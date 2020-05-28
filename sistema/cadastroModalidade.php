@@ -1,10 +1,10 @@
 <?php
+
 /**
  * Cadastro de Campus
  *  
  * By Alat
  */
-
 # Reservado para o servidor logado
 $idUsuario = NULL;
 
@@ -12,22 +12,22 @@ $idUsuario = NULL;
 include ("_config.php");
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario,9);
+$acesso = Verifica::acesso($idUsuario, 9);
 
-if($acesso){    
+if ($acesso) {
     # Conecta ao Banco de Dados
     $intra = new Intra();
     $contrato = new Contrato();
     $pessoal = new Pessoal();
-	
+
     # Verifica a fase do programa
-    $fase = get("fase","listar");
-    
+    $fase = get("fase", "listar");
+
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
 
     # Começa uma nova página
-    $page = new Page();			
+    $page = new Page();
     $page->iniciaPagina();
 
     # Cabeçalho da Página
@@ -37,15 +37,14 @@ if($acesso){
     $objeto = new Modelo();
 
     ################################################################
-
     # Nome do Modelo
     $objeto->set_nome("Modalidades de Contrato");
 
     # Botão de voltar da lista
     $objeto->set_voltarLista("areaInicial.php");
-    
+
     # select da lista
-    $objeto->set_selectLista ("SELECT idModalidade,
+    $objeto->set_selectLista("SELECT idModalidade,
                                       modalidade,
                                       obs
                                  FROM tbmodalidade
@@ -64,9 +63,9 @@ if($acesso){
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(array("Id","Campus","Obs"));
-    $objeto->set_width(array(5,40,45));
-    $objeto->set_align(array("center","left","left"));
+    $objeto->set_label(array("Id", "Campus", "Obs"));
+    $objeto->set_width(array(5, 40, 45));
+    $objeto->set_align(array("center", "left", "left"));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -82,38 +81,38 @@ if($acesso){
 
     # Campos para o formulario
     $objeto->set_campos(array(
-        array ("linha" => 1,
-               "nome" => "modalidade",
-               "label" => "Modalidade:",
-               "tipo" => "texto",
-               "required" => TRUE,
-               "autofocus" => TRUE,
-               "col" => 6,
-               "size" => 100), 
-        array ("linha" => 2,
-               "nome" => "obs",
-               "label" => "Observação:",
-               "tipo" => "textarea",
-               "size" => array(80,5))));
+        array("linha" => 1,
+            "nome" => "modalidade",
+            "label" => "Modalidade:",
+            "tipo" => "texto",
+            "required" => TRUE,
+            "autofocus" => TRUE,
+            "col" => 6,
+            "size" => 100),
+        array("linha" => 2,
+            "nome" => "obs",
+            "label" => "Observação:",
+            "tipo" => "textarea",
+            "size" => array(80, 5))));
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
 
     ################################################################
-    switch ($fase){
+    switch ($fase) {
         case "" :
         case "listar" :
             $objeto->listar();
             break;
 
-        case "editar" :	
-        case "excluir" :	
+        case "editar" :
+        case "excluir" :
         case "gravar" :
             $objeto->$fase($id);
             break;
-    }									 	 		
+    }
 
     $page->terminaPagina();
-}else{
+} else {
     loadPage("../../areaServidor/sistema/login.php");
 }

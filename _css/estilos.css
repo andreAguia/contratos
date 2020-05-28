@@ -2,7 +2,7 @@
 /*******************************************
  * Exibe dados do contrato
  *******************************************/
- 
+
 p#contratoLabel{
     font-size: 10px;
     text-align: left;
@@ -33,6 +33,20 @@ p#contratoNumero{
 }
 
 p#situacaoData{
+    font-size: 9px;
+    text-align: right;
+    padding: 0px;
+    margin: -10px;
+}
+
+p#comissaoMembro{
+    font-size: 9px;
+    text-align: right;
+    padding: 0px;
+    margin: -10px;
+}
+
+p#comissaoTipo{
     font-size: 9px;
     text-align: right;
     padding: 0px;
