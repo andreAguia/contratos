@@ -5,14 +5,45 @@
  * By Alat
  */
 
+header("Content-Type: text/html; charset=utf-8");
+
+
+/**
+ * [ PHP Basic Config ] Configurações basicas do sistema
+ * Configura o timezone da aplicação
+ * Define a função para output de erros.
+ */
+date_default_timezone_set("America/Sao_Paulo");
+set_error_handler("fullStackPHPErrorHandler");
+
+/**
+ * [ php config ] Altera modo de erro e exibição do var_dump.
+ * display_errors: Erros devem ser exibidos.
+ * error_reporting: Todos os tipos de erros
+ * overload_var_dump: Omitir a linha de caminho do var_dump.
+ */
+ini_set("display_errors", 1);
+ini_set("error_reporting", E_ALL);
+ini_set('xdebug.overload_var_dump', 1);
+
+/**
+ * [ Default errors ] Função para exibir erros do PHP
+ */
+function fullStackPHPErrorHandler($error, $message, $file, $line)
+{
+    $color = ($error == E_USER_ERROR ? "red" : "yellow");
+    echo "<div class='trigger' style='border-color: var(--{$color}); color:var(--{$color});'>[ Linha {$line} ] {$message}<small>{$file}</small></div>";
+}
+
 # Classes
 define("PASTA_CLASSES_GERAIS","../../_framework/_classesGerais/");  # Classes Gerais
 define("PASTA_CLASSES_ADMIN","../../areaServidor/_classes/");       # Classes do sistema de Administração 
+define("PASTA_CLASSES_GRH","../../grh/_classes/");                   # Classes do sistema de GRH
 define("PASTA_CLASSES","../_classes/");                             # Classes Específicas
 
 # Funções
 define("PASTA_FUNCOES_GERAIS","../../_framework/_funcoesGerais/");  # Funções Gerais
-define("PASTA_FUNCOES","../_funcoes/");                             # Funções Específicas
+#define("PASTA_FUNCOES","../_funcoes/");                             # Funções Específicas
 
 # Figuras
 define("PASTA_FIGURAS_GERAIS","../../_framework/_imgGerais/");      # Figuras Gerais
@@ -21,11 +52,6 @@ define("PASTA_FIGURAS","../_img/");                                 # Figuras Es
 # Estilos
 define("PASTA_ESTILOS_GERAIS","../../_framework/_cssGerais/");      # Estilos Gerais (Foundation)
 define("PASTA_ESTILOS","../_css/");                                 # Estilos Específicos
-
-# Uploads
-define("PASTA_CONTRATO","../../_arquivos/pastaContratos/");         # Pasta das publicação dos contratos
-define("PASTA_APOLICE","../../_arquivos/pastaContratosApolice/");   # Pasta das apólices de seguro dos contratos
-define("PASTA_CONTRATO","../../_arquivos/pastaContratosComissao/"); # Pasta das publicação das comissões
 
 # Tags aceitas em campos com htmlTag = TRUE
 define('TAGS','<p></p><a></a><br/><br><div></div><table></table><tr></tr><td></td><th></th><strong></strong><em></em><u></u><sub></sub><sup></sup><ol></ol><li></li><ul></ul><hr><span></span><h3></h3>');       
@@ -63,7 +89,7 @@ session_start();
 
 # Funçõess gerais	
 include_once (PASTA_FUNCOES_GERAIS."funcoes.gerais.php");
-include_once (PASTA_FUNCOES."funcoes.especificas.php");
+#include_once (PASTA_FUNCOES."funcoes.especificas.php");
 
 # Framework gráfico 
 #include ('../../_framework/_outros/libchart/classes/libchart.php');
@@ -79,9 +105,6 @@ define("IP",getenv("REMOTE_ADDR"));     # Ip da máquina
 # Sistema Operacional
 define("SO",get_So());
 
-setlocale (LC_ALL, 'pt_BR');
-setlocale (LC_CTYPE, 'pt_BR');
-
 # carrega as session
 $idUsuario = get_session('idUsuario');                          // Servidor Logado
 $idServidorPesquisado = get_session('idServidorPesquisado');    // Servidor Editado na pesquisa do sistema do GRH
@@ -89,6 +112,7 @@ $idServidorPesquisado = get_session('idServidorPesquisado');    // Servidor Edit
 # Define o horário
 date_default_timezone_set("America/Sao_Paulo");
 setlocale(LC_ALL, 'pt_BR');
+setlocale (LC_CTYPE, 'pt_BR');
 
 /**
  * Função que é chamada automaticamente pelo sistema
@@ -100,7 +124,7 @@ setlocale(LC_ALL, 'pt_BR');
 
 function autoload($classe){
     # Array com as pastas existentes
-    $pastasClasses = [PASTA_CLASSES_GERAIS,PASTA_CLASSES,PASTA_CLASSES_ADMIN];
+    $pastasClasses = [PASTA_CLASSES_GERAIS,PASTA_CLASSES,PASTA_CLASSES_ADMIN,PASTA_CLASSES_GRH];
     $categoriasClasses = ["class","interface","container","html","outros","rel","bd","documento","w3"];
     
     # Percorre as pastas

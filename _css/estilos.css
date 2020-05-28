@@ -1,0 +1,43 @@
+
+/*******************************************
+ * Exibe dados do contrato
+ *******************************************/
+ 
+p#contratoLabel{
+    font-size: 10px;
+    text-align: left;
+    padding: 0px;
+    margin: 0px;
+}
+
+p#contratoConteudo{
+    font-size: 14px;
+    text-align: left;
+    padding: 0px;
+    margin: 0px;
+}
+
+
+p#contratoItem{
+    font-size: 12px;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+}
+
+p#contratoNumero{
+    font-size: 26px;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+}
+
+p#situacaoData{
+    font-size: 9px;
+    text-align: right;
+    padding: 0px;
+    margin: -10px;
+}
+
+
+
