@@ -40,8 +40,12 @@ if ($acesso) {
     $objeto = new Modelo();
 
     ################################################################
+    # Exibe os dados do Servidor
+    $objeto->set_rotinaExtra("get_DadosContrato");
+    $objeto->set_rotinaExtraParametro($idContrato);
+    
     # Nome do Modelo
-    $objeto->set_nome("Situação do Contrato");
+    $objeto->set_nome("Situação");
 
     # Botão de voltar da lista
     $objeto->set_voltarLista("areaContrato.php");

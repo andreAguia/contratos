@@ -41,7 +41,7 @@ define("PASTA_CLASSES_GRH", "../../grh/_classes/");                   # Classes 
 define("PASTA_CLASSES", "../_classes/");                             # Classes Específicas
 # Funções
 define("PASTA_FUNCOES_GERAIS", "../../_framework/_funcoesGerais/");  # Funções Gerais
-#define("PASTA_FUNCOES","../_funcoes/");                             # Funções Específicas
+define("PASTA_FUNCOES", "../_funcoes/");                             # Funções Específicas
 # Figuras
 define("PASTA_FIGURAS_GERAIS", "../../_framework/_imgGerais/");      # Figuras Gerais
 define("PASTA_FIGURAS", "../_img/");                                 # Figuras Específicas
@@ -84,7 +84,8 @@ session_start();
 
 # Funçõess gerais	
 include_once (PASTA_FUNCOES_GERAIS . "funcoes.gerais.php");
-#include_once (PASTA_FUNCOES."funcoes.especificas.php");
+include_once (PASTA_FUNCOES . "funcoes.especificas.php");
+
 # Framework gráfico 
 #include ('../../_framework/_outros/libchart/classes/libchart.php');
 # Dados do Browser

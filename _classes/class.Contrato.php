@@ -6,7 +6,7 @@ class Contrato {
      * Abriga as várias rotina referentes a concurso
      *
      * @author André Águia (Alat) - alataguia@gmail.com
-     * 
+     *
      * @var private $idConcurso integer NULL O id do concurso
      */
     private $idContrato = null;
@@ -17,9 +17,9 @@ class Contrato {
     public function __construct($idContrato = NULL) {
         /**
          * Inicia a Classe somente
-         * 
+         *
          * @param $idContrato integer NULL O id do concurso
-         * 
+         *
          * @syntax $concurso = new Concurso([$idConcurso]);
          */
         $this->idContrato = $idContrato;
@@ -31,9 +31,9 @@ class Contrato {
 
         /**
          * Informa os dados da base de dados
-         * 
+         *
          * @param $idConcurso integer NULL O id do concurso
-         * 
+         *
          * @syntax $concurso->get_dados([$idConcurso]);
          */
         # Joga o valor informado para a variável da classe
@@ -51,7 +51,7 @@ class Contrato {
         }
 
         # Pega os dados
-        $select = 'SELECT * 
+        $select = 'SELECT *
                      FROM tbcontrato
                     WHERE idContrato = ' . $this->idContrato;
 
@@ -107,7 +107,7 @@ class Contrato {
     /**
      * Método exibeDadosConcurso
      * fornece os dados de uma vaga em forma de tabela
-     * 
+     *
      * @param	string $idVaga O id da vaga
      */
     function exibeDadosContrato1($idContrato) {
@@ -142,7 +142,7 @@ class Contrato {
     /**
      * Método exibeDadosConcurso
      * fornece os dados de uma vaga em forma de tabela
-     * 
+     *
      * @param	string $idVaga O id da vaga
      */
     function exibeDadosContrato2($idContrato) {
@@ -156,7 +156,6 @@ class Contrato {
 
         #$painel = new Callout("secondary");
         #$painel->abre();
-
         # Pega os valores
         $bdModalidade = new Modalidade();
         $idModalidade = $conteudo["idModalidade"];
@@ -209,6 +208,16 @@ class Contrato {
         $grid = new Grid();
         $grid->abreColuna(12);
 
+        # Editar
+        $div = new Div("divEditaNota");
+        $div->abre();
+
+        $button = new Button("Editar", "cadastroContrato.php?fase=editar&id={$idContrato}");
+        $button->set_class("secondary button small");
+        $button->show();
+
+        $div->fecha();
+
         #tituloTable("Dados do Contrato:");
         #br();
 
@@ -253,7 +262,112 @@ class Contrato {
     /**
      * Método exibeDadosConcurso
      * fornece os dados de uma vaga em forma de tabela
-     * 
+     *
+     * @param	string $idVaga O id da vaga
+     */
+    function exibeResumoDados($idContrato) {
+
+        # Joga o valor informado para a variável da classe
+        if (!vazio($idContrato)) {
+            $this->idContrato = $idContrato;
+        }
+
+        $conteudo = $this->get_dados($idContrato);
+
+        # Pega os valores
+        $bdModalidade = new Modalidade();
+        $idModalidade = $conteudo["idModalidade"];
+        $dadosModalidade = $bdModalidade->get_dados($idModalidade);
+        $modalidade = $dadosModalidade["modalidade"];
+        $dtPublicacao = $conteudo["dtPublicacao"];
+        $publicacao = date_to_php($dtPublicacao);
+        $dtAssinatura = $conteudo["dtAssinatura"];
+        $assinatura = date_to_php($dtAssinatura);
+        $dtInicial = $conteudo["dtInicial"];
+        $inicio = date_to_php($dtInicial);
+        $prazo1 = $conteudo["prazo"];
+        $tipoPrazo = $conteudo["tipoPrazo"];
+
+        if ($tipoPrazo == 1) {
+            $prazo2 = " dias";
+        } elseif ($tipoPrazo == 2) {
+            $prazo2 = " meses";
+        }
+
+        $prazo = "{$prazo1} {$prazo2}";
+
+        $bdempresa = new Empresa();
+        $idEmpresa = $conteudo["idEmpresa"];
+        $empresa = $bdempresa->get_razaoSocial($idEmpresa);
+        $conteudo2 = $bdempresa->get_dados($idEmpresa);
+        $cnpj = $conteudo2["cnpj"];
+
+        # Monta o array de exibição
+        $dados = [
+            ["empresa", 12],
+            ["objeto", 12]
+        ];
+
+        # Rotina de exibição
+        
+        # Limita a tela
+        $grid1 = new Grid();
+        $grid1->abreColuna(3);
+
+        $this->exibeDadosContrato1($idContrato);
+
+        $grid1->fechaColuna();
+        $grid1->abreColuna(9);
+        
+        $painel = new Callout("secondary");
+        $painel->abre();
+
+        $grid = new Grid();
+
+        foreach ($dados as $item) {
+
+            # Monta a variável para usar o $$
+            $pp = $item[0];
+
+            # Monta a coluna
+            $grid->abreColuna($item[1]);
+
+            # Exibe o label colocando a primeira letra em maúsculas
+            if (empty($item[2])) {
+                p(plm($pp) . ":", "contratoLabel");
+            } else {
+                p($item[2] . ":", "contratoLabel");
+            }
+
+
+            # Verifica se tem variável com esse nome
+            if (empty($$pp)) {
+                if (empty($conteudo[$pp])) {
+                    p("---", "contratoConteudo");
+                } else {
+                    p($conteudo[$pp], "contratoConteudo");
+                }
+            } else {
+                p($$pp, "contratoConteudo");
+            }
+
+            $grid->fechaColuna();
+        }
+        $grid->fechaGrid();
+        $painel->fecha();
+
+        $grid1->fechaColuna();
+        $grid1->fechaGrid();
+
+        
+    }
+
+    ###########################################################
+
+    /**
+     * Método exibeDadosConcurso
+     * fornece os dados de uma vaga em forma de tabela
+     *
      * @param	string $idVaga O id da vaga
      */
     function exibeDatasTabela($idContrato) {

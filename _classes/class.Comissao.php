@@ -141,24 +141,60 @@ class Comissao {
 
         # monta o select
         $select = "SELECT tipo,
-                          idServidor
+                          idServidor,
+                          idComissao
                      FROM tbcomissao
                     WHERE idContrato = {$idContrato}
                  ORDER BY tipo";
 
         $row = $contratos->select($select);
 
+        # Editar
+        $div = new Div("divEditaNota");
+        $div->abre();
+
+        $button = new Button("Editar", "cadastroComissao.php");
+        $button->set_class("secondary button small");
+        $button->show();
+
+        $div->fecha();
+
         # Monta a tabela
         $tabela = new Tabela();
-        $tabela->set_titulo("Comissão de Fiscalização");
-        $tabela->set_label(array("Tipo", "Nome"));
-        $tabela->set_align(array("center", "left"));
-        $tabela->set_width(array(30, 70));
-        $tabela->set_classe(array("Comissao", "pessoal"));
-        $tabela->set_metodo(array("get_tipo", "get_nome"));
+        #$tabela->set_titulo("Comissão de Fiscalização");
+        $tabela->set_label(array("Tipo", "Nome", "Designado em"));
+        $tabela->set_align(array("center", "left", "left"));
+        $tabela->set_width(array(10, 50, 40));
+        $tabela->set_classe(array("Comissao", "Comissao", "Comissao"));
+        $tabela->set_metodo(array("get_tipo", "exibeDadosMembro", "get_portariaEntrada"));
         $tabela->set_numeroOrdem(true);
         $tabela->set_conteudo($row);
+        
+        $tabela->set_idCampo("idServidor");
+        $tabela->set_editar("cadastroComissao.php?fase=exibeFicha");
+        $tabela->set_nomeColunaEditar("Acessar");
+        $tabela->set_editarBotao("ver.png");
         $tabela->show();
+    }
+
+    #####################################################################################
+
+    public function exibeDadosMembro($idServidor) {
+
+        # Conecta ao Banco de Dados
+        $pessoal = new Pessoal();
+
+        # Verifica se foi informado
+        if (vazio($idServidor)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        $nome = $pessoal->get_nome($idServidor);
+        $lotacao = $pessoal->get_lotacao($idServidor);
+        #$cargo = $pessoal->get_cargo($idServidor);
+
+        return "{$nome}<br/>{$lotacao}";
     }
 
     ###########################################################

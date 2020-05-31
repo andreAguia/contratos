@@ -40,6 +40,10 @@ if ($acesso) {
     $objeto = new Modelo();
 
     ################################################################
+    # Exibe os dados do Servidor
+    $objeto->set_rotinaExtra("get_DadosContrato");
+    $objeto->set_rotinaExtraParametro($idContrato);
+    
     # Nome do Modelo
     $objeto->set_nome("Comissão de Fiscalização");
 
@@ -200,6 +204,13 @@ if ($acesso) {
         case "gravar" :
             $objeto->$fase($id);
             break;
+        
+        case "exibeFicha" :
+            botaoVoltar("areaContrato.php");
+            # Exibe dados do contrato
+            get_DadosContrato($idContrato);
+            break;
+            
     }
 
     $page->terminaPagina();

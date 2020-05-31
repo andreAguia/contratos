@@ -53,5 +53,9 @@ p#comissaoTipo{
     margin: -10px;
 }
 
+div#divEditaNota{
+    float: right;
+    margin-top: -60px;
+}
 
 

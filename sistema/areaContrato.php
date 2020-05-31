@@ -58,7 +58,7 @@ if ($acesso) {
     $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$id}");
     $botaoEditar->set_class('button');
     $botaoEditar->set_title('Editar os dados deste contrato');
-    $menu1->add_link($botaoEditar, "right");
+    #$menu1->add_link($botaoEditar, "right");
 
     $menu1->show();
 
@@ -97,26 +97,20 @@ if ($acesso) {
             
             $situacao->exibeSituacaoAtual($id);
             
-            echo ' 
-            <div class="row">
-                <div class="columns">
-                  <ul class="tabs" data-tabs id="example-tabs">
-                    <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">Dados do Contrato</a></li>
-                    <li class="tabs-title"><a href="#panel2">Comissão de Fiscalização</a></li>
-                  </ul>
+            $array = array(
+                "Dados do Contrato",
+                "Comissão de Fiscalização",
+            );
+            $tab = new Tab($array);
+            $tab->abreConteudo();
+                $contrato->exibeDadosContrato2($id);
+            $tab->fechaConteudo();
+            $tab->abreConteudo();
+                $comissao->listaComissao($id);
+            $tab->fechaConteudo();
+            $tab->show();
 
-                  <div class="tabs-content" data-tabs-content="example-tabs">
-                    <div class="tabs-panel is-active" id="panel1">';
-                      $contrato->exibeDadosContrato2($id);
-                    echo '</div>
-                    <div class="tabs-panel" id="panel2">';
-                     $comissao->listaComissao($id);
-                   echo '</div>
-                  </div>
-                </div>
-              </div>
-                    '; 
-
+                   
             $grid2->fechaColuna();
             $grid2->fechaGrid();
             break;
