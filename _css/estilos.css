@@ -58,4 +58,6 @@ div#divEditaNota{
     margin-top: -60px;
 }
 
-
+tr#listaDados{
+    background-color: #D7D7D7;
+}

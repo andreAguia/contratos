@@ -88,6 +88,7 @@ include_once (PASTA_FUNCOES . "funcoes.especificas.php");
 
 # Framework gráfico 
 #include ('../../_framework/_outros/libchart/classes/libchart.php');
+
 # Dados do Browser
 $browser = get_BrowserName();
 define("BROWSER_NAME", $browser['browser']); # Nome do browser
@@ -132,8 +133,8 @@ spl_autoload_register("autoload");
 
 # Sobre o Sistema
 $intra = new Intra();
-define("SISTEMA", $intra->get_variavel("sistemaGrh"));             # Nome do sistema
-define("DESCRICAO", $intra->get_variavel("sistemaGrhDescricao"));  # Descrição do sistema
+define("SISTEMA", $intra->get_variavel("sistemaContratos"));             # Nome do sistema
+define("DESCRICAO", $intra->get_variavel("sistemaContratosDescricao"));  # Descrição do sistema
 define("AUTOR", $intra->get_variavel("sistemaAutor"));             # Autor do sistema
 define("EMAILAUTOR", $intra->get_variavel("sistemaAutorEmail"));   # Autor do sistema
 # Versão do sistema
