@@ -51,12 +51,12 @@ if ($acesso) {
     $objeto->set_voltarLista("areaContrato.php");
 
     # select da lista
-    $objeto->set_selectLista("SELECT idSituacao,
-                                      data,                                      
-                                      situacao
-                                 FROM tbsituacao
-                                WHERE idContrato = {$idContrato}
-                             ORDER BY idSituacao DESC");
+    $objeto->set_selectLista("SELECT data,                                      
+                                     idSituacao,
+                                     idSituacao
+                                FROM tbsituacao
+                               WHERE idContrato = {$idContrato}
+                            ORDER BY data DESC");
 
     # select do edita
     $objeto->set_selectEdita("SELECT data,
@@ -72,11 +72,13 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(array("Id", "Data", "Situacao do Contrato"));
-    $objeto->set_width(array(5, 10, 75));
-    $objeto->set_align(array("center", "center", "left"));
-    $objeto->set_funcao(array(null, "date_to_php"));
-
+    $objeto->set_label(array("Data", "Situacao do Contrato"));
+    $objeto->set_width(array(10, 85));
+    $objeto->set_align(array("center", "left"));
+    $objeto->set_funcao(array("date_to_php"));
+    $objeto->set_classe(array(null,"Situacao"));
+    $objeto->set_metodo(array(null,"get_situacao"));
+    
     $objeto->set_formatacaoCondicional(array(array('coluna' => 0,
             'valor' => 0,
             'operador' => '=',

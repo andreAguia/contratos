@@ -19,6 +19,7 @@ if ($acesso) {
     $intra = new Intra();
     $contrato = new Contrato();
     $pessoal = new Pessoal();
+    $comissao = new Comissao();
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
@@ -43,7 +44,7 @@ if ($acesso) {
     # Exibe os dados do Servidor
     $objeto->set_rotinaExtra("get_DadosContrato");
     $objeto->set_rotinaExtraParametro($idContrato);
-    
+
     # Nome do Modelo
     $objeto->set_nome("Comissão de Fiscalização");
 
@@ -52,14 +53,13 @@ if ($acesso) {
 
     # select da lista
     $objeto->set_selectLista("SELECT tipo,
-                                      idServidor,
-                                      idServidor,
-                                      idServidor,
-                                      idComissao,
-                                      idComissao
-                                 FROM tbcomissao
-                                WHERE idContrato = {$idContrato}
-                             ORDER BY tipo");
+                                     idServidor,
+                                     idServidor,
+                                     idServidor,
+                                     idComissao
+                                FROM tbcomissao 
+                               WHERE idContrato = {$idContrato}
+                            ORDER BY tipo");
 
     # select do edita
     $objeto->set_selectEdita("SELECT idServidor,
@@ -77,18 +77,46 @@ if ($acesso) {
                               WHERE idComissao = {$id}");
 
     # Caminhos
-    $objeto->set_linkEditar("?fase=editar");
-    $objeto->set_linkExcluir("?fase=excluir");
+    #$objeto->set_linkEditar("?fase=editar");
+    #$objeto->set_linkExcluir("?fase=excluir");
     $objeto->set_linkGravar("?fase=gravar");
     $objeto->set_linkListar("?fase=listar");
+    $objeto->set_linkIncluir("?fase=incluirMembro");
+
+    $formatacaoCondicional = array(
+        array('coluna'   => 0,
+            'valor'    => "Presidente",
+            'operador' => '=',
+            'id'       => 'presidenteComissao'),
+        array('coluna'   => 0,
+            'valor'    => "Membro",
+            'operador' => '=',
+            'id'       => 'membroComissao'),
+        array('coluna'   => 0,
+            'valor'    => "Suplente",
+            'operador' => '=',
+            'id'       => 'cuplenteComissao'),
+    );
 
     # Parametros da tabela
-    $objeto->set_label(array("Tipo", "Nome", "Cargo", "Lotação", "Designado em"));
-    $objeto->set_align(array("center", "left", "left", "left", "left"));
-    $objeto->set_width(array(5, 20, 20, 20, 25));
-    $objeto->set_classe(array("Comissao", "pessoal", "pessoal", "pessoal", "Comissao"));
-    $objeto->set_metodo(array("get_tipo", "get_nome", "get_cargo", "get_lotacao", "get_portariaEntrada"));
+    $objeto->set_label(array("Tipo", "Nome", "Cargo", "Lotação", "Ver"));
+    $objeto->set_align(array("center", "left", "left", "left"));
+    $objeto->set_width(array(8, 30, 25, 25, 7));
+    #$objeto->set_funcao(array(null, null, null, null, null, "exibeFoto"));
+    $objeto->set_classe(array("Comissao", "pessoal", "pessoal", "pessoal"));
+    $objeto->set_metodo(array("get_tipo", "get_nome", "get_cargo", "get_lotacao"));
     $objeto->set_numeroOrdem(true);
+    $objeto->set_formatacaoCondicional($formatacaoCondicional);
+
+    # Botão de exibição dos servidores com permissão a essa regra
+    $botao = new BotaoGrafico();
+    $botao->set_label('');
+    $botao->set_title('Editar membro da comissão');
+    $botao->set_url('?fase=exibeMembro&id=' . $id);
+    $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
+
+    # Coloca o objeto link na tabela			
+    $objeto->set_link(array(null, null, null, null, $botao));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -122,71 +150,71 @@ if ($acesso) {
 
     # Campos para o formulario
     $objeto->set_campos(array(
-        array('linha' => 1,
-            'nome' => 'idServidor',
-            'label' => 'Membro:',
-            'tipo' => 'combo',
-            'array' => $membro,
-            'title' => 'Servidor membro ca comissão',
-            'col' => 9,
+        array('linha'    => 1,
+            'nome'     => 'idServidor',
+            'label'    => 'Membro:',
+            'tipo'     => 'combo',
+            'array'    => $membro,
+            'title'    => 'Servidor membro ca comissão',
+            'col'      => 9,
             'required' => true,
-            'size' => 30),
-        array('linha' => 1,
-            'nome' => 'tipo',
-            'label' => 'Tipo:',
-            'tipo' => 'combo',
-            'array' => $tipo,
+            'size'     => 30),
+        array('linha'  => 1,
+            'nome'   => 'tipo',
+            'label'  => 'Tipo:',
+            'tipo'   => 'combo',
+            'array'  => $tipo,
             'padrao' => 2,
-            'col' => 3,
-            'size' => 15),
+            'col'    => 3,
+            'size'   => 15),
         array('linha' => 2,
-            'nome' => 'portariaEntrada',
-            'label' => 'Portaria Número:',
-            'tipo' => 'texto',
-            'col' => 2,
-            'size' => 10),
+            'nome'  => 'portariaEntrada',
+            'label' => 'Portaria Designação:',
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 10),
         array('linha' => 2,
-            'nome' => 'dtPortariaEntrada',
+            'nome'  => 'dtPortariaEntrada',
             'label' => 'De:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 2,
-            'nome' => 'dtPublicacaoEntrada',
+            'nome'  => 'dtPublicacaoEntrada',
             'label' => 'Publicado no DOERJ em:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 3,
-            'nome' => 'portariaSaida',
-            'label' => 'Portaria Número:',
-            'tipo' => 'texto',
-            'col' => 2,
-            'size' => 10),
+            'nome'  => 'portariaSaida',
+            'label' => 'Portaria de Saída:',
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 10),
         array('linha' => 3,
-            'nome' => 'dtPortariaSaida',
+            'nome'  => 'dtPortariaSaida',
             'label' => 'De:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 3,
-            'nome' => 'dtPublicacaoSaida',
+            'nome'  => 'dtPublicacaoSaida',
             'label' => 'Publicado no DOERJ em:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 4,
-            'nome' => 'obs',
+            'nome'  => 'obs',
             'label' => 'Observação:',
-            'tipo' => 'textarea',
-            'size' => array(80, 5)),
-        array("linha" => 5,
-            "nome" => "idContrato",
-            "label" => "idContrato:",
-            'tipo' => 'hidden',
+            'tipo'  => 'textarea',
+            'size'  => array(80, 5)),
+        array("linha"  => 5,
+            "nome"   => "idContrato",
+            "label"  => "idContrato:",
+            'tipo'   => 'hidden',
             'padrao' => $idContrato,
-            "col" => 3,
-            "size" => 11)
+            "col"    => 3,
+            "size"   => 11)
     ));
 
     # idUsuário para o Log
@@ -204,16 +232,58 @@ if ($acesso) {
         case "gravar" :
             $objeto->$fase($id);
             break;
-        
+
         case "exibeFicha" :
             botaoVoltar("areaContrato.php");
             # Exibe dados do contrato
             get_DadosContrato($idContrato);
             break;
+
+        ##################################################################
+
+        case "exibeMembro" :
+
+            # Limita a tela
+            $grid = new Grid();
+            $grid->abreColuna(12);
+
+            # Cria um menu
+            $menu1 = new MenuBar();
+
+            # Voltar
+            $botaoVoltar = new Link("Voltar", "?");
+            $botaoVoltar->set_class('button');
+            $botaoVoltar->set_title('Voltar a página anterior');
+            $botaoVoltar->set_accessKey('V');
+            $menu1->add_link($botaoVoltar, "left");
+
+            # Editar
+            $botaoEditar = new Link("Editar", "cadastroComissao.php?fase=editar&id={$id}");
+            $botaoEditar->set_class('button');
+            $botaoEditar->set_title('Editar os dados deste membro');
+            $menu1->add_link($botaoEditar, "right");
+
+            $menu1->show();
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
+
+            # Exibe dados do membro da comissão
+            $comissao->exibeDadosMembro($id);
+            break;
+
+        ##################################################################
+        
+        case "incluirMembro" :
             
+            echo "oi";
+            break;
+        
+        ##################################################################
     }
 
     $page->terminaPagina();
-} else {
+}
+else {
     loadPage("../../areaServidor/sistema/login.php");
 }

@@ -85,7 +85,7 @@ class Situacao {
         if (vazio($row)) {
             return "---";
         } else {
-            return $row[0];
+            return "<pre>{$row[0]}</pre>";
         }
     }
 
@@ -119,7 +119,7 @@ class Situacao {
 
         p(date_to_php($situacao['data']), "situacaoData");
         p("Situação Atual", "contratoLabel");
-        p($situacao['situacao'], "contratoConteudo");
+        p("<pre>{$situacao['situacao']}</pre>", "contratoConteudo");
 
 
         $grid->fechaColuna();
@@ -127,5 +127,33 @@ class Situacao {
         $painel->fecha();
     }
 
-    ###########################################################
+    #####################################################################################
+
+    public function get_situacao($idSituacao) {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idSituacao)) {
+            alert("É necessário informar o id do Situacao.");
+            return;
+        }
+
+        # Pega os dados
+        $select = "SELECT situacao
+                     FROM tbsituacao
+                    WHERE idSituacao = {$idSituacao}";
+
+        $row = $contratos->select($select, FALSE);
+
+        # Retorno
+        if (vazio($row)) {
+            return "---";
+        } else {
+            return "<pre>{$row[0]}</pre>";
+        }
+    }
+
+    #####################################################################################
 }

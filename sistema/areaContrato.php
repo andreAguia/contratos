@@ -76,7 +76,7 @@ if ($acesso) {
             $grid2->abreColuna(3);
 
             # Exibe dados do Contrato
-            $contrato->exibeDadosContrato1($id);
+            $contrato->exibeNumeroContrato($id);
 
             ########################################
             # Menu
@@ -84,6 +84,7 @@ if ($acesso) {
 
             $menu = new Menu("menuProcedimentos");
             $menu->add_item('titulo', 'Cadastros');
+            $menu->add_item('link', 'Dados do Contrato', 'cadastroContrato.php?fase=editar');
             $menu->add_item('link', 'Comissão de Fiscalização', 'cadastroComissao.php');
             $menu->add_item('link', 'Situação', 'cadastroSituacao.php');
 
@@ -97,6 +98,9 @@ if ($acesso) {
             
             $situacao->exibeSituacaoAtual($id);
             
+            $contrato->exibeDadosContrato($id);
+            
+            /*
             $array = array(
                 "Dados do Contrato",
                 "Comissão de Fiscalização",
@@ -109,7 +113,7 @@ if ($acesso) {
                 $comissao->listaComissao($id);
             $tab->fechaConteudo();
             $tab->show();
-
+            */
                    
             $grid2->fechaColuna();
             $grid2->fechaGrid();

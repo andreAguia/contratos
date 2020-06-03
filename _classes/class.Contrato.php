@@ -150,7 +150,7 @@ class Contrato
      *
      * @param	string $idVaga O id da vaga
      */
-    function exibeDadosContrato1($idContrato)
+    function exibeNumeroContrato($idContrato)
     {
 
         # Joga o valor informado para a variável da classe
@@ -185,7 +185,7 @@ class Contrato
      *
      * @param	string $idVaga O id da vaga
      */
-    function exibeDadosContrato2($idContrato)
+    function exibeDadosContrato($idContrato)
     {
 
         # Joga o valor informado para a variável da classe
@@ -195,6 +195,9 @@ class Contrato
 
         $conteudo = $this->get_dados($idContrato);
 
+        $painel = new Callout("secondary");
+        $painel->abre();
+        
         # Pega os valores
         $bdModalidade = new Modalidade();
         $idModalidade = $conteudo["idModalidade"];
@@ -252,18 +255,8 @@ class Contrato
         $grid = new Grid();
         $grid->abreColuna(12);
 
-        # Editar
-        $div = new Div("divEditaNota");
-        $div->abre();
-
-        $button = new Button("Editar", "cadastroContrato.php?fase=editar&id={$idContrato}");
-        $button->set_class("secondary button small");
-        $button->show();
-
-        $div->fecha();
-
-        #tituloTable("Dados do Contrato:");
-        #br();
+        tituloTable("Dados do Contrato:");
+        br();
 
         $grid->fechaColuna();
 
@@ -301,7 +294,7 @@ class Contrato
         }
         $grid->fechaGrid();
 
-        #$painel->fecha();
+        $painel->fecha();
     }
 
     ###########################################################
