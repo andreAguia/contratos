@@ -6,7 +6,7 @@
  * By Alat
  */
 # Reservado para o servidor logado
-$idUsuario = NULL;
+$idUsuario = null;
 
 # Configuração
 include ("_config.php");
@@ -132,14 +132,14 @@ if ($acesso) {
 
     # Pega os dados da combo de servidor
     $membro = $pessoal->select('SELECT idServidor, 
-                                       CONCAT(tbpessoa.nome," | ",IFNULL(tbtipocargo.sigla,"")," - ",IFNULL(tbcargo.nome,"")," | ",uenf_grh.tbsituacao.situacao)
+                                       CONCAT(tbpessoa.nome," | ",IFnull(tbtipocargo.sigla,"")," - ",IFnull(tbcargo.nome,"")," | ",uenf_grh.tbsituacao.situacao)
                                   FROM uenf_grh.tbservidor JOIN uenf_grh.tbpessoa USING (idPessoa)
                                                       LEFT JOIN uenf_grh.tbsituacao ON (uenf_grh.tbservidor.situacao = uenf_grh.tbsituacao.idsituacao)
                                                       LEFT JOIN uenf_grh.tbcargo USING (idCargo)
                                                       LEFT JOIN uenf_grh.tbtipocargo USING (idTipoCargo)
                                  WHERE (idPerfil = 1 OR idPerfil = 4)
                               ORDER BY uenf_grh.tbsituacao.idSituacao, tbpessoa.nome');
-    array_unshift($membro, array(NULL, NULL)); # Adiciona o valor de nulo
+    array_unshift($membro, array(null, null)); # Adiciona o valor de nulo
     # Dados da combo tipo
     $tipo = array(
         array(null, null),
@@ -152,7 +152,7 @@ if ($acesso) {
     $objeto->set_campos(array(
         array('linha'    => 1,
             'nome'     => 'idServidor',
-            'label'    => 'Membro:',
+            'label'    => 'Servidor:',
             'tipo'     => 'combo',
             'array'    => $membro,
             'title'    => 'Servidor membro ca comissão',

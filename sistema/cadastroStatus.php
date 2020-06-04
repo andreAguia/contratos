@@ -6,7 +6,7 @@
  * By Alat
  */
 # Reservado para o servidor logado
-$idUsuario = NULL;
+$idUsuario = null;
 
 # Configuração
 include ("_config.php");
@@ -85,8 +85,8 @@ if ($acesso) {
             "nome" => "status",
             "label" => "Status:",
             "tipo" => "texto",
-            "required" => TRUE,
-            "autofocus" => TRUE,
+            "required" => true,
+            "autofocus" => true,
             "col" => 6,
             "size" => 100),
         array("linha" => 2,

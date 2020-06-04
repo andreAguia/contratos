@@ -6,7 +6,7 @@
  * By Alat
  */
 # Reservado para o servidor logado
-$idUsuario = NULL;
+$idUsuario = null;
 
 # Configuração
 include ("_config.php");
@@ -56,13 +56,13 @@ if ($acesso) {
 
     # select do edita
     $objeto->set_selectEdita('SELECT numero,
-                                     objeto,
-                                     idStatus,
-                                     processoSei,
-                                     processo,
                                      idModalidade,
                                      siafe,
+                                     idStatus,
+                                     objeto,
                                      idEmpresa,
+                                     processoSei,
+                                     processo,
                                      valor,
                                      garantia,
                                      dtPublicacao,
@@ -104,7 +104,7 @@ if ($acesso) {
                                    FROM tbstatus
                                ORDER BY status');
 
-    array_unshift($status, array(NULL, NULL));
+    array_unshift($status, array(null, null));
 
     # Dados da combo tipo
     $tipo = array(
@@ -119,7 +119,7 @@ if ($acesso) {
                                        FROM tbmodalidade
                                    ORDER BY modalidade');
 
-    array_unshift($modalidade, array(NULL, NULL));
+    array_unshift($modalidade, array(null, null));
 
     # Dados da combo empresa
     $empresa = $contrato->select('SELECT idEmpresa,
@@ -127,7 +127,7 @@ if ($acesso) {
                                     FROM tbempresa
                               ORDER BY razaoSocial');
 
-    array_unshift($empresa, array(NULL, NULL));
+    array_unshift($empresa, array(null, null));
 
     # Campos para o formulario
     $objeto->set_campos(array(
@@ -137,22 +137,45 @@ if ($acesso) {
             'tipo' => 'texto',
             'required' => true,
             'autofocus' => true,
-            'col' => 2,
+            'col' => 3,
             'size' => 10),
         array('linha' => 1,
-            'nome' => 'objeto',
-            'label' => 'Objeto:',
+            'nome' => 'idModalidade',
+            'label' => 'Modalidade:',
+            'tipo' => 'combo',
+            'required' => true,
+            'array' => $modalidade,
+            'col' => 3,
+            'size' => 15),                
+        array('linha' => 1,
+            'nome' => 'siafe',
+            'label' => 'Siafe:',
             'tipo' => 'texto',
-            'col' => 8,
-            'size' => 250),
+            'required' => true,
+            'col' => 3,
+            'size' => 15),
         array('linha' => 1,
             'nome' => 'idStatus',
             'label' => 'Status:',
             'tipo' => 'combo',
             'array' => $status,
             'required' => true,
-            'col' => 2,
+            'col' => 3,
             'size' => 30),
+        array('linha' => 1,
+            'nome' => 'objeto',
+            'label' => 'Objeto:',
+            'tipo' => 'texto',
+            'col' => 12,
+            'size' => 250),
+        array('linha' => 2,
+            'nome' => 'idEmpresa',
+            'label' => 'Empresa:',
+            'tipo' => 'combo',
+            'array' => $empresa,
+            'required' => true,
+            'col' => 12,
+            'size' => 200),
         array('linha' => 2,
             'nome' => 'processoSei',
             'label' => 'Processo Sei:',
@@ -166,35 +189,12 @@ if ($acesso) {
             'col' => 3,
             'size' => 50),
         array('linha' => 2,
-            'nome' => 'idModalidade',
-            'label' => 'Modalidade:',
-            'tipo' => 'combo',
-            'required' => true,
-            'array' => $modalidade,
-            'col' => 3,
-            'size' => 15),                
-        array('linha' => 2,
-            'nome' => 'siafe',
-            'label' => 'Siafe:',
-            'tipo' => 'texto',
-            'required' => true,
-            'col' => 2,
-            'size' => 15),
-        array('linha' => 2,
-            'nome' => 'idEmpresa',
-            'label' => 'Empresa:',
-            'tipo' => 'combo',
-            'array' => $empresa,
-            'required' => true,
-            'col' => 12,
-            'size' => 200),
-        array('linha' => 3,
             'nome' => 'valor',
             'label' => 'Valor:',
             'tipo' => 'moeda',
             'col' => 3,
             'size' => 15),
-        array('linha' => 3,
+        array('linha' => 2,
             'nome' => 'garantia',
             'label' => 'Garantia: (se houver)',
             'tipo' => 'percentagem',
@@ -213,7 +213,7 @@ if ($acesso) {
             'tipo' => 'texto',
             'col' => 2,
             'size' => 5),
-        array('linha' => 4,
+        array('linha' => 3,
             'nome' => 'dtAssinatura',
             'label' => 'Assinatura:',
             'tipo' => 'date',

@@ -7,17 +7,17 @@ class Situacao {
      *
      * @author André Águia (Alat) - alataguia@gmail.com
      * 
-     * @var private $idConcurso integer NULL O id do concurso
+     * @var private $idConcurso integer null O id do concurso
      */
     private $idSituacao = null;
 
 ##############################################################
 
-    public function __construct($idSituacao = NULL) {
+    public function __construct($idSituacao = null) {
         /**
          * Inicia a Classe somente
          * 
-         * @param $idContrato integer NULL O id do concurso
+         * @param $idContrato integer null O id do concurso
          * 
          * @syntax $concurso = new Concurso([$idConcurso]);
          */
@@ -26,12 +26,12 @@ class Situacao {
 
 ##############################################################
 
-    public function get_dados($idSituacao = NULL) {
+    public function get_dados($idSituacao = null) {
 
         /**
          * Informa os dados da base de dados
          * 
-         * @param $idConcurso integer NULL O id do concurso
+         * @param $idConcurso integer null O id do concurso
          * 
          * @syntax $concurso->get_dados([$idConcurso]);
          */
@@ -54,7 +54,7 @@ class Situacao {
                      FROM tbsituacao
                     WHERE idSituacao = ' . $this->idSituacao;
 
-        $row = $contratos->select($select, FALSE);
+        $row = $contratos->select($select, false);
 
         # Retorno
         return $row;
@@ -79,7 +79,7 @@ class Situacao {
                     WHERE idContrato = {$idContrato}
                  ORDER BY idSituacao desc";
 
-        $row = $contratos->select($select, FALSE);
+        $row = $contratos->select($select, false);
 
         # Retorno
         if (vazio($row)) {
@@ -108,7 +108,7 @@ class Situacao {
                     WHERE idContrato = {$idContrato}
                  ORDER BY idSituacao desc";
 
-        $situacao = $contratos->select($select, FALSE);
+        $situacao = $contratos->select($select, false);
 
         # Limita a tela
         $grid = new Grid();
@@ -145,7 +145,7 @@ class Situacao {
                      FROM tbsituacao
                     WHERE idSituacao = {$idSituacao}";
 
-        $row = $contratos->select($select, FALSE);
+        $row = $contratos->select($select, false);
 
         # Retorno
         if (vazio($row)) {

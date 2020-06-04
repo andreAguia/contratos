@@ -8,13 +8,15 @@ p#contratoLabel{
     text-align: left;
     padding: 0px;
     margin: 0px;
+    margin-bottom: -5px;
+    
 }
 
 p#contratoConteudo{
     font-size: 14px;
     text-align: left;
     padding: 0px;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
     margin: 0px;
 }
 
@@ -61,6 +63,33 @@ div#divEditaNota{
 
 tr#listaDados{
     background-color: #D7D7D7;
+}
+
+p#statusAtivo{
+    font-size: 10px;
+    text-align: right;
+    padding: 0px;
+    margin: -10px;
+    color: green;
+    font-weight: bold;
+}
+
+p#statusPendente{
+    font-size: 10px;
+    text-align: right;
+    padding: 0px;
+    margin: -10px;
+    color: red;
+    font-weight: bold;
+}
+
+p#statusEncerrado{
+    font-size: 10px;
+    text-align: right;
+    padding: 0px;
+    margin: -10px;
+    color: gray;
+    font-weight: bold;
 }
 
 /*******************************************

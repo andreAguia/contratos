@@ -1,23 +1,23 @@
 <?php
 
-class Comissao {
+class Comissao
+{
 
     /**
      * Abriga as várias rotina referentes a comissao
      *
      * @author André Águia (Alat) - alataguia@gmail.com
      * 
-     * @var private $idComissao integer NULL O id do concurso
+     * @var private $idComissao integer null O id do concurso
      */
     private $idComissao = null;
-
 ##############################################################
-
-    public function __construct($idComissao = NULL) {
+    public function __construct($idComissao = null)
+    {
         /**
          * Inicia a Classe somente
          * 
-         * @param $idContrato integer NULL O id do concurso
+         * @param $idContrato integer null O id do concurso
          * 
          * @syntax $concurso = new Concurso([$idConcurso]);
          */
@@ -25,13 +25,13 @@ class Comissao {
     }
 
 ##############################################################
-
-    public function get_dados($idComissao = NULL) {
+    public function get_dados($idComissao = null)
+    {
 
         /**
          * Informa os dados da base de dados
          * 
-         * @param $idConcurso integer NULL O id do concurso
+         * @param $idConcurso integer null O id do concurso
          * 
          * @syntax $concurso->get_dados([$idConcurso]);
          */
@@ -54,15 +54,15 @@ class Comissao {
                      FROM tbcomissao
                     WHERE idComissao = ' . $this->idComissao;
 
-        $row = $contratos->select($select, FALSE);
+        $row = $contratos->select($select, false);
 
         # Retorno
         return $row;
     }
 
     #####################################################################################
-
-    public function get_portariaEntrada($idComissao) {
+    public function get_portariaEntrada($idComissao)
+    {
 
         # Joga o valor informado para a variável da classe
         if (!vazio($idComissao)) {
@@ -87,12 +87,13 @@ class Comissao {
                      FROM tbcomissao
                     WHERE idComissao = {$idComissao}";
 
-        $row = $contratos->select($select, FALSE);
+        $row = $contratos->select($select, false);
 
         # Trata o retorno
         if (empty($row["portariaEntrada"])) {
             return "---";
-        } else {
+        }
+        else {
             $return = "Portaria n° {$row["portariaEntrada"]}";
 
             if (!empty($row["dtPortariaEntrada"])) {
@@ -109,13 +110,14 @@ class Comissao {
     }
 
     #####################################################################################
-
-    public function get_tipo($tipo) {
+    public function get_tipo($tipo)
+    {
 
         # Verifica se foi informado
         if (vazio($tipo)) {
             return "---";
-        } else {
+        }
+        else {
             switch ($tipo) {
                 case 1 :
                     return "Presidente";
@@ -133,8 +135,8 @@ class Comissao {
     }
 
     #####################################################################################
-
-    public function listaComissao($idContrato) {
+    public function listaComissao($idContrato)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -169,7 +171,7 @@ class Comissao {
         $tabela->set_metodo(array("get_tipo", "exibeDadosMembro", "get_portariaEntrada"));
         $tabela->set_numeroOrdem(true);
         $tabela->set_conteudo($row);
-        
+
         $tabela->set_idCampo("idServidor");
         $tabela->set_editar("cadastroComissao.php?fase=exibeFicha");
         $tabela->set_nomeColunaEditar("Acessar");
@@ -178,8 +180,8 @@ class Comissao {
     }
 
     #####################################################################################
-
-    public function exibeDadosMembro($idComissao) {
+    public function exibeDadosMembro($idComissao)
+    {
 
         # Conecta ao Banco de Dados
         $pessoal = new Pessoal();
@@ -188,33 +190,34 @@ class Comissao {
         if (vazio($idComissao)) {
             alert("É necessário informar o id.");
             return;
-        }else{
-            
+        }
+        else {
+
             # Pega dados do membro da comissao
             $conteudo = $this->get_dados($idComissao);
-            
+
             # Pega os dados
             $idServidor = $conteudo["idServidor"];
             $idPessoa = $pessoal->get_idPessoa($idServidor);
             $portariaEntrada = $this->get_portariaEntrada($idComissao);
-            
+
             # Dados do Servidor
             get_DadosServidor($idServidor);
-            
+
             # Monta as colunas
             $grid = new Grid();
-            
+
             #####################################
-            
+
             $grid->abreColuna(3);
-            
+
             # Pega os telefones
             $telefones = $pessoal->get_telefones($idServidor);
 
             # Pega os Emails
             $emailPessoal = $pessoal->get_emailPessoal($idServidor);
             $emailUenf = $pessoal->get_emailUenf($idServidor);
-            $emails = NULL;
+            $emails = null;
 
             # junta os Emails
             if (!vazio($emailPessoal)) {
@@ -230,47 +233,49 @@ class Comissao {
 
             p($telefones, "center", "f14");
             p($emails, "center", "f14");
-            
+
             tituloTable("CPF:");
             br();
 
-            P($pessoal->get_cpf($idPessoa),"center","14");
-            
+            P($pessoal->get_cpf($idPessoa), "center", "14");
+
             $grid->fechaColuna();
-            
+
             #####################################
-            
+
             $grid->abreColuna(6);
 
             # Pega os valores
             $tipo1 = $conteudo["tipo"];
-            
+
             # Trata a portaria de Entrada
             if (empty($conteudo["portariaEntrada"])) {
                 $portariaEntrada = "---";
-            } else {
+            }
+            else {
                 $portariaEntrada = "Portaria n° {$conteudo["portariaEntrada"]}";
 
                 if (!empty($conteudo["dtPortariaEntrada"])) {
                     $portariaEntrada .= " de " . date_to_php($conteudo["dtPortariaEntrada"]);
                 }
             }
-            
+
             if (!empty($conteudo["dtPublicacaoEntrada"])) {
                 $dtPublicacaoEntrada = date_to_php($conteudo["dtPublicacaoEntrada"]);
             }
-            
+
             # Trata a portaria de SAida
             if (empty($conteudo["portariaSaida"])) {
                 $portariaSaida = "---";
-            } else {
+            }
+            else {
                 $portariaSaida = "Portaria n° {$conteudo["portariaSaida"]}";
 
                 if (!empty($conteudo["dtPortariaSaida"])) {
                     $portariaSaida .= " de " . date_to_php($conteudo["dtPortariaSaida"]);
                 }
             }
-            
+
             if (!empty($conteudo["dtPublicacaoSaida"])) {
                 $dtPublicacaoSaida = date_to_php($conteudo["dtPublicacaoSaida"]);
             }
@@ -288,61 +293,70 @@ class Comissao {
 
             # Monta o array de exibição
             $dados = [
-                ["tipo", 12],
-                ["portariaEntrada", 6, "Portaria de Designação"],
-                ["dtPublicacaoEntrada", 6, "Publicado em"],
-                ["portariaSaida", 6, "Portaria de Saída"],
-                ["dtPublicacaoSaida", 6, "Publicado em"],
-                ["obs", 12],
+                ["tipo", 1, 12],
+                ["portariaEntrada", 2, 8, "Portaria de Designação"],
+                ["dtPublicacaoEntrada", 2, 4, "Publicado em"],
+                ["portariaSaida", 3, 8, "Portaria de Saída"],
+                ["dtPublicacaoSaida", 3, 4, "Publicado em"],
+                ["obs", 4, 12, null, "textarea", 3],
             ];
 
-            # Rotina de exibição
-            tituloTable("Dados da Designação:");
-            br();
-
-            $grid1 = new Grid();
+            # Formuário exemplo de login
+            $form = new Form('#', 'contrato');
 
             foreach ($dados as $item) {
 
                 # Monta a variável para usar o $$
                 $pp = $item[0];
 
-                # Monta a coluna
-                $grid1->abreColuna($item[1]);
-
-                # Exibe o label colocando a primeira letra em maúsculas
-                if (empty($item[2])) {
-                    p(plm($pp) . ":", "contratoLabel");
+                # label
+                if (empty($item[3])) {
+                    $label = plm($pp);
                 }
                 else {
-                    p($item[2] . ":", "contratoLabel");
+                    $label = $item[3] . ":";
                 }
-
 
                 # Verifica se tem variável com esse nome
                 if (empty($$pp)) {                      // Se não tem variável com esse nome
                     if (empty($conteudo[$pp])) {        // Se não tiver no array de conteúdo do bd
-                        p("---", "contratoConteudo");   // Exibe tracinho
+                        $valor = "---";                 // Exibe tracinho
                     }
                     else {                              // Se tiver conteúdo do bd exibe ele
-                        p($conteudo[$pp], "contratoConteudo");
+                        $valor = $conteudo[$pp];
                     }
                 }
                 else {                                  // Se tiver variável exibe ela
-                    p($$pp, "contratoConteudo");
+                    $valor = $$pp;
                 }
 
-                $grid1->fechaColuna();
+                # Tipo
+                if (empty($item[4])) {
+                    $tipo = "texto";
+                }
+                else {
+                    $tipo = $item[4];
+                }
+
+                $controle = new Input($item[0], $tipo, $label, 1);
+                $controle->set_col($item[2]);
+                $controle->set_linha($item[1]);
+                $controle->set_valor($valor);
+                $controle->set_size(200);
+                $controle->set_disabled(true);
+                if ($tipo == "textarea") {
+                    $controle->set_size(array(80, $item[5]));
+                }
+                $form->add_item($controle);
             }
-            $grid1->fechaGrid();
-            
+
+            $form->show();
+
             $grid->fechaColuna();
-            
+
             #####################################
-            
+
             $grid->abreColuna(3);
-            tituloTable("Foto");
-            br();
 
             $foto = new ExibeFoto();
             $foto->set_fotoLargura(150);
@@ -352,7 +366,7 @@ class Comissao {
 
             $grid->fechaColuna();
             $grid->fechaGrid();
-            
+
             hr();
         }
     }

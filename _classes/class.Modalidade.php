@@ -7,17 +7,17 @@ class Modalidade {
      *
      * @author André Águia (Alat) - alataguia@gmail.com
      * 
-     * @var private $idConcurso integer NULL O id do concurso
+     * @var private $idConcurso integer null O id do concurso
      */
     private $idModalidade = null;
 
 ##############################################################
 
-    public function __construct($idModalidade = NULL) {
+    public function __construct($idModalidade = null) {
         /**
          * Inicia a Classe somente
          * 
-         * @param $idContrato integer NULL O id do concurso
+         * @param $idContrato integer null O id do concurso
          * 
          * @syntax $concurso = new Concurso([$idConcurso]);
          */
@@ -26,12 +26,12 @@ class Modalidade {
 
 ##############################################################
 
-    public function get_dados($idModalidade = NULL) {
+    public function get_dados($idModalidade = null) {
 
         /**
          * Informa os dados da base de dados
          * 
-         * @param $idConcurso integer NULL O id do concurso
+         * @param $idConcurso integer null O id do concurso
          * 
          * @syntax $concurso->get_dados([$idConcurso]);
          */
@@ -54,7 +54,7 @@ class Modalidade {
                      FROM tbmodalidade
                     WHERE idModalidade = ' . $this->idModalidade;
 
-        $row = $contratos->select($select, FALSE);
+        $row = $contratos->select($select, false);
 
         # Retorno
         return $row;

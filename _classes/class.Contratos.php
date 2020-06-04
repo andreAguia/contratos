@@ -8,12 +8,12 @@ class Contratos extends Bd {
      * @author André Águia (Alat) - alataguia@gmail.com
      * 
      * @var private $servidor string localhost O nome do servidor do banco de dados
-     * @var private $usuario  string NULL      O nome do usuário no banco de dados
-     * @var private $senha    string NULL      A senha de acesso ao banco de dados
+     * @var private $usuario  string null      O nome do usuário no banco de dados
+     * @var private $senha    string null      A senha de acesso ao banco de dados
      * @var private $banco    string pessoal   O nome do banco de dados a ser acessado pela classe
      * @var private $sgdb     string mysql     O nome do SGDB a ser utilizado
-     * @var private $tabela   string NULL      A tabela que está sendo acessada
-     * @var private $idCampo  string NULL      O nome do campo id da tabela    
+     * @var private $tabela   string null      A tabela que está sendo acessada
+     * @var private $idCampo  string null      O nome do campo id da tabela    
      */
     private $servidor = "localhost";
     private $usuario = "intranet";
@@ -59,7 +59,7 @@ class Contratos extends Bd {
     /**
      * Método Gravar
      */
-    public function gravar($campos = NULL, $valor = NULL, $idValor = NULL, $tabela = NULL, $idCampo = NULL, $alerta = FALSE) {
+    public function gravar($campos = null, $valor = null, $idValor = null, $tabela = null, $idCampo = null, $alerta = false) {
 
         if (is_null($tabela)) {
             $tabela = $this->tabela;
@@ -77,12 +77,12 @@ class Contratos extends Bd {
     /**
      * Método Excluir
      */
-    public function excluir($idValor = NULL, $tabela = NULL, $idCampo = 'id') {
+    public function excluir($idValor = null, $tabela = null, $idCampo = 'id') {
 
         # efetua a exclus�o
         parent::excluir($idValor, $this->tabela, $this->idCampo);
 
-        return TRUE;
+        return true;
     }
 
 ##############################################################

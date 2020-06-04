@@ -8,19 +8,19 @@ class Contrato
      *
      * @author André Águia (Alat) - alataguia@gmail.com
      *
-     * @var private $idConcurso integer NULL O id do concurso
+     * @var private $idConcurso integer null O id do concurso
      */
     private
             $idContrato = null;
     private
             $permiteEditar = true;
 ##############################################################
-    public function __construct($idContrato = NULL)
+    public function __construct($idContrato = null)
     {
         /**
          * Inicia a Classe somente
          *
-         * @param $idContrato integer NULL O id do concurso
+         * @param $idContrato integer null O id do concurso
          *
          * @syntax $concurso = new Concurso([$idConcurso]);
          */
@@ -28,13 +28,13 @@ class Contrato
     }
 
 ##############################################################
-    public function get_dados($idContrato = NULL)
+    public function get_dados($idContrato = null)
     {
 
         /**
          * Informa os dados da base de dados
          *
-         * @param $idConcurso integer NULL O id do concurso
+         * @param $idConcurso integer null O id do concurso
          *
          * @syntax $concurso->get_dados([$idConcurso]);
          */
@@ -57,20 +57,20 @@ class Contrato
                      FROM tbcontrato
                     WHERE idContrato = ' . $this->idContrato;
 
-        $row = $contratos->select($select, FALSE);
+        $row = $contratos->select($select, false);
 
         # Retorno
         return $row;
     }
 
     ##############################################################
-    public function get_processo($idContrato = NULL)
+    public function get_processo($idContrato = null, $br = true)
     {
 
         /**
          * Informa os dados da base de dados
          *
-         * @param $idConcurso integer NULL O id do concurso
+         * @param $idConcurso integer null O id do concurso
          *
          * @syntax $concurso->get_dados([$idConcurso]);
          */
@@ -95,8 +95,12 @@ class Contrato
         }
 
         # Verifica se tem os dois
-        if ((!empty($conteudo["processoSei"])) AND (!empty($conteudo["processo"]))) {
-            $processo = "SEI - {$conteudo["processoSei"]} <br/> {$conteudo["processo"]}";
+        if ((!empty($conteudo["processoSei"])) AND (!empty($conteudo["processo"]))) {            
+            if($br){
+                $processo = "SEI - {$conteudo["processoSei"]} <br/> {$conteudo["processo"]}";
+            }else{
+                $processo = "SEI - {$conteudo["processoSei"]} / {$conteudo["processo"]}";
+            }
         }
 
         return $processo;
@@ -110,9 +114,10 @@ class Contrato
         $contratos = new Contratos();
 
         # monta o select
-        $select = "SELECT status,
-                          CONCAT(numero,'<br/>',tbcontrato.nome,'<br/>',modalidade),
-                          CONCAT(tbempresa.razaoSocial,'<br/>',cnpj),
+        $select = "SELECT CONCAT(numero,'<br/>',modalidade,'<br/>',status),
+                          objeto,
+                          idEmpresa,
+                          idContrato,
                           idContrato,
                           idContrato,
                           idContrato
@@ -126,11 +131,11 @@ class Contrato
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_titulo("Contratos");
-        $tabela->set_label(array("Status", "Número", "Empresa", "Prazo", "Situação"));
-        $tabela->set_classe(array(NULL, NULL, NULL, "Contrato", "Situacao"));
-        $tabela->set_metodo(array(NULL, NULL, NULL, "exibeDatasTabela", "get_situacaoAtual"));
-        #$tabela->set_funcao(array(NULL,NULL,NULL,NULL,"date_to_php"));
-        $tabela->set_align(array("center", "center", "left", "center", "left"));
+        $tabela->set_label(array("Contrato", "Objeto","Empresa", "Processo","Prazo", "Situação"));
+        $tabela->set_classe(array(null, null,"Empresa", "Contrato", "Contrato","Situacao"));
+        $tabela->set_metodo(array(null, null,"get_empresaCnpj","get_processo", "exibeDatasTabela", "get_situacaoAtual"));
+        $tabela->set_width(array(10,20,20,20,10,20));
+        $tabela->set_align(array( "center", "left","left", "left","center", "left"));
         $tabela->set_idCampo('idContrato');
 
         if ($this->permiteEditar) {
@@ -164,16 +169,17 @@ class Contrato
         $painel->abre();
 
         $numero = $conteudo["numero"];
-        $nome = $conteudo["nome"];
         $idModalidade = $conteudo["idModalidade"];
+        $status = $this->get_status($idContrato);
 
         $mm = new Modalidade();
         $mmDados = $mm->get_dados($idModalidade);
         $modalidade = $mmDados['modalidade'];
 
         p($numero, "contratoNumero");
-        p($nome, "contratoItem");
         p($modalidade, "contratoItem");
+        br();
+        p("Contrato {$status}", "status{$status}");
 
         $painel->fecha();
     }
@@ -195,9 +201,9 @@ class Contrato
 
         $conteudo = $this->get_dados($idContrato);
 
-        $painel = new Callout("secondary");
-        $painel->abre();
-        
+        #$painel = new Callout("secondary");
+        #$painel->abre();
+
         # Pega os valores
         $bdModalidade = new Modalidade();
         $idModalidade = $conteudo["idModalidade"];
@@ -211,9 +217,10 @@ class Contrato
         $inicio = date_to_php($dtInicial);
         $prazo = $conteudo["prazo"];
         $tipoPrazo = $conteudo["tipoPrazo"];
-        $processo = $this->get_processo($idContrato);
         $status = $this->get_status($idContrato);
-        
+        $processo = $this->get_processo($idContrato,false);
+        $obs = "<pre>{$conteudo["obs"]}</pre";
+
         # Informa o prazo
         if ($tipoPrazo == 1) {
             $prazo2 = " dias";
@@ -233,20 +240,16 @@ class Contrato
 
         # Monta o array de exibição
         $dados = [
-            ["numero", 2],
-            ["processo", 4, "Processo"],
-            ["modalidade", 2],
-            ["siafe", 2],
-            ["status", 2],
             ["objeto", 12],
+            ["empresa", 12],
+            ["processo", 8, "Processo"],
+            ["siape", 3],
             ["publicacao", 2, "Publicação DOERJ"],
             ["pgPublicacao", 2, "Página"],
             ["assinatura", 2, "Assinatura"],
             ["inicio", 2, "Início"],
             ["prazo", 2],
             ["vigencia", 2],
-            ["empresa", 8],
-            ["cnpj", 4],
             ["obs", 12]
         ];
 
@@ -255,46 +258,48 @@ class Contrato
         $grid = new Grid();
         $grid->abreColuna(12);
 
-        tituloTable("Dados do Contrato:");
-        br();
+        #tituloTable("Dados do Contrato:");
+        #br();
 
         $grid->fechaColuna();
+
+        # Formuário exemplo de login
+        //$form = new Form('#', 'contrato');
 
         foreach ($dados as $item) {
 
             # Monta a variável para usar o $$
             $pp = $item[0];
 
-            # Monta a coluna
-            $grid->abreColuna($item[1]);
-
-            # Exibe o label colocando a primeira letra em maúsculas
+            # label
             if (empty($item[2])) {
-                p(plm($pp) . ":", "contratoLabel");
+                $label = plm($pp);
             }
             else {
-                p($item[2] . ":", "contratoLabel");
+                $label = $item[2] . ":";
             }
-
 
             # Verifica se tem variável com esse nome
             if (empty($$pp)) {                      // Se não tem variável com esse nome
                 if (empty($conteudo[$pp])) {        // Se não tiver no array de conteúdo do bd
-                    p("---", "contratoConteudo");   // Exibe tracinho
+                    $valor = "---";                 // Exibe tracinho
                 }
                 else {                              // Se tiver conteúdo do bd exibe ele
-                    p($conteudo[$pp], "contratoConteudo");
+                    $valor = $conteudo[$pp];
                 }
             }
             else {                                  // Se tiver variável exibe ela
-                p($$pp, "contratoConteudo");
+                $valor = $$pp;
             }
-
+            
+            $grid->abreColuna($item[1]);
+            p("{$label}:","contratoLabel");
+            p($valor,"contratoConteudo");
             $grid->fechaColuna();
         }
         $grid->fechaGrid();
 
-        $painel->fecha();
+        //$form->show();
     }
 
     ###########################################################
@@ -336,7 +341,7 @@ class Contrato
         #$tabela->set_funcao($function);
         #$tabela->set_classe($classe);
         #$tabela->set_metodo($metodo);
-        $tabela->set_totalRegistro(FALSE);
+        $tabela->set_totalRegistro(false);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
 
         $tabela->show();
@@ -380,7 +385,7 @@ class Contrato
     }
 
     ##############################################################
-    public function get_status($idContrato = NULL)
+    public function get_status($idContrato = null)
     {
 
         # Verifica se foi informado
@@ -388,20 +393,20 @@ class Contrato
             alert("É necessário informar o id do Contrato.");
             return;
         }
-        
+
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-        
+
         $conteudo = $this->get_dados($idContrato);
         $idStatus = $conteudo["idStatus"];
-        
+
         # monta o select
         $select = "SELECT status
                      FROM tbstatus
                     WHERE idStatus = {$idStatus}";
 
         $row = $contratos->select($select, false);
-        
+
         return $row["status"];
     }
 

@@ -6,7 +6,7 @@
  * By Alat
  */
 # Reservado para o servidor logado
-$idUsuario = NULL;
+$idUsuario = null;
 
 # Configuração
 include ("_config.php");
@@ -45,16 +45,26 @@ if ($acesso) {
 
     # select da lista
     $objeto->set_selectLista("SELECT idEmpresa,
-                                      nome,
-                                      razaoSocial,
-                                      cnpj
-                                 FROM tbempresa
-                             ORDER BY idEmpresa");
+                                     idEmpresa,
+                                     idEmpresa,
+                                     idEmpresa,
+                                     idEmpresa,
+                                     usuarioSei
+                                FROM tbempresa
+                            ORDER BY idEmpresa");
 
     # select do edita
     $objeto->set_selectEdita("SELECT razaoSocial,
                                      nome,
-                                     cnpj,
+                                     cnpj,                                     
+                                     telefone1,
+                                     telefone2,
+                                     telefone3,
+                                     email1,
+                                     email2,
+                                     email3,
+                                     contato,
+                                     usuarioSei,
                                      endereco,
                                      bairro,
                                      idCidade,
@@ -70,9 +80,11 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(array("Id", "Nome", "Razão Social", "CNPJ"));
-    #$objeto->set_width(array(5,40,45));
-    $objeto->set_align(array("center", "left", "left"));
+    $objeto->set_label(array("Id", "Empresa", "Telefone", "Email", "Contatos"));
+    $objeto->set_width(array(5,30,15,15,20));
+    $objeto->set_align(array("center", "left", "left", "left", "left","left"));
+    $objeto->set_classe(array(null, "Empresa", "Empresa", "Empresa","Empresa"));
+    $objeto->set_metodo(array(null, "get_empresaCnpj", "get_telefones", "get_emails","get_contatos"));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -91,67 +103,124 @@ if ($acesso) {
                                        CONCAT(tbcidade.nome," (",tbestado.uf,")")
                                   FROM tbcidade JOIN tbestado USING (idEstado)
                               ORDER BY proximidade,tbestado.uf,tbcidade.nome');
-    array_unshift($cidade, array(NULL, NULL)); # Adiciona o valor de nulo
+    array_unshift($cidade, array(null, null)); # Adiciona o valor de nulo
     # Campos para o formulario
     $objeto->set_campos(array(
-        array('linha' => 1,
-            'nome' => 'razaoSocial',
-            'label' => 'Razão Social:',
-            'tipo' => 'texto',
+        array('linha'     => 1,
+            'nome'      => 'razaoSocial',
+            'label'     => 'Razão Social:',
+            'tipo'      => 'texto',
+            'required'  => true,
+            'autofocus' => true,
+            'plm'   => true,
+            'col'       => 12,
+            'size'      => 250),
+        array('linha'    => 2,
+            'nome'     => 'nome',
+            'label'    => 'Nome:',
+            'tipo'     => 'texto',
             'required' => true,
-            'autofocus' => TRUE,
-            'col' => 12,
-            'size' => 250),
-        array('linha' => 2,
-            'nome' => 'nome',
-            'label' => 'Nome:',
-            'tipo' => 'texto',
+            'col'      => 8,
+            'size'     => 200),
+        array('linha'    => 2,
+            'nome'     => 'cnpj',
+            'label'    => 'CNPJ:',
+            'tipo'     => 'texto',
             'required' => true,
-            'col' => 8,
-            'size' => 200),
-        array('linha' => 2,
-            'nome' => 'cnpj',
-            'label' => 'CNPJ:',
-            'tipo' => 'texto',
-            'required' => true,
-            'col' => 4,
-            'size' => 30),
+            'col'      => 4,
+            'size'     => 30),
         array('linha' => 3,
-            'nome' => 'endereco',
+            'nome'  => 'telefone1',
+            'label' => 'Telefone 1:',
+            'tipo'  => 'texto',
+            'title' => 'Número de telefone',
+            'col'   => 4,
+            'size'  => 100),
+        array('linha' => 3,
+            'nome'  => 'telefone2',
+            'label' => 'Telefone 2:',
+            'tipo'  => 'texto',
+            'title' => 'Número de telefone',
+            'col'   => 4,
+            'size'  => 100),
+        array('linha' => 3,
+            'nome'  => 'telefone3',
+            'label' => 'Telefone 3:',
+            'tipo'  => 'texto',
+            'title' => 'Número de telefone',
+            'col'   => 4,
+            'size'  => 100),
+        array('linha' => 4,
+            'nome'  => 'email1',
+            'label' => 'Email 1:',
+            'tipo'  => 'texto',
+            'title' => 'Email da empresa',
+            'col'   => 4,
+            'size'  => 100),
+        array('linha' => 4,
+            'nome'  => 'email2',
+            'label' => 'Email 2:',
+            'tipo'  => 'texto',
+            'title' => 'Email da empresa',
+            'col'   => 4,
+            'size'  => 100),
+        array('linha' => 4,
+            'nome'  => 'email3',
+            'label' => 'Email 3:',
+            'tipo'  => 'texto',
+            'title' => 'Email da empresa',
+            'col'   => 4,
+            'size'  => 100),
+        array('linha' => 5,
+            'nome'  => 'contato',
+            'label' => 'Contato na Empresa:',
+            'tipo'  => 'texto',
+            'title' => 'Contato',
+            'col'   => 6,
+            'size'  => 150),
+        array('linha' => 5,
+            'nome'  => 'usuarioSei',
+            'label' => 'Pessoa da empresa cadastrada no SEI:',
+            'tipo'  => 'texto',
+            'title' => 'Contato',
+            'col'   => 6,
+            'size'  => 150),
+        array('linha' => 5,
+            'nome'  => 'endereco',
             'label' => 'Endereço:',
-            'tipo' => 'texto',
-            'plm' => TRUE,
-            'title' => 'Endereço do Servidor',
-            'col' => 12,
-            'size' => 150),
-        array('linha' => 4,
-            'nome' => 'bairro',
+            'tipo'  => 'texto',
+            'plm'   => true,
+            'title' => 'Endereço da Empresa',
+            'col'   => 12,
+            'size'  => 150),
+        array('linha' => 6,
+            'nome'  => 'bairro',
             'label' => 'Bairro:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Bairro',
-            'plm' => TRUE,
-            'col' => 4,
-            'size' => 50),
-        array('linha' => 4,
-            'nome' => 'idCidade',
+            'plm'   => true,
+            'col'   => 4,
+            'size'  => 50),
+        array('linha' => 6,
+            'nome'  => 'idCidade',
             'label' => 'Cidade:',
-            'tipo' => 'combo',
+            'tipo'  => 'combo',
             'array' => $cidade,
             'title' => 'Cidade de Moradia do Servidor',
-            'col' => 5,
-            'size' => 30),
-        array('linha' => 4,
-            'nome' => 'cep',
+            'col'   => 5,
+            'size'  => 30),
+        array('linha' => 6,
+            'nome'  => 'cep',
             'label' => 'Cep:',
-            'tipo' => 'cep',
+            'tipo'  => 'cep',
             'title' => 'Cep',
-            'col' => 3,
-            'size' => 10),
-        array('linha' => 5,
-            'nome' => 'obs',
+            'col'   => 3,
+            'size'  => 10),
+        array('linha' => 7,
+            'nome'  => 'obs',
             'label' => 'Observação:',
-            'tipo' => 'textarea',
-            'size' => array(80, 5))));
+            'tipo'  => 'textarea',
+            'size'  => array(80, 5))));
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
@@ -168,9 +237,37 @@ if ($acesso) {
         case "gravar" :
             $objeto->$fase($id);
             break;
+
+        case "ver" :
+            # Limita a tela
+            $grid = new Grid();
+            $grid->abreColuna(12);
+
+            # Cria um menu
+            $menu1 = new MenuBar();
+
+            # Voltar
+            $botaoVoltar = new Link("Voltar", "areaContrato.php");
+            $botaoVoltar->set_class('button');
+            $botaoVoltar->set_title('Voltar a página anterior');
+            $botaoVoltar->set_accessKey('V');
+            $menu1->add_link($botaoVoltar, "left");
+
+            # Editar
+            $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$id}");
+            $botaoEditar->set_class('button');
+            $botaoEditar->set_title('Editar Empresa');
+            $menu1->add_link($botaoEditar, "right");
+
+            $menu1->show();
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
+            break;
     }
 
     $page->terminaPagina();
-} else {
+}
+else {
     loadPage("../../areaServidor/sistema/login.php");
 }

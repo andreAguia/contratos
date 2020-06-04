@@ -6,7 +6,7 @@
  * By Alat
  */
 # Reservado para o servidor logado
-$idUsuario = NULL;
+$idUsuario = null;
 
 # Configuração
 include ("_config.php");
@@ -57,8 +57,8 @@ if ($acesso) {
     # Editar
     $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$id}");
     $botaoEditar->set_class('button');
-    $botaoEditar->set_title('Editar os dados deste contrato');
-    #$menu1->add_link($botaoEditar, "right");
+    $botaoEditar->set_title('Editar contrato');
+    $menu1->add_link($botaoEditar, "right");
 
     $menu1->show();
 
@@ -84,7 +84,8 @@ if ($acesso) {
 
             $menu = new Menu("menuProcedimentos");
             $menu->add_item('titulo', 'Cadastros');
-            $menu->add_item('link', 'Dados do Contrato', 'cadastroContrato.php?fase=editar');
+            #$menu->add_item('link', 'Dados do Contrato', 'cadastroContrato.php?fase=editar');
+            $menu->add_item('link', 'Empresa', 'cadastroEmpresa.php?fase=ver&idContrato='.$id);
             $menu->add_item('link', 'Comissão de Fiscalização', 'cadastroComissao.php');
             $menu->add_item('link', 'Situação', 'cadastroSituacao.php');
 
