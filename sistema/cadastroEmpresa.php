@@ -55,7 +55,6 @@ if ($acesso) {
 
     # select do edita
     $objeto->set_selectEdita("SELECT razaoSocial,
-                                     nome,
                                      cnpj,                                     
                                      telefone1,
                                      telefone2,
@@ -82,7 +81,7 @@ if ($acesso) {
     # Parametros da tabela
     $objeto->set_label(array("Id", "Empresa", "Telefone", "Email", "Contatos"));
     $objeto->set_width(array(5,30,15,15,20));
-    $objeto->set_align(array("center", "left", "left", "left", "left","left"));
+    $objeto->set_align(array("center", "left", "left", "left", "left"));
     $objeto->set_classe(array(null, "Empresa", "Empresa", "Empresa","Empresa"));
     $objeto->set_metodo(array(null, "get_empresaCnpj", "get_telefones", "get_emails","get_contatos"));
 
@@ -113,16 +112,9 @@ if ($acesso) {
             'required'  => true,
             'autofocus' => true,
             'plm'   => true,
-            'col'       => 12,
+            'col'       => 8,
             'size'      => 250),
-        array('linha'    => 2,
-            'nome'     => 'nome',
-            'label'    => 'Nome:',
-            'tipo'     => 'texto',
-            'required' => true,
-            'col'      => 8,
-            'size'     => 200),
-        array('linha'    => 2,
+        array('linha'    => 1,
             'nome'     => 'cnpj',
             'label'    => 'CNPJ:',
             'tipo'     => 'texto',

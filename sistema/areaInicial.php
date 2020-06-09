@@ -32,6 +32,8 @@ if ($acesso) {
 
     # Cabeçalho da Página
     AreaServidor::cabecalho();
+    
+    p(SISTEMA, 'tituloInicial');
 
     # Zera as sessões
     set_session('sessionContrato');
@@ -77,10 +79,6 @@ if ($acesso) {
     $menu->add_link($botaoRel, "right");
 
     $menu->show();
-
-    # Título
-    titulo("Sistema de Gestão de Contratos");
-    br();
     
     ################################################################
 

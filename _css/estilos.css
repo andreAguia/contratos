@@ -28,13 +28,6 @@ p#contratoItem{
     margin: 0px;
 }
 
-p#contratoNumero{
-    font-size: 26px;
-    text-align: center;
-    padding: 0px;
-    margin: 0px;
-}
-
 p#situacaoData{
     font-size: 9px;
     text-align: right;
@@ -56,40 +49,70 @@ p#comissaoTipo{
     margin: -10px;
 }
 
+a#editaNota{
+    font-size: 10px;
+    color: #8a8a8a;
+}
+
 div#divEditaNota{
     float: right;
-    margin-top: -60px;
+    right: 0;
 }
 
 tr#listaDados{
     background-color: #D7D7D7;
 }
 
-p#statusAtivo{
-    font-size: 10px;
-    text-align: right;
+p#contratoLabelCallout{
+    font-size: 9px;
+    text-align: left;
     padding: 0px;
     margin: -10px;
+    margin-bottom: 5px;
+    
+}
+
+p#situacaoAtual{
+    font-size: 14px;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+}
+
+p#statusAtivo{
+    font-size: 14px;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
     color: green;
     font-weight: bold;
 }
 
 p#statusPendente{
-    font-size: 10px;
-    text-align: right;
+    font-size: 14px;
+    text-align: center;
     padding: 0px;
-    margin: -10px;
+    margin: 0px;
     color: red;
     font-weight: bold;
 }
 
 p#statusEncerrado{
-    font-size: 10px;
-    text-align: right;
+    font-size: 14px;
+    text-align: center;
     padding: 0px;
-    margin: -10px;
+    margin: 0px;
     color: gray;
     font-weight: bold;
+}
+
+p#tituloInicial{
+    font-size: 25px;
+    text-align: center;
+    font-family: tahoma;
+    color: #02548b;
+    padding: 0px;
+    margin: 0px;
 }
 
 /*******************************************

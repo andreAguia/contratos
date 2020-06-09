@@ -23,6 +23,8 @@ if ($acesso) {
     $contrato = new Contrato();
     $situacao = new Situacao();
     $comissao = new Comissao();
+    $empresa = new Empresa();
+    $aditivo = new Aditivo();
 
     # Verifica a fase do programa
     $fase = get('fase');
@@ -42,7 +44,7 @@ if ($acesso) {
 
     # Limita a tela
     $grid = new Grid();
-    $grid->abreColuna(12);
+    $grid->abreColuna(10);
 
     # Cria um menu
     $menu1 = new MenuBar();
@@ -54,70 +56,67 @@ if ($acesso) {
     $botaoVoltar->set_accessKey('V');
     $menu1->add_link($botaoVoltar, "left");
 
+    # Aditivo
+    $botaoEditar = new Link("Aditivos", "cadastroAditivo.php");
+    $botaoEditar->set_class('button');
+    $botaoEditar->set_title('Acessa os aditivos do contrato');
+    #$menu1->add_link($botaoEditar, "right");
+    
+    # Comissão
+    $botaoEditar = new Link("Comissão", "cadastroComissao.php");
+    $botaoEditar->set_class('button');
+    $botaoEditar->set_title('Acessa os membros da comissão de fiscalização deste contrato');
+    #$menu1->add_link($botaoEditar, "right");
+
+    # Situação
+    $botaoEditar = new Link("Situação", "cadastroSituacao.php");
+    $botaoEditar->set_class('button');
+    $botaoEditar->set_title('Acessa o cadastro de situação deste contrato.');
+    #$menu1->add_link($botaoEditar, "right");
+
     # Editar
     $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$id}");
     $botaoEditar->set_class('button');
     $botaoEditar->set_title('Editar contrato');
-    $menu1->add_link($botaoEditar, "right");
+    #$menu1->add_link($botaoEditar, "right");
 
     $menu1->show();
-
-    # Título
-    titulo("Area do Contrato");
-    br();
+    
+    $grid->fechaColuna();
+    $grid->abreColuna(2);
+    
+    $contrato->exibeStatus($id);
+    
+    $grid->fechaColuna();
+    $grid->abreColuna(12);
 
     ################################################################
 
     switch ($fase) {
         case "" :
-            $grid2 = new Grid();
-
-            # Área Lateral
-            $grid2->abreColuna(3);
-
-            # Exibe dados do Contrato
-            $contrato->exibeNumeroContrato($id);
-
-            ########################################
-            # Menu
-            #tituloTable("Menu");
-
-            $menu = new Menu("menuProcedimentos");
-            $menu->add_item('titulo', 'Cadastros');
-            #$menu->add_item('link', 'Dados do Contrato', 'cadastroContrato.php?fase=editar');
-            $menu->add_item('link', 'Empresa', 'cadastroEmpresa.php?fase=ver&idContrato='.$id);
-            $menu->add_item('link', 'Comissão de Fiscalização', 'cadastroComissao.php');
-            $menu->add_item('link', 'Situação', 'cadastroSituacao.php');
-
-            $menu->add_item('titulo', 'Relatórios');
-            $menu->show();
-
-            #######################################
-            # Área Principal            
-            $grid2->fechaColuna();
-            $grid2->abreColuna(9);
+            # Carrega os dados com contrado editado
+            $conteudo = $contrato->get_dados($id);
             
-            $situacao->exibeSituacaoAtual($id);
+            # Exibe os dados do contrado
+            get_DadosContrato($id);
             
-            $contrato->exibeDadosContrato($id);
+            $grid->fechaColuna();
+            $grid->abreColuna(5);
             
-            /*
-            $array = array(
-                "Dados do Contrato",
-                "Comissão de Fiscalização",
-            );
-            $tab = new Tab($array);
-            $tab->abreConteudo();
-                $contrato->exibeDadosContrato2($id);
-            $tab->fechaConteudo();
-            $tab->abreConteudo();
-                $comissao->listaComissao($id);
-            $tab->fechaConteudo();
-            $tab->show();
-            */
-                   
-            $grid2->fechaColuna();
-            $grid2->fechaGrid();
+                # Exibe dados da empresa
+                $idEmpresa = $conteudo["idEmpresa"];                   
+                $empresa->exibeDados($idEmpresa);
+            
+            $grid->fechaColuna();
+            $grid->abreColuna(7);
+            
+                # Exibe a situação atual
+                $situacao->exibeSituacaoAtual($id);
+                
+                # Exibe outros dados do contrato
+                $contrato->exibeDadosContrato($id);
+                $aditivo->exibeAditivoContrato($id);
+                
             break;
 
         ################################################################

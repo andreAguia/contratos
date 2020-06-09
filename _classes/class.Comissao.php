@@ -92,8 +92,7 @@ class Comissao
         # Trata o retorno
         if (empty($row["portariaEntrada"])) {
             return "---";
-        }
-        else {
+        } else {
             $return = "Portaria n° {$row["portariaEntrada"]}";
 
             if (!empty($row["dtPortariaEntrada"])) {
@@ -116,8 +115,7 @@ class Comissao
         # Verifica se foi informado
         if (vazio($tipo)) {
             return "---";
-        }
-        else {
+        } else {
             switch ($tipo) {
                 case 1 :
                     return "Presidente";
@@ -190,8 +188,7 @@ class Comissao
         if (vazio($idComissao)) {
             alert("É necessário informar o id.");
             return;
-        }
-        else {
+        } else {
 
             # Pega dados do membro da comissao
             $conteudo = $this->get_dados($idComissao);
@@ -201,16 +198,143 @@ class Comissao
             $idPessoa = $pessoal->get_idPessoa($idServidor);
             $portariaEntrada = $this->get_portariaEntrada($idComissao);
 
-            # Dados do Servidor
-            get_DadosServidor($idServidor);
+            $idFuncional = $pessoal->get_idFuncional($idServidor);
+            $servidor = $pessoal->get_nome($idServidor);
+            $cargo = $pessoal->get_cargo($idServidor);
+            $lotacao = $pessoal->get_lotacao($idServidor);
+            $cpf = $pessoal->get_cpf($idPessoa);
 
+            # Titulo
+            #tituloTable("Membro da Comissão de Fiscalização");
+            #get_DadosServidor($idServidor);
             # Monta as colunas
             $grid = new Grid();
 
             #####################################
 
+            $grid->abreColuna(9);
+
+            # Pega os valores
+            $tipo1 = $conteudo["tipo"];
+
+            # Trata a portaria de Entrada
+            if (empty($conteudo["portariaEntrada"])) {
+                $portariaEntrada = "---";
+            } else {
+                $portariaEntrada = "Portaria n° {$conteudo["portariaEntrada"]}";
+
+                if (!empty($conteudo["dtPortariaEntrada"])) {
+                    $portariaEntrada .= " de " . date_to_php($conteudo["dtPortariaEntrada"]);
+                }
+            }
+
+            if (!empty($conteudo["dtPublicacaoEntrada"])) {
+                $dtPublicacaoEntrada = date_to_php($conteudo["dtPublicacaoEntrada"]);
+            }
+
+            # Trata a portaria de SAida
+            if (empty($conteudo["portariaSaida"])) {
+                $portariaSaida = "---";
+            } else {
+                $portariaSaida = "Portaria n° {$conteudo["portariaSaida"]}";
+
+                if (!empty($conteudo["dtPortariaSaida"])) {
+                    $portariaSaida .= " de " . date_to_php($conteudo["dtPortariaSaida"]);
+                }
+            }
+
+            if (!empty($conteudo["dtPublicacaoSaida"])) {
+                $dtPublicacaoSaida = date_to_php($conteudo["dtPublicacaoSaida"]);
+            }
+
+            # Informa o tipo
+            if ($tipo1 == 1) {
+                $tipo = "Presidente";
+            } elseif ($tipo1 == 2) {
+                $tipo = "Membro";
+            } elseif ($tipo1 == 3) {
+                $tipo = "Suplente";
+            }
+
+            # Monta o array de exibição
+            $dados = [
+                ["servidor", 1, 12],
+                ["idFuncional", 2, 4], 
+                ["cpf", 2, 4], 
+                ["tipo", 2, 4],
+                
+                ["cargo", 2, 6],
+                ["lotacao", 2, 6],
+                              
+                
+                ["portariaEntrada", 5, 8, "Portaria de Designação"],
+                ["dtPublicacaoEntrada", 5, 4, "Publicado em"],
+                ["portariaSaida", 6, 8, "Portaria de Saída"],
+                ["dtPublicacaoSaida", 6, 4, "Publicado em"],
+                ["obs", 7, 12, null, "textarea", 3],
+            ];
+
+            # Formuário exemplo de login
+            $form = new Form('#', 'contrato');
+
+            foreach ($dados as $item) {
+
+                # Monta a variável para usar o $$
+                $pp = $item[0];
+
+                # label
+                if (empty($item[3])) {
+                    $label = plm($pp). ":";
+                } else {
+                    $label = $item[3] . ":";
+                }
+
+                # Verifica se tem variável com esse nome
+                if (empty($$pp)) {                      // Se não tem variável com esse nome
+                    if (empty($conteudo[$pp])) {        // Se não tiver no array de conteúdo do bd
+                        $valor = "---";                 // Exibe tracinho
+                    } else {                              // Se tiver conteúdo do bd exibe ele
+                        $valor = $conteudo[$pp];
+                    }
+                } else {                                  // Se tiver variável exibe ela
+                    $valor = $$pp;
+                }
+
+                # Tipo
+                if (empty($item[4])) {
+                    $tipoInput = "texto";
+                } else {
+                    $tipoInput = $item[4];
+                }
+
+                $controle = new Input($item[0], $tipoInput, $label, 1);
+                $controle->set_col($item[2]);
+                $controle->set_linha($item[1]);
+                $controle->set_valor($valor);
+                $controle->set_size(200);
+                $controle->set_disabled(true);
+                if ($tipoInput == "textarea") {
+                    $controle->set_size(array(80, $item[5]));
+                }
+                $form->add_item($controle);
+            }
+
+            $form->show();
+
+            $grid->fechaColuna();
+
+            #####################################
+
             $grid->abreColuna(3);
 
+            $foto = new ExibeFoto();
+            $foto->set_fotoLargura(150);
+            $foto->set_fotoAltura(200);
+            #$foto->set_url('?');
+            $foto->show($idPessoa);
+            
+            br();
+            
             # Pega os telefones
             $telefones = $pessoal->get_telefones($idServidor);
 
@@ -233,136 +357,6 @@ class Comissao
 
             p($telefones, "center", "f14");
             p($emails, "center", "f14");
-
-            tituloTable("CPF:");
-            br();
-
-            P($pessoal->get_cpf($idPessoa), "center", "14");
-
-            $grid->fechaColuna();
-
-            #####################################
-
-            $grid->abreColuna(6);
-
-            # Pega os valores
-            $tipo1 = $conteudo["tipo"];
-
-            # Trata a portaria de Entrada
-            if (empty($conteudo["portariaEntrada"])) {
-                $portariaEntrada = "---";
-            }
-            else {
-                $portariaEntrada = "Portaria n° {$conteudo["portariaEntrada"]}";
-
-                if (!empty($conteudo["dtPortariaEntrada"])) {
-                    $portariaEntrada .= " de " . date_to_php($conteudo["dtPortariaEntrada"]);
-                }
-            }
-
-            if (!empty($conteudo["dtPublicacaoEntrada"])) {
-                $dtPublicacaoEntrada = date_to_php($conteudo["dtPublicacaoEntrada"]);
-            }
-
-            # Trata a portaria de SAida
-            if (empty($conteudo["portariaSaida"])) {
-                $portariaSaida = "---";
-            }
-            else {
-                $portariaSaida = "Portaria n° {$conteudo["portariaSaida"]}";
-
-                if (!empty($conteudo["dtPortariaSaida"])) {
-                    $portariaSaida .= " de " . date_to_php($conteudo["dtPortariaSaida"]);
-                }
-            }
-
-            if (!empty($conteudo["dtPublicacaoSaida"])) {
-                $dtPublicacaoSaida = date_to_php($conteudo["dtPublicacaoSaida"]);
-            }
-
-            # Informa o tipo
-            if ($tipo1 == 1) {
-                $tipo = "Presidente";
-            }
-            elseif ($tipo1 == 2) {
-                $tipo = "Membro";
-            }
-            elseif ($tipo1 == 3) {
-                $tipo = "Suplente";
-            }
-
-            # Monta o array de exibição
-            $dados = [
-                ["tipo", 1, 12],
-                ["portariaEntrada", 2, 8, "Portaria de Designação"],
-                ["dtPublicacaoEntrada", 2, 4, "Publicado em"],
-                ["portariaSaida", 3, 8, "Portaria de Saída"],
-                ["dtPublicacaoSaida", 3, 4, "Publicado em"],
-                ["obs", 4, 12, null, "textarea", 3],
-            ];
-
-            # Formuário exemplo de login
-            $form = new Form('#', 'contrato');
-
-            foreach ($dados as $item) {
-
-                # Monta a variável para usar o $$
-                $pp = $item[0];
-
-                # label
-                if (empty($item[3])) {
-                    $label = plm($pp);
-                }
-                else {
-                    $label = $item[3] . ":";
-                }
-
-                # Verifica se tem variável com esse nome
-                if (empty($$pp)) {                      // Se não tem variável com esse nome
-                    if (empty($conteudo[$pp])) {        // Se não tiver no array de conteúdo do bd
-                        $valor = "---";                 // Exibe tracinho
-                    }
-                    else {                              // Se tiver conteúdo do bd exibe ele
-                        $valor = $conteudo[$pp];
-                    }
-                }
-                else {                                  // Se tiver variável exibe ela
-                    $valor = $$pp;
-                }
-
-                # Tipo
-                if (empty($item[4])) {
-                    $tipo = "texto";
-                }
-                else {
-                    $tipo = $item[4];
-                }
-
-                $controle = new Input($item[0], $tipo, $label, 1);
-                $controle->set_col($item[2]);
-                $controle->set_linha($item[1]);
-                $controle->set_valor($valor);
-                $controle->set_size(200);
-                $controle->set_disabled(true);
-                if ($tipo == "textarea") {
-                    $controle->set_size(array(80, $item[5]));
-                }
-                $form->add_item($controle);
-            }
-
-            $form->show();
-
-            $grid->fechaColuna();
-
-            #####################################
-
-            $grid->abreColuna(3);
-
-            $foto = new ExibeFoto();
-            $foto->set_fotoLargura(150);
-            $foto->set_fotoAltura(200);
-            #$foto->set_url('?');
-            $foto->show($idPessoa);
 
             $grid->fechaColuna();
             $grid->fechaGrid();

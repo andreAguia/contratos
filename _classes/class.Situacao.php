@@ -116,15 +116,45 @@ class Situacao {
 
         $painel = new Callout("warning");
         $painel->abre();
-
+        
+        $grid = new Grid();
+        $grid->abreColuna(6);
+       
+        p("Situação Atual", "contratoLabelCallout");
+        
+        $grid->fechaColuna();
+        $grid->abreColuna(6);
+        
         p(date_to_php($situacao['data']), "situacaoData");
-        p("Situação Atual", "contratoLabel");
-        p("<pre>{$situacao['situacao']}</pre>", "contratoConteudo");
+        
+        $grid->fechaColuna();
+        $grid->abreColuna(12);
+        
+        p("<pre>{$situacao['situacao']}</pre>", "situacaoAtual","left important");
+        
+        $grid->fechaColuna();
+        $grid->fechaGrid();
+        
+        $div = new Div("divEditaNota");
+        $div->abre();
+        
+        
+        # Editar
+        $botaoEditar = new Link("Editar", "cadastroSituacao.php");
+        $botaoEditar->set_class('tiny button secondary');
+        $botaoEditar->set_title('Editar situação');
+        $botaoEditar->show();
+    
+//        $link = new Link("Editar", "cadastroSituacao.php");
+//        $link->set_id("editaNota");
+//        $link->show();
+//        $div->fecha();
 
+        $painel->fecha();
 
         $grid->fechaColuna();
         $grid->fechaGrid();
-        $painel->fecha();
+       
     }
 
     #####################################################################################

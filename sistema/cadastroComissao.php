@@ -235,6 +235,7 @@ if ($acesso) {
 
         case "exibeFicha" :
             botaoVoltar("areaContrato.php");
+            
             # Exibe dados do contrato
             get_DadosContrato($idContrato);
             break;
@@ -268,7 +269,8 @@ if ($acesso) {
             $grid->fechaColuna();
             $grid->fechaGrid();
 
-            # Exibe dados do membro da comissão
+            # Exibe dados do Contrato
+            $contrato->exibeResumoDados($idContrato);
             $comissao->exibeDadosMembro($id);
             break;
 
