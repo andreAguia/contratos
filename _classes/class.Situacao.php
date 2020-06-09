@@ -1,6 +1,7 @@
 <?php
 
-class Situacao {
+class Situacao
+{
 
     /**
      * Abriga as várias rotina referentes a concurso
@@ -10,10 +11,9 @@ class Situacao {
      * @var private $idConcurso integer null O id do concurso
      */
     private $idSituacao = null;
-
 ##############################################################
-
-    public function __construct($idSituacao = null) {
+    public function __construct($idSituacao = null)
+    {
         /**
          * Inicia a Classe somente
          * 
@@ -25,8 +25,8 @@ class Situacao {
     }
 
 ##############################################################
-
-    public function get_dados($idSituacao = null) {
+    public function get_dados($idSituacao = null)
+    {
 
         /**
          * Informa os dados da base de dados
@@ -61,8 +61,8 @@ class Situacao {
     }
 
     #####################################################################################
-
-    public function get_situacaoAtual($idContrato) {
+    public function get_situacaoAtual($idContrato)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -90,8 +90,8 @@ class Situacao {
     }
 
     #####################################################################################
-
-    function exibeSituacaoAtual($idContrato) {
+    function exibeSituacaoAtual($idContrato)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -116,50 +116,52 @@ class Situacao {
 
         $painel = new Callout("warning");
         $painel->abre();
-        
+
+
+
         $grid = new Grid();
         $grid->abreColuna(6);
-       
+
         p("Situação Atual", "contratoLabelCallout");
-        
+
         $grid->fechaColuna();
         $grid->abreColuna(6);
-        
+
         p(date_to_php($situacao['data']), "situacaoData");
-        
+
         $grid->fechaColuna();
         $grid->abreColuna(12);
-        
-        p("<pre>{$situacao['situacao']}</pre>", "situacaoAtual","left important");
-        
+
+        p("<pre>{$situacao['situacao']}</pre>", "situacaoAtual", "left important");
+
         $grid->fechaColuna();
         $grid->fechaGrid();
-        
-        $div = new Div("divEditaNota");
+
+        $div = new Div("divEdita1");
         $div->abre();
-        
-        
+
+        # Editar
+        $div = new Div("divEdita2");
+        $div->abre();
+
         # Editar
         $botaoEditar = new Link("Editar", "cadastroSituacao.php");
         $botaoEditar->set_class('tiny button secondary');
         $botaoEditar->set_title('Editar situação');
         $botaoEditar->show();
-    
-//        $link = new Link("Editar", "cadastroSituacao.php");
-//        $link->set_id("editaNota");
-//        $link->show();
-//        $div->fecha();
 
+        $div->fecha();
+
+        $div->fecha();
         $painel->fecha();
 
         $grid->fechaColuna();
         $grid->fechaGrid();
-       
     }
 
     #####################################################################################
-
-    public function get_situacao($idSituacao) {
+    public function get_situacao($idSituacao)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();

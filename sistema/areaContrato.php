@@ -106,6 +106,8 @@ if ($acesso) {
                 # Exibe dados da empresa
                 $idEmpresa = $conteudo["idEmpresa"];                   
                 $empresa->exibeDados($idEmpresa);
+                
+                $comissao->exibeComissao($id);
             
             $grid->fechaColuna();
             $grid->abreColuna(7);

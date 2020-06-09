@@ -132,7 +132,7 @@ class Contrato
         $tabela->set_titulo("Contratos");
         $tabela->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Prazo", "Situação"));
         $tabela->set_classe(array(null, null, "Empresa", "Contrato", "Contrato", "Situacao"));
-        $tabela->set_metodo(array(null, null, "get_empresaCnpj", "get_processo", "exibeDatasTabela", "get_situacaoAtual"));
+        $tabela->set_metodo(array(null, null, "get_empresaCnpj", "get_processo", "get_periodo", "get_situacaoAtual"));
         $tabela->set_width(array(10, 20, 20, 20, 10, 20));
         $tabela->set_align(array("center", "left", "left", "left", "center", "left"));
         $tabela->set_idCampo('idContrato');
@@ -150,7 +150,6 @@ class Contrato
     ###########################################################
     function exibeNumeroContrato($idContrato)
     {
-
         # Joga o valor informado para a variável da classe
         if (!vazio($idContrato)) {
             $this->idContrato = $idContrato;
@@ -189,7 +188,7 @@ class Contrato
         } elseif ($status == "Pendente") {
             $painel = new Callout("alert");
             $stilo = "statusPendente";
-        }else{
+        } else {
             $painel = new Callout("secondary");
             $stilo = "statusEncerrado";
         }
@@ -227,12 +226,12 @@ class Contrato
         $processo = $this->get_processo($idContrato, false);
         $assinatura = date_to_php($conteudo["dtAssinatura"]);
         $obs = $conteudo["obs"];
-        
+
         # Prazo
         $prazo = $conteudo["prazo"];
         $tipoPrazo = $conteudo["tipoPrazo"];
         $inicio = date_to_php($conteudo["dtInicial"]);
-        
+
         if ($tipoPrazo == 1) {
             $prazo2 = " dias";
             $vigencia = addDias($inicio, $prazo);
@@ -243,28 +242,28 @@ class Contrato
             $vigencia = addMeses($inicio, $prazo);
             $prazo .= $prazo2;
             $vigencia .= " ({$prazo})";
-        }        
-       
+        }
+
         # Publicação
         $dtPublicacao = $conteudo["dtPublicacao"];
         $publicacao = date_to_php($dtPublicacao);
-        if(!empty($conteudo["pgPublicacao"])){
+        if (!empty($conteudo["pgPublicacao"])) {
             $publicacao .= " pag: {$conteudo["pgPublicacao"]}";
         }
-        
+
         # Valor
-        if(!empty($conteudo["valor"])){
-            $valor = "R$ ".formataMoeda($conteudo['valor']);
+        if (!empty($conteudo["valor"])) {
+            $valor = "R$ " . formataMoeda($conteudo['valor']);
         }
-        
+
         # Garantia
-        if(!empty($conteudo["valor"])){
-            if(!empty($conteudo["garantia"])){
-                $garantia = $conteudo['valor'] * ($conteudo['garantia']/100);
-                $garantia = "R$ ".formataMoeda($garantia)." ({$conteudo['garantia']}%)";
+        if (!empty($conteudo["valor"])) {
+            if (!empty($conteudo["garantia"])) {
+                $garantia = $conteudo['valor'] * ($conteudo['garantia'] / 100);
+                $garantia = "R$ " . formataMoeda($garantia) . " ({$conteudo['garantia']}%)";
             }
         }
-        
+
         $dtAssinatura = $conteudo["dtAssinatura"];
 
         # Monta o array de exibição
@@ -317,12 +316,22 @@ class Contrato
             $grid->fechaColuna();
         }
         $grid->fechaGrid();
-        
-        $div = new Div("divEditaNota");
+
+        $div = new Div("divEdita1");
         $div->abre();
-        $link = new Link("Editar", "cadastroContrato.php?fase=editar&id={$idContrato}");
-        $link->set_id("editaNota");
-        $link->show();
+
+        # Editar
+        $div = new Div("divEdita2");
+        $div->abre();
+
+        # Editar
+        $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$idContrato}");
+        $botaoEditar->set_class('tiny button secondary');
+        $botaoEditar->set_title('Editar contrato');
+        $botaoEditar->show();
+
+        $div->fecha();
+
         $div->fecha();
 
         $painel->fecha();
@@ -376,13 +385,7 @@ class Contrato
     }
 
     ###########################################################
-    /**
-     * Método exibeDadosConcurso
-     * fornece os dados de uma vaga em forma de tabela
-     *
-     * @param	string $idVaga O id da vaga
-     */
-    function exibeDatasTabela($idContrato)
+    function get_periodo($idContrato)
     {
 
         # Joga o valor informado para a variável da classe

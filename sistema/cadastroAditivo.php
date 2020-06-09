@@ -15,7 +15,7 @@ include ("_config.php");
 $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
-   # Conecta ao Banco de Dados
+    # Conecta ao Banco de Dados
     $intra = new Intra();
     $contrato = new Contrato();
     $pessoal = new Pessoal();
@@ -44,7 +44,7 @@ if ($acesso) {
     # Exibe os dados do Servidor
     $objeto->set_rotinaExtra("get_DadosContrato");
     $objeto->set_rotinaExtraParametro($idContrato);
-    
+
     # Nome do Modelo
     $objeto->set_nome('Aditivos');
 
@@ -52,14 +52,15 @@ if ($acesso) {
     $objeto->set_voltarLista('areaContrato.php');
 
     # select da lista
-    $objeto->set_selectLista("SELECT dtPublicacao,
-                                      objeto,
-                                      dtInicial,
-                                      prazo,
-                                      tipoPrazo
-                                 FROM tbaditivo
-                                WHERE idContrato = {$idContrato}
-                             ORDER BY dtInicial");
+    $objeto->set_selectLista("SELECT idAditivo,
+                                     dtAssinatura,                                     
+                                     idAditivo,
+                                     objeto,  
+                                     idAditivo,
+                                     idAditivo
+                                FROM tbaditivo
+                               WHERE idContrato = {$idContrato}
+                            ORDER BY dtInicial");
 
     # select do edita
     $objeto->set_selectEdita('SELECT objeto, 
@@ -84,9 +85,13 @@ if ($acesso) {
     $objeto->set_linkListar('?fase=listar');
 
     # Parametros da tabela
-    $objeto->set_label(array("Objeto", "Inicial", "Nome", "Modalidade", "Situação"));
-    $objeto->set_width(array(10, 10, 20, 10, 40));
-    $objeto->set_align(array("center"));
+    $objeto->set_label(array("Publicação", "Assinatura", "Período","Objeto", "Valor", "Garantia"));
+    #$objeto->set_width(array(10, 10, 20, 10, 40));
+    $objeto->set_align(array("center","center","center","left"));
+    $objeto->set_classe(array("Aditivo",null,"Aditivo",null,"Aditivo","Aditivo"));
+    $objeto->set_metodo(array("get_publicacao",null,"get_periodo",null,"get_valor","get_garantia"));
+    $objeto->set_funcao(array(null, "date_to_php"));
+    $objeto->set_numeroOrdem(true);
 
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
@@ -107,61 +112,61 @@ if ($acesso) {
     # Campos para o formulario
     $objeto->set_campos(array(
         array('linha' => 1,
-            'nome' => 'objeto',
+            'nome'  => 'objeto',
             'label' => 'Objeto:',
-            'tipo' => 'texto',
-            'col' => 12,
-            'size' => 250),
+            'tipo'  => 'texto',
+            'col'   => 12,
+            'size'  => 250),
         array('linha' => 3,
-            'nome' => 'valor',
+            'nome'  => 'valor',
             'label' => 'Valor:',
-            'tipo' => 'moeda',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'moeda',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 3,
-            'nome' => 'garantia',
+            'nome'  => 'garantia',
             'label' => 'Garantia: (se houver)',
-            'tipo' => 'percentagem',
-            'col' => 2,
-            'size' => 5),
-        array('linha' => 4,
-            'nome' => 'dtPublicacao',
-            'label' => 'Publicação:',
-            'tipo' => 'date',
+            'tipo'  => 'percentagem',
+            'col'   => 2,
+            'size'  => 5),
+        array('linha'    => 4,
+            'nome'     => 'dtPublicacao',
+            'label'    => 'Publicação:',
+            'tipo'     => 'date',
             'required' => true,
-            'col' => 3,
-            'size' => 15),
+            'col'      => 3,
+            'size'     => 15),
         array('linha' => 4,
-            'nome' => 'pgPublicacao',
+            'nome'  => 'pgPublicacao',
             'label' => 'Pag:',
-            'tipo' => 'texto',
-            'col' => 2,
-            'size' => 5),
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 5),
         array('linha' => 4,
-            'nome' => 'dtAssinatura',
+            'nome'  => 'dtAssinatura',
             'label' => 'Assinatura:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),        
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 5,
-            'nome' => 'dtInicial',
+            'nome'  => 'dtInicial',
             'label' => 'Data Inicial:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 5,
-            'nome' => 'prazo',
+            'nome'  => 'prazo',
             'label' => 'Prazo:',
-            'tipo' => 'texto',
-            'col' => 2,
-            'size' => 15),
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 15),
         array('linha' => 5,
-            'nome' => 'tipoPrazo',
+            'nome'  => 'tipoPrazo',
             'label' => 'Tipo:',
-            'tipo' => 'combo',
+            'tipo'  => 'combo',
             'array' => $tipo,
-            'col' => 2,
-            'size' => 15),
+            'col'   => 2,
+            'size'  => 15),
         array('linha' => 4,
             'nome'  => 'obs',
             'label' => 'Observação:',
@@ -183,7 +188,7 @@ if ($acesso) {
     switch ($fase) {
         case "" :
         case "listar" :
-           $objeto->$fase();
+            $objeto->$fase();
             break;
         case "editar" :
         case "excluir" :

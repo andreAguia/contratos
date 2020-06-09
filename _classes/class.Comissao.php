@@ -203,17 +203,95 @@ class Comissao
             $cargo = $pessoal->get_cargo($idServidor);
             $lotacao = $pessoal->get_lotacao($idServidor);
             $cpf = $pessoal->get_cpf($idPessoa);
+            
+            # Pega os telefones
+            $telefones = $pessoal->get_telefones($idServidor);
 
-            # Titulo
-            #tituloTable("Membro da Comissão de Fiscalização");
-            #get_DadosServidor($idServidor);
+            # Pega os Emails
+            $emailPessoal = $pessoal->get_emailPessoal($idServidor);
+            $emailUenf = $pessoal->get_emailUenf($idServidor);
+            $emails = null;
+
+            # junta os Emails
+            if (!vazio($emailPessoal)) {
+                $emails .= "$emailPessoal<br/>";
+            }
+
+            if (!vazio($emailUenf)) {
+                $emails .= "$emailUenf<br/>";
+            }
+            
             # Monta as colunas
             $grid = new Grid();
 
             #####################################
 
-            $grid->abreColuna(9);
+            $grid->abreColuna(4);
+            
+            $painel = new Callout();
+            $painel->abre();
+            
+            # Titulo
+            titulo("Dados do Servidor");
+            br();
 
+            # Monta o array de exibição
+            $dados = [
+                ["servidor", 12],
+                ["idFuncional", 6], 
+                ["cpf", 6],  
+                ["cargo", 12],
+                ["lotacao", 12],           
+                ["telefones", 12],        
+                ["emails", 12],        
+            ];
+            
+            # Rotina de exibição
+            $grid1 = new Grid();
+
+            foreach ($dados as $item) {
+
+                # Monta a variável para usar o $$
+                $pp = $item[0];
+
+                # label
+                if (empty($item[2])) {
+                    $label = plm($pp);
+                } else {
+                    $label = $item[2] . ":";
+                }
+
+                # Verifica se tem variável com esse nome
+                if (empty($$pp)) {                      // Se não tem variável com esse nome
+                    if (empty($conteudo[$pp])) {        // Se não tiver no array de conteúdo do bd
+                        $valor = "---";                 // Exibe tracinho
+                    } else {                              // Se tiver conteúdo do bd exibe ele
+                        $valor = $conteudo[$pp];
+                    }
+                } else {                                  // Se tiver variável exibe ela
+                    $valor = $$pp;
+                }
+
+                $grid1->abreColuna($item[1]);
+                p("{$label}:", "contratoLabel");
+                p($valor, "contratoConteudo");
+                $grid1->fechaColuna();
+            }
+            $grid1->fechaGrid();            
+            $painel->fecha();
+            $grid->fechaColuna();
+            
+            #####################################
+
+            $grid->abreColuna(5);
+            
+            $painel = new Callout("primary");
+            $painel->abre();
+            
+            # Titulo
+            titulo("Membro da Comissão de Fiscalização");
+            br();
+            
             # Pega os valores
             $tipo1 = $conteudo["tipo"];
 
@@ -258,24 +336,16 @@ class Comissao
 
             # Monta o array de exibição
             $dados = [
-                ["servidor", 1, 12],
-                ["idFuncional", 2, 4], 
-                ["cpf", 2, 4], 
-                ["tipo", 2, 4],
-                
-                ["cargo", 2, 6],
-                ["lotacao", 2, 6],
-                              
-                
-                ["portariaEntrada", 5, 8, "Portaria de Designação"],
-                ["dtPublicacaoEntrada", 5, 4, "Publicado em"],
-                ["portariaSaida", 6, 8, "Portaria de Saída"],
-                ["dtPublicacaoSaida", 6, 4, "Publicado em"],
-                ["obs", 7, 12, null, "textarea", 3],
+                ["tipo", 12], 
+                ["portariaEntrada", 8, "Portaria de Designação"],
+                ["dtPublicacaoEntrada", 4, "Publicado em"],
+                ["portariaSaida", 8, "Portaria de Saída"],
+                ["dtPublicacaoSaida", 4, "Publicado em"],
+                ["obs", 12],
             ];
-
-            # Formuário exemplo de login
-            $form = new Form('#', 'contrato');
+            
+            # Rotina de exibição
+            $grid1 = new Grid();
 
             foreach ($dados as $item) {
 
@@ -283,10 +353,10 @@ class Comissao
                 $pp = $item[0];
 
                 # label
-                if (empty($item[3])) {
-                    $label = plm($pp). ":";
+                if (empty($item[2])) {
+                    $label = plm($pp);
                 } else {
-                    $label = $item[3] . ":";
+                    $label = $item[2] . ":";
                 }
 
                 # Verifica se tem variável com esse nome
@@ -300,69 +370,158 @@ class Comissao
                     $valor = $$pp;
                 }
 
-                # Tipo
-                if (empty($item[4])) {
-                    $tipoInput = "texto";
-                } else {
-                    $tipoInput = $item[4];
-                }
-
-                $controle = new Input($item[0], $tipoInput, $label, 1);
-                $controle->set_col($item[2]);
-                $controle->set_linha($item[1]);
-                $controle->set_valor($valor);
-                $controle->set_size(200);
-                $controle->set_disabled(true);
-                if ($tipoInput == "textarea") {
-                    $controle->set_size(array(80, $item[5]));
-                }
-                $form->add_item($controle);
+                $grid1->abreColuna($item[1]);
+                p("{$label}:", "contratoLabel");
+                p($valor, "contratoConteudo");
+                $grid1->fechaColuna();
             }
-
-            $form->show();
+            $grid1->fechaGrid();
+            
+            $painel->fecha();
 
             $grid->fechaColuna();
-
+            
             #####################################
 
             $grid->abreColuna(3);
+            br();
 
             $foto = new ExibeFoto();
             $foto->set_fotoLargura(150);
             $foto->set_fotoAltura(200);
             #$foto->set_url('?');
             $foto->show($idPessoa);
-            
-            br();
-            
-            # Pega os telefones
-            $telefones = $pessoal->get_telefones($idServidor);
-
-            # Pega os Emails
-            $emailPessoal = $pessoal->get_emailPessoal($idServidor);
-            $emailUenf = $pessoal->get_emailUenf($idServidor);
-            $emails = null;
-
-            # junta os Emails
-            if (!vazio($emailPessoal)) {
-                $emails .= "$emailPessoal<br/>";
-            }
-
-            if (!vazio($emailUenf)) {
-                $emails .= "$emailUenf<br/>";
-            }
-
-            tituloTable("Contatos:");
-            br();
-
-            p($telefones, "center", "f14");
-            p($emails, "center", "f14");
 
             $grid->fechaColuna();
             $grid->fechaGrid();
 
             hr();
         }
+    }
+
+    ###########################################################
+    
+     function exibeComissao($idContrato = null)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+                
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+        $pessoal = new Pessoal();
+
+        $select = "SELECT * 
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato}
+                 ORDER BY tipo";
+                    
+        $total = $contratos->count($select);
+                    
+        # Contator 
+        $contAdt = 1;
+        
+        $painel = new Callout();
+        $painel->abre();
+        
+        titulo("Comissão de Fiscalização");
+        br();
+
+                    
+        foreach($contratos->select($select) as $conteudo){
+            
+            # Pega os valores]
+            $idServidor = $conteudo["idServidor"];
+            $idPessoa = $pessoal->get_idPessoa($idServidor);
+            $tipo1 = $conteudo["tipo"];
+
+            $idFuncional = $pessoal->get_idFuncional($idServidor);
+            $servidor = $pessoal->get_nome($idServidor);
+            $cargo = $pessoal->get_cargo($idServidor);
+            $lotacao = $pessoal->get_lotacao($idServidor);
+            $cpf = $pessoal->get_cpf($idPessoa);# Informa o tipo
+            
+            # trata Tipo
+            if ($tipo1 == 1) {
+                $tipo = "Presidente";
+            } elseif ($tipo1 == 2) {
+                $tipo = "Membro";
+            } elseif ($tipo1 == 3) {
+                $tipo = "Suplente";
+            }
+
+            # Monta o array de exibição
+            $dados = [
+                ["servidor", 9],
+                ["tipo", 3],
+            ];
+
+            # Rotina de exibição
+            $grid = new Grid();
+            $grid->abreColuna(12);
+            
+            # incrementa contador
+            $contAdt++;
+
+            $grid->fechaColuna();
+
+            foreach ($dados as $item) {
+
+                # Monta a variável para usar o $$
+                $pp = $item[0];
+
+                # label
+                if (empty($item[2])) {
+                    $label = plm($pp);
+                } else {
+                    $label = $item[2];
+                }
+
+                # Verifica se tem variável com esse nome
+                if (empty($$pp)) {                      // Se não tem variável com esse nome
+                    if (empty($conteudo[$pp])) {        // Se não tiver no array de conteúdo do bd
+                        $dado = "---";                 // Exibe tracinho
+                    } else {                              // Se tiver conteúdo do bd exibe ele
+                        $dado = $conteudo[$pp];
+                    }
+                } else {                                  // Se tiver variável exibe ela
+                    $dado = $$pp;
+                }
+
+                $grid->abreColuna($item[1]);
+                #p("{$label}:", "contratoLabel");
+                p($dado, "contratoConteudo");
+                $grid->fechaColuna();
+            }
+            $grid->fechaGrid();
+            
+            if($contAdt <= $total){
+                hr("hrComissao");
+            }else{
+                br();
+                $div = new Div("divEdita1");
+                $div->abre();
+
+                # Editar
+                $div = new Div("divEdita2");
+                $div->abre();
+
+                # Editar
+                $botaoEditar = new Link("Editar", "cadastroComissao.php");
+                $botaoEditar->set_class('tiny button secondary');
+                $botaoEditar->set_title('Editar comissão');
+                $botaoEditar->show();
+
+                $div->fecha();
+
+                $div->fecha();
+            }
+        }
+        
+        $painel->fecha();
     }
 
     ###########################################################

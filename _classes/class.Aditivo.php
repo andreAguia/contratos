@@ -47,7 +47,7 @@ class Aditivo
             alert("É necessário informar o id do Contrato.");
             return;
         }
-                
+
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
@@ -55,17 +55,23 @@ class Aditivo
                      FROM tbaditivo
                     WHERE idContrato = {$idContrato}
                  ORDER BY dtInicial";
-                    
+
+        $total = $contratos->count($select);
+
         # Cobntator de aditivos
         $contAdt = 1;
-                    
-        foreach($contratos->select($select) as $conteudo){
 
-            $painel = new Callout("success");
-            $painel->abre();
+        $painel = new Callout("success");
+        $painel->abre();
+
+        titulo("Aditivos");       
+
+        foreach ($contratos->select($select) as $conteudo) {
+
 
             # Pega os valores
             $assinatura = date_to_php($conteudo["dtAssinatura"]);
+            $idAditivo = $conteudo["idAditivo"];
 
             # Prazo
             $prazo = $conteudo["prazo"];
@@ -73,23 +79,19 @@ class Aditivo
             $inicio = date_to_php($conteudo["dtInicial"]);
 
             if ($tipoPrazo == 1) {
-                $prazo2 = " dias";
+                $prazo2 = " d";
                 $vigencia = addDias($inicio, $prazo);
                 $prazo .= $prazo2;
                 $vigencia .= " ({$prazo})";
             } elseif ($tipoPrazo == 2) {
-                $prazo2 = " meses";
+                $prazo2 = " m";
                 $vigencia = addMeses($inicio, $prazo);
                 $prazo .= $prazo2;
                 $vigencia .= " ({$prazo})";
             }
 
             # Publicação
-            $dtPublicacao = $conteudo["dtPublicacao"];
-            $publicacao = date_to_php($dtPublicacao);
-            if (!empty($conteudo["pgPublicacao"])) {
-                $publicacao .= " pag: {$conteudo["pgPublicacao"]}";
-            }
+            $publicacao = $this->get_publicacao($idAditivo);
 
             # Valor
             if (!empty($conteudo["valor"])) {
@@ -110,24 +112,19 @@ class Aditivo
             $dados = [
                 ["objeto", 12],
                 ["publicacao", 4, "Publicação DOERJ"],
-                ["assinatura", 8, "Assinatura"],
-                ["inicio", 4, "Início"],
-                ["vigencia", 8, "Vigência"],
+                ["assinatura", 2, "Assinatura"],
+                ["inicio", 2, "Início"],
+                ["vigencia", 4, "Vigência"],
                 ["valor", 4],
                 ["garantia", 8],
             ];
+            
+            
+            # Exibe o número de aditivos
+            p($contAdt,"pNumAdt");
 
             # Rotina de exibição
             $grid = new Grid();
-            $grid->abreColuna(12);
-
-            titulo("Aditivo {$contAdt}");
-            br();
-            
-            # incrementa contador
-            $contAdt++;
-
-            $grid->fechaColuna();
 
             foreach ($dados as $item) {
 
@@ -159,16 +156,134 @@ class Aditivo
             }
             $grid->fechaGrid();
 
-            $div = new Div("divEditaNota");
-            $div->abre();
-            $link = new Link("Editar", "cadastroAditivo.php?fase=editar&id={$idContrato}");
-            $link->set_id("editaNota");
-            $link->show();
-            $div->fecha();
+            if ($contAdt < $total) {
+                hr("hrComissao");
+                
+            } else {
+                br();
+                $div = new Div("divEdita1");
+                $div->abre();
 
-            $painel->fecha();
+                # Editar
+                $div = new Div("divEdita2");
+                $div->abre();
+
+                # Editar
+                $botaoEditar = new Link("Editar", "cadastroAditivo.php");
+                $botaoEditar->set_class('tiny button secondary');
+                $botaoEditar->set_title('Editar comissão');
+                $botaoEditar->show();
+
+                $div->fecha();
+
+                $div->fecha();
+            }
+            
+            # incrementa contador
+            $contAdt++;
         }
+
+        $painel->fecha();
+    }
+
+    ##############################################################
+    public function get_publicacao($idAditivo = null)
+    {
+
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+
+        $conteudo = $this->get_dados($idAditivo);
+
+        # Publicação
+        $dtPublicacao = $conteudo["dtPublicacao"];
+        $publicacao = date_to_php($dtPublicacao);
+        if (!empty($conteudo["pgPublicacao"])) {
+            $publicacao .= " pag: {$conteudo["pgPublicacao"]}";
+        }
+
+        return $publicacao;
     }
 
     ###########################################################
+    function get_periodo($idAditivo = null)
+    {
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+
+        $conteudo = $this->get_dados($idAditivo);
+
+        $dtInicial = date_to_php($conteudo["dtInicial"]);
+        $prazo = $conteudo["prazo"];
+        $tipoPrazo = $conteudo["tipoPrazo"];
+
+        $tipo = null;
+        $dtFinal = null;
+
+        if ($tipoPrazo == 1) {
+            $tipo = "Dias";
+            $dtFinal = addDias($dtInicial, $prazo);
+        } else {
+            $tipo = "Meses";
+            $dtFinal = addMeses($dtInicial, $prazo);
+        }
+        $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
+
+        return $retorno;
+    }
+
+    ###########################################################
+    function get_valor($idAditivo = null)
+    {
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+
+        $conteudo = $this->get_dados($idAditivo);
+
+        # Valor
+        if (!empty($conteudo["valor"])) {
+            $valor = "R$ " . formataMoeda($conteudo['valor']);
+        }else{
+            $valor = "---";
+        }
+
+        return $valor;
+    }
+
+    ###########################################################
+    function get_garantia($idAditivo = null)
+    {
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+
+        $conteudo = $this->get_dados($idAditivo);
+
+        # Garantia
+        if (!empty($conteudo["valor"])) {
+            if (!empty($conteudo["garantia"])) {
+                $garantia = $conteudo['valor'] * ($conteudo['garantia'] / 100);
+                $garantia = "R$ " . formataMoeda($garantia) . " ({$conteudo['garantia']}%)";
+            }else{
+                $garantia = "---";
+            }
+        }else{
+            $garantia = "---";
+        }
+
+        return $garantia;
+    }
+
+    #############################################################
 }

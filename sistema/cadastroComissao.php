@@ -81,7 +81,7 @@ if ($acesso) {
     #$objeto->set_linkExcluir("?fase=excluir");
     $objeto->set_linkGravar("?fase=gravar");
     $objeto->set_linkListar("?fase=listar");
-    $objeto->set_linkIncluir("?fase=incluirMembro");
+    $objeto->set_linkIncluir("?fase=editar");
 
     $formatacaoCondicional = array(
         array('coluna'   => 0,
