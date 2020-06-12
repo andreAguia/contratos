@@ -117,8 +117,6 @@ class Situacao
         $painel = new Callout("warning");
         $painel->abre();
 
-
-
         $grid = new Grid();
         $grid->abreColuna(6);
 
@@ -126,13 +124,19 @@ class Situacao
 
         $grid->fechaColuna();
         $grid->abreColuna(6);
-
-        p(date_to_php($situacao['data']), "situacaoData");
+        
+        if(!empty($situacao)){
+            p(date_to_php($situacao['data']), "situacaoData");
+        }
 
         $grid->fechaColuna();
         $grid->abreColuna(12);
 
-        p("<pre>{$situacao['situacao']}</pre>", "situacaoAtual", "left important");
+        if(!empty($situacao)){
+            p("<pre>{$situacao['situacao']}</pre>", "situacaoAtual", "left important");
+        }else{
+            p("Nenhuma situação cadastrada", "situacaoAtual", "left important");
+        }
 
         $grid->fechaColuna();
         $grid->fechaGrid();

@@ -100,6 +100,9 @@ if ($acesso) {
             # Exibe os dados do contrado
             get_DadosContrato($id);
             
+            # Exibe alertas (se tiver)
+            $alerta = new AlertaContrato($id);            
+            
             $grid->fechaColuna();
             $grid->abreColuna(5);
             
@@ -107,7 +110,8 @@ if ($acesso) {
                 $idEmpresa = $conteudo["idEmpresa"];                   
                 $empresa->exibeDados($idEmpresa);
                 
-                $comissao->exibeComissao($id);
+                #$comissao->exibeComissao($id);
+                $comissao->listaComissao($id);
             
             $grid->fechaColuna();
             $grid->abreColuna(7);

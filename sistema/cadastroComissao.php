@@ -16,9 +16,9 @@ $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra = new Intra();
+    $intra    = new Intra();
     $contrato = new Contrato();
-    $pessoal = new Pessoal();
+    $pessoal  = new Pessoal();
     $comissao = new Comissao();
 
     # Verifica a fase do programa
@@ -52,14 +52,14 @@ if ($acesso) {
     $objeto->set_voltarLista("areaContrato.php");
 
     # select da lista
-    $objeto->set_selectLista("SELECT tipo,
+    $objeto->set_selectLista("SELECT idComissao,
                                      idServidor,
                                      idServidor,
                                      idServidor,
                                      idComissao
                                 FROM tbcomissao 
                                WHERE idContrato = {$idContrato}
-                            ORDER BY tipo");
+                            ORDER BY dtPublicacaoSaida, tipo");
 
     # select do edita
     $objeto->set_selectEdita("SELECT idServidor,
@@ -78,7 +78,7 @@ if ($acesso) {
 
     # Caminhos
     #$objeto->set_linkEditar("?fase=editar");
-    #$objeto->set_linkExcluir("?fase=excluir");
+    $objeto->set_linkExcluir("?fase=excluir");
     $objeto->set_linkGravar("?fase=gravar");
     $objeto->set_linkListar("?fase=listar");
     $objeto->set_linkIncluir("?fase=editar");
@@ -96,6 +96,10 @@ if ($acesso) {
             'valor'    => "Suplente",
             'operador' => '=',
             'id'       => 'cuplenteComissao'),
+        array('coluna'   => 0,
+            'valor'    => "Saiu",
+            'operador' => '=',
+            'id'       => 'saiuComissao'),
     );
 
     # Parametros da tabela
@@ -235,7 +239,7 @@ if ($acesso) {
 
         case "exibeFicha" :
             botaoVoltar("areaContrato.php");
-            
+
             # Exibe dados do contrato
             get_DadosContrato($idContrato);
             break;
@@ -252,7 +256,7 @@ if ($acesso) {
             $menu1 = new MenuBar();
 
             # Voltar
-            $botaoVoltar = new Link("Voltar", "?");
+            $botaoVoltar = new Link("Voltar", "areaContrato.php");
             $botaoVoltar->set_class('button');
             $botaoVoltar->set_title('Voltar a página anterior');
             $botaoVoltar->set_accessKey('V');
@@ -275,17 +279,16 @@ if ($acesso) {
             break;
 
         ##################################################################
-        
+
         case "incluirMembro" :
-            
+
             echo "oi";
             break;
-        
+
         ##################################################################
     }
 
     $page->terminaPagina();
-}
-else {
+} else {
     loadPage("../../areaServidor/sistema/login.php");
 }

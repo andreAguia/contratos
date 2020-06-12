@@ -16,9 +16,9 @@ $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra = new Intra();
+    $intra     = new Intra();
     $contratos = new Contratos();
-    $pessoal = new Pessoal();
+    $pessoal   = new Pessoal();
 
     # Verifica a fase do programa
     $fase = get('fase');
@@ -32,7 +32,7 @@ if ($acesso) {
 
     # Cabeçalho da Página
     AreaServidor::cabecalho();
-    
+
     p(SISTEMA, 'tituloInicial');
 
     # Zera as sessões
@@ -53,25 +53,25 @@ if ($acesso) {
     $menu->add_link($botaoVoltar, "left");
 
     # Empresa
-    $botaoVoltar = new Link("Empresas","cadastroEmpresa.php");
+    $botaoVoltar = new Link("Empresas", "cadastroEmpresa.php");
     $botaoVoltar->set_class('button');
     $botaoVoltar->set_title('Cadastro de Empresas');
-    $menu->add_link($botaoVoltar,"right");
-    
+    $menu->add_link($botaoVoltar, "right");
+
     # Modalidade
-    $botaoVoltar = new Link("Modalidades","cadastroModalidade.php");
+    $botaoVoltar = new Link("Modalidades", "cadastroModalidade.php");
     $botaoVoltar->set_class('button');
     $botaoVoltar->set_title('Cadastro de Modalidades');
-    $menu->add_link($botaoVoltar,"right");
-    
+    $menu->add_link($botaoVoltar, "right");
+
     # Status
-    $botaoVoltar = new Link("Status","cadastroStatus.php");
+    $botaoVoltar = new Link("Status", "cadastroStatus.php");
     $botaoVoltar->set_class('button');
     $botaoVoltar->set_title('Cadastro de Status');
-    $menu->add_link($botaoVoltar,"right");
-    
+    $menu->add_link($botaoVoltar, "right");
+
     # Relatórios
-    $imagem1 = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+    $imagem1  = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
     $botaoRel = new Button();
     $botaoRel->set_url("relatorios.php");
     $botaoRel->set_title("Relatórios dos Sistema");
@@ -79,7 +79,7 @@ if ($acesso) {
     $menu->add_link($botaoRel, "right");
 
     $menu->show();
-    
+
     ################################################################
 
     switch ($fase) {
