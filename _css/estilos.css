@@ -187,9 +187,42 @@ p#pmembroNome{
     padding: 0px;
     margin: 0px;
 }
+/*******************************************
+ * Tela Inicial
+ *******************************************/
+ p#ip{
+    font-size: 11px;
+    text-align: right;
+    color: #02548b;
+}
+
+p#usuarioLogado{
+    font-size: 11px;
+    text-align: left;
+    color: #02548b;
+    padding: 0px;
+    margin: 0px;
+}
+
+p#idServidor{
+    font-size: 9px;
+    text-align: left;
+    color: #02548b;
+    padding: 0px;
+    margin: 0px;
+    float: right;
+}
+
+p#versao{
+    font-size: 11px;
+    text-align: center;
+    color: #02548b;
+    padding: 0px;
+    margin: 0px;
+}
 
 /*******************************************
- * Alertes
+ * Alertas
  *******************************************/
 
 p#palerta{

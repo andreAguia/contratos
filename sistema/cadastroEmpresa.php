@@ -26,6 +26,14 @@ if ($acesso) {
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
 
+    # Pega o parametro de pesquisa (se tiver)
+    if (is_null(post('parametro'))) {     # Se o parametro n?o vier por post (for nulo)
+        $parametro = retiraAspas(get_session('sessionParametro'));  # passa o parametro da session para a variavel parametro retirando as aspas
+    } else {
+        $parametro = post('parametro');                # Se vier por post, retira as aspas e passa para a variavel parametro
+        set_session('sessionParametro', $parametro);    # transfere para a session para poder recuperá-lo depois
+    }
+
     # Começa uma nova página
     $page = new Page();
     $page->iniciaPagina();
@@ -43,6 +51,10 @@ if ($acesso) {
     # Botão de voltar da lista
     $objeto->set_voltarLista("areaInicial.php");
 
+    # controle de pesquisa
+    $objeto->set_parametroLabel('Pesquisar');
+    $objeto->set_parametroValue($parametro);
+
     # select da lista
     $objeto->set_selectLista("SELECT idEmpresa,
                                      idEmpresa,
@@ -51,6 +63,16 @@ if ($acesso) {
                                      idEmpresa,
                                      usuarioSei
                                 FROM tbempresa
+                               WHERE razaosocial LIKE '%{$parametro}%'
+                                  OR cnpj LIKE '%{$parametro}%'
+                                  OR telefone1 LIKE '%{$parametro}%'
+                                  OR telefone2 LIKE '%{$parametro}%'
+                                  OR telefone3 LIKE '%{$parametro}%'
+                                  OR email1 LIKE '%{$parametro}%'
+                                  OR email2 LIKE '%{$parametro}%'
+                                  OR email3 LIKE '%{$parametro}%'
+                                  OR contato LIKE '%{$parametro}%'
+                                  OR usuarioSei LIKE '%{$parametro}%'
                             ORDER BY idEmpresa");
 
     # select do edita
