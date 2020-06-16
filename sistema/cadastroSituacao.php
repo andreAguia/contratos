@@ -52,7 +52,7 @@ if ($acesso) {
 
     # select da lista
     $objeto->set_selectLista("SELECT data,                                      
-                                     idSituacao,
+                                     situacao,
                                      idSituacao
                                 FROM tbsituacao
                                WHERE idContrato = {$idContrato}
@@ -73,11 +73,11 @@ if ($acesso) {
 
     # Parametros da tabela
     $objeto->set_label(array("Data", "Situacao do Contrato"));
-    $objeto->set_width(array(10, 85));
+    $objeto->set_width(array(10, 80));
     $objeto->set_align(array("center", "left"));
     $objeto->set_funcao(array("date_to_php"));
-    $objeto->set_classe(array(null,"Situacao"));
-    $objeto->set_metodo(array(null,"get_situacao"));
+    #$objeto->set_classe(array(null,"Situacao"));
+    #$objeto->set_metodo(array(null,"get_situacao"));
     
     $objeto->set_formatacaoCondicional(array(array('coluna' => 0,
             'valor' => 0,
@@ -108,12 +108,13 @@ if ($acesso) {
             'required' => true,
             'col' => 3,
             'size' => 15),
-        array("linha" => 2,
+        array("linha" => 1,
+            'col' => 9,
             "nome" => "situacao",
             "label" => "Situacao:",
             'required' => true,
-            "tipo" => "textarea",
-            "size" => array(80, 5)),
+            "tipo" => "texto",
+            "size" => 250),
         array("linha" => 3,
             "nome" => "idContrato",
             "label" => "idContrato:",

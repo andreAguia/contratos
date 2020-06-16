@@ -5,12 +5,12 @@ class MenuContratos
 
     /**
      * Gera o Menu Principal do Sistema de Contratos
-     * 
+     *
      * @author André Águia (Alat) - alataguia@gmail.com
      */
     private $idUsuario = null;
 
-    ######################################################################################################################    
+    ######################################################################################################################
 
     public function __construct($idUsuario)
     {
@@ -35,21 +35,10 @@ class MenuContratos
         ###############################################################################################
 
         # Segunda Coluna
-        $grid->abreColuna(12, 4);
+        $grid->abreColuna(12, 8);
 
         # Módulos
-        $this->moduloEstatistica();
-
-        $grid->fechaColuna();
-
-        ###############################################################################################
-
-        # Terceira Coluna
-        $grid->abreColuna(12, 4);
-
-        # Calendário
-        $cal = new Calendario();
-        $cal->show();
+        $this->moduloEventos();
 
         $grid->fechaColuna();
         $grid->fechaGrid();
@@ -58,7 +47,7 @@ class MenuContratos
     ######################################################################################################################
     /**
      * Método moduloCadastroPrincipal
-     * 
+     *
      * Exibe o menu de Legislação
      */
     private function moduloCadastroPrincipal()
@@ -96,7 +85,7 @@ class MenuContratos
     ######################################################################################################################
     /**
      * Método moduloTabelasAuxiliares
-     * 
+     *
      * Exibe o menu de Legislação
      */
     private function moduloTabelasAuxiliares()
@@ -133,22 +122,40 @@ class MenuContratos
 
     ######################################################################################################################
     /**
-     * Método moduloEstatistica
-     * 
+     * Método moduloEventos
+     *
      * Exibe o menu de Legislação
      */
-    private function moduloEstatistica()
+    private function moduloEventos()
     {
 
         $painel = new Callout();
         $painel->abre();
 
-        titulo('Contratos');
-        br(5);
+        titulo("Agenda");
+        br();
 
-        p("Área em Manutenção","center","f14");
-        br(5);
-        
+        # Inicia o Grid
+        $grid = new Grid();
+        $grid->abreColuna(6);
+
+        titulotable("Tarefas");
+        br();
+
+        # Exibir as tarefas
+        $tarefa = new Tarefa();
+        $tarefa->listaTarefas();
+
+        $grid->fechaColuna();
+        $grid->abreColuna(6);
+
+        # Calendário
+        $cal = new Calendario();
+        $cal->show();
+
+        $grid->fechaColuna();
+        $grid->fechaGrid();
+
         $painel->fecha();
     }
 

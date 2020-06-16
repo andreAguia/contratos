@@ -34,8 +34,12 @@ if ($acesso) {
     AreaServidor::cabecalho();
 
     # Zera as sessões
-    set_session('sessionContrato');
-
+    set_session('parametroAno');
+    set_session('parametroStatus');
+    set_session('parametroModalidade');
+    set_session('parametroEmpresa');
+    set_session('sessionParametro');
+    
     # Limita a tela
     $grid = new Grid();
     $grid->abreColuna(12);
@@ -56,24 +60,6 @@ if ($acesso) {
             $botaoVoltar->set_title('Voltar a página anterior');
             $botaoVoltar->set_accessKey('V');
             $menu->add_link($botaoVoltar, "left");
-
-            # Empresa
-            $botaoVoltar = new Link("Empresas", "cadastroEmpresa.php");
-            $botaoVoltar->set_class('button');
-            $botaoVoltar->set_title('Cadastro de Empresas');
-            #$menu->add_link($botaoVoltar, "right");
-
-            # Modalidade
-            $botaoVoltar = new Link("Modalidades", "cadastroModalidade.php");
-            $botaoVoltar->set_class('button');
-            $botaoVoltar->set_title('Cadastro de Modalidades');
-            #$menu->add_link($botaoVoltar, "right");
-
-            # Status
-            $botaoVoltar = new Link("Status", "cadastroStatus.php");
-            $botaoVoltar->set_class('button');
-            $botaoVoltar->set_title('Cadastro de Status');
-            #$menu->add_link($botaoVoltar, "right");
 
             # Relatórios
             $imagem1  = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);

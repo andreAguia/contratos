@@ -2,22 +2,21 @@
 
 /**
  * Cadastro de Campus
- *  
+ *
  * By Alat
  */
 # Reservado para o servidor logado
 $idUsuario = null;
 
 # Configuração
-include ("_config.php");
+include "_config.php";
 
 # Permissão de Acesso
 $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra = new Intra();
-    $contrato = new Contrato();
+    $empresa = new Empresa();
     $pessoal = new Pessoal();
 
     # Verifica a fase do programa
@@ -25,13 +24,14 @@ if ($acesso) {
 
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
+    $sessionContrato = get_session('sessionContrato');
 
     # Pega o parametro de pesquisa (se tiver)
-    if (is_null(post('parametro'))) {     # Se o parametro n?o vier por post (for nulo)
-        $parametro = retiraAspas(get_session('sessionParametro'));  # passa o parametro da session para a variavel parametro retirando as aspas
-    } else {
-        $parametro = post('parametro');                # Se vier por post, retira as aspas e passa para a variavel parametro
-        set_session('sessionParametro', $parametro);    # transfere para a session para poder recuperá-lo depois
+    if (is_null(post('parametro'))) { # Se o parametro n?o vier por post (for nulo)
+    $parametro = retiraAspas(get_session('sessionParametro')); # passa o parametro da session para a variavel parametro retirando as aspas
+} else {
+        $parametro = post('parametro'); # Se vier por post, retira as aspas e passa para a variavel parametro
+        set_session('sessionParametro', $parametro); # transfere para a session para poder recuperá-lo depois
     }
 
     # Começa uma nova página
@@ -60,8 +60,7 @@ if ($acesso) {
                                      idEmpresa,
                                      idEmpresa,
                                      idEmpresa,
-                                     idEmpresa,
-                                     usuarioSei
+                                     idEmpresa
                                 FROM tbempresa
                                WHERE razaosocial LIKE '%{$parametro}%'
                                   OR cnpj LIKE '%{$parametro}%'
@@ -77,7 +76,7 @@ if ($acesso) {
 
     # select do edita
     $objeto->set_selectEdita("SELECT razaoSocial,
-                                     cnpj,                                     
+                                     cnpj,
                                      telefone1,
                                      telefone2,
                                      telefone3,
@@ -98,14 +97,21 @@ if ($acesso) {
     $objeto->set_linkEditar("?fase=editar");
     $objeto->set_linkExcluir("?fase=excluir");
     $objeto->set_linkGravar("?fase=gravar");
-    $objeto->set_linkListar("?fase=listar");
+
+    if (!empty($sessionContrato)) {
+        $objeto->set_voltarForm("areaContrato.php");
+        $objeto->set_linkListar("areaContrato.php");
+    }else{
+        $objeto->set_linkListar("?fase=listar");
+    }
+    
 
     # Parametros da tabela
-    $objeto->set_label(array("Id", "Empresa", "Telefone", "Email", "Contatos"));
-    $objeto->set_width(array(5,30,15,15,20));
-    $objeto->set_align(array("center", "left", "left", "left", "left"));
-    $objeto->set_classe(array(null, "Empresa", "Empresa", "Empresa","Empresa"));
-    $objeto->set_metodo(array(null, "get_empresaCnpj", "get_telefones", "get_emails","get_contatos"));
+    $objeto->set_label(array("Empresa", "Telefone", "Email", "Contatos", "Contratos"));
+    $objeto->set_width(array(30, 15, 15, 20, 5));
+    $objeto->set_align(array("left", "left", "left", "left"));
+    $objeto->set_classe(array("Empresa", "Empresa", "Empresa", "Empresa", "Empresa"));
+    $objeto->set_metodo(array("get_empresaCnpj", "get_telefones", "get_emails", "get_contatos", "get_numContratos"));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -127,161 +133,148 @@ if ($acesso) {
     array_unshift($cidade, array(null, null)); # Adiciona o valor de nulo
     # Campos para o formulario
     $objeto->set_campos(array(
-        array('linha'     => 1,
-            'nome'      => 'razaoSocial',
-            'label'     => 'Razão Social:',
-            'tipo'      => 'texto',
-            'required'  => true,
-            'autofocus' => true,
-            'plm'   => true,
-            'col'       => 8,
-            'size'      => 250),
-        array('linha'    => 1,
-            'nome'     => 'cnpj',
-            'label'    => 'CNPJ:',
-            'tipo'     => 'texto',
+        array('linha' => 1,
+            'nome' => 'razaoSocial',
+            'label' => 'Razão Social:',
+            'tipo' => 'texto',
             'required' => true,
-            'col'      => 4,
-            'size'     => 30),
+            'autofocus' => true,
+            'plm' => true,
+            'col' => 8,
+            'size' => 250),
+        array('linha' => 1,
+            'nome' => 'cnpj',
+            'label' => 'CNPJ:',
+            'tipo' => 'texto',
+            'required' => true,
+            'col' => 4,
+            'size' => 30),
         array('linha' => 3,
-            'nome'  => 'telefone1',
+            'nome' => 'telefone1',
             'label' => 'Telefone 1:',
-            'tipo'  => 'texto',
+            'tipo' => 'texto',
             'title' => 'Número de telefone',
-            'col'   => 4,
-            'size'  => 100),
+            'col' => 4,
+            'size' => 100),
         array('linha' => 3,
-            'nome'  => 'telefone2',
+            'nome' => 'telefone2',
             'label' => 'Telefone 2:',
-            'tipo'  => 'texto',
+            'tipo' => 'texto',
             'title' => 'Número de telefone',
-            'col'   => 4,
-            'size'  => 100),
+            'col' => 4,
+            'size' => 100),
         array('linha' => 3,
-            'nome'  => 'telefone3',
+            'nome' => 'telefone3',
             'label' => 'Telefone 3:',
-            'tipo'  => 'texto',
+            'tipo' => 'texto',
             'title' => 'Número de telefone',
-            'col'   => 4,
-            'size'  => 100),
+            'col' => 4,
+            'size' => 100),
         array('linha' => 4,
-            'nome'  => 'email1',
+            'nome' => 'email1',
             'label' => 'Email 1:',
-            'tipo'  => 'texto',
+            'tipo' => 'texto',
             'title' => 'Email da empresa',
-            'col'   => 4,
-            'size'  => 100),
+            'col' => 4,
+            'size' => 100),
         array('linha' => 4,
-            'nome'  => 'email2',
+            'nome' => 'email2',
             'label' => 'Email 2:',
-            'tipo'  => 'texto',
+            'tipo' => 'texto',
             'title' => 'Email da empresa',
-            'col'   => 4,
-            'size'  => 100),
+            'col' => 4,
+            'size' => 100),
         array('linha' => 4,
-            'nome'  => 'email3',
+            'nome' => 'email3',
             'label' => 'Email 3:',
-            'tipo'  => 'texto',
+            'tipo' => 'texto',
             'title' => 'Email da empresa',
-            'col'   => 4,
-            'size'  => 100),
+            'col' => 4,
+            'size' => 100),
         array('linha' => 5,
-            'nome'  => 'contato',
+            'nome' => 'contato',
             'label' => 'Contato na Empresa:',
-            'tipo'  => 'texto',
+            'tipo' => 'texto',
             'title' => 'Contato',
-            'col'   => 6,
-            'size'  => 150),
+            'col' => 6,
+            'size' => 150),
         array('linha' => 5,
-            'nome'  => 'usuarioSei',
+            'nome' => 'usuarioSei',
             'label' => 'Pessoa da empresa cadastrada no SEI:',
-            'tipo'  => 'texto',
+            'tipo' => 'texto',
             'title' => 'Contato',
-            'col'   => 6,
-            'size'  => 150),
+            'col' => 6,
+            'size' => 150),
         array('linha' => 5,
-            'nome'  => 'endereco',
+            'nome' => 'endereco',
             'label' => 'Endereço:',
-            'tipo'  => 'texto',
-            'plm'   => true,
+            'tipo' => 'texto',
+            'plm' => true,
             'title' => 'Endereço da Empresa',
-            'col'   => 12,
-            'size'  => 150),
+            'col' => 12,
+            'size' => 150),
         array('linha' => 6,
-            'nome'  => 'bairro',
+            'nome' => 'bairro',
             'label' => 'Bairro:',
-            'tipo'  => 'texto',
+            'tipo' => 'texto',
             'title' => 'Bairro',
-            'plm'   => true,
-            'col'   => 4,
-            'size'  => 50),
+            'plm' => true,
+            'col' => 4,
+            'size' => 50),
         array('linha' => 6,
-            'nome'  => 'idCidade',
+            'nome' => 'idCidade',
             'label' => 'Cidade:',
-            'tipo'  => 'combo',
+            'tipo' => 'combo',
             'array' => $cidade,
             'title' => 'Cidade de Moradia do Servidor',
-            'col'   => 5,
-            'size'  => 30),
+            'col' => 5,
+            'size' => 30),
         array('linha' => 6,
-            'nome'  => 'cep',
+            'nome' => 'cep',
             'label' => 'Cep:',
-            'tipo'  => 'cep',
+            'tipo' => 'cep',
             'title' => 'Cep',
-            'col'   => 3,
-            'size'  => 10),
+            'col' => 3,
+            'size' => 10),
         array('linha' => 7,
-            'nome'  => 'obs',
+            'nome' => 'obs',
             'label' => 'Observação:',
-            'tipo'  => 'textarea',
-            'size'  => array(80, 5))));
+            'tipo' => 'textarea',
+            'size' => array(80, 5))));
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
 
     ################################################################
     switch ($fase) {
-        case "" :
-        case "listar" :
+        case "":
+        case "listar":
             $objeto->listar();
             break;
 
-        case "editar" :
-        case "excluir" :
-        case "gravar" :
-            $objeto->$fase($id);
+        ################################################################
+
+        case "excluir":
+            # Verifica se tem contrato com essa modalidade
+            $numContratos = $empresa->get_numContratos($id);
+
+            if ($numContratos > 0) {
+                alert("Existem contratos cadastrados com esta empresa. Dessa forma a mesma NÃO poderá ser excluída.");
+                back(1);
+            } else {
+                $objeto->excluir($id);
+            }
             break;
 
-        case "ver" :
-            # Limita a tela
-            $grid = new Grid();
-            $grid->abreColuna(12);
+        ################################################################
 
-            # Cria um menu
-            $menu1 = new MenuBar();
-
-            # Voltar
-            $botaoVoltar = new Link("Voltar", "areaContrato.php");
-            $botaoVoltar->set_class('button');
-            $botaoVoltar->set_title('Voltar a página anterior');
-            $botaoVoltar->set_accessKey('V');
-            $menu1->add_link($botaoVoltar, "left");
-
-            # Editar
-            $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$id}");
-            $botaoEditar->set_class('button');
-            $botaoEditar->set_title('Editar Empresa');
-            $menu1->add_link($botaoEditar, "right");
-
-            $menu1->show();
-
-            $grid->fechaColuna();
-            $grid->fechaGrid();
+        case "editar":
+        case "gravar":
+            $objeto->$fase($id);
             break;
     }
 
     $page->terminaPagina();
-}
-else {
+} else {
     loadPage("../../areaServidor/sistema/login.php");
 }

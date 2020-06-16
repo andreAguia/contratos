@@ -10,10 +10,8 @@ class Contrato
      *
      * @var private $idConcurso integer null O id do concurso
      */
-    private
-            $idContrato = null;
-    private
-            $permiteEditar = true;
+    private $idContrato = null;
+    private $permiteEditar = true;
 ##############################################################
     public function __construct($idContrato = null)
     {
@@ -85,7 +83,7 @@ class Contrato
         $processo = null;
 
         # Verifica se tem somente um processo
-        if ((empty($conteudo["processoSei"])) XOR (empty($conteudo["processo"]))) {
+        if ((empty($conteudo["processoSei"])) xor (empty($conteudo["processo"]))) {
             if (empty($conteudo["processoSei"])) {
                 $processo = $conteudo["processo"];
             } else {
@@ -94,7 +92,7 @@ class Contrato
         }
 
         # Verifica se tem os dois
-        if ((!empty($conteudo["processoSei"])) AND (!empty($conteudo["processo"]))) {
+        if ((!empty($conteudo["processoSei"])) and (!empty($conteudo["processo"]))) {
             if ($br) {
                 $processo = "SEI - {$conteudo["processoSei"]} <br/> {$conteudo["processo"]}";
             } else {
@@ -148,7 +146,7 @@ class Contrato
     }
 
     ###########################################################
-    function exibeNumeroContrato($idContrato)
+    public function exibeNumeroContrato($idContrato)
     {
         # Joga o valor informado para a variável da classe
         if (!vazio($idContrato)) {
@@ -177,7 +175,7 @@ class Contrato
     }
 
     ###########################################################
-    function exibeStatus($idContrato)
+    public function exibeStatus($idContrato)
     {
 
         $status = $this->get_status($idContrato);
@@ -205,9 +203,9 @@ class Contrato
      * Método exibeDadosConcurso
      * fornece os dados de uma vaga em forma de tabela
      *
-     * @param	string $idVaga O id da vaga
+     * @param    string $idVaga O id da vaga
      */
-    function exibeDadosContrato($idContrato)
+    public function exibeDadosContrato($idContrato)
     {
 
         # Joga o valor informado para a variável da classe
@@ -300,13 +298,13 @@ class Contrato
             }
 
             # Verifica se tem variável com esse nome
-            if (empty($$pp)) {                      // Se não tem variável com esse nome
-                if (empty($conteudo[$pp])) {        // Se não tiver no array de conteúdo do bd
-                    $dado = "---";                 // Exibe tracinho
-                } else {                              // Se tiver conteúdo do bd exibe ele
+            if (empty($$pp)) { // Se não tem variável com esse nome
+                if (empty($conteudo[$pp])) { // Se não tiver no array de conteúdo do bd
+                    $dado = "---"; // Exibe tracinho
+                } else { // Se tiver conteúdo do bd exibe ele
                     $dado = $conteudo[$pp];
                 }
-            } else {                                  // Se tiver variável exibe ela
+            } else { // Se tiver variável exibe ela
                 $dado = $$pp;
             }
 
@@ -342,9 +340,9 @@ class Contrato
      * Método exibeDadosConcurso
      * fornece os dados de uma vaga em forma de tabela
      *
-     * @param	string $idVaga O id da vaga
+     * @param    string $idVaga O id da vaga
      */
-    function exibeResumoDados($idContrato)
+    public function exibeResumoDados($idContrato)
     {
 
         $conteudo = $this->get_dados($idContrato);
@@ -366,10 +364,10 @@ class Contrato
         $label = ["Contrato", "Processo", "Objeto", "Empresa"];
         $item = [[$numero, $processo, $objeto, "{$empresa}<br/>{$cnpj}"]];
 
-        $formatacaoCondicional = array(array('coluna'   => 0,
-                'valor'    => $numero,
-                'operador' => '=',
-                'id'       => 'listaDados'));
+        $formatacaoCondicional = array(array('coluna' => 0,
+            'valor' => $numero,
+            'operador' => '=',
+            'id' => 'listaDados'));
 
         # Monta a tabela
         $tabela = new Tabela();
@@ -385,7 +383,7 @@ class Contrato
     }
 
     ###########################################################
-    function get_periodo($idContrato)
+    public function get_periodo($idContrato)
     {
 
         # Joga o valor informado para a variável da classe
@@ -412,6 +410,20 @@ class Contrato
         $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
 
         return $retorno;
+    }
+
+    ###########################################################
+    public function get_numero($idContrato)
+    {
+
+        # Joga o valor informado para a variável da classe
+        if (!vazio($idContrato)) {
+            $this->idContrato = $idContrato;
+        }
+
+        $conteudo = $this->get_dados($idContrato);
+        
+        return $conteudo["numero"];
     }
 
     ##############################################################
@@ -467,4 +479,29 @@ class Contrato
     }
 
     #####################################################################################
+    public function get_novoNumero()
+    {
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        $select = "SELECT numero
+                     FROM tbcontrato
+                    WHERE YEAR(dtAssinatura) = YEAR(CURDATE())
+                 ORDER BY numero desc LIMIT 1";
+
+        $numero = $contratos->select($select, false);
+
+        if (empty($numero["numero"])) {
+            $retorno = "001/".date('Y');
+        } else {
+            $itens = explode("/", $numero["numero"]);
+            $itens[0]++;
+            $itens[0] = str_pad($itens[0], 3, '0', STR_PAD_LEFT);
+            $retorno = "$itens[0]/$itens[1]";
+        }
+
+        return $retorno;
+    }
+
+#####################################################################################
 }

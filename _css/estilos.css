@@ -157,8 +157,8 @@ pre {
 }
 
 hr#hrComissao{
-    margin-top: 1px;
-    margin-bottom: 1px;
+    margin-top: 3px;
+    margin-bottom: 3px;
     border-top: 1px solid #8a8a8a;
 }
 
@@ -230,4 +230,67 @@ p#palerta{
     text-align: left;
     padding: 0px;
     margin: 0px;
+}
+
+/*******************************************
+ * Eventos na tela Inicial
+ *******************************************/
+
+ table#tableTarefas{
+    border-collapse: separate;
+    border-spacing: 2pt;
+    font-size: 13px;
+    width: 100%;
+    margin: 0px;
+}
+
+table#tableTarefas a{
+    color: #000;
+    font-size: 14px;
+}
+
+table#tableTarefas th{
+    background-color:#fff;
+    height: 0px;
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+}
+
+table#tableTarefas caption {
+    background-color: #fff;
+    font-weight: normal;
+    font-size: 14px;
+    color: #000;
+    text-align: left;
+    border: 0px;
+    padding: 0px;
+    margin: 0px;
+}
+
+table#tableTarefas td{
+    background-color: #FFF;
+    padding: 2px;
+    border-bottom: 1px solid gray;
+    color: #000;
+    font-size: 12px;
+}
+
+table#tableTarefas tfoot td {
+    background-color: #FFF;
+    color: #000;
+    text-align: right;
+    border-bottom: 0px;
+    font-size: 10px;
+    padding: 0px;
+}
+
+span#projeto{
+    color: #076cba;
+    font-size: 11px;
+}
+
+span#etiqueta{
+    font-size: 11px;
+    color: #ff6600;
 }

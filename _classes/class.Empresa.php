@@ -264,7 +264,50 @@ class Empresa
         $grid->fechaGrid();
 
         $painel->fecha();
+
+        # Editar
+        $div = new Div("divEdita1Comissao");
+        $div->abre();
+
+        $div = new Div("divEdita2");
+        $div->abre();
+
+        $botaoEditar = new Link("Editar", "cadastroEmpresa.php?fase=editar&id={$idEmpresa}");
+        $botaoEditar->set_class('tiny button secondary');
+        $botaoEditar->set_title('Editar situação');
+        $botaoEditar->show();
+
+        $div->fecha();
+        $div->fecha();
     }
 
-    ###########################################################
+    ##############################################################
+
+    public function get_numContratos($idEmpresa = null)
+    {
+        # Joga o valor informado para a variável da classe
+        if (!vazio($idEmpresa)) {
+            $this->idEmpresa = $idEmpresa;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($this->idEmpresa)) {
+            alert("É necessário informar o id da Empresa.");
+            return;
+        }
+
+        # Pega os dados
+        $select = 'SELECT idEmpresa
+                 FROM tbcontrato
+                WHERE idEmpresa = ' . $this->idEmpresa;
+
+        $numero = $contratos->count($select, false);
+
+        # Retorno
+        return $numero;
+    }
+
 }

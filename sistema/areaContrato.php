@@ -2,14 +2,14 @@
 
 /**
  * Cadastro de Campus
- *  
+ *
  * By Alat
  */
 # Reservado para o servidor logado
 $idUsuario = null;
 
 # Configuração
-include("_config.php");
+include "_config.php";
 
 # Permissão de Acesso
 $acesso = Verifica::acesso($idUsuario, 9);
@@ -25,6 +25,7 @@ if ($acesso) {
     $comissao = new Comissao();
     $empresa = new Empresa();
     $aditivo = new Aditivo();
+    $tarefa = new Tarefa();
 
     # Verifica a fase do programa
     $fase = get('fase');
@@ -32,7 +33,7 @@ if ($acesso) {
     # pega o id (se tiver)
     $id = soNumeros(get('id', get_session('sessionContrato')));
 
-    # Joga os parâmetros para as sessions    
+    # Joga os parâmetros para as sessions
     set_session('sessionContrato', $id);
 
     # Começa uma nova página
@@ -120,6 +121,31 @@ if ($acesso) {
             # Exibe a situação atual
             $situacao->exibeSituacaoAtual($id);
 
+            # Exibe as tarefas
+            $painel = new Callout();
+            $painel->abre();
+            p("Tarefas", "contratoLabelCallout");
+
+            $tarefa->listaTarefas($id);
+
+            $div = new Div("divEdita1");
+            $div->abre();
+
+            # Editar
+            $div = new Div("divEdita2");
+            $div->abre();
+
+            # Editar
+            $botaoEditar = new Link("Editar", "cadastroSituacao.php");
+            $botaoEditar->set_class('tiny button secondary');
+            $botaoEditar->set_title('Editar situação');
+            $botaoEditar->show();
+
+            $div->fecha();
+
+            $div->fecha();
+            $painel->fecha();
+
             # Exibe outros dados do contrato
             $contrato->exibeDadosContrato($id);
             $aditivo->exibeAditivoContrato($id);
@@ -131,6 +157,9 @@ if ($acesso) {
 
     $grid->fechaColuna();
     $grid->fechaGrid();
+
+    # Exibe o rodapé da página
+    Grh::rodape($idUsuario);
 
     $page->terminaPagina();
 } else {

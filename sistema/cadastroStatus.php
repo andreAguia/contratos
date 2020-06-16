@@ -2,23 +2,21 @@
 
 /**
  * Cadastro de Campus
- *  
+ *
  * By Alat
  */
 # Reservado para o servidor logado
 $idUsuario = null;
 
 # Configuração
-include ("_config.php");
+include "_config.php";
 
 # Permissão de Acesso
 $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra = new Intra();
-    $contrato = new Contrato();
-    $pessoal = new Pessoal();
+    $status = new Status();
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
@@ -46,7 +44,8 @@ if ($acesso) {
     # select da lista
     $objeto->set_selectLista("SELECT idStatus,
                                       status,
-                                      obs
+                                      obs,
+                                      idStatus
                                  FROM tbstatus
                              ORDER BY status");
 
@@ -63,9 +62,11 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(array("Id", "Campus", "Obs"));
-    $objeto->set_width(array(5, 40, 45));
-    $objeto->set_align(array("center", "left", "left"));
+    $objeto->set_label(array("Id", "Campus", "Obs", "Contratos"));
+    $objeto->set_width(array(5, 40, 40, 5));
+    $objeto->set_align(array("center", "left", "left", "center"));
+    $objeto->set_classe(array(null, null, null, "Status"));
+    $objeto->set_metodo(array(null, null, null, "get_numContratos"));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -100,14 +101,29 @@ if ($acesso) {
 
     ################################################################
     switch ($fase) {
-        case "" :
-        case "listar" :
+        case "":
+        case "listar":
             $objeto->listar();
             break;
 
-        case "editar" :
-        case "excluir" :
-        case "gravar" :
+        ################################################################
+
+        case "excluir":
+            # Verifica se tem contrato com esse status
+            $numContratos = $status->get_numContratos($id);
+
+            if ($numContratos > 0) {
+                alert("Existem contratos cadastrados com este status. Dessa forma o mesmo NÃO poderá ser excluída.");
+                back(1);
+            } else {
+                $objeto->excluir($id);
+            }
+            break;
+
+        ################################################################
+
+        case "editar":
+        case "gravar":
             $objeto->$fase($id);
             break;
     }

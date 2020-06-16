@@ -2,14 +2,14 @@
 
 /**
  * Cadastro de Campus
- *  
+ *
  * By Alat
  */
 # Reservado para o servidor logado
 $idUsuario = null;
 
 # Configuração
-include("_config.php");
+include "_config.php";
 
 # Permissão de Acesso
 $acesso = Verifica::acesso($idUsuario, 9);
@@ -17,7 +17,8 @@ $acesso = Verifica::acesso($idUsuario, 9);
 if ($acesso) {
     # Conecta ao Banco de Dados
     $intra = new Intra();
-    $contrato = new Contratos();
+    $contratos = new Contratos();
+    $contrato = new Contrato();
     $pessoal = new Pessoal();
 
     # Verifica a fase do programa
@@ -29,13 +30,17 @@ if ($acesso) {
     # zera a sessionContrato
     set_session('sessionContrato', $id);
 
-    # Pega o parametro de pesquisa (se tiver)
-    if (is_null(post('parametro'))) {     # Se o parametro n?o vier por post (for nulo)
-        $parametro = retiraAspas(get_session('sessionParametro'));  # passa o parametro da session para a variavel parametro retirando as aspas
-    } else {
-        $parametro = post('parametro');                # Se vier por post, retira as aspas e passa para a variavel parametro
-        set_session('sessionParametro', $parametro);    # transfere para a session para poder recuperá-lo depois
-    }
+    # Pega os parâmetros
+    $parametroAno = post('parametroAno', get_session('parametroAno'));
+    $parametroStatus = post('parametroStatus', get_session('parametroStatus'));
+    $parametroModalidade = post('parametroModalidade', get_session('parametroModalidade'));
+    $parametroEmpresa = post('parametroEmpresa', get_session('parametroEmpresa'));
+
+    # Joga os parâmetros par as sessions
+    set_session('parametroAno', $parametroAno);
+    set_session('parametroStatus', $parametroStatus);
+    set_session('parametroModalidade', $parametroModalidade);
+    set_session('parametroEmpresa', $parametroEmpresa);
 
     # Começa uma nova página
     $page = new Page();
@@ -54,12 +59,8 @@ if ($acesso) {
     # Botão de voltar da lista
     $objeto->set_voltarLista('areaInicial.php');
 
-    # controle de pesquisa
-    $objeto->set_parametroLabel('Pesquisar');
-    $objeto->set_parametroValue($parametro);
-
     # select da lista
-    $objeto->set_selectLista("SELECT CONCAT(numero,'<br/>',modalidade,'<br/>',status),
+    $select = "SELECT CONCAT(numero,'<br/>',modalidade,'<br/>',status),
                                      objeto,
                                      idEmpresa,
                                      idContrato,
@@ -69,14 +70,27 @@ if ($acesso) {
                                 FROM tbcontrato JOIN tbmodalidade USING (idModalidade)
                                                 JOIN tbstatus USING (idStatus)
                                                 JOIN tbempresa USING (idEmpresa)
-                               WHERE tbempresa.razaosocial LIKE '%{$parametro}%'
-                                  OR processoSei LIKE '%{$parametro}%'
-                                  OR processo LIKE '%{$parametro}%' 
-                                  OR objeto LIKE '%{$parametro}%'
-                                  OR tbmodalidade.modalidade LIKE '%{$parametro}%'
-                                  OR tbstatus.status LIKE '%{$parametro}%' 
-                                  OR numero LIKE '%{$parametro}%'            
-                            ORDER BY numero");
+                               WHERE true";
+
+    if (!empty($parametroEmpresa)) {
+        $select .= " AND idEmpresa = {$parametroEmpresa}";
+    }
+
+    if (!empty($parametroAno)) {
+        $select .= " AND YEAR(dtAssinatura) = {$parametroAno}";
+    }
+
+    if (!empty($parametroModalidade)) {
+        $select .= " AND idModalidade = {$parametroModalidade}";
+    }
+
+    if (!empty($parametroStatus)) {
+        $select .= " AND idStatus = {$parametroStatus}";
+    }
+
+    $select .= " ORDER BY numero";
+
+    $objeto->set_selectLista($select);
 
     # select do edita
     $objeto->set_selectEdita('SELECT numero,
@@ -104,9 +118,10 @@ if ($acesso) {
     $objeto->set_botaoEditar(false);
     #$objeto->set_linkExcluir('?fase=editar');
     $objeto->set_linkGravar('?fase=gravar');
-    $objeto->set_linkListar('?fase=listar');
+    $objeto->set_voltarForm("areaContrato.php");
+    $objeto->set_linkListar("areaContrato.php");
 
-    $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Prazo", "Situação","Acessar"));
+    $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Prazo", "Situação", "Acessar"));
     $objeto->set_classe(array(null, null, "Empresa", "Contrato", "Contrato", "Situacao"));
     $objeto->set_metodo(array(null, null, "get_empresaCnpj", "get_processo", "get_periodo", "get_situacaoAtual"));
     $objeto->set_width(array(10, 20, 20, 20, 10, 20));
@@ -119,7 +134,7 @@ if ($acesso) {
     $botao->set_url("areaContrato.php?id={$id}");
     $botao->set_imagem(PASTA_FIGURAS_GERAIS . "ver.png", 20, 20);
 
-    # Coloca o objeto link na tabela			
+    # Coloca o objeto link na tabela
     $objeto->set_link(array("", "", "", "", "", "", $botao));
 
     # Classe do banco de dados
@@ -135,7 +150,7 @@ if ($acesso) {
     $objeto->set_formlabelTipo(1);
 
     # Dados da combo status
-    $status = $contrato->select('SELECT idStatus,
+    $status = $contratos->select('SELECT idStatus,
                                         status
                                    FROM tbstatus
                                ORDER BY status');
@@ -146,11 +161,11 @@ if ($acesso) {
     $tipo = array(
         array(null, null),
         array(1, "Dias"),
-        array(2, "Meses")
+        array(2, "Meses"),
     );
 
     # Dados da combo modalidade
-    $modalidade = $contrato->select('SELECT idModalidade,
+    $modalidade = $contratos->select('SELECT idModalidade,
                                             modalidade
                                        FROM tbmodalidade
                                    ORDER BY modalidade');
@@ -158,12 +173,14 @@ if ($acesso) {
     array_unshift($modalidade, array(null, null));
 
     # Dados da combo empresa
-    $empresa = $contrato->select('SELECT idEmpresa,
+    $empresa = $contratos->select('SELECT idEmpresa,
                                          razaoSocial
                                     FROM tbempresa
                               ORDER BY razaoSocial');
 
     array_unshift($empresa, array(null, null));
+
+    #$valorPadrao = $contrato->get_novoNumero();
 
     # Campos para o formulario
     $objeto->set_campos(array(
@@ -173,9 +190,11 @@ if ($acesso) {
             'label' => 'Número:',
             'tipo' => 'texto',
             'required' => true,
+            'unique' => true,
             'autofocus' => true,
             'col' => 3,
-            'size' => 10
+            'size' => 10,
+            'padrao' => $contrato->get_novoNumero(),
         ),
         array(
             'linha' => 1,
@@ -185,7 +204,7 @@ if ($acesso) {
             'required' => true,
             'array' => $modalidade,
             'col' => 3,
-            'size' => 15
+            'size' => 15,
         ),
         array(
             'linha' => 1,
@@ -194,7 +213,7 @@ if ($acesso) {
             'tipo' => 'texto',
             'required' => true,
             'col' => 3,
-            'size' => 15
+            'size' => 15,
         ),
         array(
             'linha' => 1,
@@ -204,7 +223,7 @@ if ($acesso) {
             'array' => $status,
             'required' => true,
             'col' => 3,
-            'size' => 30
+            'size' => 30,
         ),
         array(
             'linha' => 1,
@@ -212,7 +231,7 @@ if ($acesso) {
             'label' => 'Objeto:',
             'tipo' => 'texto',
             'col' => 12,
-            'size' => 250
+            'size' => 250,
         ),
         array(
             'linha' => 2,
@@ -222,7 +241,7 @@ if ($acesso) {
             'array' => $empresa,
             'required' => true,
             'col' => 12,
-            'size' => 200
+            'size' => 200,
         ),
         array(
             'linha' => 2,
@@ -230,7 +249,7 @@ if ($acesso) {
             'label' => 'Processo Sei:',
             'tipo' => 'sei',
             'col' => 4,
-            'size' => 50
+            'size' => 50,
         ),
         array(
             'linha' => 2,
@@ -238,7 +257,7 @@ if ($acesso) {
             'label' => 'Processo Físico:',
             'tipo' => 'processo',
             'col' => 3,
-            'size' => 50
+            'size' => 50,
         ),
         array(
             'linha' => 2,
@@ -246,7 +265,7 @@ if ($acesso) {
             'label' => 'Valor:',
             'tipo' => 'moeda',
             'col' => 3,
-            'size' => 15
+            'size' => 15,
         ),
         array(
             'linha' => 2,
@@ -254,7 +273,7 @@ if ($acesso) {
             'label' => 'Garantia: (se houver)',
             'tipo' => 'percentagem',
             'col' => 2,
-            'size' => 5
+            'size' => 5,
         ),
         array(
             'linha' => 3,
@@ -263,7 +282,7 @@ if ($acesso) {
             'tipo' => 'date',
             'required' => true,
             'col' => 3,
-            'size' => 15
+            'size' => 15,
         ),
         array(
             'linha' => 3,
@@ -271,7 +290,7 @@ if ($acesso) {
             'label' => 'Pag:',
             'tipo' => 'texto',
             'col' => 2,
-            'size' => 5
+            'size' => 5,
         ),
         array(
             'linha' => 3,
@@ -279,7 +298,7 @@ if ($acesso) {
             'label' => 'Assinatura:',
             'tipo' => 'date',
             'col' => 3,
-            'size' => 15
+            'size' => 15,
         ),
         array(
             'linha' => 4,
@@ -287,7 +306,7 @@ if ($acesso) {
             'label' => 'Data Inicial:',
             'tipo' => 'date',
             'col' => 3,
-            'size' => 15
+            'size' => 15,
         ),
         array(
             'linha' => 4,
@@ -295,7 +314,7 @@ if ($acesso) {
             'label' => 'Prazo:',
             'tipo' => 'texto',
             'col' => 2,
-            'size' => 15
+            'size' => 15,
         ),
         array(
             'linha' => 4,
@@ -304,16 +323,20 @@ if ($acesso) {
             'tipo' => 'combo',
             'array' => $tipo,
             'col' => 2,
-            'size' => 15
+            'size' => 15,
         ),
         array(
             'linha' => 5,
             'nome' => 'obs',
             'label' => 'Observação:',
             'tipo' => 'textarea',
-            'size' => array(80, 5)
-        )
+            'size' => array(80, 5),
+        ),
     ));
+
+    # Retira os botões de voltar e incluir da rotina de editar
+    $objeto->set_botaoVoltarLista(false);
+    $objeto->set_botaoIncluir(false);
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
@@ -322,8 +345,141 @@ if ($acesso) {
     switch ($fase) {
         case "":
         case "listar":
-            $objeto->$fase();
+            # Limita o tamanho da tela
+            $grid = new Grid();
+            $grid->abreColuna(12);
+
+            # Cria um menu
+            $menu1 = new MenuBar();
+
+            # Voltar
+            $botaoVoltar = new Link("Voltar", "areaInicial.php");
+            $botaoVoltar->set_class('button');
+            $botaoVoltar->set_title('Voltar a página anterior');
+            $botaoVoltar->set_accessKey('V');
+            $menu1->add_link($botaoVoltar, "left");
+
+            # Incluir
+            $botaoInserir = new Button("Incluir", "?fase=editar");
+            $botaoInserir->set_title("Incluir");
+            $menu1->add_link($botaoInserir, "right");
+
+            # Relatórios
+            $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+            $botaoRel = new Button();
+            $botaoRel->set_title("Relatório dessa pesquisa");
+            $botaoRel->set_url("#");
+            $botaoRel->set_target("_blank");
+            $botaoRel->set_imagem($imagem);
+            #$menu1->add_link($botaoRel,"right");
+
+            $menu1->show();
+
+            # Formulário de Pesquisa
+            $form = new Form('?');
+
+            /*
+             * Ano do Contrato
+             */
+
+            # Pega os dados
+            $comboAno = $contratos->select('SELECT DISTINCT YEAR(dtAssinatura), YEAR(dtAssinatura)
+                                                  FROM tbcontrato
+                                                 WHERE dtAssinatura IS NOT NULL
+                                              ORDER BY YEAR(dtAssinatura)');
+
+            array_unshift($comboAno, array(null, "Todos"));
+
+            # Ano
+            $controle = new Input('parametroAno', 'combo', 'Ano:', 1);
+            $controle->set_size(20);
+            $controle->set_title('Ano da assinatura do contrato');
+            $controle->set_valor($parametroAno);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(1);
+            $controle->set_col(2);
+            $controle->set_array($comboAno);
+            $controle->set_autofocus(true);
+            $form->add_item($controle);
+
+            /*
+             * Status
+             */
+
+            # Pega os dados
+            $comboStatus = $contratos->select('SELECT idStatus, status
+                                               FROM tbstatus
+                                           ORDER BY idStatus');
+
+            array_unshift($comboStatus, array(null, "Todos"));
+
+            # Status
+            $controle = new Input('parametroStatus', 'combo', 'Status:', 1);
+            $controle->set_size(20);
+            $controle->set_title('Status do contrato');
+            $controle->set_valor($parametroStatus);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(1);
+            $controle->set_col(2);
+            $controle->set_array($comboStatus);
+            $controle->set_autofocus(true);
+            $form->add_item($controle);
+
+            /*
+             * Modalidade
+             */
+
+            # Pega os dados
+            $comboModalidade = $contratos->select('SELECT idModalidade, modalidade
+                                               FROM tbmodalidade
+                                           ORDER BY idModalidade');
+
+            array_unshift($comboModalidade, array(null, "Todos"));
+
+            # Modalidade
+            $controle = new Input('parametroModalidade', 'combo', 'Modalidade:', 1);
+            $controle->set_size(20);
+            $controle->set_title('Modalidade do contrato');
+            $controle->set_valor($parametroModalidade);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(1);
+            $controle->set_col(3);
+            $controle->set_array($comboModalidade);
+            $controle->set_autofocus(true);
+            $form->add_item($controle);
+
+            /*
+             * Empresa
+             */
+
+            # Pega os dados
+            $comboEmpresa = $contratos->select('SELECT idEmpresa, razaoSocial
+                                               FROM tbempresa
+                                           ORDER BY razaoSocial');
+
+            array_unshift($comboEmpresa, array(null, "Todas"));
+
+            # Empresa
+            $controle = new Input('parametroEmpresa', 'combo', 'Empresa:', 1);
+            $controle->set_size(20);
+            $controle->set_title('EMpresa contratada');
+            $controle->set_valor($parametroEmpresa);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(1);
+            $controle->set_col(5);
+            $controle->set_array($comboEmpresa);
+            $controle->set_autofocus(true);
+            $form->add_item($controle);
+
+            $form->show();
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
+
+            $objeto->listar();
             break;
+
+        ################################################################
 
         case "editar":
         case "excluir":
@@ -335,7 +491,7 @@ if ($acesso) {
             $objeto->$fase($id);
             break;
     }
-
+    
     $page->terminaPagina();
 } else {
     loadPage("../../areaServidor/sistema/login.php");

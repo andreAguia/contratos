@@ -2,23 +2,23 @@
 
 /**
  * Cadastro de Campus
- *  
+ *
  * By Alat
  */
 # Reservado para o servidor logado
 $idUsuario = null;
 
 # Configuração
-include ("_config.php");
+include "_config.php";
 
 # Permissão de Acesso
 $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra    = new Intra();
+    $intra = new Intra();
     $contrato = new Contrato();
-    $pessoal  = new Pessoal();
+    $pessoal = new Pessoal();
     $comissao = new Comissao();
 
     # Verifica a fase do programa
@@ -57,7 +57,7 @@ if ($acesso) {
                                      idServidor,
                                      idServidor,
                                      idComissao
-                                FROM tbcomissao 
+                                FROM tbcomissao
                                WHERE idContrato = {$idContrato}
                             ORDER BY dtPublicacaoSaida, tipo");
 
@@ -77,38 +77,38 @@ if ($acesso) {
                               WHERE idComissao = {$id}");
 
     # Caminhos
-    #$objeto->set_linkEditar("?fase=editar");
+    $objeto->set_linkEditar("?fase=editar");
     $objeto->set_linkExcluir("?fase=excluir");
     $objeto->set_linkGravar("?fase=gravar");
     $objeto->set_linkListar("?fase=listar");
     $objeto->set_linkIncluir("?fase=editar");
 
     $formatacaoCondicional = array(
-        array('coluna'   => 0,
-            'valor'    => "Presidente",
+        array('coluna' => 0,
+            'valor' => "Presidente",
             'operador' => '=',
-            'id'       => 'presidenteComissao'),
-        array('coluna'   => 0,
-            'valor'    => "Membro",
+            'id' => 'presidenteComissao'),
+        array('coluna' => 0,
+            'valor' => "Membro",
             'operador' => '=',
-            'id'       => 'membroComissao'),
-        array('coluna'   => 0,
-            'valor'    => "Suplente",
+            'id' => 'membroComissao'),
+        array('coluna' => 0,
+            'valor' => "Suplente",
             'operador' => '=',
-            'id'       => 'cuplenteComissao'),
-        array('coluna'   => 0,
-            'valor'    => "Saiu",
+            'id' => 'cuplenteComissao'),
+        array('coluna' => 0,
+            'valor' => "Saiu",
             'operador' => '=',
-            'id'       => 'saiuComissao'),
+            'id' => 'saiuComissao'),
     );
 
     # Parametros da tabela
-    $objeto->set_label(array("Tipo", "Nome", "Cargo", "Lotação", "Ver"));
-    $objeto->set_align(array("center", "left", "left", "left"));
-    $objeto->set_width(array(8, 30, 25, 25, 7));
+    $objeto->set_label(array("Tipo", "Foto", "Nome", "Contatos", "Designação"));
+    $objeto->set_align(array("center", "left", "left", "left", "left"));
+    $objeto->set_width(array(8, 8, 25, 20, 20));
     #$objeto->set_funcao(array(null, null, null, null, null, "exibeFoto"));
-    $objeto->set_classe(array("Comissao", "pessoal", "pessoal", "pessoal"));
-    $objeto->set_metodo(array("get_tipo", "get_nome", "get_cargo", "get_lotacao"));
+    $objeto->set_classe(array("Comissao", "pessoal", "Comissao", "pessoal", "Comissao"));
+    $objeto->set_metodo(array("get_tipo", "get_foto", "get_dadosMembro", "get_contatos", "get_dadosDesignacao"));
     $objeto->set_numeroOrdem(true);
     $objeto->set_formatacaoCondicional($formatacaoCondicional);
 
@@ -119,8 +119,8 @@ if ($acesso) {
     $botao->set_url('?fase=exibeMembro&id=' . $id);
     $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
 
-    # Coloca o objeto link na tabela			
-    $objeto->set_link(array(null, null, null, null, $botao));
+    # Coloca o objeto link na tabela
+    #$objeto->set_link(array(null, null, null, null, $botao));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -135,7 +135,7 @@ if ($acesso) {
     $objeto->set_formlabelTipo(1);
 
     # Pega os dados da combo de servidor
-    $membro = $pessoal->select('SELECT idServidor, 
+    $membro = $pessoal->select('SELECT idServidor,
                                        CONCAT(tbpessoa.nome," | ",IFnull(tbtipocargo.sigla,"")," - ",IFnull(tbcargo.nome,"")," | ",uenf_grh.tbsituacao.situacao)
                                   FROM uenf_grh.tbservidor JOIN uenf_grh.tbpessoa USING (idPessoa)
                                                       LEFT JOIN uenf_grh.tbsituacao ON (uenf_grh.tbservidor.situacao = uenf_grh.tbsituacao.idsituacao)
@@ -149,76 +149,76 @@ if ($acesso) {
         array(null, null),
         array(1, "Presidente"),
         array(2, "Membro"),
-        array(3, "Suplente")
+        array(3, "Suplente"),
     );
 
     # Campos para o formulario
     $objeto->set_campos(array(
-        array('linha'    => 1,
-            'nome'     => 'idServidor',
-            'label'    => 'Servidor:',
-            'tipo'     => 'combo',
-            'array'    => $membro,
-            'title'    => 'Servidor membro ca comissão',
-            'col'      => 9,
+        array('linha' => 1,
+            'nome' => 'idServidor',
+            'label' => 'Servidor:',
+            'tipo' => 'combo',
+            'array' => $membro,
+            'title' => 'Servidor membro ca comissão',
+            'col' => 9,
             'required' => true,
-            'size'     => 30),
-        array('linha'  => 1,
-            'nome'   => 'tipo',
-            'label'  => 'Tipo:',
-            'tipo'   => 'combo',
-            'array'  => $tipo,
+            'size' => 30),
+        array('linha' => 1,
+            'nome' => 'tipo',
+            'label' => 'Tipo:',
+            'tipo' => 'combo',
+            'array' => $tipo,
             'padrao' => 2,
-            'col'    => 3,
-            'size'   => 15),
+            'col' => 3,
+            'size' => 15),
         array('linha' => 2,
-            'nome'  => 'portariaEntrada',
+            'nome' => 'portariaEntrada',
             'label' => 'Portaria Designação:',
-            'tipo'  => 'texto',
-            'col'   => 2,
-            'size'  => 10),
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 10),
         array('linha' => 2,
-            'nome'  => 'dtPortariaEntrada',
+            'nome' => 'dtPortariaEntrada',
             'label' => 'De:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15),
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15),
         array('linha' => 2,
-            'nome'  => 'dtPublicacaoEntrada',
+            'nome' => 'dtPublicacaoEntrada',
             'label' => 'Publicado no DOERJ em:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15),
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15),
         array('linha' => 3,
-            'nome'  => 'portariaSaida',
+            'nome' => 'portariaSaida',
             'label' => 'Portaria de Saída:',
-            'tipo'  => 'texto',
-            'col'   => 2,
-            'size'  => 10),
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 10),
         array('linha' => 3,
-            'nome'  => 'dtPortariaSaida',
+            'nome' => 'dtPortariaSaida',
             'label' => 'De:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15),
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15),
         array('linha' => 3,
-            'nome'  => 'dtPublicacaoSaida',
+            'nome' => 'dtPublicacaoSaida',
             'label' => 'Publicado no DOERJ em:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15),
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15),
         array('linha' => 4,
-            'nome'  => 'obs',
+            'nome' => 'obs',
             'label' => 'Observação:',
-            'tipo'  => 'textarea',
-            'size'  => array(80, 5)),
-        array("linha"  => 5,
-            "nome"   => "idContrato",
-            "label"  => "idContrato:",
-            'tipo'   => 'hidden',
+            'tipo' => 'textarea',
+            'size' => array(80, 5)),
+        array("linha" => 5,
+            "nome" => "idContrato",
+            "label" => "idContrato:",
+            'tipo' => 'hidden',
             'padrao' => $idContrato,
-            "col"    => 3,
-            "size"   => 11)
+            "col" => 3,
+            "size" => 11),
     ));
 
     # idUsuário para o Log
@@ -226,63 +226,22 @@ if ($acesso) {
 
     ################################################################
     switch ($fase) {
-        case "" :
-        case "listar" :
+        case "":
+        case "listar":
             $objeto->listar();
             break;
 
-        case "editar" :
-        case "excluir" :
-        case "gravar" :
+        case "editar":
+        case "excluir":
+        case "gravar":
             $objeto->$fase($id);
             break;
 
-        case "exibeFicha" :
+        case "exibeFicha":
             botaoVoltar("areaContrato.php");
 
             # Exibe dados do contrato
             get_DadosContrato($idContrato);
-            break;
-
-        ##################################################################
-
-        case "exibeMembro" :
-
-            # Limita a tela
-            $grid = new Grid();
-            $grid->abreColuna(12);
-
-            # Cria um menu
-            $menu1 = new MenuBar();
-
-            # Voltar
-            $botaoVoltar = new Link("Voltar", "areaContrato.php");
-            $botaoVoltar->set_class('button');
-            $botaoVoltar->set_title('Voltar a página anterior');
-            $botaoVoltar->set_accessKey('V');
-            $menu1->add_link($botaoVoltar, "left");
-
-            # Editar
-            $botaoEditar = new Link("Editar", "cadastroComissao.php?fase=editar&id={$id}");
-            $botaoEditar->set_class('button');
-            $botaoEditar->set_title('Editar os dados deste membro');
-            $menu1->add_link($botaoEditar, "right");
-
-            $menu1->show();
-
-            $grid->fechaColuna();
-            $grid->fechaGrid();
-
-            # Exibe dados do Contrato
-            $contrato->exibeResumoDados($idContrato);
-            $comissao->exibeDadosMembro($id);
-            break;
-
-        ##################################################################
-
-        case "incluirMembro" :
-
-            echo "oi";
             break;
 
         ##################################################################

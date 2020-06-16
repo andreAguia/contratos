@@ -1,6 +1,6 @@
 <?php
 
-class Modalidade
+class Status
 {
 
     /**
@@ -10,11 +10,11 @@ class Modalidade
      *
      * @var private $idConcurso integer null O id do concurso
      */
-    private $idModalidade = null;
+    private $idStatus = null;
 
 ##############################################################
 
-    public function __construct($idModalidade = null)
+    public function __construct($idStatus = null)
     {
         /**
          * Inicia a Classe somente
@@ -23,12 +23,12 @@ class Modalidade
          *
          * @syntax $concurso = new Concurso([$idConcurso]);
          */
-        $this->idModalidade = $idModalidade;
+        $this->idStatus = $idStatus;
     }
 
 ##############################################################
 
-    public function get_dados($idModalidade = null)
+    public function get_dados($idStatus = null)
     {
 
         /**
@@ -39,23 +39,23 @@ class Modalidade
          * @syntax $concurso->get_dados([$idConcurso]);
          */
         # Joga o valor informado para a variável da classe
-        if (!vazio($idModalidade)) {
-            $this->idModalidade = $idModalidade;
+        if (!vazio($idStatus)) {
+            $this->idStatus = $idStatus;
         }
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
         # Verifica se foi informado
-        if (vazio($this->idModalidade)) {
-            alert("É necessário informar o id da Modalidade.");
+        if (vazio($this->idStatus)) {
+            alert("É necessário informar o id do Status.");
             return;
         }
 
         # Pega os dados
         $select = 'SELECT *
-                     FROM tbmodalidade
-                    WHERE idModalidade = ' . $this->idModalidade;
+                     FROM tbstatus
+                    WHERE idStatus = ' . $this->idStatus;
 
         $row = $contratos->select($select, false);
 
@@ -65,39 +65,30 @@ class Modalidade
 
 ##############################################################
 
-    public function get_numContratos($idModalidade = null)
+    public function get_numContratos($idStatus = null)
     {
-
-        /**
-         * Informa os dados da base de dados
-         *
-         * @param $idConcurso integer null O id do concurso
-         *
-         * @syntax $concurso->get_dados([$idConcurso]);
-         */
         # Joga o valor informado para a variável da classe
-        if (!vazio($idModalidade)) {
-            $this->idModalidade = $idModalidade;
+        if (!vazio($idStatus)) {
+            $this->idStatus = $idStatus;
         }
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
         # Verifica se foi informado
-        if (vazio($this->idModalidade)) {
-            alert("É necessário informar o id da Modalidade.");
+        if (vazio($this->idStatus)) {
+            alert("É necessário informar o id do Status.");
             return;
         }
 
         # Pega os dados
-        $select = 'SELECT idContrato
+        $select = 'SELECT idStatus
                  FROM tbcontrato
-                WHERE idModalidade = ' . $this->idModalidade;
+                WHERE idStatus = ' . $this->idStatus;
 
         $numero = $contratos->count($select, false);
 
         # Retorno
         return $numero;
     }
-
 }
