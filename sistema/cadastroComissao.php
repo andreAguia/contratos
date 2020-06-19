@@ -71,8 +71,7 @@ if ($acesso) {
                                      dtPortariaSaida,
                                      dtPublicacaoSaida,
                                      obs,
-                                     idContrato,
-                                     idComissao
+                                     idContrato
                                 FROM tbcomissao
                               WHERE idComissao = {$id}");
 

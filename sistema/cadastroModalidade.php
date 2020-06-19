@@ -45,6 +45,7 @@ if ($acesso) {
     $objeto->set_selectLista("SELECT idModalidade,
                                       modalidade,
                                       obs,
+                                      idModalidade,
                                       idModalidade
                                  FROM tbmodalidade
                              ORDER BY modalidade");

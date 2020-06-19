@@ -132,19 +132,12 @@ class MenuContratos
         $painel = new Callout();
         $painel->abre();
 
-        titulo("Agenda");
+        titulo("Eventos");
         br();
 
         # Inicia o Grid
         $grid = new Grid();
         $grid->abreColuna(6);
-
-        titulotable("Tarefas");
-        br();
-
-        # Exibir as tarefas
-        $tarefa = new Tarefa();
-        $tarefa->listaTarefas();
 
         $grid->fechaColuna();
         $grid->abreColuna(6);

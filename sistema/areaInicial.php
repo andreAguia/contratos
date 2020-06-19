@@ -39,7 +39,7 @@ if ($acesso) {
     set_session('parametroModalidade');
     set_session('parametroEmpresa');
     set_session('sessionParametro');
-    
+
     # Limita a tela
     $grid = new Grid();
     $grid->abreColuna(12);
@@ -70,13 +70,15 @@ if ($acesso) {
             $menu->add_link($botaoRel, "right");
 
             $menu->show();
+
+            # Menu Inicial
             $menu = new MenuContratos($idUsuario);
 
             # Exibe o rodapé da página
             Grh::rodape($idUsuario);
             break;
 
-            ################################################################
+        ################################################################
 
         case "relatorio":
             # Monta o menu principal
@@ -93,12 +95,10 @@ if ($acesso) {
             # Título
             Titulo("Relatórios");
             br(4);
-            
-            p("Rotina ainda não implementada!","center","f14");
+
+            p("Rotina ainda não implementada!", "center", "f14");
             break;
     }
-
-
 
     $grid->fechaColuna();
     $grid->fechaGrid();

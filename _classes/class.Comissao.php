@@ -192,6 +192,7 @@ class Comissao
                           idComissao
                      FROM tbcomissao
                     WHERE idContrato = {$idContrato}
+                      AND dtPublicacaoSaida IS NULL  
                  ORDER BY dtPublicacaoSaida,tipo";
 
         $row = $contratos->select($select);

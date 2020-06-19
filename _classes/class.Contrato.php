@@ -2,7 +2,6 @@
 
 class Contrato
 {
-
     /**
      * Abriga as várias rotina referentes a concurso
      *
@@ -10,9 +9,10 @@ class Contrato
      *
      * @var private $idConcurso integer null O id do concurso
      */
-    private $idContrato = null;
+    private $idContrato    = null;
     private $permiteEditar = true;
 ##############################################################
+
     public function __construct($idContrato = null)
     {
         /**
@@ -26,6 +26,7 @@ class Contrato
     }
 
 ##############################################################
+
     public function get_dados($idContrato = null)
     {
 
@@ -62,6 +63,7 @@ class Contrato
     }
 
     ##############################################################
+
     public function get_processo($idContrato = null, $br = true)
     {
 
@@ -104,6 +106,7 @@ class Contrato
     }
 
     #####################################################################################
+
     public function listaContratos()
     {
 
@@ -146,6 +149,7 @@ class Contrato
     }
 
     ###########################################################
+
     public function exibeNumeroContrato($idContrato)
     {
         # Joga o valor informado para a variável da classe
@@ -158,12 +162,12 @@ class Contrato
         $painel = new Callout("primary");
         $painel->abre();
 
-        $numero = $conteudo["numero"];
+        $numero       = $conteudo["numero"];
         $idModalidade = $conteudo["idModalidade"];
-        $status = $this->get_status($idContrato);
+        $status       = $this->get_status($idContrato);
 
-        $mm = new Modalidade();
-        $mmDados = $mm->get_dados($idModalidade);
+        $mm         = new Modalidade();
+        $mmDados    = $mm->get_dados($idModalidade);
         $modalidade = $mmDados['modalidade'];
 
         p($numero, "contratoNumero");
@@ -175,6 +179,7 @@ class Contrato
     }
 
     ###########################################################
+
     public function exibeStatus($idContrato)
     {
 
@@ -182,13 +187,13 @@ class Contrato
 
         if ($status == "Ativo") {
             $painel = new Callout("success");
-            $stilo = "statusAtivo";
+            $stilo  = "statusAtivo";
         } elseif ($status == "Pendente") {
             $painel = new Callout("alert");
-            $stilo = "statusPendente";
+            $stilo  = "statusPendente";
         } else {
             $painel = new Callout("secondary");
-            $stilo = "statusEncerrado";
+            $stilo  = "statusEncerrado";
         }
         $painel->abre();
 
@@ -199,11 +204,12 @@ class Contrato
     }
 
     ###########################################################
+
     /**
      * Método exibeDadosConcurso
      * fornece os dados de uma vaga em forma de tabela
      *
-     * @param    string $idVaga O id da vaga
+     * @param    string $idContrato O id da vaga
      */
     public function exibeDadosContrato($idContrato)
     {
@@ -220,31 +226,31 @@ class Contrato
 
         # Pega os valores
         $modalidade = $this->get_modalidade($idContrato);
-        $status = $this->get_status($idContrato);
-        $processo = $this->get_processo($idContrato, false);
+        $status     = $this->get_status($idContrato);
+        $processo   = $this->get_processo($idContrato, false);
         $assinatura = date_to_php($conteudo["dtAssinatura"]);
-        $obs = $conteudo["obs"];
+        $obs        = $conteudo["obs"];
 
         # Prazo
-        $prazo = $conteudo["prazo"];
+        $prazo     = $conteudo["prazo"];
         $tipoPrazo = $conteudo["tipoPrazo"];
-        $inicio = date_to_php($conteudo["dtInicial"]);
+        $inicio    = date_to_php($conteudo["dtInicial"]);
 
         if ($tipoPrazo == 1) {
-            $prazo2 = " dias";
+            $prazo2   = " dias";
             $vigencia = addDias($inicio, $prazo);
-            $prazo .= $prazo2;
+            $prazo    .= $prazo2;
             $vigencia .= " ({$prazo})";
         } elseif ($tipoPrazo == 2) {
-            $prazo2 = " meses";
+            $prazo2   = " meses";
             $vigencia = addMeses($inicio, $prazo);
-            $prazo .= $prazo2;
+            $prazo    .= $prazo2;
             $vigencia .= " ({$prazo})";
         }
 
         # Publicação
         $dtPublicacao = $conteudo["dtPublicacao"];
-        $publicacao = date_to_php($dtPublicacao);
+        $publicacao   = date_to_php($dtPublicacao);
         if (!empty($conteudo["pgPublicacao"])) {
             $publicacao .= " pag: {$conteudo["pgPublicacao"]}";
         }
@@ -272,7 +278,6 @@ class Contrato
             ["inicio", 4, "Início"],
             ["vigencia", 4, "Vigência"],
             ["assinatura", 4, "Assinatura"],
-            ["valor", 4],
             ["garantia", 4],
         ];
 
@@ -336,6 +341,7 @@ class Contrato
     }
 
     ###########################################################
+
     /**
      * Método exibeDadosConcurso
      * fornece os dados de uma vaga em forma de tabela
@@ -345,16 +351,16 @@ class Contrato
     public function exibeResumoDados($idContrato)
     {
 
-        $conteudo = $this->get_dados($idContrato);
-        $numero = $conteudo["numero"];
-        $objeto = $conteudo["objeto"];
+        $conteudo  = $this->get_dados($idContrato);
+        $numero    = $conteudo["numero"];
+        $objeto    = $conteudo["objeto"];
         $idEmpresa = $conteudo["idEmpresa"];
-        $processo = $this->get_processo($idContrato);
+        $processo  = $this->get_processo($idContrato);
 
         $bdempresa = new Empresa();
-        $dados = $bdempresa->get_dados($idEmpresa);
-        $empresa = $dados["razaoSocial"];
-        $cnpj = $dados["cnpj"];
+        $dados     = $bdempresa->get_dados($idEmpresa);
+        $empresa   = $dados["razaoSocial"];
+        $cnpj      = $dados["cnpj"];
 
         # Limita o tamanho da tela
         $grid = new Grid();
@@ -362,12 +368,12 @@ class Contrato
 
         # Monta os dados
         $label = ["Contrato", "Processo", "Objeto", "Empresa"];
-        $item = [[$numero, $processo, $objeto, "{$empresa}<br/>{$cnpj}"]];
+        $item  = [[$numero, $processo, $objeto, "{$empresa}<br/>{$cnpj}"]];
 
-        $formatacaoCondicional = array(array('coluna' => 0,
-            'valor' => $numero,
-            'operador' => '=',
-            'id' => 'listaDados'));
+        $formatacaoCondicional = array(array('coluna'   => 0,
+                'valor'    => $numero,
+                'operador' => '=',
+                'id'       => 'listaDados'));
 
         # Monta a tabela
         $tabela = new Tabela();
@@ -383,6 +389,7 @@ class Contrato
     }
 
     ###########################################################
+
     public function get_periodo($idContrato)
     {
 
@@ -394,17 +401,17 @@ class Contrato
         $conteudo = $this->get_dados($idContrato);
 
         $dtInicial = date_to_php($conteudo["dtInicial"]);
-        $prazo = $conteudo["prazo"];
+        $prazo     = $conteudo["prazo"];
         $tipoPrazo = $conteudo["tipoPrazo"];
 
-        $tipo = null;
+        $tipo    = null;
         $dtFinal = null;
 
         if ($tipoPrazo == 1) {
-            $tipo = "Dias";
+            $tipo    = "Dias";
             $dtFinal = addDias($dtInicial, $prazo);
         } else {
-            $tipo = "Meses";
+            $tipo    = "Meses";
             $dtFinal = addMeses($dtInicial, $prazo);
         }
         $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
@@ -413,6 +420,7 @@ class Contrato
     }
 
     ###########################################################
+
     public function get_numero($idContrato)
     {
 
@@ -422,11 +430,12 @@ class Contrato
         }
 
         $conteudo = $this->get_dados($idContrato);
-        
+
         return $conteudo["numero"];
     }
 
     ##############################################################
+
     public function get_status($idContrato = null)
     {
 
@@ -453,6 +462,7 @@ class Contrato
     }
 
     ##############################################################
+
     public function get_modalidade($idContrato = null)
     {
 
@@ -465,7 +475,7 @@ class Contrato
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
-        $conteudo = $this->get_dados($idContrato);
+        $conteudo     = $this->get_dados($idContrato);
         $idModalidade = $conteudo["idModalidade"];
 
         # monta o select
@@ -479,6 +489,7 @@ class Contrato
     }
 
     #####################################################################################
+
     public function get_novoNumero()
     {
         # Conecta ao Banco de Dados
@@ -486,21 +497,81 @@ class Contrato
 
         $select = "SELECT numero
                      FROM tbcontrato
-                    WHERE YEAR(dtAssinatura) = YEAR(CURDATE())
                  ORDER BY numero desc LIMIT 1";
 
         $numero = $contratos->select($select, false);
 
         if (empty($numero["numero"])) {
-            $retorno = "001/".date('Y');
+            $retorno = "001/" . date('Y');
         } else {
-            $itens = explode("/", $numero["numero"]);
+            $itens    = explode("/", $numero["numero"]);
             $itens[0]++;
             $itens[0] = str_pad($itens[0], 3, '0', STR_PAD_LEFT);
-            $retorno = "$itens[0]/$itens[1]";
+            $retorno  = "$itens[0]/$itens[1]";
         }
 
         return $retorno;
+    }
+
+    #####################################################################################
+
+    public function exibeValorTotal($idContrato = null)
+    {
+        # Pega o valor do contrato
+        $conteudo = $this->get_dados($idContrato);
+
+        # Inicia as variáveis
+        $valorTotal       = 0;
+        $valoresTabela[]  = null;
+        $contadorAditivos = 0;
+
+        $valorTotal       += $conteudo["valor"];
+        $valoresTabelas[] = ["Contrato", "R$ " . formataMoeda($conteudo["valor"])];
+
+        # Valores do aditivo
+        $contratos   = new Contratos();
+        $select      = "SELECT valor FROM tbaditivo WHERE idContrato = {$idContrato} ORDER BY dtAssinatura";
+        $row         = $contratos->select($select);
+        $numAditivos = $contratos->count($select);
+
+        # Percorre os valores somando-os
+        foreach ($row as $item) {
+            $contadorAditivos++;
+            if (!empty($item[0])) {
+                $valorTotal       += $item[0];
+                $valoresTabelas[] = ["Aditivo {$contadorAditivos}", "R$ " . formataMoeda($item[0])];
+            }
+        }
+
+        # exibe o resultado
+        $painel = new Callout("secondary");
+        $painel->abre();
+
+        titulo("Valor Total");
+        br();
+
+        p("R$ " . formataMoeda($valorTotal), "p12", "center");
+
+        /*
+         * Exibe a tabela de aditivos e valores
+         */
+
+        if ($numAditivos > 0) {
+
+            # Monta a tabela
+            $tabela = new Tabela();
+            #$tabela->set_titulo("Aditivos");
+            $tabela->set_label(array("Descrição", "Valor"));
+            $tabela->set_align(array("left", "right"));
+            $tabela->set_width(array(60, 40));
+            #$tabela->set_classe(array("Comissao", "Comissao"));
+            #$tabela->set_metodo(array("get_nomeMembro", "get_tipo"));
+            #$tabela->set_numeroOrdem(true);
+            $tabela->set_conteudo($valoresTabelas);
+            $tabela->show();
+        }
+
+        $painel->fecha();
     }
 
 #####################################################################################

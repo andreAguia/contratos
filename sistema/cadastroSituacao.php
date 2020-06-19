@@ -16,9 +16,9 @@ $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra = new Intra();
+    $intra    = new Intra();
     $contrato = new Contrato();
-    $pessoal = new Pessoal();
+    $pessoal  = new Pessoal();
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
@@ -43,7 +43,7 @@ if ($acesso) {
     # Exibe os dados do Servidor
     $objeto->set_rotinaExtra("get_DadosContrato");
     $objeto->set_rotinaExtraParametro($idContrato);
-    
+
     # Nome do Modelo
     $objeto->set_nome("Situação");
 
@@ -53,6 +53,7 @@ if ($acesso) {
     # select da lista
     $objeto->set_selectLista("SELECT data,                                      
                                      situacao,
+                                     obs,
                                      idSituacao
                                 FROM tbsituacao
                                WHERE idContrato = {$idContrato}
@@ -61,6 +62,7 @@ if ($acesso) {
     # select do edita
     $objeto->set_selectEdita("SELECT data,
                                      situacao,
+                                     obs,
                                      idContrato
                                 FROM tbsituacao
                               WHERE idSituacao = {$id}");
@@ -72,17 +74,17 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(array("Data", "Situacao do Contrato"));
-    $objeto->set_width(array(10, 80));
-    $objeto->set_align(array("center", "left"));
+    $objeto->set_label(array("Data", "Situacao do Contrato", "Obs"));
+    $objeto->set_width(array(10, 40, 40));
+    $objeto->set_align(array("center", "left", "left"));
     $objeto->set_funcao(array("date_to_php"));
     #$objeto->set_classe(array(null,"Situacao"));
     #$objeto->set_metodo(array(null,"get_situacao"));
-    
-    $objeto->set_formatacaoCondicional(array(array('coluna' => 0,
-            'valor' => 0,
+
+    $objeto->set_formatacaoCondicional(array(array('coluna'   => 0,
+            'valor'    => 0,
             'operador' => '=',
-            'id' => 'logLogin')
+            'id'       => 'logLogin')
     ));
 
 
@@ -100,28 +102,38 @@ if ($acesso) {
 
     # Campos para o formulario
     $objeto->set_campos(array(
-        array('linha' => 1,
-            'nome' => 'data',
-            'label' => 'Data:',
-            'tipo' => 'date',
+        array(
+            'linha'     => 1,
+            'nome'      => 'data',
+            'label'     => 'Data:',
+            'tipo'      => 'date',
             'autofocus' => true,
+            'required'  => true,
+            'col'       => 3,
+            'size'      => 15),
+        array(
+            "linha"    => 1,
+            'col'      => 9,
+            "nome"     => "situacao",
+            "label"    => "Situacao:",
             'required' => true,
-            'col' => 3,
-            'size' => 15),
-        array("linha" => 1,
-            'col' => 9,
-            "nome" => "situacao",
-            "label" => "Situacao:",
-            'required' => true,
-            "tipo" => "texto",
-            "size" => 250),
-        array("linha" => 3,
-            "nome" => "idContrato",
-            "label" => "idContrato:",
-            'tipo' => 'hidden',
+            "tipo"     => "texto",
+            "size"     => 250),
+        array(
+            'linha' => 2,
+            'nome'  => 'obs',
+            'label' => 'Observação:',
+            'tipo'  => 'textarea',
+            'size'  => array(80, 5),
+        ),
+        array(
+            "linha"  => 3,
+            "nome"   => "idContrato",
+            "label"  => "idContrato:",
+            'tipo'   => 'hidden',
             'padrao' => $idContrato,
-            "col" => 3,
-            "size" => 11),
+            "col"    => 3,
+            "size"   => 11),
     ));
 
     # idUsuário para o Log
