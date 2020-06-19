@@ -2,13 +2,13 @@
 
 class Comissao
 {
-/**
- * Abriga as várias rotina referentes a comissao
- *
- * @author André Águia (Alat) - alataguia@gmail.com
- *
- * @var private $idComissao integer null O id do concurso
- */
+    /**
+     * Abriga as várias rotina referentes a comissao
+     *
+     * @author André Águia (Alat) - alataguia@gmail.com
+     *
+     * @var private $idComissao integer null O id do concurso
+     */
     private $idComissao = null;
 ##############################################################
 
@@ -113,9 +113,9 @@ class Comissao
             return;
         } else {
 
-            $conteudo = $this->get_dados($idComissao);
+            $conteudo          = $this->get_dados($idComissao);
             $dtPublicacaoSaida = $conteudo["dtPublicacaoSaida"];
-            $tipo = $conteudo["tipo"];
+            $tipo              = $conteudo["tipo"];
 
             # Verifica se foi informado
             if (vazio($tipo)) {
@@ -168,7 +168,7 @@ class Comissao
         if (empty($idServidor)) {
             echo "---";
         } else {
-            $pessoal = new Pessoal();
+            $pessoal  = new Pessoal();
             $idPessoa = $pessoal->get_idPessoa($idServidor);
 
             p($pessoal->get_nome($idServidor), "pmembroNome");
@@ -199,22 +199,22 @@ class Comissao
 
         # Colore a llinha de acordo com o tipo
         $formatacaoCondicional = array(
-            array('coluna' => 1,
-                'valor' => "Presidente",
+            array('coluna'   => 1,
+                'valor'    => "Presidente",
                 'operador' => '=',
-                'id' => 'presidenteComissao'),
-            array('coluna' => 1,
-                'valor' => "Membro",
+                'id'       => 'presidenteComissao'),
+            array('coluna'   => 1,
+                'valor'    => "Membro",
                 'operador' => '=',
-                'id' => 'membroComissao'),
-            array('coluna' => 1,
-                'valor' => "Suplente",
+                'id'       => 'membroComissao'),
+            array('coluna'   => 1,
+                'valor'    => "Suplente",
                 'operador' => '=',
-                'id' => 'cuplenteComissao'),
-            array('coluna' => 1,
-                'valor' => "Saiu",
+                'id'       => 'cuplenteComissao'),
+            array('coluna'   => 1,
+                'valor'    => "Saiu",
                 'operador' => '=',
-                'id' => 'saiuComissao'),
+                'id'       => 'saiuComissao'),
         );
 
         # Monta a tabela
@@ -260,13 +260,13 @@ class Comissao
             return;
         } else {
 
-            $conteudo = $this->get_dados($idComissao);
-            $portariaEntrada = $conteudo["portariaEntrada"];
-            $dtPortariaEntrada = $conteudo["dtPortariaEntrada"];
+            $conteudo            = $this->get_dados($idComissao);
+            $portariaEntrada     = $conteudo["portariaEntrada"];
+            $dtPortariaEntrada   = $conteudo["dtPortariaEntrada"];
             $dtPublicacaoEntrada = $conteudo["dtPublicacaoEntrada"];
-            $portariaSaida = $conteudo["portariaSaida"];
-            $dtPortariaSaida = $conteudo["dtPortariaSaida"];
-            $dtPublicacaoSaida = $conteudo["dtPublicacaoSaida"];
+            $portariaSaida       = $conteudo["portariaSaida"];
+            $dtPortariaSaida     = $conteudo["dtPortariaSaida"];
+            $dtPublicacaoSaida   = $conteudo["dtPublicacaoSaida"];
 
             # Designação
             if ((!empty($portariaEntrada)) and (!empty($dtPortariaEntrada))) {
@@ -302,7 +302,7 @@ class Comissao
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-        $pessoal = new Pessoal();
+        $pessoal   = new Pessoal();
 
         $select = "SELECT *
                      FROM tbcomissao
@@ -324,15 +324,14 @@ class Comissao
 
             # Pega os valores
             $idServidor = $conteudo["idServidor"];
-            $idPessoa = $pessoal->get_idPessoa($idServidor);
-            $tipo1 = $conteudo["tipo"];
+            $idPessoa   = $pessoal->get_idPessoa($idServidor);
+            $tipo1      = $conteudo["tipo"];
 
             $idFuncional = $pessoal->get_idFuncional($idServidor);
-            $servidor = $pessoal->get_nome($idServidor);
-            $cargo = $pessoal->get_cargo($idServidor);
-            $lotacao = $pessoal->get_lotacao($idServidor);
-            $cpf = $pessoal->get_cpf($idPessoa); # Informa o tipo
-
+            $servidor    = $pessoal->get_nome($idServidor);
+            $cargo       = $pessoal->get_cargo($idServidor);
+            $lotacao     = $pessoal->get_lotacao($idServidor);
+            $cpf         = $pessoal->get_cpf($idPessoa); # Informa o tipo
             # trata Tipo
             if ($tipo1 == 1) {
                 $tipo = "Presidente";
@@ -433,5 +432,181 @@ class Comissao
         $painel->fecha();
     }
 
-#####################################################################################
+    ##############################################################
+
+    public function exibeProcesso($idContrato = null)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $contrato = new Contrato();
+        $conteudo = $contrato->get_dados($idContrato);
+
+        $processo = null;
+
+        # Verifica se tem somente um processo
+        if ((empty($conteudo["processoComissaoSei"])) xor (empty($conteudo["processoComissao"]))) {
+            if (empty($conteudo["processoComissaoSei"])) {
+                $processo = $conteudo["processoComissao"];
+            } else {
+                $processo = "SEI - {$conteudo["processoComissaoSei"]}";
+            }
+        }
+
+        # Verifica se tem os dois
+        if ((!empty($conteudo["processoComissaoSei"])) and (!empty($conteudo["processoComissao"]))) {
+            $processo = "SEI - {$conteudo["processoComissaoSei"]} <br/> {$conteudo["processoComissao"]}";
+        }
+
+        # Exibe os Processos
+        $painel = new Callout();
+        $painel->abre();
+
+        tituloTable("Processos:");
+        br();
+
+        if (empty($processo)) {
+            br();
+            P("Nenhum processo cadastrado", "center", "f14");
+        } else {
+            br();
+            p($processo, "center", "f14");
+        }
+
+        # Editar    
+        $div = new Div("divEdita1");
+        $div->abre();
+
+        $div = new Div("divEdita2");
+        $div->abre();
+
+        $botaoEditar = new Link("Editar", "?fase=cadastroProcesso");
+        $botaoEditar->set_class('tiny button secondary');
+        $botaoEditar->set_title('Editar contrato');
+        $botaoEditar->show();
+
+        $div->fecha();
+        $div->fecha();
+
+        $painel->fecha();
+
+        return;
+    }
+
+    ##############################################################
+
+    public function exibeMenuDocumentos($idContrato = null)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $painel = new Callout();
+        $painel->abre();
+
+        titulotable('Documentos');
+        br();
+
+        $tamanhoImage = 60;
+        $menu         = new MenuGrafico(3);
+
+        $botao = new BotaoGrafico();
+        $botao->set_label('Legislação');
+        $botao->set_url('#');
+        $botao->set_imagem(PASTA_FIGURAS . 'legislacao.png', $tamanhoImage, $tamanhoImage);
+        $botao->set_title('Legislação referente a comissão de fiscalização');
+        $menu->add_item($botao);
+
+        $botao = new BotaoGrafico();
+        $botao->set_label('Formulário');
+        $botao->set_url('#');
+        $botao->set_imagem(PASTA_FIGURAS . 'formulario.png', $tamanhoImage, $tamanhoImage);
+        $botao->set_title('Legislação referente a comissão de fiscalização');
+        $menu->add_item($botao);
+
+        $botao = new BotaoGrafico();
+        $botao->set_label('Checklist');
+        $botao->set_url('#');
+        $botao->set_imagem(PASTA_FIGURAS . 'checklist.png', $tamanhoImage, $tamanhoImage);
+        $botao->set_title('Legislação referente a comissão de fiscalização');
+        $menu->add_item($botao);
+
+        $menu->show();
+        $painel->fecha();
+    }
+
+    ##############################################################
+
+    public function getProcesso($idContrato = null)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $contrato = new Contrato();
+        $conteudo = $contrato->get_dados($idContrato);
+
+        $processo = null;
+
+        # Verifica se tem somente um processo
+        if ((empty($conteudo["processoComissaoSei"])) xor (empty($conteudo["processoComissao"]))) {
+            if (empty($conteudo["processoComissaoSei"])) {
+                $processo = $conteudo["processoComissao"];
+            } else {
+                $processo = "SEI - {$conteudo["processoComissaoSei"]}";
+            }
+        }
+
+        # Verifica se tem os dois
+        if ((!empty($conteudo["processoComissaoSei"])) and (!empty($conteudo["processoComissao"]))) {
+            $processo = "SEI - {$conteudo["processoComissaoSei"]} <br/> {$conteudo["processoComissao"]}";
+        }
+
+        # Exibe os Processos
+        $painel = new Callout();
+        $painel->abre();
+
+        tituloTable("Processos:");
+        br();
+
+        if (empty($processo)) {
+            br();
+            P("Nenhum processo cadastrado", "center", "f14");
+        } else {
+            br();
+            p($processo, "center", "f14");
+        }
+
+        # Editar    
+        $div = new Div("divEdita1");
+        $div->abre();
+
+        $div = new Div("divEdita2");
+        $div->abre();
+
+        $botaoEditar = new Link("Editar", "?fase=cadastroProcesso");
+        $botaoEditar->set_class('tiny button secondary');
+        $botaoEditar->set_title('Editar contrato');
+        $botaoEditar->show();
+
+        $div->fecha();
+        $div->fecha();
+
+        $painel->fecha();
+
+        return;
+    }
+
+    ##############################################################
+
 }

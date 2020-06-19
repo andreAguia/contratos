@@ -123,7 +123,7 @@ if ($acesso) {
 
     $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Prazo", "Situação", "Acessar"));
     $objeto->set_classe(array(null, null, "Empresa", "Contrato", "Contrato", "Situacao"));
-    $objeto->set_metodo(array(null, null, "get_empresaCnpj", "get_processo", "get_periodo", "get_situacaoAtual"));
+    $objeto->set_metodo(array(null, null, "get_empresaCnpj", "get_processo", "exibePeriodo", "get_situacaoAtual"));
     $objeto->set_width(array(10, 20, 20, 20, 10, 20));
     $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
 

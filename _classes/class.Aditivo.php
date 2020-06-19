@@ -163,7 +163,7 @@ class Aditivo
 
         # Monta a tabela
         $tabela = new Tabela();
-        $tabela->set_titulo("Aditivos");
+        $tabela->set_titulo("Termo(s) Aditivo(s)");
         $tabela->set_label(array("Objetivo","Publicação", "Assinatura","Duração","Garantia"));
         $tabela->set_align(array("left", "center"));
         $tabela->set_width(array(30,15,15,15,25));

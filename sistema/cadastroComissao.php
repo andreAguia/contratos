@@ -16,9 +16,9 @@ $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra = new Intra();
+    $intra    = new Intra();
     $contrato = new Contrato();
-    $pessoal = new Pessoal();
+    $pessoal  = new Pessoal();
     $comissao = new Comissao();
 
     # Verifica a fase do programa
@@ -41,10 +41,55 @@ if ($acesso) {
     $objeto = new Modelo();
 
     ################################################################
-    # Exibe os dados do Servidor
-    $objeto->set_rotinaExtra("get_DadosContrato");
-    $objeto->set_rotinaExtraParametro($idContrato);
 
+    if ($fase == "listar") {
+
+        # Limita o tamanho da tela
+        $grid = new Grid();
+        $grid->abreColuna(12);
+
+        # Cria um menu
+        $menu = new MenuBar();
+
+        # Botão voltar
+        $linkBotao1 = new Link("Voltar", "areaContrato.php");
+        $linkBotao1->set_class('button');
+        $linkBotao1->set_title('Volta para a página anterior');
+        $linkBotao1->set_accessKey('V');
+        $menu->add_link($linkBotao1, "left");
+
+        # Incluir
+        $linkBotao2 = new Link("Incluir", '?fase=editar');
+        $linkBotao2->set_class('button');
+        $linkBotao2->set_title('Incluir');
+        $linkBotao2->set_accessKey('I');
+        $menu->add_link($linkBotao2, "right");
+
+        # Relatório
+        $imagem   = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+        $botaoRel = new Button();
+        $botaoRel->set_imagem($imagem);
+        $botaoRel->set_title("Imprimir Relatório de Histórico de Processo de readaptação");
+        $botaoRel->set_url("../grhRelatorios/servidorReadaptacao.php");
+        $botaoRel->set_target("_blank");
+        #$menu->add_link($botaoRel, "right");
+        $menu->show();
+
+        $objeto->set_botaoVoltarLista(false);
+        $objeto->set_botaoIncluir(false);
+
+        # Exibe os dados do Contrato
+        get_DadosContrato($idContrato);
+
+        $grid->fechaColuna();
+        $grid->fechaGrid();
+    } else {
+        # Exibe os dados do Contrato
+        $objeto->set_rotinaExtra("get_DadosContrato");
+        $objeto->set_rotinaExtraParametro($idContrato);
+    }
+
+    ################################################################
     # Nome do Modelo
     $objeto->set_nome("Comissão de Fiscalização");
 
@@ -83,22 +128,22 @@ if ($acesso) {
     $objeto->set_linkIncluir("?fase=editar");
 
     $formatacaoCondicional = array(
-        array('coluna' => 0,
-            'valor' => "Presidente",
+        array('coluna'   => 0,
+            'valor'    => "Presidente",
             'operador' => '=',
-            'id' => 'presidenteComissao'),
-        array('coluna' => 0,
-            'valor' => "Membro",
+            'id'       => 'presidenteComissao'),
+        array('coluna'   => 0,
+            'valor'    => "Membro",
             'operador' => '=',
-            'id' => 'membroComissao'),
-        array('coluna' => 0,
-            'valor' => "Suplente",
+            'id'       => 'membroComissao'),
+        array('coluna'   => 0,
+            'valor'    => "Suplente",
             'operador' => '=',
-            'id' => 'cuplenteComissao'),
-        array('coluna' => 0,
-            'valor' => "Saiu",
+            'id'       => 'cuplenteComissao'),
+        array('coluna'   => 0,
+            'valor'    => "Saiu",
             'operador' => '=',
-            'id' => 'saiuComissao'),
+            'id'       => 'saiuComissao'),
     );
 
     # Parametros da tabela
@@ -120,7 +165,6 @@ if ($acesso) {
 
     # Coloca o objeto link na tabela
     #$objeto->set_link(array(null, null, null, null, $botao));
-
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
 
@@ -144,7 +188,7 @@ if ($acesso) {
                               ORDER BY uenf_grh.tbsituacao.idSituacao, tbpessoa.nome');
     array_unshift($membro, array(null, null)); # Adiciona o valor de nulo
     # Dados da combo tipo
-    $tipo = array(
+    $tipo   = array(
         array(null, null),
         array(1, "Presidente"),
         array(2, "Membro"),
@@ -153,71 +197,71 @@ if ($acesso) {
 
     # Campos para o formulario
     $objeto->set_campos(array(
-        array('linha' => 1,
-            'nome' => 'idServidor',
-            'label' => 'Servidor:',
-            'tipo' => 'combo',
-            'array' => $membro,
-            'title' => 'Servidor membro ca comissão',
-            'col' => 9,
+        array('linha'    => 1,
+            'nome'     => 'idServidor',
+            'label'    => 'Servidor:',
+            'tipo'     => 'combo',
+            'array'    => $membro,
+            'title'    => 'Servidor membro ca comissão',
+            'col'      => 9,
             'required' => true,
-            'size' => 30),
-        array('linha' => 1,
-            'nome' => 'tipo',
-            'label' => 'Tipo:',
-            'tipo' => 'combo',
-            'array' => $tipo,
+            'size'     => 30),
+        array('linha'  => 1,
+            'nome'   => 'tipo',
+            'label'  => 'Tipo:',
+            'tipo'   => 'combo',
+            'array'  => $tipo,
             'padrao' => 2,
-            'col' => 3,
-            'size' => 15),
+            'col'    => 3,
+            'size'   => 15),
         array('linha' => 2,
-            'nome' => 'portariaEntrada',
+            'nome'  => 'portariaEntrada',
             'label' => 'Portaria Designação:',
-            'tipo' => 'texto',
-            'col' => 2,
-            'size' => 10),
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 10),
         array('linha' => 2,
-            'nome' => 'dtPortariaEntrada',
+            'nome'  => 'dtPortariaEntrada',
             'label' => 'De:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 2,
-            'nome' => 'dtPublicacaoEntrada',
+            'nome'  => 'dtPublicacaoEntrada',
             'label' => 'Publicado no DOERJ em:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 3,
-            'nome' => 'portariaSaida',
+            'nome'  => 'portariaSaida',
             'label' => 'Portaria de Saída:',
-            'tipo' => 'texto',
-            'col' => 2,
-            'size' => 10),
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 10),
         array('linha' => 3,
-            'nome' => 'dtPortariaSaida',
+            'nome'  => 'dtPortariaSaida',
             'label' => 'De:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 3,
-            'nome' => 'dtPublicacaoSaida',
+            'nome'  => 'dtPublicacaoSaida',
             'label' => 'Publicado no DOERJ em:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15),
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15),
         array('linha' => 4,
-            'nome' => 'obs',
+            'nome'  => 'obs',
             'label' => 'Observação:',
-            'tipo' => 'textarea',
-            'size' => array(80, 5)),
-        array("linha" => 5,
-            "nome" => "idContrato",
-            "label" => "idContrato:",
-            'tipo' => 'hidden',
+            'tipo'  => 'textarea',
+            'size'  => array(80, 5)),
+        array("linha"  => 5,
+            "nome"   => "idContrato",
+            "label"  => "idContrato:",
+            'tipo'   => 'hidden',
             'padrao' => $idContrato,
-            "col" => 3,
-            "size" => 11),
+            "col"    => 3,
+            "size"   => 11),
     ));
 
     # idUsuário para o Log
@@ -226,7 +270,26 @@ if ($acesso) {
     ################################################################
     switch ($fase) {
         case "":
-        case "listar":
+        case "listar" :
+            # Divide a página em 2 colunas
+            $grid = new Grid();
+
+            #########################################################################################################
+            # Processos
+            $grid->abreColuna(12, 6);
+
+            $comissao->exibeProcesso($idContrato);
+
+            $grid->fechaColuna();
+
+            #########################################################################################################
+            # Documentos
+            $grid->abreColuna(12, 6);
+
+            $comissao->exibeMenuDocumentos($idContrato);
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
             $objeto->listar();
             break;
 
@@ -243,7 +306,108 @@ if ($acesso) {
             get_DadosContrato($idContrato);
             break;
 
+        case "cadastroProcesso":
+
+            botaoVoltar("?");
+
+            # Exibe dados do contrato
+            get_DadosContrato($idContrato);
+            
+            # Pega os valores do banco
+            $conteudo = $contrato->get_dados($idContrato);
+            
+            $painel = new Callout();
+            $painel->abre();
+
+            tituloTable("Processo da Comissão de Fiscalização");
+            br();
+
+            # Formuário exemplo de login
+            $form = new Form('?fase=valida', 'login');
+
+            /*
+             *  processo Sei
+             */
+            $controle = new Input('processoComissaoSei', 'sei', 'Processo Sei:', 1);
+            $controle->set_autofocus(true);
+            $controle->set_size(50);
+            $controle->set_linha(1);
+            $controle->set_col(6);
+            $controle->set_valor($conteudo["processoComissaoSei"]);
+            $controle->set_title('O processo Sei da comissão de fiscalização');
+            $form->add_item($controle);
+
+            /*
+             *  processo físico
+             */
+            $controle = new Input('processoComissao', 'texto', 'Processo Físico:', 1);
+            $controle->set_size(50);
+            $controle->set_linha(1);
+            $controle->set_col(6);
+            $controle->set_valor($conteudo["processoComissao"]);
+            $controle->set_title('O processo Físico da comissão de fiscalização');
+            $form->add_item($controle);
+
+            /*
+             *  submit
+             */
+            $controle = new Input('submit', 'submit');
+            $controle->set_valor('Entrar');
+            $controle->set_linha(3);
+            $controle->set_tabIndex(3);
+            $controle->set_accessKey('E');
+            $form->add_item($controle);
+
+            $form->show();
+            $painel->fecha();
+            break;
+
         ##################################################################
+
+        case "valida":
+
+            # Pega os dados digitados
+            $processoComissaoSei = post("processoComissaoSei");
+            $processoComissao    = post("processoComissao");
+            
+            # Pega os valores anteriores
+            $conteudo = $contrato->get_dados($idContrato);
+
+            # Grava os valores
+            $objeto = new Contratos();
+            $objeto->set_tabela("tbcontrato");
+            $objeto->set_idCampo("idContrato");
+            $objeto->gravar(
+                    ["processoComissaoSei", "processoComissao"],
+                    [$processoComissaoSei, $processoComissao],
+                    $idContrato);
+
+            # Registra o log
+            $intra     = new Intra();
+            $data      = date("Y-m-d H:i:s");
+            $atividade = "Alterou: ";
+            $alterou   = false;
+
+            if ($conteudo["processoComissaoSei"] <> $processoComissaoSei) {
+                $atividade .= "[processoComissaoSei] {$conteudo["processoComissaoSei"]} -> {$processoComissaoSei}; ";
+                $alterou   = true;
+            }
+
+            if ($conteudo["processoComissao"] <> $processoComissao) {
+                $atividade .= "[processoComissao] {$conteudo["processoComissao"]} -> {$processoComissao}; ";
+                $alterou   = true;
+            }
+
+            if ($alterou) {
+                $intra->registraLog($idUsuario,
+                                    $data,
+                                    $atividade,
+                                    "tbcontrato",
+                                    $idContrato,
+                                    2);
+            }
+            loadPage("?");
+            break;
     }
 
     $page->terminaPagina();

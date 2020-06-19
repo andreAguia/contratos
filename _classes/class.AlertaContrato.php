@@ -70,12 +70,17 @@ class AlertaContrato
         $conteudo = $contratos->select($select, false);
 
         $numero = $conteudo[0];
+        
+        # Verifica se tem / em numero
+        $posicao = mb_strpos($numero, "/");
+        
+        if($posicao !== false){
+            if(!empty($conteudo[1])){
+                $partes = explode("/",$numero);
 
-        if(!empty($conteudo[1])){
-            $partes = explode("/",$numero);
-
-            if($conteudo[1] <> $partes[1]){
-                $erro[] = "O ano de assinatura ({$conteudo[1]}) está diferente do ano do número do contrato ({$partes[1]})!! Favor alterar!";
+                if($conteudo[1] <> $partes[1]){
+                    $erro[] = "O ano de assinatura ({$conteudo[1]}) está diferente do ano do número do contrato ({$partes[1]})!! Favor alterar!";
+                }
             }
         }
         

@@ -235,17 +235,12 @@ class Contrato
         $prazo     = $conteudo["prazo"];
         $tipoPrazo = $conteudo["tipoPrazo"];
         $inicio    = date_to_php($conteudo["dtInicial"]);
+        $vigencia = $this->getVigencia($idContrato);
 
         if ($tipoPrazo == 1) {
-            $prazo2   = " dias";
-            $vigencia = addDias($inicio, $prazo);
-            $prazo    .= $prazo2;
-            $vigencia .= " ({$prazo})";
+            $vigencia = "{$vigencia} ({$prazo} dias)";
         } elseif ($tipoPrazo == 2) {
-            $prazo2   = " meses";
-            $vigencia = addMeses($inicio, $prazo);
-            $prazo    .= $prazo2;
-            $vigencia .= " ({$prazo})";
+            $vigencia = "{$vigencia} ({$prazo} meses)";
         }
 
         # Publicação
@@ -320,21 +315,19 @@ class Contrato
         }
         $grid->fechaGrid();
 
+        # Editar    
         $div = new Div("divEdita1");
         $div->abre();
 
-        # Editar
         $div = new Div("divEdita2");
         $div->abre();
 
-        # Editar
         $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$idContrato}");
         $botaoEditar->set_class('tiny button secondary');
         $botaoEditar->set_title('Editar contrato');
         $botaoEditar->show();
 
         $div->fecha();
-
         $div->fecha();
 
         $painel->fecha();
@@ -346,7 +339,7 @@ class Contrato
      * Método exibeDadosConcurso
      * fornece os dados de uma vaga em forma de tabela
      *
-     * @param    string $idVaga O id da vaga
+     * @param    string $idContrato O id da vaga
      */
     public function exibeResumoDados($idContrato)
     {
@@ -390,7 +383,7 @@ class Contrato
 
     ###########################################################
 
-    public function get_periodo($idContrato)
+    public function exibePeriodo($idContrato)
     {
 
         # Joga o valor informado para a variável da classe
@@ -409,14 +402,43 @@ class Contrato
 
         if ($tipoPrazo == 1) {
             $tipo    = "Dias";
-            $dtFinal = addDias($dtInicial, $prazo);
+            $dtFinal = $this->getVigencia($idContrato);
         } else {
             $tipo    = "Meses";
-            $dtFinal = addMeses($dtInicial, $prazo);
+            $dtFinal = $this->getVigencia($idContrato);
         }
         $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
 
         return $retorno;
+    }
+
+    ###########################################################
+
+    public function getVigencia($idContrato)
+    {
+
+        # Joga o valor informado para a variável da classe
+        if (!vazio($idContrato)) {
+            $this->idContrato = $idContrato;
+        }
+
+        $conteudo = $this->get_dados($idContrato);
+
+        $dtInicial = date_to_php($conteudo["dtInicial"]);
+        $prazo     = $conteudo["prazo"];
+        $tipoPrazo = $conteudo["tipoPrazo"];
+
+        $tipo    = null;
+        $dtFinal = null;
+
+        if ($tipoPrazo == 1) {
+            $dtFinal = addDias($dtInicial, $prazo);
+        } else {
+            $dtFinal = addMeses($dtInicial, $prazo);
+            $dtFinal = addDias($dtFinal, -1, false);      // retira 1 dia
+        }
+
+        return $dtFinal;
     }
 
     ###########################################################
@@ -504,10 +526,17 @@ class Contrato
         if (empty($numero["numero"])) {
             $retorno = "001/" . date('Y');
         } else {
-            $itens    = explode("/", $numero["numero"]);
-            $itens[0]++;
-            $itens[0] = str_pad($itens[0], 3, '0', STR_PAD_LEFT);
-            $retorno  = "$itens[0]/$itens[1]";
+            # Verifica se tem / em numero
+            $posicao = mb_strpos($numero["numero"], "/");
+
+            if ($posicao !== false) {
+                $itens    = explode("/", $numero["numero"]);
+                $itens[0]++;
+                $itens[0] = str_pad($itens[0], 3, '0', STR_PAD_LEFT);
+                $retorno  = "$itens[0]/$itens[1]";
+            } else {
+                $retorno = null;
+            }
         }
 
         return $retorno;
