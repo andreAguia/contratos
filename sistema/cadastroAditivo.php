@@ -60,7 +60,7 @@ if ($acesso) {
                                      idAditivo
                                 FROM tbaditivo
                                WHERE idContrato = {$idContrato}
-                            ORDER BY dtInicial");
+                            ORDER BY dtAssinatura");
 
     # select do edita
     $objeto->set_selectEdita('SELECT objeto, 

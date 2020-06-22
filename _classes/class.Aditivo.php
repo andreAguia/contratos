@@ -58,9 +58,9 @@ class Aditivo
                      FROM tbaditivo
                     WHERE idContrato = ' . $idContrato;
 
-        if($contratos->count($select) > 0){
+        if ($contratos->count($select) > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -81,7 +81,7 @@ class Aditivo
             alert("É necessário informar o id do Contrato.");
             return;
         }
-        
+
         # monta o select
         $select = "SELECT *
                      FROM tbaditivo
@@ -126,21 +126,26 @@ class Aditivo
 
         $conteudo = $this->get_dados($idAditivo);
 
-        $dtInicial = date_to_php($conteudo["dtInicial"]);
-        $prazo     = $conteudo["prazo"];
-        $tipoPrazo = $conteudo["tipoPrazo"];
+        if (!empty($conteudo["dtInicial"])) {
 
-        $tipo    = null;
-        $dtFinal = null;
+            $dtInicial = date_to_php($conteudo["dtInicial"]);
+            $prazo     = $conteudo["prazo"];
+            $tipoPrazo = $conteudo["tipoPrazo"];
 
-        if ($tipoPrazo == 1) {
-            $tipo    = "Dias";
-            $dtFinal = addDias($dtInicial, $prazo);
+            $tipo    = null;
+            $dtFinal = null;
+
+            if ($tipoPrazo == 1) {
+                $tipo    = "Dias";
+                $dtFinal = addDias($dtInicial, $prazo);
+            } else {
+                $tipo    = "Meses";
+                $dtFinal = addMeses($dtInicial, $prazo);
+            }
+            $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
         } else {
-            $tipo    = "Meses";
-            $dtFinal = addMeses($dtInicial, $prazo);
+            $retorno = null;
         }
-        $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
 
         return $retorno;
     }
@@ -200,7 +205,7 @@ class Aditivo
     {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-        
+
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -222,12 +227,12 @@ class Aditivo
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_titulo("Termo(s) Aditivo(s)");
-        $tabela->set_label(array("Objetivo","Publicação", "Assinatura","Duração","Garantia"));
+        $tabela->set_label(array("Objetivo", "Publicação", "Assinatura", "Duração", "Garantia"));
         $tabela->set_align(array("left", "center"));
-        $tabela->set_width(array(30,15,15,15,25));
-        $tabela->set_classe(array(null,"Aditivo",null,"Aditivo","Aditivo"));
-        $tabela->set_metodo(array(null,"get_publicacao",null,"get_periodo","get_garantia"));
-        $tabela->set_funcao(array(null,null,"date_to_php"));
+        $tabela->set_width(array(30, 15, 15, 15, 25));
+        $tabela->set_classe(array(null, "Aditivo", null, "Aditivo", "Aditivo"));
+        $tabela->set_metodo(array(null, "get_publicacao", null, "get_periodo", "get_garantia"));
+        $tabela->set_funcao(array(null, null, "date_to_php"));
         $tabela->set_numeroOrdem(true);
         $tabela->set_conteudo($row);
         #$tabela->set_formatacaoCondicional($formatacaoCondicional);
@@ -249,7 +254,7 @@ class Aditivo
         $div->fecha();
         $div->fecha();
     }
-    
+
     ###########################################################
 
     public function getVigencia($idAditivo)
@@ -281,7 +286,5 @@ class Aditivo
     }
 
     ###########################################################
-
-
 #####################################################################################
 }
