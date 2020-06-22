@@ -137,12 +137,13 @@ class Aditivo
 
             if ($tipoPrazo == 1) {
                 $tipo    = "Dias";
-                $dtFinal = addDias($dtInicial, $prazo);
+                $dtFinal = $this->getVigencia($idContrato);
             } else {
                 $tipo    = "Meses";
-                $dtFinal = addMeses($dtInicial, $prazo);
+                $dtFinal = $this->getVigencia($idContrato);
             }
             $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
+            
         } else {
             $retorno = null;
         }
