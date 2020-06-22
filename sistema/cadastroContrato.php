@@ -60,17 +60,17 @@ if ($acesso) {
     $objeto->set_voltarLista('areaInicial.php');
 
     # select da lista
-    $select = "SELECT CONCAT(numero,'<br/>',modalidade,'<br/>',status),
-                                     objeto,
-                                     idEmpresa,
-                                     idContrato,
-                                     idContrato,
-                                     idContrato,
-                                     idContrato
-                                FROM tbcontrato JOIN tbmodalidade USING (idModalidade)
-                                                JOIN tbstatus USING (idStatus)
-                                                JOIN tbempresa USING (idEmpresa)
-                               WHERE true";
+    $select = "SELECT idContrato,
+                      objeto,
+                      idEmpresa,
+                      idContrato,
+                      idContrato,
+                      idContrato,
+                      idContrato
+                 FROM tbcontrato JOIN tbmodalidade USING (idModalidade)
+                                 JOIN tbstatus USING (idStatus)
+                                 JOIN tbempresa USING (idEmpresa)
+                WHERE true";
 
     if (!empty($parametroEmpresa)) {
         $select .= " AND idEmpresa = {$parametroEmpresa}";
@@ -122,8 +122,8 @@ if ($acesso) {
     $objeto->set_linkListar("areaContrato.php");
 
     $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Prazo", "Situação", "Acessar"));
-    $objeto->set_classe(array(null, null, "Empresa", "Contrato", "Contrato", "Situacao"));
-    $objeto->set_metodo(array(null, null, "get_empresaCnpj", "get_processo", "exibePeriodo", "get_situacaoAtual"));
+    $objeto->set_classe(array("Contrato", null, "Empresa", "Contrato", "Contrato", "Situacao"));
+    $objeto->set_metodo(array("exibeNumeroContrato", null, "get_empresaCnpj", "get_processo", "exibePeriodo", "get_situacaoAtual"));
     $objeto->set_width(array(10, 20, 20, 20, 10, 20));
     $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
 

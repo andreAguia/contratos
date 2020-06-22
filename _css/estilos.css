@@ -28,6 +28,14 @@ p#contratoItem{
     margin: 0px;
 }
 
+p#contratoNumero{
+    font-size: 16px;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    color: blue;
+}
+
 p#situacaoData{
     font-size: 9px;
     text-align: right;

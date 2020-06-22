@@ -159,9 +159,6 @@ class Contrato
 
         $conteudo = $this->get_dados($idContrato);
 
-        $painel = new Callout("primary");
-        $painel->abre();
-
         $numero       = $conteudo["numero"];
         $idModalidade = $conteudo["idModalidade"];
         $status       = $this->get_status($idContrato);
@@ -172,10 +169,7 @@ class Contrato
 
         p($numero, "contratoNumero");
         p($modalidade, "contratoItem");
-        br();
-        p("Contrato {$status}", "status{$status}");
-
-        $painel->fecha();
+        p($status, "status{$status}");
     }
 
     ###########################################################
@@ -235,7 +229,7 @@ class Contrato
         $prazo     = $conteudo["prazo"];
         $tipoPrazo = $conteudo["tipoPrazo"];
         $inicio    = date_to_php($conteudo["dtInicial"]);
-        $vigencia = $this->getVigencia($idContrato);
+        $vigencia  = $this->getVigencia($idContrato);
 
         if ($tipoPrazo == 1) {
             $vigencia = "{$vigencia} ({$prazo} dias)";
@@ -345,7 +339,7 @@ class Contrato
     {
 
         $conteudo  = $this->get_dados($idContrato);
-        $numero    = $conteudo["numero"];
+        $numero    = "<p id='contratoNumero'>{$conteudo["numero"]}</p>";
         $objeto    = $conteudo["objeto"];
         $idEmpresa = $conteudo["idEmpresa"];
         $processo  = $this->get_processo($idContrato);
@@ -393,6 +387,7 @@ class Contrato
 
         $conteudo = $this->get_dados($idContrato);
 
+        # Período do contrato inicial
         $dtInicial = date_to_php($conteudo["dtInicial"]);
         $prazo     = $conteudo["prazo"];
         $tipoPrazo = $conteudo["tipoPrazo"];
@@ -408,6 +403,31 @@ class Contrato
             $dtFinal = $this->getVigencia($idContrato);
         }
         $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
+
+        # Verifica se tem aditivo
+        $aditivo = new Aditivo();
+
+        if ($aditivo->temAditivo($idContrato)) {
+            $itemAditivo = $aditivo->getAditivosContrato($idContrato);
+
+            # Percorre os aditivos
+            foreach ($itemAditivo as $item) {
+                $dtInicial = date_to_php($item["dtInicial"]);
+                $prazo     = $item["prazo"];
+                $tipoPrazo = $item["tipoPrazo"];
+
+                if ($tipoPrazo == 1) {
+                    $tipo    = "Dias";
+                    $dtFinal = $aditivo->getVigencia($idContrato);
+                } else {
+                    $tipo    = "Meses";
+                    $dtFinal = $aditivo->getVigencia($idContrato);
+                }
+                
+                $retorno .= "<br/><br/>{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
+            }
+        }
+
 
         return $retorno;
     }

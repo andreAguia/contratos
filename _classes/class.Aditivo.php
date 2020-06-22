@@ -39,6 +39,58 @@ class Aditivo
         return $contratos->select($select, false);
     }
 
+##############################################################
+
+    public function temAditivo($idContrato = null)
+    {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Pega os dados
+        $select = 'SELECT * 
+                     FROM tbaditivo
+                    WHERE idContrato = ' . $idContrato;
+
+        if($contratos->count($select) > 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+##############################################################
+    /*
+     * var $idAditivo integer id do Contrato
+     */
+
+    public function getAditivosContrato($idContrato = null)
+    {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+        
+        # monta o select
+        $select = "SELECT *
+                     FROM tbaditivo
+                    WHERE idContrato = {$idContrato}
+                 ORDER BY dtInicial";
+
+        return $contratos->select($select);
+    }
+
 ###########################################################
 
     public function get_publicacao($idAditivo = null)
@@ -148,6 +200,12 @@ class Aditivo
     {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
+        
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
 
         # monta o select
         $select = "SELECT objeto,
@@ -191,6 +249,39 @@ class Aditivo
         $div->fecha();
         $div->fecha();
     }
+    
+    ###########################################################
+
+    public function getVigencia($idAditivo)
+    {
+
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+
+        $conteudo = $this->get_dados($idAditivo);
+
+        $dtInicial = date_to_php($conteudo["dtInicial"]);
+        $prazo     = $conteudo["prazo"];
+        $tipoPrazo = $conteudo["tipoPrazo"];
+
+        $tipo    = null;
+        $dtFinal = null;
+
+        if ($tipoPrazo == 1) {
+            $dtFinal = addDias($dtInicial, $prazo);
+        } else {
+            $dtFinal = addMeses($dtInicial, $prazo);
+            $dtFinal = addDias($dtFinal, -1, false);      // retira 1 dia
+        }
+
+        return $dtFinal;
+    }
+
+    ###########################################################
+
 
 #####################################################################################
 }

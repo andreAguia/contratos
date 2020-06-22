@@ -176,7 +176,7 @@ class Empresa
         $retorno = plm($dados["razaoSocial"]);
 
         if (!empty($dados["cnpj"])) {
-            $retorno .= "<br/> CNPJ: {$dados["cnpj"]}";
+            $retorno .= "<br/><p id='f10'> CNPJ: {$dados["cnpj"]}</p>";
         }
 
         return $retorno;
