@@ -50,6 +50,7 @@ define("PASTA_ESTILOS_GERAIS", "../../_framework/_cssGerais/");      # Estilos G
 define("PASTA_ESTILOS", "../_css/");                                 # Estilos Específicos
 # Arquivos
 define("PASTA_FOTOS", "../../_arquivos/fotos/");                     # Fotos dos Servidores
+define("PASTA_DOCUMENTOS", "../../_arquivos/documentos/");           # Documentos da Comissão de fiscalização
 # Tags aceitas em campos com htmlTag = true
 define('TAGS', '<p></p><a></a><br/><br><div></div><table></table><tr></tr><td></td><th></th><strong></strong><em></em><u></u><sub></sub><sup></sup><ol></ol><li></li><ul></ul><hr><span></span><h3></h3>');
 

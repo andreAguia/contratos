@@ -526,7 +526,8 @@ class Comissao
 
         $botao = new BotaoGrafico();
         $botao->set_label('Formulário');
-        $botao->set_url('#');
+        $botao->set_url(PASTA_DOCUMENTOS.'2.pdf');
+        $botao->set_target("_blank");
         $botao->set_imagem(PASTA_FIGURAS . 'formulario.png', $tamanhoImage, $tamanhoImage);
         $botao->set_title('Legislação referente a comissão de fiscalização');
         $menu->add_item($botao);
