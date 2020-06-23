@@ -2,6 +2,7 @@
 
 class Contrato
 {
+
     /**
      * Abriga as várias rotina referentes a concurso
      *
@@ -9,8 +10,6 @@ class Contrato
      *
      * @var private $idConcurso integer null O id do concurso
      */
-    private $idContrato    = null;
-    private $permiteEditar = true;
 ##############################################################
 
     public function __construct($idContrato = null)
@@ -27,44 +26,7 @@ class Contrato
 
 ##############################################################
 
-    public function get_dados($idContrato = null)
-    {
-
-        /**
-         * Informa os dados da base de dados
-         *
-         * @param $idConcurso integer null O id do concurso
-         *
-         * @syntax $concurso->get_dados([$idConcurso]);
-         */
-        # Joga o valor informado para a variável da classe
-        if (!vazio($idContrato)) {
-            $this->idContrato = $idContrato;
-        }
-
-        # Conecta ao Banco de Dados
-        $contratos = new Contratos();
-
-        # Verifica se foi informado
-        if (vazio($this->idContrato)) {
-            alert("É necessário informar o id do Contrato.");
-            return;
-        }
-
-        # Pega os dados
-        $select = 'SELECT *
-                     FROM tbcontrato
-                    WHERE idContrato = ' . $this->idContrato;
-
-        $row = $contratos->select($select, false);
-
-        # Retorno
-        return $row;
-    }
-
-    ##############################################################
-
-    public function get_processo($idContrato = null, $br = true)
+    public function getDados($idContrato = null)
     {
 
         /**
@@ -80,7 +42,39 @@ class Contrato
             return;
         }
 
-        $conteudo = $this->get_dados($idContrato);
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Pega os dados
+        $select = "SELECT *
+                     FROM tbcontrato
+                    WHERE idContrato = {$idContrato}";
+
+        $row = $contratos->select($select, false);
+
+        # Retorno
+        return $row;
+    }
+
+    ##############################################################
+
+    public function getProcesso($idContrato = null, $br = true)
+    {
+
+        /**
+         * Informa os dados da base de dados
+         *
+         * @param $idConcurso integer null O id do concurso
+         *
+         * @syntax $concurso->get_dados([$idConcurso]);
+         */
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
 
         $processo = null;
 
@@ -152,16 +146,17 @@ class Contrato
 
     public function exibeNumeroContrato($idContrato)
     {
-        # Joga o valor informado para a variável da classe
-        if (!vazio($idContrato)) {
-            $this->idContrato = $idContrato;
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
         }
 
-        $conteudo = $this->get_dados($idContrato);
+        $conteudo = $this->getDados($idContrato);
 
         $numero       = $conteudo["numero"];
         $idModalidade = $conteudo["idModalidade"];
-        $status       = $this->get_status($idContrato);
+        $status       = $this->getStatus($idContrato);
 
         $mm         = new Modalidade();
         $mmDados    = $mm->get_dados($idModalidade);
@@ -176,8 +171,13 @@ class Contrato
 
     public function exibeStatus($idContrato)
     {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
 
-        $status = $this->get_status($idContrato);
+        $status = $this->getStatus($idContrato);
 
         if ($status == "Ativo") {
             $painel = new Callout("success");
@@ -208,20 +208,21 @@ class Contrato
     public function exibeDadosContrato($idContrato)
     {
 
-        # Joga o valor informado para a variável da classe
-        if (!vazio($idContrato)) {
-            $this->idContrato = $idContrato;
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
         }
 
-        $conteudo = $this->get_dados($idContrato);
+        $conteudo = $this->getDados($idContrato);
 
         $painel = new Callout("secondary");
         $painel->abre();
 
         # Pega os valores
-        $modalidade = $this->get_modalidade($idContrato);
-        $status     = $this->get_status($idContrato);
-        $processo   = $this->get_processo($idContrato, false);
+        $modalidade = $this->getModalidade($idContrato);
+        $status     = $this->getStatus($idContrato);
+        $processo   = $this->getProcesso($idContrato, false);
         $assinatura = date_to_php($conteudo["dtAssinatura"]);
         $obs        = $conteudo["obs"];
 
@@ -337,15 +338,20 @@ class Contrato
      */
     public function exibeResumoDados($idContrato)
     {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
 
-        $conteudo  = $this->get_dados($idContrato);
+        $conteudo  = $this->getDados($idContrato);
         $numero    = "<p id='contratoNumero'>{$conteudo["numero"]}</p>";
         $objeto    = $conteudo["objeto"];
         $idEmpresa = $conteudo["idEmpresa"];
-        $processo  = $this->get_processo($idContrato);
+        $processo  = $this->getProcesso($idContrato);
 
         $bdempresa = new Empresa();
-        $dados     = $bdempresa->get_dados($idEmpresa);
+        $dados     = $bdempresa->getDados($idEmpresa);
         $empresa   = $dados["razaoSocial"];
         $cnpj      = $dados["cnpj"];
 
@@ -377,57 +383,78 @@ class Contrato
 
     ###########################################################
 
-    public function exibePeriodo($idContrato)
+    public function exibeTempoEVigencia($idContrato)
     {
+        # Tempo Total
+        $tempo = $this->getTempoTotal($idContrato);
 
-        # Joga o valor informado para a variável da classe
-        if (!vazio($idContrato)) {
-            $this->idContrato = $idContrato;
+        # Vigencia Total
+        $vigencia = $this->getVigenciaTotal($idContrato);
+
+        # Diferença em dias
+        if (!jaPassou($vigencia)) {
+            $diferenca = abs(dataDif($vigencia));
         }
 
-        $conteudo = $this->get_dados($idContrato);
+        if ($tempo["meses"] >= 60) {
+            p("{$tempo["meses"]} Meses", "pTempoTotal60");
+        } else {
+            p("{$tempo["meses"]} Meses", "pTempoTotal");
+        }
 
-        # Período do contrato inicial
-        $dtInicial = date_to_php($conteudo["dtInicial"]);
+        p($vigencia, "pVigencia");
+        if (!jaPassou($vigencia)) {
+            p("({$diferenca} dias)", "pVigencia");
+        }
+    }
+
+    ###########################################################
+    /*
+     * Retorna array com os meses e dias do tempo do contrato
+     */
+
+    public function getTempoTotal($idContrato)
+    {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Inicia as variáveis de retorno
+        $prazoDias  = 0;
+        $prazoMeses = 0;
+
+        # Pega o tempo do contrato
+        $conteudo  = $this->getDados($idContrato);
         $prazo     = $conteudo["prazo"];
         $tipoPrazo = $conteudo["tipoPrazo"];
 
-        $tipo    = null;
-        $dtFinal = null;
-
-        if ($tipoPrazo == 1) {
-            $tipo    = "Dias";
-            $dtFinal = $this->getVigencia($idContrato);
+        if ($tipoPrazo == 2) {
+            $prazoMeses += $prazo;
         } else {
-            $tipo    = "Meses";
-            $dtFinal = $this->getVigencia($idContrato);
+            $prazoDias += $prazo;
         }
-        $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
 
-        # Verifica se tem aditivo
+        # Verifica se tem aditivo e pega os tempo de cada um deles
         $aditivo = new Aditivo();
-
         if ($aditivo->temAditivo($idContrato)) {
-            $itemAditivo = $aditivo->getAditivosContrato($idContrato);
+            $arrayAditivo = $aditivo->getAditivosContrato($idContrato);
 
-            # Percorre os aditivos
-            foreach ($itemAditivo as $item) {
-                $dtInicial = date_to_php($item["dtInicial"]);
-                $prazo     = $item["prazo"];
-                $tipoPrazo = $item["tipoPrazo"];
-
-                if ($tipoPrazo == 1) {
-                    $tipo    = "Dias";
-                    $dtFinal = $aditivo->getVigencia($idContrato);
+            # Percorre o array
+            foreach ($arrayAditivo as $itemAditivo) {
+                if ($itemAditivo["tipoPrazo"] == 2) {
+                    $prazoMeses += $itemAditivo["prazo"];
                 } else {
-                    $tipo    = "Meses";
-                    $dtFinal = $aditivo->getVigencia($idContrato);
+                    $prazoDias += $itemAditivo["prazo"];
                 }
-                
-                $retorno .= "<br/><br/>{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
             }
         }
 
+        $retorno = [
+            "dias"  => $prazoDias,
+            "meses" => $prazoMeses,
+        ];
 
         return $retorno;
     }
@@ -437,33 +464,60 @@ class Contrato
     public function getVigencia($idContrato)
     {
 
-        # Joga o valor informado para a variável da classe
-        if (!vazio($idContrato)) {
-            $this->idContrato = $idContrato;
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
         }
 
-        $conteudo = $this->get_dados($idContrato);
+        $conteudo = $this->getDados($idContrato);
 
         $dtInicial = date_to_php($conteudo["dtInicial"]);
         $prazo     = $conteudo["prazo"];
         $tipoPrazo = $conteudo["tipoPrazo"];
 
-        $tipo    = null;
-        $dtFinal = null;
+        $tipo       = null;
+        $dtVigencia = null;
 
+        # trata pelo tipo de prazo
         if ($tipoPrazo == 1) {
-            $dtFinal = addDias($dtInicial, $prazo);
+            $dtVigencia = addDias($dtInicial, $prazo);
         } else {
-            $dtFinal = addMeses($dtInicial, $prazo);
-            $dtFinal = addDias($dtFinal, -1, false);      // retira 1 dia
+            $dtVigencia = addMeses($dtInicial, $prazo);
+            $dtVigencia = addDias($dtVigencia, -1, false);      // retira 1 dia
         }
 
-        return $dtFinal;
+        return $dtVigencia;
+    }
+
+    ###########################################################
+    /*
+     * Informa a vigência geral do contrato
+     */
+
+    public function getVigenciaTotal($idContrato)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Verifica se tem aditivo e pega os tempo de cada um deles
+        $aditivo = new Aditivo();
+        if ($aditivo->temAditivo($idContrato)) {
+            $dados = $aditivo->getDadosUltimoAditivo($idContrato);
+
+            return $aditivo->getVigencia($dados["idAditivo"]);
+        } else {
+            return $this->getVigencia($idContrato);
+        }
     }
 
     ###########################################################
 
-    public function get_numero($idContrato)
+    public function getNumero($idContrato)
     {
 
         # Joga o valor informado para a variável da classe
@@ -471,14 +525,14 @@ class Contrato
             $this->idContrato = $idContrato;
         }
 
-        $conteudo = $this->get_dados($idContrato);
+        $conteudo = $this->getDados($idContrato);
 
         return $conteudo["numero"];
     }
 
     ##############################################################
 
-    public function get_status($idContrato = null)
+    public function getStatus($idContrato = null)
     {
 
         # Verifica se foi informado
@@ -490,7 +544,7 @@ class Contrato
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
-        $conteudo = $this->get_dados($idContrato);
+        $conteudo = $this->getDados($idContrato);
         $idStatus = $conteudo["idStatus"];
 
         # monta o select
@@ -505,7 +559,7 @@ class Contrato
 
     ##############################################################
 
-    public function get_modalidade($idContrato = null)
+    public function getModalidade($idContrato = null)
     {
 
         # Verifica se foi informado
@@ -517,7 +571,7 @@ class Contrato
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
-        $conteudo     = $this->get_dados($idContrato);
+        $conteudo     = $this->getDados($idContrato);
         $idModalidade = $conteudo["idModalidade"];
 
         # monta o select
@@ -532,13 +586,14 @@ class Contrato
 
     #####################################################################################
 
-    public function get_novoNumero()
+    public function getNovoNumeroProcesso()
     {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
         $select = "SELECT numero
                      FROM tbcontrato
+                    WHERE INSTR(numero,'/')
                  ORDER BY numero desc LIMIT 1";
 
         $numero = $contratos->select($select, false);
@@ -553,9 +608,17 @@ class Contrato
                 $itens    = explode("/", $numero["numero"]);
                 $itens[0]++;
                 $itens[0] = str_pad($itens[0], 3, '0', STR_PAD_LEFT);
-                $retorno  = "$itens[0]/$itens[1]";
+                
+                # Verifica se o ano do ultimo lançamento é o ano atual
+                if($itens[1] == date('Y')){
+                    $retorno  = "$itens[0]/".date('Y');
+                }else{
+                    $retorno  = "001/".date('Y');
+                }
+                
             } else {
                 $retorno = null;
+                
             }
         }
 
@@ -567,7 +630,7 @@ class Contrato
     public function exibeValorTotal($idContrato = null)
     {
         # Pega o valor do contrato
-        $conteudo = $this->get_dados($idContrato);
+        $conteudo = $this->getDados($idContrato);
 
         # Inicia as variáveis
         $valorTotal       = 0;

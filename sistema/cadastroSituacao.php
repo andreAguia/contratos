@@ -107,9 +107,9 @@ if ($acesso) {
             'nome'      => 'data',
             'label'     => 'Data:',
             'tipo'      => 'date',
-            'autofocus' => true,
             'required'  => true,
             'col'       => 3,
+            'padrao'    => date("Y-m-d"),
             'size'      => 15),
         array(
             "linha"    => 1,
@@ -117,6 +117,7 @@ if ($acesso) {
             "nome"     => "situacao",
             "label"    => "Situacao:",
             'required' => true,
+            'autofocus' => true,
             "tipo"     => "texto",
             "size"     => 250),
         array(

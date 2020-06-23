@@ -111,7 +111,7 @@ if ($acesso) {
     $objeto->set_width(array(30, 15, 15, 20, 5));
     $objeto->set_align(array("left", "left", "left", "left"));
     $objeto->set_classe(array("Empresa", "Empresa", "Empresa", "Empresa", "Empresa"));
-    $objeto->set_metodo(array("get_empresaCnpj", "get_telefones", "get_emails", "get_contatos", "get_numContratos"));
+    $objeto->set_metodo(array("getEmpresaCnpj", "getTelefones", "getEmails", "getContatos", "getNumContratos"));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -256,7 +256,7 @@ if ($acesso) {
 
         case "excluir":
             # Verifica se tem contrato com essa modalidade
-            $numContratos = $empresa->get_numContratos($id);
+            $numContratos = $empresa->getNumContratos($id);
 
             if ($numContratos > 0) {
                 alert("Existem contratos cadastrados com esta empresa. Dessa forma a mesma NÃO poderá ser excluída.");

@@ -2,7 +2,6 @@
 
 class Empresa
 {
-
     /**
      * Abriga as várias rotina referentes a concurso
      *
@@ -12,6 +11,7 @@ class Empresa
      */
     private $idEmpresa = null;
 ##############################################################
+
     public function __construct($idEmpresa = null)
     {
         /**
@@ -25,7 +25,8 @@ class Empresa
     }
 
 ##############################################################
-    public function get_dados($idEmpresa = null)
+
+    public function getDados($idEmpresa = null)
     {
 
         /**
@@ -61,7 +62,8 @@ class Empresa
     }
 
     #####################################################################################
-    public function get_razaoSocial($idEmpresa)
+
+    public function getRazaoSocial($idEmpresa)
     {
 
         # Joga o valor informado para a variável da classe
@@ -90,14 +92,15 @@ class Empresa
     }
 
     ##########################################################################################
-    public function get_telefones($idEmpresa)
+
+    public function getTelefones($idEmpresa)
     {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
         # Parâmetro: id do servidor
 
-        $dados = $this->get_dados($idEmpresa);
+        $dados   = $this->getDados($idEmpresa);
         $retorno = null;
 
         if (!empty($dados["telefone1"])) {
@@ -116,14 +119,15 @@ class Empresa
     }
 
     ##########################################################################################
-    public function get_emails($idEmpresa)
+
+    public function getEmails($idEmpresa)
     {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
         # Parâmetro: id do servidor
 
-        $dados = $this->get_dados($idEmpresa);
+        $dados   = $this->getDados($idEmpresa);
         $retorno = null;
 
         if (!empty($dados["email1"])) {
@@ -142,14 +146,15 @@ class Empresa
     }
 
     ##########################################################################################
-    public function get_contatos($idEmpresa)
+
+    public function getContatos($idEmpresa)
     {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
         # Parâmetro: id do servidor
 
-        $dados = $this->get_dados($idEmpresa);
+        $dados   = $this->getDados($idEmpresa);
         $retorno = null;
 
         if (!empty($dados["contato"])) {
@@ -164,14 +169,15 @@ class Empresa
     }
 
     ##########################################################################################
-    public function get_empresaCnpj($idEmpresa)
+
+    public function getEmpresaCnpj($idEmpresa)
     {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
         # Parâmetro: id do servidor
 
-        $dados = $this->get_dados($idEmpresa);
+        $dados = $this->getDados($idEmpresa);
 
         $retorno = plm($dados["razaoSocial"]);
 
@@ -183,10 +189,11 @@ class Empresa
     }
 
     ##########################################################################################
-    public function get_endereco($idEmpresa)
+
+    public function getEndereco($idEmpresa)
     {
 
-        $dados = $this->get_dados($idEmpresa);
+        $dados = $this->getDados($idEmpresa);
 
         if (!empty($dados["endereco"])) {
             return "{$dados["endereco"]}<br/>{$dados["bairro"]}<br/>{$dados["cep"]}";
@@ -196,20 +203,15 @@ class Empresa
     }
 
     ###########################################################
-    /**
-     * Método exibeDadosConcurso
-     * fornece os dados de uma vaga em forma de tabela
-     *
-     * @param	string $idVaga O id da vaga
-     */
+
     function exibeDados($idEmpresa)
     {
 
-        $conteudo = $this->get_dados($idEmpresa);
-        $email = $this->get_emails($idEmpresa);
-        $telefone = $this->get_telefones($idEmpresa);
-        $contatos = $this->get_contatos($idEmpresa);
-        $endereco = $this->get_endereco($idEmpresa);
+        $conteudo = $this->getDados($idEmpresa);
+        $email    = $this->getEmails($idEmpresa);
+        $telefone = $this->getTelefones($idEmpresa);
+        $contatos = $this->getContatos($idEmpresa);
+        $endereco = $this->getEndereco($idEmpresa);
 
         $painel = new Callout("primary");
         $painel->abre();
@@ -283,7 +285,7 @@ class Empresa
 
     ##############################################################
 
-    public function get_numContratos($idEmpresa = null)
+    public function getNumContratos($idEmpresa = null)
     {
         # Joga o valor informado para a variável da classe
         if (!vazio($idEmpresa)) {

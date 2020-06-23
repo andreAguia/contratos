@@ -19,7 +19,11 @@ class Aditivo
 
 ##############################################################
 
-    public function get_dados($idAditivo = null)
+    /*
+     * Informa todos os dados de um único aditivo
+     */
+
+    public function getDados($idAditivo = null)
     {
 
         # Conecta ao Banco de Dados
@@ -40,6 +44,10 @@ class Aditivo
     }
 
 ##############################################################
+
+    /*
+     * Informa se o contrato tem  ou não aditivo
+     */
 
     public function temAditivo($idContrato = null)
     {
@@ -66,8 +74,9 @@ class Aditivo
     }
 
 ##############################################################
+
     /*
-     * var $idAditivo integer id do Contrato
+     * retorna um array com os dados de todos os aditivos de um contrato
      */
 
     public function getAditivosContrato($idContrato = null)
@@ -92,8 +101,11 @@ class Aditivo
     }
 
 ###########################################################
+    /*
+     * Informa a data de publicação mais a página ( se tiver) de um aditivo
+     */
 
-    public function get_publicacao($idAditivo = null)
+    public function getPublicacao($idAditivo = null)
     {
 
         # Verifica se foi informado o id
@@ -102,7 +114,7 @@ class Aditivo
             return;
         }
 
-        $conteudo = $this->get_dados($idAditivo);
+        $conteudo = $this->getDados($idAditivo);
 
         # Publicação
         $dtPublicacao = $conteudo["dtPublicacao"];
@@ -116,7 +128,7 @@ class Aditivo
 
     ###########################################################
 
-    function get_periodo($idAditivo = null)
+    function getPeriodo($idAditivo = null)
     {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -124,7 +136,7 @@ class Aditivo
             return;
         }
 
-        $conteudo = $this->get_dados($idAditivo);
+        $conteudo = $this->getDados($idAditivo);
 
         if (!empty($conteudo["dtInicial"])) {
 
@@ -143,7 +155,6 @@ class Aditivo
                 $dtFinal = $this->getVigencia($idAditivo);
             }
             $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
-            
         } else {
             $retorno = null;
         }
@@ -153,7 +164,7 @@ class Aditivo
 
     ###########################################################
 
-    function get_valor($idAditivo = null)
+    function getValor($idAditivo = null)
     {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -161,7 +172,7 @@ class Aditivo
             return;
         }
 
-        $conteudo = $this->get_dados($idAditivo);
+        $conteudo = $this->getDados($idAditivo);
 
         # Valor
         if (!empty($conteudo["valor"])) {
@@ -175,7 +186,7 @@ class Aditivo
 
     ###########################################################
 
-    function get_garantia($idAditivo = null)
+    function getGarantia($idAditivo = null)
     {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -183,7 +194,7 @@ class Aditivo
             return;
         }
 
-        $conteudo = $this->get_dados($idAditivo);
+        $conteudo = $this->getDados($idAditivo);
 
         # Garantia
         if (!empty($conteudo["valor"])) {
@@ -201,6 +212,9 @@ class Aditivo
     }
 
     #####################################################################################
+    /*
+     * Lista os aditivos de um contraro
+     */
 
     public function listaAditivos($idContrato)
     {
@@ -221,7 +235,7 @@ class Aditivo
                           idAditivo
                      FROM tbaditivo
                     WHERE idContrato = {$idContrato}
-                 ORDER BY dtInicial";
+                 ORDER BY dtAssinatura";
 
         $row = $contratos->select($select);
 
@@ -232,7 +246,7 @@ class Aditivo
         $tabela->set_align(array("left", "center"));
         $tabela->set_width(array(30, 15, 15, 15, 25));
         $tabela->set_classe(array(null, "Aditivo", null, "Aditivo", "Aditivo"));
-        $tabela->set_metodo(array(null, "get_publicacao", null, "get_periodo", "get_garantia"));
+        $tabela->set_metodo(array(null, "getPublicacao", null, "getPeriodo", "getGarantia"));
         $tabela->set_funcao(array(null, null, "date_to_php"));
         $tabela->set_numeroOrdem(true);
         $tabela->set_conteudo($row);
@@ -267,7 +281,7 @@ class Aditivo
             return;
         }
 
-        $conteudo = $this->get_dados($idAditivo);
+        $conteudo = $this->getDados($idAditivo);
 
         $dtInicial = date_to_php($conteudo["dtInicial"]);
         $prazo     = $conteudo["prazo"];
@@ -285,6 +299,64 @@ class Aditivo
 
         return $dtFinal;
     }
-    
+
+    ##############################################################
+
+    /*
+     * Informa todos os dados do último aditivo
+     */
+
+    public function getDadosUltimoAditivo($idContrato = null)
+    {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # monta o select
+        $select = "SELECT *
+                     FROM tbaditivo
+                    WHERE idContrato = {$idContrato}
+                 ORDER BY dtInicial desc LIMIT 1";
+
+        return $contratos->select($select, false);
+    }
+
+##############################################################
+
+    /*
+     * Informa a data inicial de um aditivo considerando a data anterior
+     */
+
+    public function getDataInicialNovoAditivo($idContrato = null)
+    {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        if ($this->temAditivo($idContrato)) {
+            $dados    = $this->getDadosUltimoAditivo($idContrato);
+            $vigencia = $this->getVigencia($dados["idAditivo"]);
+            $return   = addDias($vigencia, 1, false);
+        } else {
+            $contrato = new Contrato();
+            $vigencia = $contrato->getVigencia($idContrato);
+            $return   = addDias($vigencia, 1, false);
+        }
+
+        return $return;
+    }
+
 #####################################################################################
 }

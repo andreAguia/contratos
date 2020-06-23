@@ -16,10 +16,10 @@ $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra = new Intra();
+    $intra     = new Intra();
     $contratos = new Contratos();
-    $contrato = new Contrato();
-    $pessoal = new Pessoal();
+    $contrato  = new Contrato();
+    $pessoal   = new Pessoal();
 
     # Verifica a fase do programa
     $fase = get('fase', 'listar');
@@ -31,10 +31,10 @@ if ($acesso) {
     set_session('sessionContrato', $id);
 
     # Pega os parâmetros
-    $parametroAno = post('parametroAno', get_session('parametroAno'));
-    $parametroStatus = post('parametroStatus', get_session('parametroStatus'));
+    $parametroAno        = post('parametroAno', get_session('parametroAno'));
+    $parametroStatus     = post('parametroStatus', get_session('parametroStatus'));
     $parametroModalidade = post('parametroModalidade', get_session('parametroModalidade'));
-    $parametroEmpresa = post('parametroEmpresa', get_session('parametroEmpresa'));
+    $parametroEmpresa    = post('parametroEmpresa', get_session('parametroEmpresa'));
 
     # Joga os parâmetros par as sessions
     set_session('parametroAno', $parametroAno);
@@ -98,14 +98,14 @@ if ($acesso) {
                                      siafe,
                                      idStatus,
                                      objeto,
+                                     dtAssinatura,
                                      idEmpresa,
                                      processoSei,
                                      processo,
                                      valor,
                                      garantia,
                                      dtPublicacao,
-                                     pgPublicacao,
-                                     dtAssinatura,
+                                     pgPublicacao,                                     
                                      dtInicial,
                                      prazo,
                                      tipoPrazo,
@@ -121,9 +121,9 @@ if ($acesso) {
     $objeto->set_voltarForm("areaContrato.php");
     $objeto->set_linkListar("areaContrato.php");
 
-    $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Prazo", "Situação", "Acessar"));
+    $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Tempo e Vigência", "Situação", "Acessar"));
     $objeto->set_classe(array("Contrato", null, "Empresa", "Contrato", "Contrato", "Situacao"));
-    $objeto->set_metodo(array("exibeNumeroContrato", null, "get_empresaCnpj", "get_processo", "exibePeriodo", "get_situacaoAtual"));
+    $objeto->set_metodo(array("exibeNumeroContrato", null, "getEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
     $objeto->set_width(array(10, 20, 20, 20, 10, 20));
     $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
 
@@ -181,156 +181,155 @@ if ($acesso) {
     array_unshift($empresa, array(null, null));
 
     #$valorPadrao = $contrato->get_novoNumero();
-
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
-            'linha' => 1,
-            'nome' => 'numero',
-            'label' => 'Número:',
-            'tipo' => 'texto',
-            'required' => true,
-            'unique' => true,
+            'linha'     => 1,
+            'nome'      => 'numero',
+            'label'     => 'Número:',
+            'tipo'      => 'texto',
+            'required'  => true,
+            'unique'    => true,
             'autofocus' => true,
-            'col' => 3,
-            'size' => 10,
-            'padrao' => $contrato->get_novoNumero(),
+            'col'       => 3,
+            'size'      => 10,
+            'padrao'    => $contrato->getNovoNumeroProcesso(),
         ),
         array(
-            'linha' => 1,
-            'nome' => 'idModalidade',
-            'label' => 'Modalidade:',
-            'tipo' => 'combo',
+            'linha'    => 1,
+            'nome'     => 'idModalidade',
+            'label'    => 'Modalidade:',
+            'tipo'     => 'combo',
             'required' => true,
-            'array' => $modalidade,
-            'col' => 3,
-            'size' => 15,
+            'array'    => $modalidade,
+            'col'      => 3,
+            'size'     => 15,
         ),
         array(
-            'linha' => 1,
-            'nome' => 'siafe',
-            'label' => 'Siafe:',
-            'tipo' => 'texto',
+            'linha'    => 1,
+            'nome'     => 'siafe',
+            'label'    => 'Siafe:',
+            'tipo'     => 'texto',
             'required' => true,
-            'col' => 3,
-            'size' => 15,
+            'col'      => 3,
+            'size'     => 15,
         ),
         array(
-            'linha' => 1,
-            'nome' => 'idStatus',
-            'label' => 'Status:',
-            'tipo' => 'combo',
-            'array' => $status,
+            'linha'    => 1,
+            'nome'     => 'idStatus',
+            'label'    => 'Status:',
+            'tipo'     => 'combo',
+            'array'    => $status,
             'required' => true,
-            'col' => 3,
-            'size' => 30,
+            'col'      => 3,
+            'size'     => 30,
         ),
         array(
-            'linha' => 1,
-            'nome' => 'objeto',
+            'linha' => 2,
+            'nome'  => 'objeto',
             'label' => 'Objeto:',
-            'tipo' => 'texto',
-            'col' => 12,
-            'size' => 250,
+            'tipo'  => 'texto',
+            'col'   => 9,
+            'size'  => 250,
         ),
         array(
             'linha' => 2,
-            'nome' => 'idEmpresa',
-            'label' => 'Empresa:',
-            'tipo' => 'combo',
-            'array' => $empresa,
-            'required' => true,
-            'col' => 12,
-            'size' => 200,
-        ),
-        array(
-            'linha' => 2,
-            'nome' => 'processoSei',
-            'label' => 'Processo Sei:',
-            'tipo' => 'sei',
-            'col' => 4,
-            'size' => 50,
-        ),
-        array(
-            'linha' => 2,
-            'nome' => 'processo',
-            'label' => 'Processo Físico:',
-            'tipo' => 'processo',
-            'col' => 3,
-            'size' => 50,
-        ),
-        array(
-            'linha' => 2,
-            'nome' => 'valor',
-            'label' => 'Valor:',
-            'tipo' => 'moeda',
-            'col' => 3,
-            'size' => 15,
-        ),
-        array(
-            'linha' => 2,
-            'nome' => 'garantia',
-            'label' => 'Garantia: (se houver)',
-            'tipo' => 'percentagem',
-            'col' => 2,
-            'size' => 5,
-        ),
-        array(
-            'linha' => 3,
-            'nome' => 'dtPublicacao',
-            'label' => 'Publicação:',
-            'tipo' => 'date',
-            'required' => true,
-            'col' => 3,
-            'size' => 15,
-        ),
-        array(
-            'linha' => 3,
-            'nome' => 'pgPublicacao',
-            'label' => 'Pag:',
-            'tipo' => 'texto',
-            'col' => 2,
-            'size' => 5,
-        ),
-        array(
-            'linha' => 3,
-            'nome' => 'dtAssinatura',
+            'nome'  => 'dtAssinatura',
             'label' => 'Assinatura:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15,
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15,
+        ),
+        array(
+            'linha'    => 3,
+            'nome'     => 'idEmpresa',
+            'label'    => 'Empresa:',
+            'tipo'     => 'combo',
+            'array'    => $empresa,
+            'required' => true,
+            'col'      => 12,
+            'size'     => 200,
         ),
         array(
             'linha' => 4,
-            'nome' => 'dtInicial',
-            'label' => 'Data Inicial:',
-            'tipo' => 'date',
-            'col' => 3,
-            'size' => 15,
+            'nome'  => 'processoSei',
+            'label' => 'Processo Sei:',
+            'tipo'  => 'sei',
+            'col'   => 4,
+            'size'  => 50,
         ),
         array(
             'linha' => 4,
-            'nome' => 'prazo',
-            'label' => 'Prazo:',
-            'tipo' => 'texto',
-            'col' => 2,
-            'size' => 15,
+            'nome'  => 'processo',
+            'label' => 'Processo Físico:',
+            'tipo'  => 'processo',
+            'col'   => 3,
+            'size'  => 50,
         ),
         array(
             'linha' => 4,
-            'nome' => 'tipoPrazo',
-            'label' => 'Tipo:',
-            'tipo' => 'combo',
-            'array' => $tipo,
-            'col' => 2,
-            'size' => 15,
+            'nome'  => 'valor',
+            'label' => 'Valor:',
+            'tipo'  => 'moeda',
+            'col'   => 3,
+            'size'  => 15,
+        ),
+        array(
+            'linha' => 4,
+            'nome'  => 'garantia',
+            'label' => 'Garantia: (se houver)',
+            'tipo'  => 'percentagem',
+            'col'   => 2,
+            'size'  => 5,
+        ),
+        array(
+            'linha'    => 5,
+            'nome'     => 'dtPublicacao',
+            'label'    => 'Publicação:',
+            'tipo'     => 'date',
+            'required' => true,
+            'col'      => 3,
+            'size'     => 15,
         ),
         array(
             'linha' => 5,
-            'nome' => 'obs',
+            'nome'  => 'pgPublicacao',
+            'label' => 'Pag:',
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 5,
+        ),
+        array(
+            'linha' => 5,
+            'nome'  => 'dtInicial',
+            'label' => 'Data Inicial:',
+            'tipo'  => 'date',
+            'col'   => 3,
+            'size'  => 15,
+        ),
+        array(
+            'linha' => 5,
+            'nome'  => 'prazo',
+            'label' => 'Prazo:',
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 15,
+        ),
+        array(
+            'linha' => 5,
+            'nome'  => 'tipoPrazo',
+            'label' => 'Tipo:',
+            'tipo'  => 'combo',
+            'array' => $tipo,
+            'col'   => 2,
+            'size'  => 15,
+        ),
+        array(
+            'linha' => 5,
+            'nome'  => 'obs',
             'label' => 'Observação:',
-            'tipo' => 'textarea',
-            'size' => array(80, 5),
+            'tipo'  => 'textarea',
+            'size'  => array(80, 3),
         ),
     ));
 
@@ -365,7 +364,7 @@ if ($acesso) {
             $menu1->add_link($botaoInserir, "right");
 
             # Relatórios
-            $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+            $imagem   = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
             $botaoRel = new Button();
             $botaoRel->set_title("Relatório dessa pesquisa");
             $botaoRel->set_url("#");
@@ -491,7 +490,7 @@ if ($acesso) {
             $objeto->$fase($id);
             break;
     }
-    
+
     $page->terminaPagina();
 } else {
     loadPage("../../areaServidor/sistema/login.php");

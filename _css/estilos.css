@@ -140,6 +140,30 @@ p#tituloInicial{
     margin: 0px;
 }
 
+p#pTempoTotal60{
+    font-size: 14px;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    color: red;
+    font-weight: bold;
+}
+
+p#pTempoTotal{
+    font-size: 14px;
+    text-align: center;
+    padding: 0px;
+    margin: 0px;
+    color: blue;
+}
+
+p#pVigencia{
+    font-size: 10px;
+    text-align: center;
+    padding: 0px;
+    margin: -3px;
+}
+
 /*******************************************
  * Cadastro da comissão
  *******************************************/
@@ -170,10 +194,6 @@ hr#hrComissao{
     margin-bottom: 3px;
     border-top: 1px solid #8a8a8a;
 }
-
-/*******************************************
- * Cadastro da comissão
- *******************************************/
 
 p#pNumAdt{
     font-size: 11px;
@@ -239,6 +259,14 @@ p#palerta{
     text-align: left;
     padding: 0px;
     margin: 0px;
+}
+
+p#palertaSpainel{
+    font-size: 10px;
+    text-align: left;
+    padding: 0px;
+    margin: 0px;
+    color: red;
 }
 
 /*******************************************

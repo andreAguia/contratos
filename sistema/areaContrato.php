@@ -49,7 +49,7 @@ if ($acesso) {
 
         # Limita a tela
         $grid = new Grid();
-        $grid->abreColuna(10);
+        $grid->abreColuna(8);
 
         # Cria um menu
         $menu1 = new MenuBar();
@@ -87,6 +87,17 @@ if ($acesso) {
         $grid->fechaColuna();
         $grid->abreColuna(2);
 
+        $painel = new Callout("secondary");
+        $painel->abre();
+        
+        p("Duração e Vigência:","contratoLabelCallout");
+        $contrato->exibeTempoEVigencia($id);
+
+        $painel->fecha();
+
+        $grid->fechaColuna();
+        $grid->abreColuna(2);
+
         $contrato->exibeStatus($id);
 
         $grid->fechaColuna();
@@ -103,13 +114,13 @@ if ($acesso) {
         case "":
         case "inicial":
             # Carrega os dados com contrado editado
-            $conteudo = $contrato->get_dados($id);
+            $conteudo = $contrato->getDados($id);
 
             # Exibe os dados do contrado
             get_DadosContrato($id);
 
             # Exibe alertas (se tiver)
-            $alerta = new AlertaContrato($id);
+            $alerta = new AlertaContrato($id, true);
 
             $grid->fechaColuna();
             $grid->abreColuna(5);
@@ -120,7 +131,7 @@ if ($acesso) {
             # Exibe dados da empresa
             $idEmpresa = $conteudo["idEmpresa"];
             $empresa->exibeDados($idEmpresa);
-            
+
             $comissao->listaComissao($id);
 
             $grid->fechaColuna();

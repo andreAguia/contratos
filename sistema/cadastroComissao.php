@@ -152,7 +152,7 @@ if ($acesso) {
     $objeto->set_width(array(8, 8, 25, 20, 20));
     #$objeto->set_funcao(array(null, null, null, null, null, "exibeFoto"));
     $objeto->set_classe(array("Comissao", "pessoal", "Comissao", "pessoal", "Comissao"));
-    $objeto->set_metodo(array("get_tipo", "get_foto", "get_dadosMembro", "get_contatos", "get_dadosDesignacao"));
+    $objeto->set_metodo(array("getTipo", "get_foto", "getDadosMembro", "get_contatos", "getDadosDesignacao"));
     $objeto->set_numeroOrdem(true);
     $objeto->set_formatacaoCondicional($formatacaoCondicional);
 
@@ -219,18 +219,21 @@ if ($acesso) {
             'label' => 'Portaria Designação:',
             'tipo'  => 'texto',
             'col'   => 2,
+            'padrao' => $comissao->getUltimaPortariaEntrada($idContrato),
             'size'  => 10),
         array('linha' => 2,
             'nome'  => 'dtPortariaEntrada',
             'label' => 'De:',
             'tipo'  => 'date',
             'col'   => 3,
+            'padrao' => date_to_bd($comissao->getUltimaDataPortariaEntrada($idContrato)),
             'size'  => 15),
         array('linha' => 2,
             'nome'  => 'dtPublicacaoEntrada',
             'label' => 'Publicado no DOERJ em:',
             'tipo'  => 'date',
             'col'   => 3,
+            'padrao' => date_to_bd($comissao->getUltimaDataPublicacaoEntrada($idContrato)),
             'size'  => 15),
         array('linha' => 3,
             'nome'  => 'portariaSaida',
@@ -314,7 +317,7 @@ if ($acesso) {
             get_DadosContrato($idContrato);
             
             # Pega os valores do banco
-            $conteudo = $contrato->get_dados($idContrato);
+            $conteudo = $contrato->getDados($idContrato);
             
             $painel = new Callout();
             $painel->abre();
@@ -371,7 +374,7 @@ if ($acesso) {
             $processoComissao    = post("processoComissao");
             
             # Pega os valores anteriores
-            $conteudo = $contrato->get_dados($idContrato);
+            $conteudo = $contrato->getDados($idContrato);
 
             # Grava os valores
             $objeto = new Contratos();

@@ -9,10 +9,10 @@ class Comissao
      *
      * @var private $idComissao integer null O id do concurso
      */
-    private $idComissao = null;
+    
 ##############################################################
 
-    public function __construct($idComissao = null)
+    public function __construct()
     {
         /**
          * Inicia a Classe somente
@@ -21,31 +21,26 @@ class Comissao
          *
          * @syntax $concurso = new Concurso([$idConcurso]);
          */
-        $this->idComissao = $idComissao;
+        
     }
 
 ##############################################################
 
-    public function get_dados($idComissao = null)
+    public function getDados($idComissao = null)
     {
-        # Joga o valor informado para a variável da classe
-        if (!vazio($idComissao)) {
-            $this->idComissao = $idComissao;
-        }
-
-        # Conecta ao Banco de Dados
-        $contratos = new Contratos();
-
-        # Verifica se foi informado
-        if (vazio($this->idComissao)) {
+       # Verifica se foi informado
+        if (vazio($idComissao)) {
             alert("É necessário informar o id.");
             return;
         }
+        
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
 
         # Pega os dados
-        $select = 'SELECT *
+        $select = "SELECT *
                      FROM tbcomissao
-                    WHERE idComissao = ' . $this->idComissao;
+                    WHERE idComissao = {$idComissao}";
 
         $row = $contratos->select($select, false);
 
@@ -55,22 +50,17 @@ class Comissao
 
 #####################################################################################
 
-    public function get_portariaEntrada($idComissao)
+    public function getPortariaEntrada($idComissao)
     {
 
-        # Joga o valor informado para a variável da classe
-        if (!vazio($idComissao)) {
-            $this->idComissao = $idComissao;
+        # Verifica se foi informado
+        if (vazio($idComissao)) {
+            alert("É necessário informar o id.");
+            return;
         }
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-
-        # Verifica se foi informado
-        if (vazio($this->idComissao)) {
-            alert("É necessário informar o id.");
-            return;
-        }
 
         $return = null;
 
@@ -104,7 +94,7 @@ class Comissao
 
 #####################################################################################
 
-    public function get_tipo($idComissao)
+    public function getTipo($idComissao)
     {
 
         # Verifica se o id foi informado
@@ -113,7 +103,7 @@ class Comissao
             return;
         } else {
 
-            $conteudo          = $this->get_dados($idComissao);
+            $conteudo          = $this->getDados($idComissao);
             $dtPublicacaoSaida = $conteudo["dtPublicacaoSaida"];
             $tipo              = $conteudo["tipo"];
 
@@ -145,7 +135,7 @@ class Comissao
 
 #####################################################################################
 
-    public function get_nomeMembro($idServidor)
+    public function getNomeMembro($idServidor)
     {
 
         # Verifica se foi informado
@@ -161,7 +151,7 @@ class Comissao
 
 #####################################################################################
 
-    public function get_dadosMembro($idServidor)
+    public function getDadosMembro($idServidor)
     {
 
         # Verifica se foi informado
@@ -183,6 +173,12 @@ class Comissao
 
     public function listaComissao($idContrato)
     {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+        
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
@@ -224,7 +220,7 @@ class Comissao
         $tabela->set_align(array("left", "center"));
         $tabela->set_width(array(70, 25));
         $tabela->set_classe(array("Comissao", "Comissao"));
-        $tabela->set_metodo(array("get_nomeMembro", "get_tipo"));
+        $tabela->set_metodo(array("getNomeMembro", "getTipo"));
         #$tabela->set_numeroOrdem(true);
         $tabela->set_conteudo($row);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
@@ -248,7 +244,7 @@ class Comissao
 
 #####################################################################################
 
-    public function get_dadosDesignacao($idComissao)
+    public function getDadosDesignacao($idComissao)
     {
 
         # Conecta ao Banco de Dados
@@ -260,7 +256,7 @@ class Comissao
             return;
         } else {
 
-            $conteudo            = $this->get_dados($idComissao);
+            $conteudo            = $this->getDados($idComissao);
             $portariaEntrada     = $conteudo["portariaEntrada"];
             $dtPortariaEntrada   = $conteudo["dtPortariaEntrada"];
             $dtPublicacaoEntrada = $conteudo["dtPublicacaoEntrada"];
@@ -444,7 +440,7 @@ class Comissao
         }
 
         $contrato = new Contrato();
-        $conteudo = $contrato->get_dados($idContrato);
+        $conteudo = $contrato->getDados($idContrato);
 
         $processo = null;
 
@@ -555,7 +551,7 @@ class Comissao
         }
 
         $contrato = new Contrato();
-        $conteudo = $contrato->get_dados($idContrato);
+        $conteudo = $contrato->getDados($idContrato);
 
         $processo = null;
 
@@ -608,6 +604,112 @@ class Comissao
         return;
     }
 
-    ##############################################################
+    #####################################################################################
+
+    public function getUltimaDataPublicacaoEntrada($idContrato)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        $return = null;
+
+        # Pega os dados
+        $select = "SELECT dtPublicacaoEntrada
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato}
+                    ORDER BY dtPublicacaoEntrada desc LIMIT 1";
+
+        $row = $contratos->select($select, false);
+
+        # Trata o retorno
+        if (empty($row["dtPublicacaoEntrada"])) {
+            $return = null;
+        } else {
+            $return = date_to_php($row["dtPublicacaoEntrada"]);
+        }
+
+        # Retorno
+        return $return;
+    }
+
+####################################################################################
+
+    public function getUltimaPortariaEntrada($idContrato)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        $return = null;
+
+        # Pega os dados
+        $select = "SELECT portariaEntrada
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato}
+                    ORDER BY dtPublicacaoEntrada desc LIMIT 1";
+
+        $row = $contratos->select($select, false);
+
+        # Trata o retorno
+        if (empty($row["portariaEntrada"])) {
+            $return = null;
+        } else {
+            $return = $row["portariaEntrada"];
+        }
+
+        # Retorno
+        return $return;
+    }
+
+####################################################################################
+
+    public function getUltimaDataPortariaEntrada($idContrato)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        $return = null;
+
+        # Pega os dados
+        $select = "SELECT dtPortariaEntrada
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato}
+                    ORDER BY dtPublicacaoEntrada desc LIMIT 1";
+
+        $row = $contratos->select($select, false);
+
+        # Trata o retorno
+        if (empty($row["dtPortariaEntrada"])) {
+            $return = null;
+        } else {
+            $return = date_to_php($row["dtPortariaEntrada"]);
+        }
+
+        # Retorno
+        return $return;
+    }
+
+#####################################################################################
+
 
 }

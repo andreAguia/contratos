@@ -2,7 +2,6 @@
 
 class Situacao
 {
-
     /**
      * Abriga as várias rotina referentes a concurso
      *
@@ -12,6 +11,7 @@ class Situacao
      */
     private $idSituacao = null;
 ##############################################################
+
     public function __construct($idSituacao = null)
     {
         /**
@@ -25,7 +25,8 @@ class Situacao
     }
 
 ##############################################################
-    public function get_dados($idSituacao = null)
+
+    public function getDados($idSituacao = null)
     {
 
         /**
@@ -61,7 +62,8 @@ class Situacao
     }
 
     #####################################################################################
-    public function get_situacaoAtual($idContrato)
+
+    public function getSituacaoAtualEAlerta($idContrato)
     {
 
         # Conecta ao Banco de Dados
@@ -82,14 +84,16 @@ class Situacao
         $row = $contratos->select($select, false);
 
         # Retorno
-        if (vazio($row)) {
-            return "---";
-        } else {
-            return "<pre>{$row[0]}</pre>";
+        if (!vazio($row)) {
+            echo "<pre>{$row[0]}</pre>";
         }
+
+        # Exibe alertas (se tiver)
+        $alerta = new AlertaContrato($idContrato);
     }
 
     #####################################################################################
+
     function exibeSituacaoAtual($idContrato)
     {
 
@@ -124,17 +128,17 @@ class Situacao
 
         $grid->fechaColuna();
         $grid->abreColuna(6);
-        
-        if(!empty($situacao)){
+
+        if (!empty($situacao)) {
             p(date_to_php($situacao['data']), "situacaoData");
         }
 
         $grid->fechaColuna();
         $grid->abreColuna(12);
 
-        if(!empty($situacao)){
+        if (!empty($situacao)) {
             p("<pre>{$situacao['situacao']}</pre>", "situacaoAtual", "left important");
-        }else{
+        } else {
             p("Nenhuma situação cadastrada", "situacaoAtual", "left important");
         }
 
@@ -164,7 +168,8 @@ class Situacao
     }
 
     #####################################################################################
-    public function get_situacao($idSituacao)
+
+    public function getSituacao($idSituacao)
     {
 
         # Conecta ao Banco de Dados
