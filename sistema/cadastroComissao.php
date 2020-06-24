@@ -99,7 +99,7 @@ if ($acesso) {
     # select da lista
     $objeto->set_selectLista("SELECT idComissao,
                                      idServidor,
-                                     idServidor,
+                                     idComissao,
                                      idServidor,
                                      idComissao
                                 FROM tbcomissao
@@ -109,12 +109,15 @@ if ($acesso) {
     # select do edita
     $objeto->set_selectEdita("SELECT idServidor,
                                      tipo,
+                                     substituindo,
                                      portariaEntrada,
                                      dtPortariaEntrada,
                                      dtPublicacaoEntrada,
+                                     pgPublicacaoEntrada,
                                      portariaSaida,
                                      dtPortariaSaida,
                                      dtPublicacaoSaida,
+                                     pgPublicacaoSaida,
                                      obs,
                                      idContrato
                                 FROM tbcomissao
@@ -179,16 +182,32 @@ if ($acesso) {
 
     # Pega os dados da combo de servidor
     $membro = $pessoal->select('SELECT idServidor,
-                                       CONCAT(tbpessoa.nome," | ",IFnull(tbtipocargo.sigla,"")," - ",IFnull(tbcargo.nome,"")," | ",uenf_grh.tbsituacao.situacao)
+                                       CONCAT(tbpessoa.nome," | ",IFNULL(tbtipocargo.sigla,"")," - ",IFNULL(tbcargo.nome,"")," | ",uenf_grh.tbsituacao.situacao)
                                   FROM uenf_grh.tbservidor JOIN uenf_grh.tbpessoa USING (idPessoa)
                                                       LEFT JOIN uenf_grh.tbsituacao ON (uenf_grh.tbservidor.situacao = uenf_grh.tbsituacao.idsituacao)
                                                       LEFT JOIN uenf_grh.tbcargo USING (idCargo)
                                                       LEFT JOIN uenf_grh.tbtipocargo USING (idTipoCargo)
-                                 WHERE (idPerfil = 1 OR idPerfil = 4)
+                                 WHERE (idPerfil = 1 OR idPerfil = 2 OR idPerfil = 3 OR idPerfil = 4)
                               ORDER BY uenf_grh.tbsituacao.idSituacao, tbpessoa.nome');
-    array_unshift($membro, array(null, null)); # Adiciona o valor de nulo
+    array_unshift($membro, array(null, null));
+
+    # Pega os dados da combo de servidor
+    $selectCombo = "SELECT idComissao,
+                           CONCAT(tbpessoa.nome,  IF(portariaSaida IS NULL,'',' - Saiu'))
+                      FROM uenf_contratos.tbcomissao JOIN uenf_grh.tbservidor USING (idServidor)
+                                                     JOIN  uenf_grh.tbpessoa  USING (idPessoa)
+                      WHERE tbcomissao.idContrato = {$idContrato}";
+    if (!empty($id)) {
+        $selectCombo .= " AND idComissao <> {$id}";
+    }
+
+    $selectCombo .= " ORDER BY portariaSaida, uenf_grh.tbpessoa.nome";
+
+    $substituindo = $pessoal->select($selectCombo);
+
+    array_unshift($substituindo, array(null, null));  // Adiciona o valor de nulo
     # Dados da combo tipo
-    $tipo   = array(
+    $tipo = array(
         array(null, null),
         array(1, "Presidente"),
         array(2, "Membro"),
@@ -197,16 +216,18 @@ if ($acesso) {
 
     # Campos para o formulario
     $objeto->set_campos(array(
-        array('linha'    => 1,
+        array(
+            'linha'    => 1,
             'nome'     => 'idServidor',
             'label'    => 'Servidor:',
             'tipo'     => 'combo',
             'array'    => $membro,
-            'title'    => 'Servidor membro ca comissão',
+            'title'    => 'Servidor membro da comissão',
             'col'      => 9,
             'required' => true,
             'size'     => 30),
-        array('linha'  => 1,
+        array(
+            'linha'  => 1,
             'nome'   => 'tipo',
             'label'  => 'Tipo:',
             'tipo'   => 'combo',
@@ -214,51 +235,82 @@ if ($acesso) {
             'padrao' => 2,
             'col'    => 3,
             'size'   => 15),
-        array('linha' => 2,
-            'nome'  => 'portariaEntrada',
-            'label' => 'Portaria Designação:',
+        array(
+            'linha' => 2,
+            'nome'  => 'substituindo',
+            'label' => 'Substituindo:',
+            'tipo'  => 'combo',
+            'array' => $substituindo,
+            'title' => 'Servidor que sai para dar vaga',
+            'col'   => 9,
+            'size'  => 30),
+        array(
+            'linha'  => 3,
+            'nome'   => 'portariaEntrada',
+            'label'  => 'Portaria Designação:',
+            'tipo'   => 'texto',
+            'col'    => 2,
+            'padrao' => $comissao->getUltimaPortariaEntrada($idContrato),
+            'size'   => 10),
+        array(
+            'linha'  => 3,
+            'nome'   => 'dtPortariaEntrada',
+            'label'  => 'De:',
+            'tipo'   => 'date',
+            'col'    => 3,
+            'padrao' => date_to_bd($comissao->getUltimaDataPortariaEntrada($idContrato)),
+            'size'   => 15),
+        array(
+            'linha'  => 3,
+            'nome'   => 'dtPublicacaoEntrada',
+            'label'  => 'Publicado no DOERJ em:',
+            'tipo'   => 'date',
+            'col'    => 3,
+            'padrao' => date_to_bd($comissao->getUltimaDataPublicacaoEntrada($idContrato)),
+            'size'   => 15),
+        array(
+            'linha' => 3,
+            'nome'  => 'pgPublicacaoEntrada',
+            'label' => 'Página:',
             'tipo'  => 'texto',
             'col'   => 2,
-            'padrao' => $comissao->getUltimaPortariaEntrada($idContrato),
-            'size'  => 10),
-        array('linha' => 2,
-            'nome'  => 'dtPortariaEntrada',
-            'label' => 'De:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'padrao' => date_to_bd($comissao->getUltimaDataPortariaEntrada($idContrato)),
-            'size'  => 15),
-        array('linha' => 2,
-            'nome'  => 'dtPublicacaoEntrada',
-            'label' => 'Publicado no DOERJ em:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'padrao' => date_to_bd($comissao->getUltimaDataPublicacaoEntrada($idContrato)),
-            'size'  => 15),
-        array('linha' => 3,
+            'size'  => 5),
+        array(
+            'linha' => 4,
             'nome'  => 'portariaSaida',
             'label' => 'Portaria de Saída:',
             'tipo'  => 'texto',
             'col'   => 2,
             'size'  => 10),
-        array('linha' => 3,
+        array(
+            'linha' => 4,
             'nome'  => 'dtPortariaSaida',
             'label' => 'De:',
             'tipo'  => 'date',
             'col'   => 3,
             'size'  => 15),
-        array('linha' => 3,
+        array(
+            'linha' => 4,
             'nome'  => 'dtPublicacaoSaida',
             'label' => 'Publicado no DOERJ em:',
             'tipo'  => 'date',
             'col'   => 3,
             'size'  => 15),
-        array('linha' => 4,
+        array(
+            'linha' => 4,
+            'nome'  => 'pgPublicacaoSaida',
+            'label' => 'Página:',
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 5),
+        array(
+            'linha' => 5,
             'nome'  => 'obs',
             'label' => 'Observação:',
             'tipo'  => 'textarea',
             'size'  => array(80, 5)),
-        array("linha"  => 5,
+        array(
+            "linha"  => 5,
             "nome"   => "idContrato",
             "label"  => "idContrato:",
             'tipo'   => 'hidden',
@@ -277,29 +329,47 @@ if ($acesso) {
             # Divide a página em 2 colunas
             $grid = new Grid();
 
-            #########################################################################################################
-            # Processos
-            $grid->abreColuna(12, 6);
+            /*
+             * Processos
+             */
+
+            $grid->abreColuna(12, 4);
 
             $comissao->exibeProcesso($idContrato);
 
             $grid->fechaColuna();
 
-            #########################################################################################################
-            # Documentos
-            $grid->abreColuna(12, 6);
+            /*
+             * Portarias
+             */
+
+            $grid->abreColuna(12, 4);
+
+            $comissao->exibePortarias($idContrato);
+
+            $grid->fechaColuna();
+
+            /*
+             * Documentos
+             */
+
+            $grid->abreColuna(12, 4);
 
             $comissao->exibeMenuDocumentos($idContrato);
 
             $grid->fechaColuna();
             $grid->fechaGrid();
+
             $objeto->listar();
             break;
 
         case "editar":
         case "excluir":
-        case "gravar":
             $objeto->$fase($id);
+            break;
+
+        case "gravar":
+            $objeto->gravar($id, null, "cadastroComissaoPosGravacao.php");
             break;
 
         case "exibeFicha":
@@ -315,10 +385,10 @@ if ($acesso) {
 
             # Exibe dados do contrato
             get_DadosContrato($idContrato);
-            
+
             # Pega os valores do banco
             $conteudo = $contrato->getDados($idContrato);
-            
+
             $painel = new Callout();
             $painel->abre();
 
@@ -372,7 +442,7 @@ if ($acesso) {
             # Pega os dados digitados
             $processoComissaoSei = post("processoComissaoSei");
             $processoComissao    = post("processoComissao");
-            
+
             # Pega os valores anteriores
             $conteudo = $contrato->getDados($idContrato);
 

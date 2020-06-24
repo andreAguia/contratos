@@ -20,6 +20,22 @@ if ($acesso) {
     $contratos = new Contratos();
     $contrato  = new Contrato();
     $pessoal   = new Pessoal();
+    
+     # Faz o backup de hora em hora
+     # Verifica se o backup automático está habilitado
+    if ($intra->get_variavel("backupAutomatico")) {
+
+        # Verifica as horas
+        $horaBackup = $intra->get_variavel("backupHora");
+        $horaAtual  = date("H");
+
+        # Compara se são diferentes
+        if ($horaAtual <> $horaBackup) {
+            # Realiza backup
+            $processo = new Processo();
+            $processo->run("php /var/www/html/areaServidor/sistema/backup.php 1 $idUsuario");
+        }
+    }
 
     # Verifica a fase do programa
     $fase = get('fase', 'listar');
@@ -32,7 +48,7 @@ if ($acesso) {
 
     # Pega os parâmetros
     $parametroAno        = post('parametroAno', get_session('parametroAno'));
-    $parametroStatus     = post('parametroStatus', get_session('parametroStatus'));
+    $parametroStatus     = post('parametroStatus', get_session('parametroStatus', 1));
     $parametroModalidade = post('parametroModalidade', get_session('parametroModalidade'));
     $parametroEmpresa    = post('parametroEmpresa', get_session('parametroEmpresa'));
 
@@ -57,7 +73,7 @@ if ($acesso) {
     $objeto->set_nome('Contratos');
 
     # Botão de voltar da lista
-    $objeto->set_voltarLista('areaInicial.php');
+    $objeto->set_voltarLista('cadastroContrato.php');
 
     # select da lista
     $select = "SELECT idContrato,
@@ -97,6 +113,7 @@ if ($acesso) {
                                      idModalidade,
                                      siafe,
                                      idStatus,
+                                     maoDeObra,
                                      objeto,
                                      dtAssinatura,
                                      idEmpresa,
@@ -211,7 +228,7 @@ if ($acesso) {
             'label'    => 'Siafe:',
             'tipo'     => 'texto',
             'required' => true,
-            'col'      => 3,
+            'col'      => 2,
             'size'     => 15,
         ),
         array(
@@ -221,8 +238,20 @@ if ($acesso) {
             'tipo'     => 'combo',
             'array'    => $status,
             'required' => true,
-            'col'      => 3,
+            'col'      => 2,
             'size'     => 30,
+            'padrao'   => 1
+        ),
+        array(
+            'linha'    => 1,
+            'nome'     => 'maoDeObra',
+            'label'    => 'Mão de Obra Alocada:',
+            'tipo'     => 'simnao',
+            'title'    => 'Informa se o contrato tem ou não mão de obra alocada na UENF.',
+            'required' => true,
+            'col'      => 2,
+            'size'     => 5,
+            'padrao'   => 0
         ),
         array(
             'linha' => 2,
@@ -352,14 +381,32 @@ if ($acesso) {
             $menu1 = new MenuBar();
 
             # Voltar
-            $botaoVoltar = new Link("Voltar", "areaInicial.php");
+            $botaoVoltar = new Link("Voltar", "../../areaServidor/sistema/areaServidor.php");
             $botaoVoltar->set_class('button');
             $botaoVoltar->set_title('Voltar a página anterior');
             $botaoVoltar->set_accessKey('V');
             $menu1->add_link($botaoVoltar, "left");
 
+            # Empresas
+            $botao = new Button("Empresas", "cadastroEmpresa.php");
+            $botao->set_title("Cadastro de Empresas");
+            $botao->set_class("button secondary");
+            $menu1->add_link($botao, "right");
+
+            # Modalidade
+            $botao = new Button("Modalidade", "cadastroModalidade.php");
+            $botao->set_title("Cadastro de Modalidade");
+            $botao->set_class("button secondary");
+            $menu1->add_link($botao, "right");
+
+            # Status
+            $botao = new Button("Status", "cadastroStatus.php");
+            $botao->set_title("Cadastro de Status");
+            $botao->set_class("button secondary");
+            $menu1->add_link($botao, "right");
+
             # Incluir
-            $botaoInserir = new Button("Incluir", "?fase=editar");
+            $botaoInserir = new Button("Incluir Contrato", "?fase=editar");
             $botaoInserir->set_title("Incluir");
             $menu1->add_link($botaoInserir, "right");
 
@@ -373,6 +420,7 @@ if ($acesso) {
             #$menu1->add_link($botaoRel,"right");
 
             $menu1->show();
+
 
             # Formulário de Pesquisa
             $form = new Form('?');
@@ -409,8 +457,6 @@ if ($acesso) {
             $comboStatus = $contratos->select('SELECT idStatus, status
                                                FROM tbstatus
                                            ORDER BY idStatus');
-
-            array_unshift($comboStatus, array(null, "Todos"));
 
             # Status
             $controle = new Input('parametroStatus', 'combo', 'Status:', 1);

@@ -153,18 +153,16 @@ class Contrato
         }
 
         $conteudo = $this->getDados($idContrato);
+        $mm       = new Modalidade();
+        $mmDados  = $mm->get_dados($conteudo["idModalidade"]);
 
-        $numero       = $conteudo["numero"];
-        $idModalidade = $conteudo["idModalidade"];
-        $status       = $this->getStatus($idContrato);
+        p($conteudo["numero"], "contratoNumero");
+        p($mmDados['modalidade'], "contratoItem");
+        p($this->getStatus($idContrato), "status{$this->getStatus($idContrato)}");
 
-        $mm         = new Modalidade();
-        $mmDados    = $mm->get_dados($idModalidade);
-        $modalidade = $mmDados['modalidade'];
-
-        p($numero, "contratoNumero");
-        p($modalidade, "contratoItem");
-        p($status, "status{$status}");
+        if ($conteudo["maoDeObra"]) {
+            p("MO Alocada", "contratoItem");
+        }
     }
 
     ###########################################################
@@ -362,6 +360,7 @@ class Contrato
         # Monta os dados
         $label = ["Contrato", "Processo", "Objeto", "Empresa"];
         $item  = [[$numero, $processo, $objeto, "{$empresa}<br/>{$cnpj}"]];
+        $width = [10, 20, 40, 30];
 
         $formatacaoCondicional = array(array('coluna'   => 0,
                 'valor'    => $numero,
@@ -372,6 +371,7 @@ class Contrato
         $tabela = new Tabela();
         $tabela->set_conteudo($item);
         $tabela->set_label($label);
+        $tabela->set_width($width);
         #$tabela->set_funcao($function);
         #$tabela->set_classe($classe);
         #$tabela->set_metodo($metodo);
@@ -608,17 +608,15 @@ class Contrato
                 $itens    = explode("/", $numero["numero"]);
                 $itens[0]++;
                 $itens[0] = str_pad($itens[0], 3, '0', STR_PAD_LEFT);
-                
+
                 # Verifica se o ano do ultimo lançamento é o ano atual
-                if($itens[1] == date('Y')){
-                    $retorno  = "$itens[0]/".date('Y');
-                }else{
-                    $retorno  = "001/".date('Y');
+                if ($itens[1] == date('Y')) {
+                    $retorno = "$itens[0]/" . date('Y');
+                } else {
+                    $retorno = "001/" . date('Y');
                 }
-                
             } else {
                 $retorno = null;
-                
             }
         }
 
@@ -649,8 +647,11 @@ class Contrato
         # Percorre os valores somando-os
         foreach ($row as $item) {
             $contadorAditivos++;
-            if (!empty($item[0])) {
-                $valorTotal       += $item[0];
+            $valorTotal += $item[0];
+
+            if (empty($item[0])) {
+                $valoresTabelas[] = ["Aditivo {$contadorAditivos}", "---"];
+            } else {
                 $valoresTabelas[] = ["Aditivo {$contadorAditivos}", "R$ " . formataMoeda($item[0])];
             }
         }

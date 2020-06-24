@@ -49,7 +49,7 @@ if ($acesso) {
     $objeto->set_nome("Cadastro de Empresas");
 
     # Botão de voltar da lista
-    $objeto->set_voltarLista("areaInicial.php");
+    $objeto->set_voltarLista("cadastroContrato.php");
 
     # controle de pesquisa
     $objeto->set_parametroLabel('Pesquisar');
@@ -139,7 +139,6 @@ if ($acesso) {
             'tipo' => 'texto',
             'required' => true,
             'autofocus' => true,
-            'plm' => true,
             'col' => 8,
             'size' => 250),
         array('linha' => 1,

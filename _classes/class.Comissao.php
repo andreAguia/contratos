@@ -2,6 +2,7 @@
 
 class Comissao
 {
+
     /**
      * Abriga as várias rotina referentes a comissao
      *
@@ -9,7 +10,6 @@ class Comissao
      *
      * @var private $idComissao integer null O id do concurso
      */
-    
 ##############################################################
 
     public function __construct()
@@ -21,19 +21,18 @@ class Comissao
          *
          * @syntax $concurso = new Concurso([$idConcurso]);
          */
-        
     }
 
 ##############################################################
 
     public function getDados($idComissao = null)
     {
-       # Verifica se foi informado
+        # Verifica se foi informado
         if (vazio($idComissao)) {
             alert("É necessário informar o id.");
             return;
         }
-        
+
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
@@ -151,13 +150,18 @@ class Comissao
 
 #####################################################################################
 
-    public function getDadosMembro($idServidor)
+    public function getDadosMembro($idComissao)
     {
 
-        # Verifica se foi informado
-        if (empty($idServidor)) {
-            echo "---";
+        # Verifica se o id foi informado
+        if (vazio($idComissao)) {
+            alert("É necessário informar o id.");
+            return;
         } else {
+            # Pega os dados desse membro
+            $dados = $this->getDados($idComissao);
+            $idServidor = $dados["idServidor"];
+
             $pessoal  = new Pessoal();
             $idPessoa = $pessoal->get_idPessoa($idServidor);
 
@@ -166,6 +170,13 @@ class Comissao
             p($pessoal->get_cargo($idServidor), "pmembroLotacao");
             p("ID: {$pessoal->get_idFuncional($idServidor)}", "pmembroLotacao");
             p("CPF: {$pessoal->get_cpf($idPessoa)}", "pmembroLotacao");
+
+            if (!empty($dados["substituindo"])) {
+                hr("hrComissao");
+                $dadossubs = $this->getDados($dados["substituindo"]);
+                p("Substutuindo:", "pmembroLotacao");
+                p($pessoal->get_nome($dadossubs["idServidor"]), "pmembroLotacao");
+            }
         }
     }
 
@@ -178,7 +189,7 @@ class Comissao
             alert("É necessário informar o id.");
             return;
         }
-        
+
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
@@ -256,30 +267,44 @@ class Comissao
             return;
         } else {
 
-            $conteudo            = $this->getDados($idComissao);
-            $portariaEntrada     = $conteudo["portariaEntrada"];
-            $dtPortariaEntrada   = $conteudo["dtPortariaEntrada"];
-            $dtPublicacaoEntrada = $conteudo["dtPublicacaoEntrada"];
-            $portariaSaida       = $conteudo["portariaSaida"];
-            $dtPortariaSaida     = $conteudo["dtPortariaSaida"];
-            $dtPublicacaoSaida   = $conteudo["dtPublicacaoSaida"];
+            $conteudo          = $this->getDados($idComissao);
+            $portariaSaida     = $conteudo["portariaSaida"];
+            $dtPortariaSaida   = $conteudo["dtPortariaSaida"];
+            $dtPublicacaoSaida = $conteudo["dtPublicacaoSaida"];
+            $pgPublicacaoSaida = $conteudo["pgPublicacaoSaida"];
 
             # Designação
-            if ((!empty($portariaEntrada)) and (!empty($dtPortariaEntrada))) {
+            if ((!empty($conteudo["portariaEntrada"])) and (!empty($conteudo["dtPortariaEntrada"]))) {
                 p("Designação:", "pmembroLotacao");
-                p("Portaria {$portariaEntrada} de " . date_to_php($dtPortariaEntrada), "pmembroLotacao");
-                if (!empty($dtPublicacaoEntrada)) {
-                    p("DOERJ: " . date_to_php($dtPublicacaoEntrada), "pmembroLotacao");
+                p("Portaria {$conteudo["portariaEntrada"]} de " . date_to_php($conteudo["dtPortariaEntrada"]), "pmembroLotacao");
+                $dados = null;
+
+                if (!empty($conteudo["dtPublicacaoEntrada"])) {
+                    $dados .= "DOERJ: " . date_to_php($conteudo["dtPublicacaoEntrada"]);
+
+                    if (!empty($conteudo["pgPublicacaoEntrada"])) {
+                        $dados .= " pag: {$conteudo["pgPublicacaoEntrada"]}";
+                    }
+
+                    p($dados, "pmembroLotacao");
                 }
             }
 
             # Saída
-            if ((!empty($portariaSaida)) and (!empty($dtPortariaSaida))) {
+            if ((!empty($conteudo["portariaSaida"])) and (!empty($conteudo["dtPortariaSaida"]))) {
                 hr("hrComissao");
                 p("Saída:", "pmembroLotacao");
-                p("Portaria {$portariaSaida} de " . date_to_php($dtPortariaSaida), "pmembroLotacao");
-                if (!empty($dtPublicacaoSaida)) {
-                    p("DOERJ: " . date_to_php($dtPublicacaoSaida), "pmembroLotacao");
+                p("Portaria {$conteudo["portariaSaida"]} de " . date_to_php($conteudo["dtPortariaSaida"]), "pmembroLotacao");
+                $dados = null;
+
+                if (!empty($conteudo["dtPublicacaoSaida"])) {
+                    $dados .= "DOERJ: " . date_to_php($conteudo["dtPublicacaoSaida"]);
+
+                    if (!empty($conteudo["pgPublicacaoSaida"])) {
+                        $dados .= " pag: {$conteudo["pgPublicacaoSaida"]}";
+                    }
+
+                    p($dados, "pmembroLotacao");
                 }
             }
         }
@@ -468,6 +493,7 @@ class Comissao
         if (empty($processo)) {
             br();
             P("Nenhum processo cadastrado", "center", "f14");
+            br();
         } else {
             br();
             p($processo, "center", "f14");
@@ -522,7 +548,7 @@ class Comissao
 
         $botao = new BotaoGrafico();
         $botao->set_label('Formulário');
-        $botao->set_url(PASTA_DOCUMENTOS.'2.pdf');
+        $botao->set_url(PASTA_DOCUMENTOS . '2.pdf');
         $botao->set_target("_blank");
         $botao->set_imagem(PASTA_FIGURAS . 'formulario.png', $tamanhoImage, $tamanhoImage);
         $botao->set_title('Legislação referente a comissão de fiscalização');
@@ -599,6 +625,66 @@ class Comissao
         $div->fecha();
         $div->fecha();
 
+        $painel->fecha();
+
+        return;
+    }
+
+    ##############################################################
+
+    public function exibePortarias($idContrato = null)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Monta o select
+        $select = "(SELECT portariaEntrada as portaria,
+                          dtPortariaEntrada as data
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato})
+                        UNION 
+                  (SELECT portariaSaida as portaria,
+                          dtPortariaSaida as data
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato})
+                 ORDER BY 2";
+
+        $contratos  = new Contratos();
+        $dados      = $contratos->select($select);
+        $quantidade = $contratos->count($select);
+
+        $portarias = [];
+
+        # Monta as portarias
+        foreach ($dados as $item) {
+            if (!empty($item["portaria"])) {
+                $portarias[] = "Portaria {$item["portaria"]} de " . date_to_php($item["data"]);
+            }
+        }
+
+        # Retira as duplicatas
+        $portarias = array_unique($portarias);
+
+        # Exibe as portarias
+        $painel = new Callout();
+        $painel->abre();
+
+        tituloTable("Portarias:");
+        br();
+
+        foreach ($portarias as $item) {
+            p($item, "pPortaria");
+        }
+
+        if ($quantidade == 0) {
+            br();
+            p("Nenhuma portaria encontrada", "center", "f14");
+            br();
+        }
         $painel->fecha();
 
         return;
@@ -710,6 +796,4 @@ class Comissao
     }
 
 #####################################################################################
-
-
 }

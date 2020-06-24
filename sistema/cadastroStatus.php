@@ -39,7 +39,7 @@ if ($acesso) {
     $objeto->set_nome("Status de Contrato");
 
     # Botão de voltar da lista
-    $objeto->set_voltarLista("areaInicial.php");
+    $objeto->set_voltarLista("cadastroContrato.php");
 
     # select da lista
     $objeto->set_selectLista("SELECT idStatus,
