@@ -20,7 +20,7 @@ if ($acesso) {
     $contrato = new Contrato();
     $pessoal  = new Pessoal();
     $comissao = new Comissao();
-    $aditivo = new Aditivo();
+    $aditivo  = new Aditivo();
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
@@ -54,9 +54,10 @@ if ($acesso) {
 
     # select da lista
     $objeto->set_selectLista("SELECT idAditivo,
+                                     objeto,
+                                     idAditivo,
                                      dtAssinatura,                                     
                                      idAditivo,
-                                     objeto,  
                                      idAditivo,
                                      idAditivo
                                 FROM tbaditivo
@@ -64,12 +65,13 @@ if ($acesso) {
                             ORDER BY dtAssinatura");
 
     # select do edita
-    $objeto->set_selectEdita('SELECT objeto,
+    $objeto->set_selectEdita('SELECT tipo,
+                                     objeto,
                                      dtAssinatura,
-                                     valor,
-                                     garantia,
                                      dtPublicacao,
-                                     pgPublicacao,                                     
+                                     pgPublicacao,
+                                     valor,
+                                     garantia,                                   
                                      dtInicial,
                                      prazo,
                                      tipoPrazo,
@@ -86,13 +88,12 @@ if ($acesso) {
     $objeto->set_linkListar('?fase=listar');
 
     # Parametros da tabela
-    $objeto->set_label(array("Publicação", "Assinatura", "Período", "Objeto", "Valor", "Garantia"));
-    #$objeto->set_width(array(10, 10, 20, 10, 40));
-    $objeto->set_align(array("center", "center", "center", "left"));
-    $objeto->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo"));
-    $objeto->set_metodo(array("getPublicacao", null, "getPeriodo", null, "getValor", "getGarantia"));
-    $objeto->set_funcao(array(null, "date_to_php"));
-    $objeto->set_numeroOrdem(true);
+    $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
+    $objeto->set_align(array("center", "left", "center"));
+    $objeto->set_width(array(10, 25, 10, 10, 10, 15,13));
+    $objeto->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
+    $objeto->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, "getPeriodo", "getGarantia", "getValor"));
+    $objeto->set_funcao(array(null, null, null, "date_to_php"));
 
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
@@ -113,6 +114,15 @@ if ($acesso) {
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
+            'linha'    => 1,
+            'nome'     => 'tipo',
+            'label'    => 'Tipo:',
+            'tipo'     => 'combo',
+            'required' => true,
+            'array'    => array([1, "Aditivo"], [2, "Apostila"]),
+            'col'      => 3,
+            'size'     => 15),
+        array(
             'linha' => 1,
             'nome'  => 'objeto',
             'label' => 'Objeto:',
@@ -120,27 +130,13 @@ if ($acesso) {
             'col'   => 9,
             'size'  => 250),
         array(
-            'linha'    => 1,
+            'linha'    => 2,
             'nome'     => 'dtAssinatura',
             'label'    => 'Assinatura:',
             'required' => true,
             'tipo'     => 'date',
             'col'      => 3,
             'size'     => 15),
-        array(
-            'linha' => 2,
-            'nome'  => 'valor',
-            'label' => 'Valor: (se houver)',
-            'tipo'  => 'moeda',
-            'col'   => 3,
-            'size'  => 15),
-        array(
-            'linha' => 2,
-            'nome'  => 'garantia',
-            'label' => 'Garantia: (se houver)',
-            'tipo'  => 'percentagem',
-            'col'   => 2,
-            'size'  => 5),
         array(
             'linha' => 2,
             'nome'  => 'dtPublicacao',
@@ -156,13 +152,27 @@ if ($acesso) {
             'col'   => 2,
             'size'  => 5),
         array(
-            'linha' => 5,
-            'nome'  => 'dtInicial',
-            'label' => 'Data Inicial:',
-            'tipo'  => 'date',
+            'linha' => 3,
+            'nome'  => 'valor',
+            'label' => 'Valor: (se houver)',
+            'tipo'  => 'moeda',
             'col'   => 3,
-            'padrao'    => date_to_bd($aditivo->getDataInicialNovoAditivo($idContrato)),
             'size'  => 15),
+        array(
+            'linha' => 3,
+            'nome'  => 'garantia',
+            'label' => 'Garantia: (se houver)',
+            'tipo'  => 'percentagem',
+            'col'   => 2,
+            'size'  => 5),
+        array(
+            'linha'  => 5,
+            'nome'   => 'dtInicial',
+            'label'  => 'Data Inicial:',
+            'tipo'   => 'date',
+            'col'    => 3,
+            'padrao' => date_to_bd($aditivo->getDataInicialNovoAditivo($idContrato)),
+            'size'   => 15),
         array(
             'linha' => 5,
             'nome'  => 'prazo',

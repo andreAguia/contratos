@@ -95,12 +95,12 @@ class Aditivo
         $select = "SELECT *
                      FROM tbaditivo
                     WHERE idContrato = {$idContrato}
-                 ORDER BY dtInicial";
+                 ORDER BY dtAssinatura";
 
         return $contratos->select($select);
     }
 
-###########################################################
+    ###########################################################
     /*
      * Informa a data de publicação mais a página ( se tiver) de um aditivo
      */
@@ -124,6 +124,49 @@ class Aditivo
         }
 
         return $publicacao;
+    }
+
+    ###########################################################
+
+    public function getTipoNumerado($idAditivo = null)
+    {
+
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+        
+        # pega os dados do aditivo
+        $conteudo = $this->getDados($idAditivo);
+        
+        # Pega o idContrato desse aditivo 
+        $idContrato = $conteudo["idContrato"];
+        
+        # Pega todos os aditivos e apostilas desse contrato
+        $aditivosContrato = $this->getAditivosContrato($idContrato);
+        
+        # Cria as variáveis para contabilização
+        $aditivo = 0;
+        $apostila = 0;
+        
+        # Percorre o array para contabilizar cada tipo
+        foreach($aditivosContrato as $item){
+            # Aumenta o contador e cria variável do tipo
+            if($item["tipo"] == 1){
+                $aditivo ++;
+                $tipoNumerado = "Aditivo {$aditivo}";
+            }else{
+                $apostila ++;
+                $tipoNumerado = "Apostila {$apostila}";
+            }
+            
+            # Verifica se é desejado
+            if($idAditivo == $item["idAditivo"]){
+                $retorno = $tipoNumerado;
+            }
+        }
+        return $retorno;
     }
 
     ###########################################################
@@ -200,7 +243,7 @@ class Aditivo
         if (!empty($conteudo["valor"])) {
             if (!empty($conteudo["garantia"])) {
                 $garantia = $conteudo['valor'] * ($conteudo['garantia'] / 100);
-                $garantia = "R$ " . formataMoeda($garantia) . " ({$conteudo['garantia']}%)";
+                $garantia = "R$ " . formataMoeda($garantia) . "<br/>({$conteudo['garantia']}%)";
             } else {
                 $garantia = "---";
             }
@@ -228,7 +271,8 @@ class Aditivo
         }
 
         # monta o select
-        $select = "SELECT objeto,
+        $select = "SELECT idAditivo,
+                          objeto,
                           idAditivo,
                           dtAssinatura,
                           idAditivo,
@@ -242,13 +286,13 @@ class Aditivo
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_titulo("Termo(s) Aditivo(s)");
-        $tabela->set_label(array("Objetivo", "Publicação", "Assinatura", "Duração", "Garantia"));
-        $tabela->set_align(array("left", "center"));
-        $tabela->set_width(array(30, 15, 15, 15, 25));
-        $tabela->set_classe(array(null, "Aditivo", null, "Aditivo", "Aditivo"));
-        $tabela->set_metodo(array(null, "getPublicacao", null, "getPeriodo", "getGarantia"));
-        $tabela->set_funcao(array(null, null, "date_to_php"));
-        $tabela->set_numeroOrdem(true);
+        $tabela->set_label(array("Tipo", "Objetivo", "Publicação", "Assinatura", "Duração", "Garantia"));
+        $tabela->set_align(array("center", "left", "center"));
+        $tabela->set_width(array(15, 23, 15, 12, 15, 20));
+        $tabela->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo"));
+        $tabela->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, "getPeriodo", "getGarantia"));
+        $tabela->set_funcao(array(null, null, null, "date_to_php"));
+        #$tabela->set_numeroOrdem(true);
         $tabela->set_conteudo($row);
         #$tabela->set_formatacaoCondicional($formatacaoCondicional);
         $tabela->show();

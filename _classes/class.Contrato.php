@@ -222,7 +222,19 @@ class Contrato
         $status     = $this->getStatus($idContrato);
         $processo   = $this->getProcesso($idContrato, false);
         $assinatura = date_to_php($conteudo["dtAssinatura"]);
+        $proposta   = date_to_php($conteudo["dtProposta"]);
         $obs        = $conteudo["obs"];
+        
+        # Empresa
+        $empresa = new Empresa();
+        $empresa = $empresa->getRazaoSocial($conteudo["idEmpresa"]);
+
+        # Mão de obra
+        if ($conteudo["maoDeObra"]) {
+            $maodeobra = "Sim";
+        } else {
+            $maodeobra = "Não";
+        }
 
         # Prazo
         $prazo     = $conteudo["prazo"];
@@ -260,13 +272,18 @@ class Contrato
 
         # Monta o array de exibição
         $dados = [
-            ["siafe", 4],
-            ["modalidade", 4],
-            ["publicacao", 4, "Publicação DOERJ"],
-            ["inicio", 4, "Início"],
+            ["numero", 3, "Número"],
+            ["modalidade", 3],
+            ["siafe", 2],
+            ["status", 2],
+            ["maodeobra", 2, "Mão de Obra"],
+            ["proposta", 3],
+            ["assinatura", 3],
+            ["empresa", 6],
+            ["objeto", 12],
+            ["publicacao", 3, "Publicação DOERJ"],
+            ["inicio", 3, "Início"],
             ["vigencia", 4, "Vigência"],
-            ["assinatura", 4, "Assinatura"],
-            ["garantia", 4],
         ];
 
         # Rotina de exibição
@@ -640,19 +657,21 @@ class Contrato
 
         # Valores do aditivo
         $contratos   = new Contratos();
-        $select      = "SELECT valor FROM tbaditivo WHERE idContrato = {$idContrato} ORDER BY dtAssinatura";
+        $select      = "SELECT idAditivo, valor FROM tbaditivo WHERE idContrato = {$idContrato} ORDER BY dtAssinatura";
         $row         = $contratos->select($select);
         $numAditivos = $contratos->count($select);
+        
+        $aditivo = new Aditivo();
 
         # Percorre os valores somando-os
         foreach ($row as $item) {
-            $contadorAditivos++;
-            $valorTotal += $item[0];
+            $valorTotal += $item[1];
+            $tipo = $aditivo->getTipoNumerado($item[0]);
 
-            if (empty($item[0])) {
-                $valoresTabelas[] = ["Aditivo {$contadorAditivos}", "---"];
+            if (empty($item[1])) {
+                $valoresTabelas[] = [$tipo, "---"];
             } else {
-                $valoresTabelas[] = ["Aditivo {$contadorAditivos}", "R$ " . formataMoeda($item[0])];
+                $valoresTabelas[] = [$tipo, "R$ " . formataMoeda($item[1])];
             }
         }
 
@@ -676,7 +695,7 @@ class Contrato
             #$tabela->set_titulo("Aditivos");
             $tabela->set_label(array("Descrição", "Valor"));
             $tabela->set_align(array("left", "right"));
-            $tabela->set_width(array(60, 40));
+            $tabela->set_width(array(45, 55));
             #$tabela->set_classe(array("Comissao", "Comissao"));
             #$tabela->set_metodo(array("get_nomeMembro", "get_tipo"));
             #$tabela->set_numeroOrdem(true);

@@ -123,7 +123,7 @@ if ($acesso) {
             $alerta = new AlertaContrato($id, true);
 
             $grid->fechaColuna();
-            $grid->abreColuna(5);
+            $grid->abreColuna(4);
 
             # Exibe o valor
             $contrato->exibeValorTotal($id);
@@ -135,7 +135,7 @@ if ($acesso) {
             $comissao->listaComissao($id);
 
             $grid->fechaColuna();
-            $grid->abreColuna(7);
+            $grid->abreColuna(8);
 
             # Exibe a situação atual
             $situacao->exibeSituacaoAtual($id);
