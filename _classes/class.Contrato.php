@@ -189,7 +189,7 @@ class Contrato
         }
         $painel->abre();
 
-        p("Status:", "contratoLabelCallout");
+        p("Status:", "contratoLabelCallout2");
         p($status, "$stilo");
 
         $painel->fecha();

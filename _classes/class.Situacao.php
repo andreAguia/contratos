@@ -124,7 +124,7 @@ class Situacao
         $grid = new Grid();
         $grid->abreColuna(6);
 
-        p("Situação Atual", "contratoLabelCallout");
+        p("Situação Atual", "contratoLabelCallout1");
 
         $grid->fechaColuna();
         $grid->abreColuna(6);

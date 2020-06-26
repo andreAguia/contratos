@@ -90,7 +90,7 @@ if ($acesso) {
         $painel = new Callout("secondary");
         $painel->abre();
         
-        p("Duração e Vigência:","contratoLabelCallout");
+        p("Duração e Vigência:","contratoLabelCallout2");
         $contrato->exibeTempoEVigencia($id);
 
         $painel->fecha();
