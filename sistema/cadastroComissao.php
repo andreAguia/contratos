@@ -274,7 +274,7 @@ if ($acesso) {
             'label' => 'Página:',
             'tipo'  => 'texto',
             'col'   => 2,
-            'size'  => 5),
+            'size'  => 10),
         array(
             'linha' => 4,
             'nome'  => 'portariaSaida',
@@ -302,7 +302,7 @@ if ($acesso) {
             'label' => 'Página:',
             'tipo'  => 'texto',
             'col'   => 2,
-            'size'  => 5),
+            'size'  => 10),
         array(
             'linha' => 5,
             'nome'  => 'obs',

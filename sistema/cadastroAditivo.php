@@ -90,7 +90,7 @@ if ($acesso) {
     # Parametros da tabela
     $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
     $objeto->set_align(array("center", "left", "center"));
-    $objeto->set_width(array(10, 25, 10, 10, 10, 15,13));
+    $objeto->set_width(array(10, 25, 10, 10, 10, 15, 13));
     $objeto->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
     $objeto->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, "getPeriodo", "getGarantia", "getValor"));
     $objeto->set_funcao(array(null, null, null, "date_to_php"));
@@ -150,7 +150,7 @@ if ($acesso) {
             'label' => 'Pag:',
             'tipo'  => 'texto',
             'col'   => 2,
-            'size'  => 5),
+            'size'  => 10),
         array(
             'linha' => 3,
             'nome'  => 'valor',
@@ -215,8 +215,10 @@ if ($acesso) {
             break;
         case "editar" :
         case "excluir" :
-        case "gravar" :
             $objeto->$fase($id);
+            break;
+        case "gravar" :
+            $objeto->gravar($id,"cadastroAditivoExtra.php");
             break;
     }
 

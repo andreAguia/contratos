@@ -366,7 +366,7 @@ class Aditivo
         $select = "SELECT *
                      FROM tbaditivo
                     WHERE idContrato = {$idContrato}
-                 ORDER BY dtInicial desc LIMIT 1";
+                 ORDER BY dtAssinatura desc LIMIT 1";
 
         return $contratos->select($select, false);
     }

@@ -228,7 +228,6 @@ if ($acesso) {
             'nome'     => 'siafe',
             'label'    => 'Siafe:',
             'tipo'     => 'texto',
-            'required' => true,
             'col'      => 2,
             'size'     => 15,
         ),
@@ -335,7 +334,7 @@ if ($acesso) {
             'label' => 'Pag:',
             'tipo'  => 'texto',
             'col'   => 2,
-            'size'  => 5,
+            'size'  => 10,
         ),
         array(
             'linha' => 6,
