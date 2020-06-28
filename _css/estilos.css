@@ -173,6 +173,18 @@ p#pVigencia{
     margin: -3px;
 }
 
+p#pAditivoPublicacao{
+    padding: 0px;
+    margin: 0px;
+    margin-top: 6px;
+}
+
+p#pAditivoPag{
+    padding: 0px;
+    margin: 0px;
+    font-size: 10px;
+}
+
 /*******************************************
  * Cadastro da comissão
  *******************************************/

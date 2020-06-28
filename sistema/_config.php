@@ -29,29 +29,48 @@ ini_set('xdebug.overload_var_dump', 1);
 /**
  * [ Default errors ] Função para exibir erros do PHP
  */
-function fullStackPHPErrorHandler($error, $message, $file, $line) {
+function fullStackPHPErrorHandler($error, $message, $file, $line)
+{
     $color = ($error == E_USER_ERROR ? "red" : "yellow");
     echo "<div class='trigger' style='border-color: var(--{$color}); color:var(--{$color});'>[ Linha {$line} ] {$message}<small>{$file}</small></div>";
 }
 
-# Classes
-define("PASTA_CLASSES_GERAIS", "../../_framework/_classesGerais/");  # Classes Gerais
-define("PASTA_CLASSES_ADMIN", "../../areaServidor/_classes/");       # Classes do sistema de Administração 
-define("PASTA_CLASSES_GRH", "../../grh/_classes/");                   # Classes do sistema de GRH
-define("PASTA_CLASSES", "../_classes/");                             # Classes Específicas
-# Funções
-define("PASTA_FUNCOES_GERAIS", "../../_framework/_funcoesGerais/");  # Funções Gerais
-define("PASTA_FUNCOES", "../_funcoes/");                             # Funções Específicas
-# Figuras
-define("PASTA_FIGURAS_GERAIS", "../../_framework/_imgGerais/");      # Figuras Gerais
-define("PASTA_FIGURAS", "../_img/");                                 # Figuras Específicas
-# Estilos
-define("PASTA_ESTILOS_GERAIS", "../../_framework/_cssGerais/");      # Estilos Gerais (Foundation)
-define("PASTA_ESTILOS", "../_css/");                                 # Estilos Específicos
-# Arquivos
-define("PASTA_FOTOS", "../../_arquivos/fotos/");                     # Fotos dos Servidores
-define("PASTA_DOCUMENTOS", "../../_arquivos/documentos/");           # Documentos da Comissão de fiscalização
-# Tags aceitas em campos com htmlTag = true
+/*
+ *  Classes
+ */
+define("PASTA_CLASSES_GERAIS", "../../_framework/_classesGerais/");  // Classes Gerais
+define("PASTA_CLASSES_ADMIN", "../../areaServidor/_classes/");       // Classes do sistema de Administração 
+define("PASTA_CLASSES_GRH", "../../grh/_classes/");                  // Classes do sistema de GRH
+define("PASTA_CLASSES", "../_classes/");                             // Classes Específicas
+
+/*
+ *  Funções
+ */
+define("PASTA_FUNCOES_GERAIS", "../../_framework/_funcoesGerais/");  // Funções Gerais
+define("PASTA_FUNCOES", "../_funcoes/");                             // Funções Específicas
+
+/*
+ *  Figuras
+ */
+define("PASTA_FIGURAS_GERAIS", "../../_framework/_imgGerais/");      // Figuras Gerais
+define("PASTA_FIGURAS", "../_img/");                                 // Figuras Específicas
+
+/*
+ *  Estilos
+ */
+define("PASTA_ESTILOS_GERAIS", "../../_framework/_cssGerais/");      // Estilos Gerais (Foundation)
+define("PASTA_ESTILOS", "../_css/");                                 // Estilos Específicos
+
+/*
+ *  Arquivos
+ */
+define("PASTA_FOTOS", "../../_arquivos/fotos/");                     // Fotos dos Servidores
+define("PASTA_ADITIVOS", "../../_arquivos/contratosAditivos/");      // Publicação de Aditivos
+define("PASTA_DOCUMENTOS", "../../_arquivos/contratosDocumentos/");  // Documentos extras
+
+/*
+ *  Tags aceitas em campos com htmlTag = true
+ */
 define('TAGS', '<p></p><a></a><br/><br><div></div><table></table><tr></tr><td></td><th></th><strong></strong><em></em><u></u><sub></sub><sup></sup><ol></ol><li></li><ul></ul><hr><span></span><h3></h3>');
 
 # Cria array dos meses
@@ -91,7 +110,6 @@ include_once (PASTA_FUNCOES . "funcoes.especificas.php");
 
 # Framework gráfico 
 #include ('../../_framework/_outros/libchart/classes/libchart.php');
-
 # Dados do Browser
 $browser = get_BrowserName();
 define("BROWSER_NAME", $browser['browser']); # Nome do browser
@@ -102,7 +120,7 @@ define("IP", getenv("REMOTE_ADDR"));     # Ip da máquina
 define("SO", get_So());
 
 # carrega as session
-$idUsuario = get_session('idUsuario');                          // Servidor Logado
+$idUsuario            = get_session('idUsuario');                          // Servidor Logado
 $idServidorPesquisado = get_session('idServidorPesquisado');    // Servidor Editado na pesquisa do sistema do GRH
 # Define o horário
 date_default_timezone_set("America/Sao_Paulo");
@@ -116,9 +134,10 @@ setlocale(LC_CTYPE, 'pt_BR');
  * 
  * @param  $classe = a classe instanciada
  */
-function autoload($classe) {
+function autoload($classe)
+{
     # Array com as pastas existentes
-    $pastasClasses = [PASTA_CLASSES_GERAIS, PASTA_CLASSES, PASTA_CLASSES_ADMIN, PASTA_CLASSES_GRH];
+    $pastasClasses     = [PASTA_CLASSES_GERAIS, PASTA_CLASSES, PASTA_CLASSES_ADMIN, PASTA_CLASSES_GRH];
     $categoriasClasses = ["class", "interface", "container", "html", "outros", "rel", "bd", "documento", "w3"];
 
     # Percorre as pastas
@@ -135,7 +154,7 @@ function autoload($classe) {
 spl_autoload_register("autoload");
 
 # Sobre o Sistema
-$intra = new Intra();
+$intra  = new Intra();
 define("SISTEMA", $intra->get_variavel("sistemaContratos"));             # Nome do sistema
 define("DESCRICAO", $intra->get_variavel("sistemaContratosDescricao"));  # Descrição do sistema
 define("AUTOR", $intra->get_variavel("sistemaAutor"));             # Autor do sistema

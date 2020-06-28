@@ -115,15 +115,29 @@ class Aditivo
         }
 
         $conteudo = $this->getDados($idAditivo);
+        
+        # Monta o arquivo
+        $arquivo = PASTA_ADITIVOS . $idAditivo . ".pdf";
 
-        # Publicação
-        $dtPublicacao = $conteudo["dtPublicacao"];
-        $publicacao   = date_to_php($dtPublicacao);
-        if (!empty($conteudo["pgPublicacao"])) {
-            $publicacao .= "<br/>pag: {$conteudo["pgPublicacao"]}";
+        # Verifica se ele existe
+        if (file_exists($arquivo)) {
+            
+            # Monta o link
+            $link = new Link(null, $arquivo, "Exibe a Publicação");
+            $link->set_imagem(PASTA_FIGURAS_GERAIS. "ver.png", 20, 20);
+            $link->set_target("_blank");
+            $link->show();
         }
 
-        return $publicacao;
+        # Publicação
+        p(date_to_php($conteudo["dtPublicacao"]),"pAditivoPublicacao");
+        
+        if (!empty($conteudo["pgPublicacao"])) {
+            p("pag: {$conteudo["pgPublicacao"]}","pAditivoPag");
+        }
+        
+       
+        return;
     }
 
     ###########################################################
@@ -136,33 +150,33 @@ class Aditivo
             alert("É necessário informar o id do Aditivo.");
             return;
         }
-        
+
         # pega os dados do aditivo
         $conteudo = $this->getDados($idAditivo);
-        
+
         # Pega o idContrato desse aditivo 
         $idContrato = $conteudo["idContrato"];
-        
+
         # Pega todos os aditivos e apostilas desse contrato
         $aditivosContrato = $this->getAditivosContrato($idContrato);
-        
+
         # Cria as variáveis para contabilização
-        $aditivo = 0;
+        $aditivo  = 0;
         $apostila = 0;
-        
+
         # Percorre o array para contabilizar cada tipo
-        foreach($aditivosContrato as $item){
+        foreach ($aditivosContrato as $item) {
             # Aumenta o contador e cria variável do tipo
-            if($item["tipo"] == 1){
-                $aditivo ++;
+            if ($item["tipo"] == 1) {
+                $aditivo++;
                 $tipoNumerado = "Aditivo {$aditivo}";
-            }else{
-                $apostila ++;
+            } else {
+                $apostila++;
                 $tipoNumerado = "Apostila {$apostila}";
             }
-            
+
             # Verifica se é desejado
-            if($idAditivo == $item["idAditivo"]){
+            if ($idAditivo == $item["idAditivo"]) {
                 $retorno = $tipoNumerado;
             }
         }
@@ -285,16 +299,14 @@ class Aditivo
 
         # Monta a tabela
         $tabela = new Tabela();
-        $tabela->set_titulo("Termo(s) Aditivo(s)");
+        $tabela->set_titulo("Termos Aditivos & Apostilas");
         $tabela->set_label(array("Tipo", "Objetivo", "Publicação", "Assinatura", "Duração", "Garantia"));
         $tabela->set_align(array("center", "left", "center"));
         $tabela->set_width(array(15, 23, 15, 12, 15, 20));
         $tabela->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo"));
         $tabela->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, "getPeriodo", "getGarantia"));
         $tabela->set_funcao(array(null, null, null, "date_to_php"));
-        #$tabela->set_numeroOrdem(true);
-        $tabela->set_conteudo($row);
-        #$tabela->set_formatacaoCondicional($formatacaoCondicional);
+        $tabela->set_conteudo($row);        
         $tabela->show();
 
         # Editar
@@ -400,6 +412,26 @@ class Aditivo
         }
 
         return $return;
+    }
+    
+##############################################################
+    
+     public function exibePublicacao($idAditivo) {
+         
+        # Monta o arquivo
+        $arquivo = PASTA_ADITIVOS . $idAditivo . ".pdf";
+
+        # Verifica se ele existe
+        if (file_exists($arquivo)) {
+
+            # Monta o link
+            $link = new Link(null, $arquivo, "Exibe a Publicação");
+            $link->set_imagem(PASTA_FIGURAS_GERAIS. "ver.png", 20, 20);
+            $link->set_target("_blank");
+            $link->show();
+        } else {
+            echo "-";
+        }
     }
 
 #####################################################################################

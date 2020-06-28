@@ -33,6 +33,13 @@ if ($acesso) {
 
     # Começa uma nova página
     $page = new Page();
+    if ($fase == "upload"){
+        $page->set_ready('$(document).ready(function(){
+                                $("form input").change(function(){
+                                    $("form p").text(this.files.length + " arquivo(s) selecionado");
+                                });
+                            });');
+    }
     $page->iniciaPagina();
 
     # Cabeçalho da Página
@@ -56,7 +63,8 @@ if ($acesso) {
     $objeto->set_selectLista("SELECT idAditivo,
                                      objeto,
                                      idAditivo,
-                                     dtAssinatura,                                     
+                                     idAditivo,                                     
+                                     dtAssinatura,
                                      idAditivo,
                                      idAditivo,
                                      idAditivo
@@ -88,12 +96,21 @@ if ($acesso) {
     $objeto->set_linkListar('?fase=listar');
 
     # Parametros da tabela
-    $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
+    $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Upload", "Assinatura", "Duração", "Garantia", "Valor"));
     $objeto->set_align(array("center", "left", "center"));
-    $objeto->set_width(array(10, 25, 10, 10, 10, 15, 13));
-    $objeto->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
-    $objeto->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, "getPeriodo", "getGarantia", "getValor"));
-    $objeto->set_funcao(array(null, null, null, "date_to_php"));
+    $objeto->set_width(array(10, 25, 10, 5, 10, 10, 15, 13));
+    $objeto->set_classe(array("Aditivo", null, "Aditivo", null, null, "Aditivo", "Aditivo", "Aditivo"));
+    $objeto->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, null, "getPeriodo", "getGarantia", "getValor"));
+    $objeto->set_funcao(array(null, null, null, null,  "date_to_php"));
+
+    # Botão de Upload
+    $botao = new BotaoGrafico();
+    $botao->set_label('');
+    $botao->set_url("cadastroAditivo.php?fase=upload&id=");
+    $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
+
+    # Coloca o objeto link na tabela			
+    $objeto->set_link(array(null, null, null, $botao));
 
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
@@ -213,12 +230,81 @@ if ($acesso) {
         case "listar" :
             $objeto->$fase();
             break;
+
         case "editar" :
         case "excluir" :
             $objeto->$fase($id);
             break;
+
         case "gravar" :
-            $objeto->gravar($id,"cadastroAditivoExtra.php");
+            $objeto->gravar($id, "cadastroAditivoExtra.php");
+            break;
+
+        case "upload":
+            $grid = new Grid("center");
+            $grid->abreColuna(12);
+
+            # Botão voltar
+            botaoVoltar('?');
+
+            tituloTable("Upload de Publicação");
+
+            $grid->fechaColuna();
+            $grid->abreColuna(6);
+
+            echo "<form class='upload' method='post' enctype='multipart/form-data'><br>
+                        <input type='file' name='doc'>
+                        <p>Clique Aqui Para Escolher o Arquivo.</p>
+                        <button type='submit' name='submit'>Enviar</button>
+                    </form>";
+
+            $pasta = PASTA_ADITIVOS;
+
+            # Se não existe o programa cria
+            if (!file_exists($pasta) || !is_dir($pasta)) {
+                mkdir($pasta, 0755);
+            }
+
+            # Extensões possíveis
+            $extensoes = array("pdf");
+
+            # Pega os valores do php.ini
+            $postMax   = limpa_numero(ini_get('post_max_size'));
+            $uploadMax = limpa_numero(ini_get('upload_max_filesize'));
+            $limite    = menorValor(array($postMax, $uploadMax));
+
+            $texto = "Extensões Permitidas:";
+
+            foreach ($extensoes as $pp) {
+                $texto .= " $pp";
+            }
+
+            $texto .= "<br/>Tamanho Máximo do Arquivo: $limite M";
+
+            br(2);
+            p($texto, "f14", "center");
+
+            if ((isset($_POST["submit"])) && (!empty($_FILES['doc']))) {
+                $upload = new UploadDoc($_FILES['doc'], $pasta, $id);
+
+                # Salva e verifica se houve erro
+                if ($upload->salvar()) {
+
+                    # Registra log
+                    $Objetolog = new Intra();
+                    $data      = date("Y-m-d H:i:s");
+                    $atividade = "Fez o upload de publicação do Aditivo";
+                    $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
+
+                    # Volta para o menu
+                    loadPage("?id={$id}");
+                } else {
+                    loadPage("?fase=upload&id={$id}");
+                }
+            }
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
             break;
     }
 
