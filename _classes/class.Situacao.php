@@ -85,7 +85,7 @@ class Situacao
 
         # Retorno
         if (!vazio($row)) {
-            echo "<pre>{$row[0]}</pre>";
+            echo $row[0];
         }
 
         # Exibe alertas (se tiver)

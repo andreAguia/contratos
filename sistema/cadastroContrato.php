@@ -472,6 +472,8 @@ if ($acesso) {
             $comboStatus = $contratos->select('SELECT idStatus, status
                                                FROM tbstatus
                                            ORDER BY idStatus');
+            
+            array_unshift($comboStatus, array(null, "Todos"));
 
             # Status
             $controle = new Input('parametroStatus', 'combo', 'Status:', 1);

@@ -347,19 +347,26 @@ class Aditivo
 
         $conteudo = $this->getDados($idAditivo);
 
-        $dtInicial = date_to_php($conteudo["dtInicial"]);
-        $prazo     = $conteudo["prazo"];
-        $tipoPrazo = $conteudo["tipoPrazo"];
+        # Verifica se a data inicial foi preenchida
+        if (!empty($conteudo["dtInicial"]) AND!empty($conteudo["prazo"]) AND!empty($conteudo["tipoPrazo"])) {
 
-        $tipo    = null;
-        $dtFinal = null;
+            $dtInicial = date_to_php($conteudo["dtInicial"]);
+            $prazo     = $conteudo["prazo"];
+            $tipoPrazo = $conteudo["tipoPrazo"];
 
-        if ($tipoPrazo == 1) {
-            $dtFinal = addDias($dtInicial, $prazo);
+            $tipo    = null;
+            $dtFinal = null;
+
+            if ($tipoPrazo == 1) {
+                $dtFinal = addDias($dtInicial, $prazo);
+            } else {
+                $dtFinal = addMeses($dtInicial, $prazo);
+                $dtFinal = addDias($dtFinal, -1, false);      // retira 1 dia
+            }
         } else {
-            $dtFinal = addMeses($dtInicial, $prazo);
-            $dtFinal = addDias($dtFinal, -1, false);      // retira 1 dia
+            $dtFinal = null;
         }
+
 
         return $dtFinal;
     }

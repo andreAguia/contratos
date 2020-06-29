@@ -274,6 +274,7 @@ if ($acesso) {
             'label' => 'Página:',
             'tipo'  => 'texto',
             'col'   => 2,
+            'padrao' => $comissao->getUltimaPgPublicacaoEntrada($idContrato),
             'size'  => 10),
         array(
             'linha' => 4,

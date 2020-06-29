@@ -153,21 +153,21 @@ class Contrato
         }
 
         $conteudo = $this->getDados($idContrato);
-        
+
         $modalidade = new Modalidade();
 
         p($conteudo["numero"], "contratoNumero");
         p($conteudo['siafe'], "pVigencia");
         p($modalidade->get_modalidade($conteudo["idModalidade"]), "pVigencia");
-        
+
         $status = $this->getStatus($idContrato);
 
         if ($status == "Ativo") {
-            $stilo  = "statusAtivo";
+            $stilo = "statusAtivo";
         } elseif ($status == "Pendente") {
-            $stilo  = "statusPendente";
+            $stilo = "statusPendente";
         } else {
-            $stilo  = "statusEncerrado";
+            $stilo = "statusEncerrado";
         }
         p($status, "$stilo");
     }
@@ -231,7 +231,7 @@ class Contrato
 
         $contratos = new Contratos();
         $row       = $contratos->select($select);
-        
+
         $tabela = new Tabela();
         $tabela->set_titulo("Contrato {$conteudo["numero"]}");
         $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia"));
@@ -386,20 +386,26 @@ class Contrato
         }
 
         $conteudo = $this->getDados($idContrato);
+        
+        # Verifica se a data inicial foi preenchida
+        if (!empty($conteudo["dtInicial"]) AND !empty($conteudo["prazo"]) AND !empty($conteudo["tipoPrazo"])) {
 
-        $dtInicial = date_to_php($conteudo["dtInicial"]);
-        $prazo     = $conteudo["prazo"];
-        $tipoPrazo = $conteudo["tipoPrazo"];
+            $dtInicial = date_to_php($conteudo["dtInicial"]);
+            $prazo     = $conteudo["prazo"];
+            $tipoPrazo = $conteudo["tipoPrazo"];
 
-        $tipo       = null;
-        $dtVigencia = null;
+            $tipo       = null;
+            $dtVigencia = null;
 
-        # trata pelo tipo de prazo
-        if ($tipoPrazo == 1) {
-            $dtVigencia = addDias($dtInicial, $prazo);
-        } else {
-            $dtVigencia = addMeses($dtInicial, $prazo);
-            $dtVigencia = addDias($dtVigencia, -1, false);      // retira 1 dia
+            # trata pelo tipo de prazo
+            if ($tipoPrazo == 1) {
+                $dtVigencia = addDias($dtInicial, $prazo);
+            } else {
+                $dtVigencia = addMeses($dtInicial, $prazo);
+                $dtVigencia = addDias($dtVigencia, -1, false);      // retira 1 dia
+            }
+        }else{
+            $dtVigencia = null;
         }
 
         return $dtVigencia;
@@ -418,16 +424,29 @@ class Contrato
             alert("É necessário informar o id do Contrato.");
             return;
         }
+        
+        # Define a vigencia total com a vigência do contrato inicial
+        $vigenciaTotal = $this->getVigencia($idContrato);
 
         # Verifica se tem aditivo e pega os tempo de cada um deles
         $aditivo = new Aditivo();
         if ($aditivo->temAditivo($idContrato)) {
-            $dados = $aditivo->getDadosUltimoAditivo($idContrato);
+            $arrayAditivo = $aditivo->getAditivosContrato($idContrato);
 
-            return $aditivo->getVigencia($dados["idAditivo"]);
-        } else {
-            return $this->getVigencia($idContrato);
+            # Percorre o array
+            foreach ($arrayAditivo as $itemAditivo) {
+
+                # Pega a vigência deste aditivo
+                $vigencia = $aditivo->getVigencia($itemAditivo["idAditivo"]);
+                
+                # Descarta de for nula e atualiza vigencia total se não for
+                if(!empty($vigencia)){
+                    $vigenciaTotal = $vigencia;
+                }
+            }
         }
+        
+        return $vigenciaTotal;
     }
 
     ###########################################################
@@ -494,10 +513,10 @@ class Contrato
                      FROM tbmodalidade
                     WHERE idModalidade = {$idModalidade}";
 
-        $row = $contratos->select($select, false);        
-        echo $row["modalidade"];        
-        
-        if($conteudo["maoDeObra"]){
+        $row = $contratos->select($select, false);
+        echo $row["modalidade"];
+
+        if ($conteudo["maoDeObra"]) {
             hr("hrComissao");
             echo "Mão de Obra Alocada";
         }
@@ -636,7 +655,7 @@ class Contrato
             $link->set_imagem(PASTA_FIGURAS_GERAIS . "ver.png", 20, 20);
             $link->set_target("_blank");
             $link->show();
-        }else{
+        } else {
             # Botão de Upload
             $botao = new BotaoGrafico();
             $botao->set_title('Faça upload do arquivo!');

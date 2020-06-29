@@ -795,5 +795,40 @@ class Comissao
         return $return;
     }
 
+###################################################################################
+
+    public function getUltimaPgPublicacaoEntrada($idContrato)
+    {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        $return = null;
+
+        # Pega os dados
+        $select = "SELECT pgPublicacaoEntrada
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato}
+                    ORDER BY dtPublicacaoEntrada desc LIMIT 1";
+
+        $row = $contratos->select($select, false);
+
+        # Trata o retorno
+        if (empty($row["pgPublicacaoEntrada"])) {
+            $return = null;
+        } else {
+            $return = $row["pgPublicacaoEntrada"];
+        }
+
+        # Retorno
+        return $return;
+    }
+
 #####################################################################################
 }

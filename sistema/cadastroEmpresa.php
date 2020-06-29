@@ -72,7 +72,7 @@ if ($acesso) {
                                   OR email3 LIKE '%{$parametro}%'
                                   OR contato LIKE '%{$parametro}%'
                                   OR usuarioSei LIKE '%{$parametro}%'
-                            ORDER BY idEmpresa");
+                            ORDER BY razaosocial");
 
     # select do edita
     $objeto->set_selectEdita("SELECT razaoSocial,
