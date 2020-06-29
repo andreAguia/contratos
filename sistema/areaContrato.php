@@ -36,6 +36,10 @@ if ($acesso) {
     $page = new Page();
     $page->iniciaPagina();
 
+    # Limita a tela
+    $grid = new Grid();
+    $grid->abreColuna(12);
+
     # Verifica se é voltar de um incluir ou de um editar
     if (empty($id)) {
         $fase = "voltar";
@@ -46,10 +50,6 @@ if ($acesso) {
 
         # Cabeçalho da Página
         AreaServidor::cabecalho();
-
-        # Limita a tela
-        $grid = new Grid();
-        $grid->abreColuna(8);
 
         # Cria um menu
         $menu1 = new MenuBar();
@@ -80,33 +80,12 @@ if ($acesso) {
         $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$id}");
         $botaoEditar->set_class('button');
         $botaoEditar->set_title('Editar contrato');
-        #$menu1->add_link($botaoEditar, "right");
+        $menu1->add_link($botaoEditar, "right");
 
         $menu1->show();
-
-        $grid->fechaColuna();
-        $grid->abreColuna(2);
-
-        $painel = new Callout("secondary");
-        $painel->abre();
-        
-        p("Duração e Vigência:","contratoLabelCallout2");
-        $contrato->exibeTempoEVigencia($id);
-
-        $painel->fecha();
-
-        $grid->fechaColuna();
-        $grid->abreColuna(2);
-
-        $contrato->exibeStatus($id);
-
-        $grid->fechaColuna();
-        $grid->fechagrid(12);
     }
 
-    # Limita a tela
-    $grid = new Grid();
-    $grid->abreColuna(12);
+
 
     ################################################################
 
@@ -119,23 +98,23 @@ if ($acesso) {
             # Exibe os dados do contrado
             get_DadosContrato($id);
 
-            # Exibe alertas (se tiver)
-            $alerta = new AlertaContrato($id, true);
-
             $grid->fechaColuna();
             $grid->abreColuna(4);
 
             # Exibe o valor
             $contrato->exibeValorTotal($id);
 
+            $comissao->listaComissao($id);
+
             # Exibe dados da empresa
             $idEmpresa = $conteudo["idEmpresa"];
             $empresa->exibeDados($idEmpresa);
 
-            $comissao->listaComissao($id);
-
             $grid->fechaColuna();
             $grid->abreColuna(8);
+
+            # Exibe alertas (se tiver)
+            $alerta = new AlertaContrato($id, true);
 
             # Exibe a situação atual
             $situacao->exibeSituacaoAtual($id);

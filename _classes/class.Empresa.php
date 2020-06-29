@@ -179,7 +179,7 @@ class Empresa
 
         $dados = $this->getDados($idEmpresa);
 
-        $retorno = plm($dados["razaoSocial"]);
+        $retorno = $dados["razaoSocial"];
 
         if (!empty($dados["cnpj"])) {
             $retorno .= "<br/><p id='f10'> CNPJ: {$dados["cnpj"]}</p>";

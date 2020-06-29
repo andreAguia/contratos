@@ -153,16 +153,23 @@ class Contrato
         }
 
         $conteudo = $this->getDados($idContrato);
-        $mm       = new Modalidade();
-        $mmDados  = $mm->get_dados($conteudo["idModalidade"]);
+        
+        $modalidade = new Modalidade();
 
         p($conteudo["numero"], "contratoNumero");
-        p($mmDados['modalidade'], "contratoItem");
-        p($this->getStatus($idContrato), "status{$this->getStatus($idContrato)}");
+        p($conteudo['siafe'], "pVigencia");
+        p($modalidade->get_modalidade($conteudo["idModalidade"]), "pVigencia");
+        
+        $status = $this->getStatus($idContrato);
 
-        if ($conteudo["maoDeObra"]) {
-            p("MO Alocada", "contratoItem");
+        if ($status == "Ativo") {
+            $stilo  = "statusAtivo";
+        } elseif ($status == "Pendente") {
+            $stilo  = "statusPendente";
+        } else {
+            $stilo  = "statusEncerrado";
         }
+        p($status, "$stilo");
     }
 
     ###########################################################
@@ -211,136 +218,31 @@ class Contrato
             alert("É necessário informar o id do Contrato.");
             return;
         }
-
         $conteudo = $this->getDados($idContrato);
 
-        $painel = new Callout("secondary");
-        $painel->abre();
+        $select = "SELECT idContrato,
+                          objeto,
+                          idContrato,
+                          dtAssinatura,
+                          idContrato,
+                          idContrato
+                     FROM tbcontrato
+                    WHERE idContrato = {$idContrato}";
 
-        # Pega os valores
-        $modalidade = $this->getModalidade($idContrato);
-        $status     = $this->getStatus($idContrato);
-        $processo   = $this->getProcesso($idContrato, false);
-        $assinatura = date_to_php($conteudo["dtAssinatura"]);
-        $proposta   = date_to_php($conteudo["dtProposta"]);
-        $obs        = $conteudo["obs"];
+        $contratos = new Contratos();
+        $row       = $contratos->select($select);
         
-        # Empresa
-        $empresa = new Empresa();
-        $empresa = $empresa->getRazaoSocial($conteudo["idEmpresa"]);
-
-        # Mão de obra
-        if ($conteudo["maoDeObra"]) {
-            $maodeobra = "Sim";
-        } else {
-            $maodeobra = "Não";
-        }
-
-        # Prazo
-        $prazo     = $conteudo["prazo"];
-        $tipoPrazo = $conteudo["tipoPrazo"];
-        $inicio    = date_to_php($conteudo["dtInicial"]);
-        $vigencia  = $this->getVigencia($idContrato);
-
-        if ($tipoPrazo == 1) {
-            $vigencia = "{$vigencia} ({$prazo} dias)";
-        } elseif ($tipoPrazo == 2) {
-            $vigencia = "{$vigencia} ({$prazo} meses)";
-        }
-
-        # Publicação
-        $dtPublicacao = $conteudo["dtPublicacao"];
-        $publicacao   = date_to_php($dtPublicacao);
-        if (!empty($conteudo["pgPublicacao"])) {
-            $publicacao .= " pag: {$conteudo["pgPublicacao"]}";
-        }
-
-        # Valor
-        if (!empty($conteudo["valor"])) {
-            $valor = "R$ " . formataMoeda($conteudo['valor']);
-        }
-
-        # Garantia
-        if (!empty($conteudo["valor"])) {
-            if (!empty($conteudo["garantia"])) {
-                $garantia = $conteudo['valor'] * ($conteudo['garantia'] / 100);
-                $garantia = "R$ " . formataMoeda($garantia) . " ({$conteudo['garantia']}%)";
-            }
-        }
-
-        $dtAssinatura = $conteudo["dtAssinatura"];
-
-        # Monta o array de exibição
-        $dados = [
-            ["numero", 3, "Número"],
-            ["modalidade", 3],
-            ["siafe", 2],
-            ["status", 2],
-            ["maodeobra", 2, "Mão de Obra"],
-            ["proposta", 3],
-            ["assinatura", 3],
-            ["empresa", 6],
-            ["objeto", 12],
-            ["publicacao", 3, "Publicação DOERJ"],
-            ["inicio", 3, "Início"],
-            ["vigencia", 4, "Vigência"],
-        ];
-
-        # Rotina de exibição
-        $grid = new Grid();
-        $grid->abreColuna(12);
-
-        titulo("Contrato");
-        br();
-
-        $grid->fechaColuna();
-
-        foreach ($dados as $item) {
-
-            # Monta a variável para usar o $$
-            $pp = $item[0];
-
-            # label
-            if (empty($item[2])) {
-                $label = plm($pp);
-            } else {
-                $label = $item[2];
-            }
-
-            # Verifica se tem variável com esse nome
-            if (empty($$pp)) { // Se não tem variável com esse nome
-                if (empty($conteudo[$pp])) { // Se não tiver no array de conteúdo do bd
-                    $dado = "---"; // Exibe tracinho
-                } else { // Se tiver conteúdo do bd exibe ele
-                    $dado = $conteudo[$pp];
-                }
-            } else { // Se tiver variável exibe ela
-                $dado = $$pp;
-            }
-
-            $grid->abreColuna($item[1]);
-            p("{$label}:", "contratoLabel");
-            p($dado, "contratoConteudo");
-            $grid->fechaColuna();
-        }
-        $grid->fechaGrid();
-
-        # Editar    
-        $div = new Div("divEdita1");
-        $div->abre();
-
-        $div = new Div("divEdita2");
-        $div->abre();
-
-        $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$idContrato}");
-        $botaoEditar->set_class('tiny button secondary');
-        $botaoEditar->set_title('Editar contrato');
-        $botaoEditar->show();
-
-        $div->fecha();
-        $div->fecha();
-
-        $painel->fecha();
+        $tabela = new Tabela();
+        $tabela->set_titulo("Contrato {$conteudo["numero"]}");
+        $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia"));
+        $tabela->set_align(array("center", "left", "center"));
+        $tabela->set_width(array(15, 23, 15, 12, 15, 20));
+        $tabela->set_classe(array("Contrato", null, "Contrato", null, "Contrato", "Contrato"));
+        $tabela->set_metodo(array("exibeModalidade", null, "getPublicacao", null, "getPeriodo", "getGarantia"));
+        $tabela->set_funcao(array(null, null, null, "date_to_php"));
+        $tabela->set_conteudo($row);
+        $tabela->set_totalRegistro(false);
+        $tabela->show();
     }
 
     ###########################################################
@@ -359,39 +261,35 @@ class Contrato
             return;
         }
 
-        $conteudo  = $this->getDados($idContrato);
-        $numero    = "<p id='contratoNumero'>{$conteudo["numero"]}</p>";
-        $objeto    = $conteudo["objeto"];
-        $idEmpresa = $conteudo["idEmpresa"];
-        $processo  = $this->getProcesso($idContrato);
+        $select = "SELECT idContrato, 
+                          idContrato, 
+                          objeto,
+                          idEmpresa, 
+                          idContrato
+                    FROM tbcontrato
+                   WHERE idContrato = {$idContrato}";
 
-        $bdempresa = new Empresa();
-        $dados     = $bdempresa->getDados($idEmpresa);
-        $empresa   = $dados["razaoSocial"];
-        $cnpj      = $dados["cnpj"];
+        $contratos = new Contratos();
+        $row       = $contratos->select($select);
 
         # Limita o tamanho da tela
         $grid = new Grid();
         $grid->abreColuna(12);
 
-        # Monta os dados
-        $label = ["Contrato", "Processo", "Objeto", "Empresa"];
-        $item  = [[$numero, $processo, $objeto, "{$empresa}<br/>{$cnpj}"]];
-        $width = [10, 20, 40, 30];
-
-        $formatacaoCondicional = array(array('coluna'   => 0,
-                'valor'    => $numero,
+        $formatacaoCondicional = array(array(
+                'coluna'   => 2,
+                'valor'    => $row[0][2],
                 'operador' => '=',
                 'id'       => 'listaDados'));
 
         # Monta a tabela
         $tabela = new Tabela();
-        $tabela->set_conteudo($item);
-        $tabela->set_label($label);
-        $tabela->set_width($width);
+        $tabela->set_conteudo($row);
+        $tabela->set_label(["Contrato", "Processo", "Objeto", "Empresa", "Vigência"]);
+        $tabela->set_width([10, 20, 25, 25, 10]);
         #$tabela->set_funcao($function);
-        #$tabela->set_classe($classe);
-        #$tabela->set_metodo($metodo);
+        $tabela->set_classe(["Contrato", "Contrato", null, "Empresa", "Contrato"]);
+        $tabela->set_metodo(["exibeNumeroContrato", "getProcesso", null, "getEmpresaCnpj", "exibeTempoEVigencia"]);
         $tabela->set_totalRegistro(false);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
 
@@ -515,7 +413,7 @@ class Contrato
     public function getVigenciaTotal($idContrato)
     {
 
-        # Verifica se foi informado
+        # Verifica se foi informado o id
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
@@ -537,7 +435,7 @@ class Contrato
     public function getNumero($idContrato)
     {
 
-        # Joga o valor informado para a variável da classe
+        # Verifica se foi informado o id
         if (!vazio($idContrato)) {
             $this->idContrato = $idContrato;
         }
@@ -576,7 +474,7 @@ class Contrato
 
     ##############################################################
 
-    public function getModalidade($idContrato = null)
+    public function exibeModalidade($idContrato = null)
     {
 
         # Verifica se foi informado
@@ -596,9 +494,15 @@ class Contrato
                      FROM tbmodalidade
                     WHERE idModalidade = {$idModalidade}";
 
-        $row = $contratos->select($select, false);
+        $row = $contratos->select($select, false);        
+        echo $row["modalidade"];        
+        
+        if($conteudo["maoDeObra"]){
+            hr("hrComissao");
+            echo "Mão de Obra Alocada";
+        }
 
-        return $row["modalidade"];
+        return;
     }
 
     #####################################################################################
@@ -660,13 +564,13 @@ class Contrato
         $select      = "SELECT idAditivo, valor FROM tbaditivo WHERE idContrato = {$idContrato} ORDER BY dtAssinatura";
         $row         = $contratos->select($select);
         $numAditivos = $contratos->count($select);
-        
+
         $aditivo = new Aditivo();
 
         # Percorre os valores somando-os
         foreach ($row as $item) {
             $valorTotal += $item[1];
-            $tipo = $aditivo->getTipoNumerado($item[0]);
+            $tipo       = $aditivo->getTipoNumerado($item[0]);
 
             if (empty($item[1])) {
                 $valoresTabelas[] = [$tipo, "---"];
@@ -706,5 +610,114 @@ class Contrato
         $painel->fecha();
     }
 
-#####################################################################################
+    ###########################################################
+    /*
+     * Informa a data de publicação mais a página ( se tiver) do Contrato
+     */
+
+    public function getPublicacao($idContrato = null)
+    {
+
+        # Verifica se foi informado o id
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        # Monta o arquivo
+        $arquivo = PASTA_CONTRATOS . $idContrato . ".pdf";
+
+        # Verifica se ele existe
+        if (file_exists($arquivo)) {
+            # Monta o link
+            $link = new Link(null, $arquivo, "Exibe a Publicação");
+            $link->set_imagem(PASTA_FIGURAS_GERAIS . "ver.png", 20, 20);
+            $link->set_target("_blank");
+            $link->show();
+        }else{
+            # Botão de Upload
+            $botao = new BotaoGrafico();
+            $botao->set_title('Faça upload do arquivo!');
+            $botao->set_url("cadastroContrato.php?fase=upload&id={$idContrato}");
+            $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
+            $botao->show();
+        }
+
+        # Publicação
+        p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
+
+        if (!empty($conteudo["pgPublicacao"])) {
+            p("pag: {$conteudo["pgPublicacao"]}", "pAditivoPag");
+        }
+
+
+        return;
+    }
+
+    ###########################################################
+
+    function getPeriodo($idContrato = null)
+    {
+        # Verifica se foi informado o id
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        if (!empty($conteudo["dtInicial"])) {
+
+            $dtInicial = date_to_php($conteudo["dtInicial"]);
+            $prazo     = $conteudo["prazo"];
+            $tipoPrazo = $conteudo["tipoPrazo"];
+
+            $tipo    = null;
+            $dtFinal = null;
+
+            if ($tipoPrazo == 1) {
+                $tipo    = "Dias";
+                $dtFinal = $this->getVigencia($idContrato);
+            } else {
+                $tipo    = "Meses";
+                $dtFinal = $this->getVigencia($idContrato);
+            }
+            $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
+        } else {
+            $retorno = null;
+        }
+
+        return $retorno;
+    }
+
+    ###########################################################
+
+    function getGarantia($idContrato = null)
+    {
+        # Verifica se foi informado o id
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        # Garantia
+        if (!empty($conteudo["valor"])) {
+            if (!empty($conteudo["garantia"])) {
+                $garantia = $conteudo['valor'] * ($conteudo['garantia'] / 100);
+                $garantia = "R$ " . formataMoeda($garantia) . "<br/>({$conteudo['garantia']}%)";
+            } else {
+                $garantia = "---";
+            }
+        } else {
+            $garantia = "---";
+        }
+
+        return $garantia;
+    }
+
+    #####################################################################################
 }

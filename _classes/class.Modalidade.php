@@ -10,39 +10,17 @@ class Modalidade
      *
      * @var private $idConcurso integer null O id do concurso
      */
-    private $idModalidade = null;
-
 ##############################################################
 
-    public function __construct($idModalidade = null)
+    public function __construct()
     {
-        /**
-         * Inicia a Classe somente
-         *
-         * @param $idContrato integer null O id do concurso
-         *
-         * @syntax $concurso = new Concurso([$idConcurso]);
-         */
-        $this->idModalidade = $idModalidade;
+        ##somente para constar
     }
 
 ##############################################################
 
     public function get_dados($idModalidade = null)
     {
-
-        /**
-         * Informa os dados da base de dados
-         *
-         * @param $idConcurso integer null O id do concurso
-         *
-         * @syntax $concurso->get_dados([$idConcurso]);
-         */
-        # Joga o valor informado para a variável da classe
-        if (!vazio($idModalidade)) {
-            $this->idModalidade = $idModalidade;
-        }
-
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
@@ -68,36 +46,49 @@ class Modalidade
     public function get_numContratos($idModalidade = null)
     {
 
-        /**
-         * Informa os dados da base de dados
-         *
-         * @param $idConcurso integer null O id do concurso
-         *
-         * @syntax $concurso->get_dados([$idConcurso]);
-         */
-        # Joga o valor informado para a variável da classe
-        if (!vazio($idModalidade)) {
-            $this->idModalidade = $idModalidade;
-        }
-
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
         # Verifica se foi informado
-        if (vazio($this->idModalidade)) {
+        if (vazio($idModalidade)) {
             alert("É necessário informar o id da Modalidade.");
             return;
         }
 
         # Pega os dados
-        $select = 'SELECT idContrato
-                 FROM tbcontrato
-                WHERE idModalidade = ' . $this->idModalidade;
+        $select = "SELECT idContrato
+                     FROM tbcontrato
+                    WHERE idModalidade = {$idModalidade}";
 
         $numero = $contratos->count($select, false);
 
         # Retorno
         return $numero;
+    }
+
+##############################################################
+
+    public function get_modalidade($idModalidade = null)
+    {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idModalidade)) {
+            alert("É necessário informar o id da Modalidade.");
+            return;
+        }
+
+        # Pega os dados
+        $select = "SELECT modalidade
+                     FROM tbmodalidade
+                    WHERE idModalidade = {$idModalidade}";
+
+        $row = $contratos->select($select, false);
+
+        # Retorno
+        return $row["modalidade"];
     }
 
 }

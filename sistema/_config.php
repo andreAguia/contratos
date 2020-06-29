@@ -64,9 +64,10 @@ define("PASTA_ESTILOS", "../_css/");                                 // Estilos 
 /*
  *  Arquivos
  */
-define("PASTA_FOTOS", "../../_arquivos/fotos/");                     // Fotos dos Servidores
-define("PASTA_ADITIVOS", "../../_arquivos/contratosAditivos/");      // Publicação de Aditivos
-define("PASTA_DOCUMENTOS", "../../_arquivos/contratosDocumentos/");  // Documentos extras
+define("PASTA_FOTOS", "../../_arquivos/fotos/");                    // Fotos dos Servidores
+define("PASTA_CONTRATOS", "../../_arquivos/contratos/");            // Publicação de Contratos
+define("PASTA_ADITIVOS", "../../_arquivos/contratosAditivos/");     // Publicação de Aditivos
+define("PASTA_DOCUMENTOS", "../../_arquivos/contratosDocumentos/"); // Documentos extras
 
 /*
  *  Tags aceitas em campos com htmlTag = true

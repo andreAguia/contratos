@@ -83,6 +83,13 @@ div#divEdita1Comissao{
     bottom: 6px;
 }
 
+div#divEdita1Contrato{
+    position: relative;
+    float: right;
+    left: -53px;
+    bottom: -50px;
+}
+
 
 tr#listaDados{
     background-color: #D7D7D7;
@@ -170,7 +177,7 @@ p#pVigencia{
     font-size: 10px;
     text-align: center;
     padding: 0px;
-    margin: -3px;
+    margin: 0px;
 }
 
 p#pAditivoPublicacao{

@@ -33,7 +33,7 @@ if ($acesso) {
 
     # Começa uma nova página
     $page = new Page();
-    if ($fase == "upload"){
+    if ($fase == "upload") {
         $page->set_ready('$(document).ready(function(){
                                 $("form input").change(function(){
                                     $("form p").text(this.files.length + " arquivo(s) selecionado");
@@ -62,8 +62,7 @@ if ($acesso) {
     # select da lista
     $objeto->set_selectLista("SELECT idAditivo,
                                      objeto,
-                                     idAditivo,
-                                     idAditivo,                                     
+                                     idAditivo,                                   
                                      dtAssinatura,
                                      idAditivo,
                                      idAditivo,
@@ -96,21 +95,12 @@ if ($acesso) {
     $objeto->set_linkListar('?fase=listar');
 
     # Parametros da tabela
-    $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Upload", "Assinatura", "Duração", "Garantia", "Valor"));
+    $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
     $objeto->set_align(array("center", "left", "center"));
-    $objeto->set_width(array(10, 25, 10, 5, 10, 10, 15, 13));
-    $objeto->set_classe(array("Aditivo", null, "Aditivo", null, null, "Aditivo", "Aditivo", "Aditivo"));
-    $objeto->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, null, "getPeriodo", "getGarantia", "getValor"));
-    $objeto->set_funcao(array(null, null, null, null,  "date_to_php"));
-
-    # Botão de Upload
-    $botao = new BotaoGrafico();
-    $botao->set_label('');
-    $botao->set_url("cadastroAditivo.php?fase=upload&id=");
-    $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
-
-    # Coloca o objeto link na tabela			
-    $objeto->set_link(array(null, null, null, $botao));
+    $objeto->set_width(array(10, 30, 10, 10, 10, 15, 13));
+    $objeto->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
+    $objeto->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, "getPeriodo", "getGarantia", "getValor"));
+    $objeto->set_funcao(array(null, null, null, "date_to_php"));
 
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
@@ -245,26 +235,22 @@ if ($acesso) {
             $grid->abreColuna(12);
 
             # Botão voltar
-            botaoVoltar('?');
+            botaoVoltar('areaContrato.php');
 
+            # Título
             tituloTable("Upload de Publicação");
 
+            # Limita a tela
             $grid->fechaColuna();
             $grid->abreColuna(6);
 
-            echo "<form class='upload' method='post' enctype='multipart/form-data'><br>
-                        <input type='file' name='doc'>
+            # Monta o formulário
+            echo "<form name='post' action='?fase=upload&id={$id}&post=true' class='upload' method='post' enctype='multipart/form-data'><br>
+                        <input type='file' name='file'>
                         <p>Clique Aqui Para Escolher o Arquivo.</p>
                         <button type='submit' name='submit'>Enviar</button>
                     </form>";
-
-            $pasta = PASTA_ADITIVOS;
-
-            # Se não existe o programa cria
-            if (!file_exists($pasta) || !is_dir($pasta)) {
-                mkdir($pasta, 0755);
-            }
-
+            
             # Extensões possíveis
             $extensoes = array("pdf");
 
@@ -274,33 +260,51 @@ if ($acesso) {
             $limite    = menorValor(array($postMax, $uploadMax));
 
             $texto = "Extensões Permitidas:";
-
             foreach ($extensoes as $pp) {
                 $texto .= " $pp";
             }
-
             $texto .= "<br/>Tamanho Máximo do Arquivo: $limite M";
 
-            br(2);
+            br();
             p($texto, "f14", "center");
 
-            if ((isset($_POST["submit"])) && (!empty($_FILES['doc']))) {
-                $upload = new UploadDoc($_FILES['doc'], $pasta, $id);
+            $pasta = PASTA_ADITIVOS;
 
-                # Salva e verifica se houve erro
-                if ($upload->salvar()) {
+            # Retorna true se existir um get de nome post e for boleano
+            $getPost = filter_input(INPUT_GET, "post", FILTER_VALIDATE_BOOLEAN);
 
-                    # Registra log
-                    $Objetolog = new Intra();
-                    $data      = date("Y-m-d H:i:s");
-                    $atividade = "Fez o upload de publicação do Aditivo";
-                    $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
+            # Se não existe o programa cria
+            if (!file_exists($pasta) || !is_dir($pasta)) {
+                mkdir($pasta, 0755);
+            }
+            
+            # Se existe uma $_FILES e o nome do arquivo não estiver vazio
+            if ($_FILES && !empty($_FILES['file']['name'])) {
 
-                    # Volta para o menu
-                    loadPage("?id={$id}");
+                $fileUpload = $_FILES["file"];
+
+                # Define no array os nameTypes permitidos
+                $allowedTypes = [
+                    "application/pdf",
+                ];
+
+                # Define o novo nome do arquivo
+                $newFileName = $id . mb_strstr($fileUpload['name'],"."); 
+                
+                # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
+                if (in_array($fileUpload['type'], $allowedTypes)) {
+                    if (move_uploaded_file($fileUpload['tmp_name'], $pasta . $newFileName)) {
+                        loadPage("?id={$id}");
+                    } else {
+                        echo "<p class='trigger error'>Erro Inesperado</p>";
+                    }
                 } else {
-                    loadPage("?fase=upload&id={$id}");
+                    echo "<p class='trigger error'>Tipo de arquivo não permitido</p>";
                 }
+            } elseif ($_FILES) {
+                echo "<p class='trigger warning'>Selecione um arquivo antes de enviar</p>";
+            } elseif ($getPost) {
+                echo "<p class='trigger warning'>Parece que o arquivo é muito grande</p>";
             }
 
             $grid->fechaColuna();

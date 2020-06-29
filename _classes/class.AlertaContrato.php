@@ -129,13 +129,13 @@ class AlertaContrato
                 $painel->abre();
 
                 $grid = new Grid();
-                $grid->abreColuna(1);
+                $grid->abreColuna(2);
 
                 $figura = new Imagem(PASTA_FIGURAS_GERAIS . 'aviso.png', 'Imagem demonstrativa', 50, 50);
                 $figura->show();
 
                 $grid->fechaColuna();
-                $grid->abreColuna(11);
+                $grid->abreColuna(10);
 
                 p("ATENÇÂO !!", "palerta");
 
