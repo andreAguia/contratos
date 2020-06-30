@@ -40,52 +40,29 @@ if ($acesso) {
     $grid = new Grid();
     $grid->abreColuna(12);
 
-    # Verifica se é voltar de um incluir ou de um editar
-    if (empty($id)) {
-        $fase = "voltar";
-    } else {
+    # Joga os parâmetros para as sessions
+    set_session('sessionContrato', $id);
 
-        # Joga os parâmetros para as sessions
-        set_session('sessionContrato', $id);
+    # Cabeçalho da Página
+    AreaServidor::cabecalho();
 
-        # Cabeçalho da Página
-        AreaServidor::cabecalho();
+    # Cria um menu
+    $menu1 = new MenuBar();
 
-        # Cria um menu
-        $menu1 = new MenuBar();
+    # Voltar
+    $botaoVoltar = new Link("Voltar", "cadastroContrato.php");
+    $botaoVoltar->set_class('button');
+    $botaoVoltar->set_title('Voltar a página anterior');
+    $botaoVoltar->set_accessKey('V');
+    $menu1->add_link($botaoVoltar, "left");
 
-        # Voltar
-        $botaoVoltar = new Link("Voltar", "cadastroContrato.php");
-        $botaoVoltar->set_class('button');
-        $botaoVoltar->set_title('Voltar a página anterior');
-        $botaoVoltar->set_accessKey('V');
-        $menu1->add_link($botaoVoltar, "left");
+    # Editar
+    $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$id}");
+    $botaoEditar->set_class('button');
+    $botaoEditar->set_title('Editar contrato');
+    $menu1->add_link($botaoEditar, "right");
 
-        # Aditivo
-        $botaoEditar = new Link("Aditivos", "cadastroAditivo.php");
-        $botaoEditar->set_class('button');
-        $botaoEditar->set_title('Acessa os aditivos do contrato');
-        #$menu1->add_link($botaoEditar, "right");
-        # Comissão
-        $botaoEditar = new Link("Comissão", "cadastroComissao.php");
-        $botaoEditar->set_class('button');
-        $botaoEditar->set_title('Acessa os membros da comissão de fiscalização deste contrato');
-        #$menu1->add_link($botaoEditar, "right");
-        # Situação
-        $botaoEditar = new Link("Situação", "cadastroSituacao.php");
-        $botaoEditar->set_class('button');
-        $botaoEditar->set_title('Acessa o cadastro de situação deste contrato.');
-        #$menu1->add_link($botaoEditar, "right");
-        # Editar
-        $botaoEditar = new Link("Editar", "cadastroContrato.php?fase=editar&id={$id}");
-        $botaoEditar->set_class('button');
-        $botaoEditar->set_title('Editar contrato');
-        $menu1->add_link($botaoEditar, "right");
-
-        $menu1->show();
-    }
-
-
+    $menu1->show();
 
     ################################################################
 
@@ -122,13 +99,6 @@ if ($acesso) {
             # Exibe outros dados do contrato
             $contrato->exibeDadosContrato($id);
             $aditivo->listaAditivos($id);
-            break;
-
-        ################################################################
-
-        case "voltar":
-
-            loadPage("cadastroContrato.php");
             break;
     }
 

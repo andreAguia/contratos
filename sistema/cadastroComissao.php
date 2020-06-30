@@ -372,14 +372,7 @@ if ($acesso) {
         case "gravar":
             $objeto->gravar($id, null, "cadastroComissaoPosGravacao.php");
             break;
-
-        case "exibeFicha":
-            botaoVoltar("areaContrato.php");
-
-            # Exibe dados do contrato
-            get_DadosContrato($idContrato);
-            break;
-
+        
         case "cadastroProcesso":
 
             botaoVoltar("?");

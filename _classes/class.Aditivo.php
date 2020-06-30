@@ -306,8 +306,8 @@ class Aditivo
 
         # Monta a tabela
         $tabela = new Tabela();
-        #$tabela->set_titulo("Termos Aditivos & Apostilas");
-        $tabela->set_label(array("", "", "", "", "", ""));
+        $tabela->set_titulo("Termos Aditivos & Apostilas");
+        $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia"));
         $tabela->set_align(array("center", "left", "center"));
         $tabela->set_width(array(15, 23, 15, 12, 15, 20));
         $tabela->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo"));

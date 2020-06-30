@@ -23,13 +23,13 @@ if ($acesso) {
     $fase = get("fase", "listar");
 
     # pega o id (se tiver)
-    $id = soNumeros(get("id"));
+    $id              = soNumeros(get("id"));
     $sessionContrato = get_session('sessionContrato');
 
     # Pega o parametro de pesquisa (se tiver)
     if (is_null(post('parametro'))) { # Se o parametro n?o vier por post (for nulo)
-    $parametro = retiraAspas(get_session('sessionParametro')); # passa o parametro da session para a variavel parametro retirando as aspas
-} else {
+        $parametro = retiraAspas(get_session('sessionParametro')); # passa o parametro da session para a variavel parametro retirando as aspas
+    } else {
         $parametro = post('parametro'); # Se vier por post, retira as aspas e passa para a variavel parametro
         set_session('sessionParametro', $parametro); # transfere para a session para poder recuperá-lo depois
     }
@@ -101,10 +101,10 @@ if ($acesso) {
     if (!empty($sessionContrato)) {
         $objeto->set_voltarForm("areaContrato.php");
         $objeto->set_linkListar("areaContrato.php");
-    }else{
+    } else {
         $objeto->set_linkListar("?fase=listar");
     }
-    
+
 
     # Parametros da tabela
     $objeto->set_label(array("Empresa", "Telefone", "Email", "Contatos", "Contratos"));
@@ -133,113 +133,113 @@ if ($acesso) {
     array_unshift($cidade, array(null, null)); # Adiciona o valor de nulo
     # Campos para o formulario
     $objeto->set_campos(array(
-        array('linha' => 1,
-            'nome' => 'razaoSocial',
-            'label' => 'Razão Social:',
-            'tipo' => 'texto',
-            'required' => true,
+        array('linha'     => 1,
+            'nome'      => 'razaoSocial',
+            'label'     => 'Razão Social:',
+            'tipo'      => 'texto',
+            'required'  => true,
             'autofocus' => true,
-            'col' => 8,
-            'size' => 250),
-        array('linha' => 1,
-            'nome' => 'cnpj',
-            'label' => 'CNPJ:',
-            'tipo' => 'texto',
+            'col'       => 8,
+            'size'      => 250),
+        array('linha'    => 1,
+            'nome'     => 'cnpj',
+            'label'    => 'CNPJ:',
+            'tipo'     => 'texto',
             'required' => true,
-            'col' => 4,
-            'size' => 30),
+            'col'      => 4,
+            'size'     => 30),
         array('linha' => 3,
-            'nome' => 'telefone1',
+            'nome'  => 'telefone1',
             'label' => 'Telefone 1:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Número de telefone',
-            'col' => 4,
-            'size' => 100),
+            'col'   => 4,
+            'size'  => 100),
         array('linha' => 3,
-            'nome' => 'telefone2',
+            'nome'  => 'telefone2',
             'label' => 'Telefone 2:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Número de telefone',
-            'col' => 4,
-            'size' => 100),
+            'col'   => 4,
+            'size'  => 100),
         array('linha' => 3,
-            'nome' => 'telefone3',
+            'nome'  => 'telefone3',
             'label' => 'Telefone 3:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Número de telefone',
-            'col' => 4,
-            'size' => 100),
+            'col'   => 4,
+            'size'  => 100),
         array('linha' => 4,
-            'nome' => 'email1',
+            'nome'  => 'email1',
             'label' => 'Email 1:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Email da empresa',
-            'col' => 4,
-            'size' => 100),
+            'col'   => 4,
+            'size'  => 100),
         array('linha' => 4,
-            'nome' => 'email2',
+            'nome'  => 'email2',
             'label' => 'Email 2:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Email da empresa',
-            'col' => 4,
-            'size' => 100),
+            'col'   => 4,
+            'size'  => 100),
         array('linha' => 4,
-            'nome' => 'email3',
+            'nome'  => 'email3',
             'label' => 'Email 3:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Email da empresa',
-            'col' => 4,
-            'size' => 100),
+            'col'   => 4,
+            'size'  => 100),
         array('linha' => 5,
-            'nome' => 'contato',
+            'nome'  => 'contato',
             'label' => 'Contato na Empresa:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Contato',
-            'col' => 6,
-            'size' => 150),
+            'col'   => 6,
+            'size'  => 150),
         array('linha' => 5,
-            'nome' => 'usuarioSei',
+            'nome'  => 'usuarioSei',
             'label' => 'Pessoa da empresa cadastrada no SEI:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Contato',
-            'col' => 6,
-            'size' => 150),
+            'col'   => 6,
+            'size'  => 150),
         array('linha' => 5,
-            'nome' => 'endereco',
+            'nome'  => 'endereco',
             'label' => 'Endereço:',
-            'tipo' => 'texto',
-            'plm' => true,
+            'tipo'  => 'texto',
+            'plm'   => true,
             'title' => 'Endereço da Empresa',
-            'col' => 12,
-            'size' => 150),
+            'col'   => 12,
+            'size'  => 150),
         array('linha' => 6,
-            'nome' => 'bairro',
+            'nome'  => 'bairro',
             'label' => 'Bairro:',
-            'tipo' => 'texto',
+            'tipo'  => 'texto',
             'title' => 'Bairro',
-            'plm' => true,
-            'col' => 4,
-            'size' => 50),
+            'plm'   => true,
+            'col'   => 4,
+            'size'  => 50),
         array('linha' => 6,
-            'nome' => 'idCidade',
+            'nome'  => 'idCidade',
             'label' => 'Cidade:',
-            'tipo' => 'combo',
+            'tipo'  => 'combo',
             'array' => $cidade,
             'title' => 'Cidade de Moradia do Servidor',
-            'col' => 5,
-            'size' => 30),
+            'col'   => 5,
+            'size'  => 30),
         array('linha' => 6,
-            'nome' => 'cep',
+            'nome'  => 'cep',
             'label' => 'Cep:',
-            'tipo' => 'cep',
+            'tipo'  => 'cep',
             'title' => 'Cep',
-            'col' => 3,
-            'size' => 10),
+            'col'   => 3,
+            'size'  => 10),
         array('linha' => 7,
-            'nome' => 'obs',
+            'nome'  => 'obs',
             'label' => 'Observação:',
-            'tipo' => 'textarea',
-            'size' => array(80, 5))));
+            'tipo'  => 'textarea',
+            'size'  => array(80, 5))));
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
@@ -268,8 +268,11 @@ if ($acesso) {
         ################################################################
 
         case "editar":
+            $objeto->editar($id);
+            break;
+        
         case "gravar":
-            $objeto->$fase($id);
+            $objeto->gravar($id, null, "cadastroEmpresaPosGravacao.php");
             break;
     }
 

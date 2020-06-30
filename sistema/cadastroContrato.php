@@ -20,9 +20,9 @@ if ($acesso) {
     $contratos = new Contratos();
     $contrato  = new Contrato();
     $pessoal   = new Pessoal();
-    
-     # Faz o backup de hora em hora
-     # Verifica se o backup automático está habilitado
+
+    # Faz o backup de hora em hora
+    # Verifica se o backup automático está habilitado
     if ($intra->get_variavel("backupAutomatico")) {
 
         # Verifica as horas
@@ -51,12 +51,14 @@ if ($acesso) {
     $parametroStatus     = post('parametroStatus', get_session('parametroStatus', 1));
     $parametroModalidade = post('parametroModalidade', get_session('parametroModalidade'));
     $parametroEmpresa    = post('parametroEmpresa', get_session('parametroEmpresa'));
-
+    $inclusaoEmpresa     = post('inclusaoEmpresa', get_session('inclusaoEmpresa'));
+    
     # Joga os parâmetros par as sessions
     set_session('parametroAno', $parametroAno);
     set_session('parametroStatus', $parametroStatus);
     set_session('parametroModalidade', $parametroModalidade);
     set_session('parametroEmpresa', $parametroEmpresa);
+    set_session('inclusaoEmpresa', $inclusaoEmpresa);
 
     # Começa uma nova página
     $page = new Page();
@@ -141,9 +143,15 @@ if ($acesso) {
     # Caminhos
     $objeto->set_linkEditar('?fase=editar');
     $objeto->set_botaoEditar(false);
-    #$objeto->set_linkExcluir('?fase=editar');
     $objeto->set_linkGravar('?fase=gravar');
-    $objeto->set_voltarForm("areaContrato.php");
+
+    # Diferencia o botão de voltar para as rotinas de editar ou incluir
+    if (empty($id)) {
+        $objeto->set_voltarForm("?");
+    } else {
+        $objeto->set_voltarForm("areaContrato.php");
+    }
+
     $objeto->set_linkListar("areaContrato.php");
 
     $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Tempo e Vigência", "Situação", "Acessar"));
@@ -204,8 +212,7 @@ if ($acesso) {
                               ORDER BY razaoSocial');
 
     array_unshift($empresa, array(null, null));
-
-    #$valorPadrao = $contrato->get_novoNumero();
+    
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
@@ -231,12 +238,12 @@ if ($acesso) {
             'size'     => 15,
         ),
         array(
-            'linha'    => 1,
-            'nome'     => 'siafe',
-            'label'    => 'Siafe:',
-            'tipo'     => 'texto',
-            'col'      => 2,
-            'size'     => 15,
+            'linha' => 1,
+            'nome'  => 'siafe',
+            'label' => 'Siafe:',
+            'tipo'  => 'texto',
+            'col'   => 2,
+            'size'  => 15,
         ),
         array(
             'linha'    => 1,
@@ -259,7 +266,7 @@ if ($acesso) {
             'col'      => 2,
             'size'     => 5,
             'padrao'   => 0
-        ),        
+        ),
         array(
             'linha' => 2,
             'nome'  => 'dtProposta',
@@ -275,7 +282,7 @@ if ($acesso) {
             'tipo'  => 'date',
             'col'   => 3,
             'size'  => 15,
-        ),        
+        ),
         array(
             'linha'    => 2,
             'nome'     => 'idEmpresa',
@@ -285,6 +292,7 @@ if ($acesso) {
             'required' => true,
             'col'      => 6,
             'size'     => 200,
+            'padrao'   => $inclusaoEmpresa,
         ),
         array(
             'linha' => 3,
@@ -388,6 +396,9 @@ if ($acesso) {
     switch ($fase) {
         case "":
         case "listar":
+            # Zera a session da inclusão de contrato
+            set_session('inclusaoEmpresa'); 
+            
             # Limita o tamanho da tela
             $grid = new Grid();
             $grid->abreColuna(12);
@@ -421,7 +432,7 @@ if ($acesso) {
             $menu1->add_link($botao, "right");
 
             # Incluir
-            $botaoInserir = new Button("Incluir Contrato", "?fase=editar");
+            $botaoInserir = new Button("Incluir Contrato", "?fase=incluir");
             $botaoInserir->set_title("Incluir");
             $menu1->add_link($botaoInserir, "right");
 
@@ -435,7 +446,6 @@ if ($acesso) {
             #$menu1->add_link($botaoRel,"right");
 
             $menu1->show();
-
 
             # Formulário de Pesquisa
             $form = new Form('?');
@@ -472,7 +482,7 @@ if ($acesso) {
             $comboStatus = $contratos->select('SELECT idStatus, status
                                                FROM tbstatus
                                            ORDER BY idStatus');
-            
+
             array_unshift($comboStatus, array(null, "Todos"));
 
             # Status
@@ -524,7 +534,7 @@ if ($acesso) {
             # Empresa
             $controle = new Input('parametroEmpresa', 'combo', 'Empresa:', 1);
             $controle->set_size(20);
-            $controle->set_title('EMpresa contratada');
+            $controle->set_title('Empresa contratada');
             $controle->set_valor($parametroEmpresa);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
@@ -545,12 +555,103 @@ if ($acesso) {
 
         case "editar":
         case "excluir":
-        case "gravar":
             $objeto->$fase($id);
             break;
 
-        case "ver":
-            $objeto->$fase($id);
+        case "gravar":
+            $objeto->gravar($id, null, "cadastroContratoPosGravacao.php");
+            break;
+
+        case "incluir":
+
+            # Limita o tamanho da tela
+            $grid = new Grid();
+            $grid->abreColuna(12);
+
+            # Cria um menu
+            $menu1 = new MenuBar();
+
+            # Voltar
+            $botaoVoltar = new Link("Voltar", "?");
+            $botaoVoltar->set_class('button');
+            $botaoVoltar->set_title('Voltar a página anterior');
+            $botaoVoltar->set_accessKey('V');
+            $menu1->add_link($botaoVoltar, "left");
+
+            # Incluir
+            $botaoInserir = new Button("Incluir Contrato", "?fase=incluir");
+            $botaoInserir->set_title("Incluir");
+            #$menu1->add_link($botaoInserir, "right");
+
+            $menu1->show();
+
+            # Formulário de Pesquisa
+            $form = new Form('?fase=valida');
+
+            # Titulo
+            titulo("Inclusão de Contrato");
+            br(2);
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
+
+            # Limita o tamanho da tela
+            $grid = new Grid("center");
+            $grid->abreColuna(8);
+
+            callout("Inicialmente informe a empresa contratada, caso seja uma empresa nova o cadastro deverá ser feito antes do cadastro do contrato !!");
+            br();
+
+
+            # Pega os dados
+            $comboEmpresa = $contratos->select('SELECT idEmpresa, razaoSocial
+                                               FROM tbempresa
+                                           ORDER BY razaoSocial');
+
+            array_unshift($comboEmpresa, array(null, null));
+            array_unshift($comboEmpresa, array("nova", "Nova Empresa"));
+
+            # Empresa
+            $controle = new Input('inclusaoEmpresa', 'combo', 'Empresa:', 1);
+            $controle->set_size(100);
+            $controle->set_title('Empresa contratada');
+            $controle->set_valor(null);
+            $controle->set_linha(1);
+            $controle->set_col(12);
+            $controle->set_array($comboEmpresa);
+            $controle->set_autofocus(true);
+            $form->add_item($controle);
+
+            # submit
+            $controle = new Input('submit', 'submit');
+            $controle->set_valor('Continua');
+            $controle->set_linha(3);
+            $controle->set_tabIndex(3);
+            $controle->set_accessKey('E');
+            $form->add_item($controle);
+
+            $form->show();
+
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
+            break;
+
+        case "valida":
+            
+            # Verifica se é nova
+            if($inclusaoEmpresa == "nova"){
+                loadPage("cadastroEmpresa.php?fase=editar");
+            }
+            
+            if(empty($inclusaoEmpresa)){
+                loadPage("?fase=incluir");
+            }
+            
+            if(is_numeric($inclusaoEmpresa)){
+                loadPage("?fase=editar");
+            }
+
             break;
 
         case "upload":
@@ -573,7 +674,7 @@ if ($acesso) {
                         <p>Clique Aqui Para Escolher o Arquivo.</p>
                         <button type='submit' name='submit'>Enviar</button>
                     </form>";
-            
+
             # Extensões possíveis
             $extensoes = array("pdf");
 
@@ -600,7 +701,7 @@ if ($acesso) {
             if (!file_exists($pasta) || !is_dir($pasta)) {
                 mkdir($pasta, 0755);
             }
-            
+
             # Se existe uma $_FILES e o nome do arquivo não estiver vazio
             if ($_FILES && !empty($_FILES['file']['name'])) {
 
@@ -612,8 +713,8 @@ if ($acesso) {
                 ];
 
                 # Define o novo nome do arquivo
-                $newFileName = $id . mb_strstr($fileUpload['name'],"."); 
-                
+                $newFileName = $id . mb_strstr($fileUpload['name'], ".");
+
                 # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
                 if (in_array($fileUpload['type'], $allowedTypes)) {
                     if (move_uploaded_file($fileUpload['tmp_name'], $pasta . $newFileName)) {
@@ -633,7 +734,6 @@ if ($acesso) {
             $grid->fechaColuna();
             $grid->fechaGrid();
             break;
-        
     }
 
     $page->terminaPagina();
