@@ -358,10 +358,12 @@ class Contrato
 
             # Percorre o array
             foreach ($arrayAditivo as $itemAditivo) {
-                if ($itemAditivo["tipoPrazo"] == 2) {
-                    $prazoMeses += $itemAditivo["prazo"];
-                } else {
-                    $prazoDias += $itemAditivo["prazo"];
+                if (!empty($itemAditivo["prazo"])) {
+                    if ($itemAditivo["tipoPrazo"] == 2) {
+                        $prazoMeses += $itemAditivo["prazo"];
+                    } else {
+                        $prazoDias += $itemAditivo["prazo"];
+                    }
                 }
             }
         }
@@ -386,9 +388,9 @@ class Contrato
         }
 
         $conteudo = $this->getDados($idContrato);
-        
+
         # Verifica se a data inicial foi preenchida
-        if (!empty($conteudo["dtInicial"]) AND !empty($conteudo["prazo"]) AND !empty($conteudo["tipoPrazo"])) {
+        if (!empty($conteudo["dtInicial"]) AND!empty($conteudo["prazo"]) AND!empty($conteudo["tipoPrazo"])) {
 
             $dtInicial = date_to_php($conteudo["dtInicial"]);
             $prazo     = $conteudo["prazo"];
@@ -404,7 +406,7 @@ class Contrato
                 $dtVigencia = addMeses($dtInicial, $prazo);
                 $dtVigencia = addDias($dtVigencia, -1, false);      // retira 1 dia
             }
-        }else{
+        } else {
             $dtVigencia = null;
         }
 
@@ -424,7 +426,7 @@ class Contrato
             alert("É necessário informar o id do Contrato.");
             return;
         }
-        
+
         # Define a vigencia total com a vigência do contrato inicial
         $vigenciaTotal = $this->getVigencia($idContrato);
 
@@ -438,14 +440,14 @@ class Contrato
 
                 # Pega a vigência deste aditivo
                 $vigencia = $aditivo->getVigencia($itemAditivo["idAditivo"]);
-                
+
                 # Descarta de for nula e atualiza vigencia total se não for
-                if(!empty($vigencia)){
+                if (!empty($vigencia)) {
                     $vigenciaTotal = $vigencia;
                 }
             }
         }
-        
+
         return $vigenciaTotal;
     }
 
@@ -567,35 +569,10 @@ class Contrato
 
     public function exibeValorTotal($idContrato = null)
     {
-        # Pega o valor do contrato
-        $conteudo = $this->getDados($idContrato);
-
-        # Inicia as variáveis
-        $valorTotal       = 0;
-        $valoresTabela[]  = null;
-        $contadorAditivos = 0;
-
-        $valorTotal       += $conteudo["valor"];
-        $valoresTabelas[] = ["Contrato", "R$ " . formataMoeda($conteudo["valor"])];
-
-        # Valores do aditivo
-        $contratos   = new Contratos();
-        $select      = "SELECT idAditivo, valor FROM tbaditivo WHERE idContrato = {$idContrato} ORDER BY dtAssinatura";
-        $row         = $contratos->select($select);
-        $numAditivos = $contratos->count($select);
-
-        $aditivo = new Aditivo();
-
-        # Percorre os valores somando-os
-        foreach ($row as $item) {
-            $valorTotal += $item[1];
-            $tipo       = $aditivo->getTipoNumerado($item[0]);
-
-            if (empty($item[1])) {
-                $valoresTabelas[] = [$tipo, "---"];
-            } else {
-                $valoresTabelas[] = [$tipo, "R$ " . formataMoeda($item[1])];
-            }
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
         }
 
         # exibe o resultado
@@ -603,9 +580,33 @@ class Contrato
         $painel->abre();
 
         titulo("Valor Total");
-        br();
 
-        p("R$ " . formataMoeda($valorTotal), "p12", "center");
+        $valorTotal = $this->getValorTotal($idContrato);
+
+        if ($valorTotal >= 0) {
+            p("R$ " . formataMoeda($valorTotal), "pvalorTotalPositivo");
+        } else {
+            p("R$ " . formataMoeda($valorTotal), "pvalorTotalNegativo");
+        }
+
+        # Pega o valor do contrato
+        $conteudo = $this->getDados($idContrato);
+
+        # Contrato
+        $tabela = new Tabela();
+        #$tabela->set_titulo("Aditivos");
+        $tabela->set_label(array("Descrição", "Valor"));
+        $tabela->set_align(array("left", "right"));
+        $tabela->set_width(array(45, 55));
+        $tabela->set_conteudo([["Contrato", formataMoeda($conteudo["valor"])]]);
+        $tabela->set_totalRegistro(false);
+        $tabela->show();
+
+        # Valores do aditivo
+        $contratos   = new Contratos();
+        $select      = "SELECT idAditivo, idAditivo FROM tbaditivo WHERE idContrato = {$idContrato} ORDER BY dtAssinatura";
+        $row         = $contratos->select($select);
+        $numAditivos = $contratos->count($select);
 
         /*
          * Exibe a tabela de aditivos e valores
@@ -616,13 +617,12 @@ class Contrato
             # Monta a tabela
             $tabela = new Tabela();
             #$tabela->set_titulo("Aditivos");
-            $tabela->set_label(array("Descrição", "Valor"));
+            $tabela->set_label(array("", ""));
             $tabela->set_align(array("left", "right"));
             $tabela->set_width(array(45, 55));
-            #$tabela->set_classe(array("Comissao", "Comissao"));
-            #$tabela->set_metodo(array("get_nomeMembro", "get_tipo"));
-            #$tabela->set_numeroOrdem(true);
-            $tabela->set_conteudo($valoresTabelas);
+            $tabela->set_classe(array("Aditivo", "Aditivo"));
+            $tabela->set_metodo(array("getTipoNumerado", "getValor"));
+            $tabela->set_conteudo($row);
             $tabela->show();
         }
 
@@ -736,6 +736,47 @@ class Contrato
         }
 
         return $garantia;
+    }
+
+    ###########################################################
+
+    function getValorTotal($idContrato = null)
+    {
+        # Verifica se foi informado o id
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Define a variável de retorno
+        $valorTotal = 0;
+
+        # Pega os dados do contrato
+        $conteudo = $this->getDados($idContrato);
+
+        # Joga o valor do contrato no valor total
+        if (!empty($conteudo["valor"])) {
+            $valorTotal += $conteudo["valor"];
+        }
+
+        # Pega os valores dos aditivos
+        $contratos   = new Contratos();
+        $select      = "SELECT valor, valorSinal FROM tbaditivo WHERE idContrato = {$idContrato} ORDER BY dtAssinatura";
+        $row         = $contratos->select($select);
+        $numAditivos = $contratos->count($select);
+
+        # Verifica se tem algum aditivo
+        if ($numAditivos > 0) {
+            foreach ($row as $item) {
+                if ($item["valorSinal"]) {
+                    $valorTotal -= $item["valor"];
+                } else {
+                    $valorTotal += $item["valor"];
+                }
+            }
+        }
+
+        return $valorTotal;
     }
 
     #####################################################################################

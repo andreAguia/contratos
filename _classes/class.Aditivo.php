@@ -239,13 +239,17 @@ class Aditivo
         $conteudo = $this->getDados($idAditivo);
 
         # Valor
-        if (!empty($conteudo["valor"])) {
-            $valor = "R$ " . formataMoeda($conteudo['valor']);
+        if (empty($conteudo["valor"])) {
+            p("----","p#pvalorNulo");            
         } else {
-            $valor = "---";
+            if ($conteudo["valorSinal"]){
+                p("R$ -" . formataMoeda($conteudo['valor']),"pvalorNegativo");
+            }else{
+                p("R$ " . formataMoeda($conteudo['valor']),"pvalorPositivo");
+            }
         }
 
-        return $valor;
+        return;
     }
 
     ###########################################################
@@ -374,10 +378,10 @@ class Aditivo
     ##############################################################
 
     /*
-     * Informa todos os dados do último aditivo
+     * Informa todos os dados do último aditivo com Data (para calculo de vigencia)
      */
 
-    public function getDadosUltimoAditivo($idContrato = null)
+    public function getDadosUltimoAditivocomData($idContrato = null)
     {
 
         # Conecta ao Banco de Dados
@@ -393,6 +397,7 @@ class Aditivo
         $select = "SELECT *
                      FROM tbaditivo
                     WHERE idContrato = {$idContrato}
+                      AND dtInicial IS NOT NULL 
                  ORDER BY dtAssinatura desc LIMIT 1";
 
         return $contratos->select($select, false);
@@ -411,13 +416,13 @@ class Aditivo
         $contratos = new Contratos();
 
         # Verifica se foi informado
-        if (vazio($idContrato)) {
+        if (empty($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
         }
 
         if ($this->temAditivo($idContrato)) {
-            $dados    = $this->getDadosUltimoAditivo($idContrato);
+            $dados    = $this->getDadosUltimoAditivocomData($idContrato);
             $vigencia = $this->getVigencia($dados["idAditivo"]);
             $return   = addDias($vigencia, 1, false);
         } else {

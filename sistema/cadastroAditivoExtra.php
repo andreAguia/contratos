@@ -6,15 +6,15 @@
 
 # Só pode passar se todos estão preenchidos ou se todos estão em branco
 $total = 0;
-if (empty($campoValor[7])) {
-    $total++;
-}
-
 if (empty($campoValor[8])) {
     $total++;
 }
 
 if (empty($campoValor[9])) {
+    $total++;
+}
+
+if (empty($campoValor[10])) {
     $total++;
 }
 

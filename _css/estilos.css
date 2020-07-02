@@ -366,3 +366,44 @@ span#etiqueta{
     font-size: 11px;
     color: #ff6600;
 }
+
+/*******************************************
+ * Cadastro de Aditivo
+ *******************************************/
+
+p#pvalorPositivo{
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+    color: blue;
+}
+
+p#pvalorNegativo{
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+    color: red;
+}
+
+p#pvalorNulo{
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+}
+
+p#pvalorTotalPositivo{
+    font-size: 18px;
+    padding: 10px;
+    margin: 0px;
+    color: blue;
+    text-align: center;
+}
+
+
+p#pvalorTotalNegativo{
+    font-size: 18px;
+    padding: 10px;
+    margin: 0px;
+    color: red;
+    text-align: center;
+}

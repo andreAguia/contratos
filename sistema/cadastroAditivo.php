@@ -78,6 +78,7 @@ if ($acesso) {
                                      dtPublicacao,
                                      pgPublicacao,
                                      valor,
+                                     valorSinal,
                                      garantia,                                   
                                      dtInicial,
                                      prazo,
@@ -117,7 +118,13 @@ if ($acesso) {
         array(1, "Dias"),
         array(2, "Meses")
     );
-
+    
+    # Calcula a data inicial quando for inclusão
+    $dataInclusao = $aditivo->getDataInicialNovoAditivo($idContrato);
+    if(!empty($dataInclusao)){
+        $dataInclusao = date_to_bd($dataInclusao);        
+    }
+    
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
@@ -167,6 +174,14 @@ if ($acesso) {
             'size'  => 15),
         array(
             'linha' => 3,
+            'nome'  => 'valorSinal',
+            'label' => 'Negativo?',
+            'tipo'  => 'simnao',
+            'col'   => 3,
+            'size'  => 3),
+        
+        array(
+            'linha' => 3,
             'nome'  => 'garantia',
             'label' => 'Garantia: (se houver)',
             'tipo'  => 'percentagem',
@@ -178,7 +193,7 @@ if ($acesso) {
             'label'  => 'Data Inicial:',
             'tipo'   => 'date',
             'col'    => 3,
-            'padrao' => date_to_bd($aditivo->getDataInicialNovoAditivo($idContrato)),
+            'padrao' => $dataInclusao,
             'size'   => 15),
         array(
             'linha' => 5,
