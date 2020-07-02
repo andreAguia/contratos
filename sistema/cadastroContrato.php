@@ -262,7 +262,6 @@ if ($acesso) {
             'label'    => 'Mão de Obra Alocada:',
             'tipo'     => 'simnao',
             'title'    => 'Informa se o contrato tem ou não mão de obra alocada na UENF.',
-            'required' => true,
             'col'      => 2,
             'size'     => 5,
             'padrao'   => 0
