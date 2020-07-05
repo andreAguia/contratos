@@ -18,6 +18,7 @@ if ($acesso) {
     # Conecta ao Banco de Dados
     $intra    = new Intra();
     $contrato = new Contrato();
+    $contratos = new Contratos();
     $pessoal  = new Pessoal();
     $comissao = new Comissao();
     $aditivo  = new Aditivo();
@@ -54,16 +55,20 @@ if ($acesso) {
     $objeto->set_rotinaExtraParametro($idContrato);
 
     # Nome do Modelo
-    $objeto->set_nome('Aditivos');
+    if(empty($id)){
+        $objeto->set_nome('Aditivos');
+    }else{
+        $objeto->set_nome($aditivo->getTipoNumerado($id));
+    }
 
     # Botão de voltar da lista
     $objeto->set_voltarLista('areaContrato.php');
 
     # select da lista
     $objeto->set_selectLista("SELECT idAditivo,
-                                     objeto,
+                                     idAditivo,
                                      idAditivo,                                   
-                                     dtAssinatura,
+                                     idAditivo,
                                      idAditivo,
                                      idAditivo,
                                      idAditivo
@@ -73,6 +78,7 @@ if ($acesso) {
 
     # select do edita
     $objeto->set_selectEdita('SELECT tipo,
+                                     vinculado,
                                      objeto,
                                      dtAssinatura,
                                      dtPublicacao,
@@ -97,11 +103,11 @@ if ($acesso) {
 
     # Parametros da tabela
     $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
-    $objeto->set_align(array("center", "left", "center"));
+    $objeto->set_align(array("center", "left", "center", "center", "center", "center", "right"));
     $objeto->set_width(array(10, 30, 10, 10, 10, 15, 13));
-    $objeto->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
-    $objeto->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, "getPeriodo", "getGarantia", "getValor"));
-    $objeto->set_funcao(array(null, null, null, "date_to_php"));
+    $objeto->set_classe(array("Aditivo", "Aditivo", "Aditivo", "Aditivo", "Aditivo", "Aditivo", "Aditivo"));
+    $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "getPublicacao", "exibeAssinatura", "exibePeriodo", "exibeGarantia", "exibeValor"));
+    #$objeto->set_funcao(array(null, null, null, "date_to_php"));
 
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
@@ -111,6 +117,27 @@ if ($acesso) {
 
     # Nome do campo id
     $objeto->set_idCampo('idAditivo');
+    
+    # Dados da combo vinculado
+    $select = "SELECT idAditivo, idAditivo
+                 FROM tbaditivo
+                WHERE idContrato = {$idContrato}";
+                
+    if(!empty($id)){
+        $select .= " AND idAditivo <> {$id}";
+    }
+    
+    $select .= " ORDER BY dtAssinatura";
+    $row = $contratos->select($select);
+    
+    # Inicia o array tratado
+    $vinculado[] = [null, "---"];
+    $vinculado[] = ["contrato", "Contrato ".$contrato->getNumero($idContrato)];
+    
+    # Trabalha o array
+    foreach ($row as $item){
+        $vinculado[] = [$item[0], $aditivo->getTipoNumerado($item[0])];
+    }
 
     # Dados da combo tipo
     $tipo = array(
@@ -137,14 +164,22 @@ if ($acesso) {
             'col'      => 3,
             'size'     => 15),
         array(
-            'linha' => 1,
+            'linha'    => 1,
+            'nome'     => 'vinculado',
+            'label'    => 'Vinculado:',
+            'tipo'     => 'combo',
+            'array'    => $vinculado,
+            'col'      => 5,
+            'size'     => 15),
+        array(
+            'linha' => 2,
             'nome'  => 'objeto',
             'label' => 'Objeto:',
             'tipo'  => 'texto',
-            'col'   => 9,
+            'col'   => 12,
             'size'  => 250),
         array(
-            'linha'    => 2,
+            'linha'    => 3,
             'nome'     => 'dtAssinatura',
             'label'    => 'Assinatura:',
             'required' => true,
@@ -152,28 +187,28 @@ if ($acesso) {
             'col'      => 3,
             'size'     => 15),
         array(
-            'linha' => 2,
+            'linha' => 3,
             'nome'  => 'dtPublicacao',
             'label' => 'Publicação:',
             'tipo'  => 'date',
             'col'   => 3,
             'size'  => 15),
         array(
-            'linha' => 2,
+            'linha' => 3,
             'nome'  => 'pgPublicacao',
             'label' => 'Pag:',
             'tipo'  => 'texto',
             'col'   => 2,
             'size'  => 10),
         array(
-            'linha' => 3,
+            'linha' => 4,
             'nome'  => 'valor',
             'label' => 'Valor: (se houver)',
             'tipo'  => 'moeda',
             'col'   => 3,
             'size'  => 15),
         array(
-            'linha' => 3,
+            'linha' => 4,
             'nome'  => 'valorSinal',
             'label' => 'Negativo?',
             'tipo'  => 'simnao',
@@ -181,7 +216,7 @@ if ($acesso) {
             'size'  => 3),
         
         array(
-            'linha' => 3,
+            'linha' => 4,
             'nome'  => 'garantia',
             'label' => 'Garantia: (se houver)',
             'tipo'  => 'percentagem',
@@ -304,7 +339,7 @@ if ($acesso) {
                 ];
 
                 # Define o novo nome do arquivo
-                $newFileName = $id . mb_strstr($fileUpload['name'],"."); 
+                $newFileName = "{$id}.pdf"; 
                 
                 # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
                 if (in_array($fileUpload['type'], $allowedTypes)) {

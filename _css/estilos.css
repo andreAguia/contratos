@@ -399,11 +399,31 @@ p#pvalorTotalPositivo{
     text-align: center;
 }
 
-
 p#pvalorTotalNegativo{
     font-size: 18px;
     padding: 10px;
     margin: 0px;
     color: red;
     text-align: center;
+}
+
+p#paditivoVinculado{
+    font-size: 10px;
+    padding: 0px;
+    margin: 0px;
+    color: #ff6600;
+}
+
+p#paditivoVinculadoValorPositivo{
+    font-size: 10px;
+    padding: 0px;
+    margin: 0px;
+    color: blue;
+}
+
+p#paditivoVinculadoValorNegativo{
+    font-size: 10px;
+    padding: 0px;
+    margin: 0px;
+    color: red;
 }

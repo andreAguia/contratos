@@ -712,7 +712,7 @@ if ($acesso) {
                 ];
 
                 # Define o novo nome do arquivo
-                $newFileName = $id . mb_strstr($fileUpload['name'], ".");
+                $newFileName = "{$id}.pdf";
 
                 # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
                 if (in_array($fileUpload['type'], $allowedTypes)) {
