@@ -180,6 +180,15 @@ p#pVigencia{
     margin: 0px;
 }
 
+p#pVigenciaJaPassou{
+    font-size: 10px;
+    text-align: center;
+    padding: 3px;
+    margin: 0px;
+    color: red;
+    font-weight: bold;
+}
+
 p#pAditivoPublicacao{
     padding: 0px;
     margin: 0px;

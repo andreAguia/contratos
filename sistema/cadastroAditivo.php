@@ -16,12 +16,14 @@ $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra    = new Intra();
+    $intra = new Intra();
     $contrato = new Contrato();
     $contratos = new Contratos();
-    $pessoal  = new Pessoal();
+    $pessoal = new Pessoal();
     $comissao = new Comissao();
-    $aditivo  = new Aditivo();
+    $aditivo = new Aditivo();
+    $empresa = new Empresa();
+    $situacao = new Situacao();
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
@@ -51,13 +53,15 @@ if ($acesso) {
 
     ################################################################
     # Exibe os dados do Servidor
-    $objeto->set_rotinaExtra("get_DadosContrato");
-    $objeto->set_rotinaExtraParametro($idContrato);
+    if($fase == "editar"){
+        $objeto->set_rotinaExtra("get_DadosContrato");
+        $objeto->set_rotinaExtraParametro($idContrato);
+    }
 
     # Nome do Modelo
-    if(empty($id)){
+    if (empty($id)) {
         $objeto->set_nome('Aditivos');
-    }else{
+    } else {
         $objeto->set_nome($aditivo->getTipoNumerado($id));
     }
 
@@ -66,9 +70,9 @@ if ($acesso) {
 
     # select da lista
     $objeto->set_selectLista("SELECT idAditivo,
-                                     idAditivo,
+                                     objeto,
                                      idAditivo,                                   
-                                     idAditivo,
+                                     dtAssinatura,
                                      idAditivo,
                                      idAditivo,
                                      idAditivo
@@ -100,14 +104,16 @@ if ($acesso) {
     $objeto->set_linkExcluir('?fase=excluir');
     $objeto->set_linkGravar('?fase=gravar');
     $objeto->set_linkListar('?fase=listar');
+    
+    $objeto->set_exibeTempoPesquisa(false);
 
     # Parametros da tabela
     $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
     $objeto->set_align(array("center", "left", "center", "center", "center", "center", "right"));
-    $objeto->set_width(array(10, 30, 10, 10, 10, 15, 13));
-    $objeto->set_classe(array("Aditivo", "Aditivo", "Aditivo", "Aditivo", "Aditivo", "Aditivo", "Aditivo"));
-    $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "getPublicacao", "exibeAssinatura", "exibePeriodo", "exibeGarantia", "exibeValor"));
-    #$objeto->set_funcao(array(null, null, null, "date_to_php"));
+    $objeto->set_width(array(15, 25, 10, 10, 10, 15, 15));
+    $objeto->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
+    $objeto->set_metodo(array("exibeTipoNumerado", null, "getPublicacao", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
+    $objeto->set_funcao(array(null, null, null, "date_to_php"));
 
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
@@ -117,25 +123,26 @@ if ($acesso) {
 
     # Nome do campo id
     $objeto->set_idCampo('idAditivo');
-    
+
     # Dados da combo vinculado
     $select = "SELECT idAditivo, idAditivo
-                 FROM tbaditivo
-                WHERE idContrato = {$idContrato}";
-                
-    if(!empty($id)){
+                 FROM tbaditivo                 
+                WHERE idContrato = {$idContrato}
+                AND vinculado IS NULL";
+
+    if (!empty($id)) {
         $select .= " AND idAditivo <> {$id}";
     }
-    
+
     $select .= " ORDER BY dtAssinatura";
     $row = $contratos->select($select);
-    
+
     # Inicia o array tratado
     $vinculado[] = [null, "---"];
-    $vinculado[] = ["contrato", "Contrato ".$contrato->getNumero($idContrato)];
-    
+    $vinculado[] = ["contrato", "Contrato " . $contrato->getNumero($idContrato)];
+
     # Trabalha o array
-    foreach ($row as $item){
+    foreach ($row as $item) {
         $vinculado[] = [$item[0], $aditivo->getTipoNumerado($item[0])];
     }
 
@@ -145,121 +152,123 @@ if ($acesso) {
         array(1, "Dias"),
         array(2, "Meses")
     );
-    
+
     # Calcula a data inicial quando for inclusão
     $dataInclusao = $aditivo->getDataInicialNovoAditivo($idContrato);
-    if(!empty($dataInclusao)){
-        $dataInclusao = date_to_bd($dataInclusao);        
+    if (!empty($dataInclusao)) {
+        $dataInclusao = date_to_bd($dataInclusao);
     }
-    
+
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
-            'linha'    => 1,
-            'nome'     => 'tipo',
-            'label'    => 'Tipo:',
-            'tipo'     => 'combo',
+            'linha' => 1,
+            'nome' => 'tipo',
+            'label' => 'Tipo:',
+            'tipo' => 'combo',
             'required' => true,
-            'array'    => array([1, "Aditivo"], [2, "Apostila"]),
-            'col'      => 3,
-            'size'     => 15),
+            'array' => array([1, "Aditivo"], [2, "Apostila"]),
+            'col' => 3,
+            'size' => 15),
         array(
-            'linha'    => 1,
-            'nome'     => 'vinculado',
-            'label'    => 'Vinculado:',
-            'tipo'     => 'combo',
-            'array'    => $vinculado,
-            'col'      => 5,
-            'size'     => 15),
+            'linha' => 1,
+            'nome' => 'vinculado',
+            'label' => 'Vinculado:',
+            'tipo' => 'combo',
+            'array' => $vinculado,
+            'col' => 5,
+            'size' => 15),
         array(
             'linha' => 2,
-            'nome'  => 'objeto',
+            'nome' => 'objeto',
             'label' => 'Objeto:',
-            'tipo'  => 'texto',
-            'col'   => 12,
-            'size'  => 250),
+            'tipo' => 'texto',
+            'col' => 12,
+            'size' => 250),
         array(
-            'linha'    => 3,
-            'nome'     => 'dtAssinatura',
-            'label'    => 'Assinatura:',
+            'linha' => 3,
+            'nome' => 'dtAssinatura',
+            'label' => 'Assinatura:',
             'required' => true,
-            'tipo'     => 'date',
-            'col'      => 3,
-            'size'     => 15),
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15),
         array(
             'linha' => 3,
-            'nome'  => 'dtPublicacao',
+            'nome' => 'dtPublicacao',
             'label' => 'Publicação:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15),
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15),
         array(
             'linha' => 3,
-            'nome'  => 'pgPublicacao',
+            'nome' => 'pgPublicacao',
             'label' => 'Pag:',
-            'tipo'  => 'texto',
-            'col'   => 2,
-            'size'  => 10),
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 10),
         array(
             'linha' => 4,
-            'nome'  => 'valor',
+            'nome' => 'valor',
             'label' => 'Valor: (se houver)',
-            'tipo'  => 'moeda',
-            'col'   => 3,
-            'size'  => 15),
+            'tipo' => 'moeda',
+            'col' => 3,
+            'size' => 15),
         array(
             'linha' => 4,
-            'nome'  => 'valorSinal',
+            'nome' => 'valorSinal',
             'label' => 'Negativo?',
-            'tipo'  => 'simnao',
-            'col'   => 3,
-            'size'  => 3),
-        
+            'tipo' => 'simnao',
+            'col' => 3,
+            'size' => 3),
         array(
             'linha' => 4,
-            'nome'  => 'garantia',
+            'nome' => 'garantia',
             'label' => 'Garantia: (se houver)',
-            'tipo'  => 'percentagem',
-            'col'   => 2,
-            'size'  => 5),
+            'tipo' => 'percentagem',
+            'col' => 2,
+            'size' => 5),
         array(
-            'linha'  => 5,
-            'nome'   => 'dtInicial',
-            'label'  => 'Data Inicial:',
-            'tipo'   => 'date',
-            'col'    => 3,
+            'linha' => 5,
+            'nome' => 'dtInicial',
+            'label' => 'Data Inicial:',
+            'tipo' => 'date',
+            'col' => 3,
             'padrao' => $dataInclusao,
-            'size'   => 15),
+            'size' => 15),
         array(
             'linha' => 5,
-            'nome'  => 'prazo',
+            'nome' => 'prazo',
             'label' => 'Prazo:',
-            'tipo'  => 'texto',
-            'col'   => 2,
-            'size'  => 15),
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 15),
         array(
             'linha' => 5,
-            'nome'  => 'tipoPrazo',
+            'nome' => 'tipoPrazo',
             'label' => 'Tipo:',
-            'tipo'  => 'combo',
+            'tipo' => 'combo',
             'array' => $tipo,
-            'col'   => 2,
-            'size'  => 15),
+            'col' => 2,
+            'size' => 15),
         array(
             'linha' => 4,
-            'nome'  => 'obs',
+            'nome' => 'obs',
             'label' => 'Observação:',
-            'tipo'  => 'textarea',
-            'size'  => array(80, 3)),
+            'tipo' => 'textarea',
+            'size' => array(80, 3)),
         array(
-            "linha"  => 5,
-            "nome"   => "idContrato",
-            "label"  => "idContrato:",
-            'tipo'   => 'hidden',
+            "linha" => 5,
+            "nome" => "idContrato",
+            "label" => "idContrato:",
+            'tipo' => 'hidden',
             'padrao' => $idContrato,
-            "col"    => 3,
-            "size"   => 11)
+            "col" => 3,
+            "size" => 11)
     ));
+    
+    $objeto->set_botaoVoltarLista(false);
+    $objeto->set_botaoIncluir(false);
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
@@ -268,7 +277,81 @@ if ($acesso) {
     switch ($fase) {
         case "" :
         case "listar" :
+            # Limita o tamanho da tela
+            $grid = new Grid();
+            $grid->abreColuna(12);
+
+            # Cria um menu
+            $menu1 = new MenuBar();
+
+            # Voltar
+            $botaoVoltar = new Link("Voltar", "cadastroContrato.php");
+            $botaoVoltar->set_class('button');
+            $botaoVoltar->set_title('Voltar a página anterior');
+            $botaoVoltar->set_accessKey('V');
+            $menu1->add_link($botaoVoltar, "left");
+
+            # Incluir
+            $botaoInserir = new Button("Incluir Aditivo", "?fase=editar");
+            $botaoInserir->set_title("Incluir");
+            $menu1->add_link($botaoInserir, "right");
+
+            # Relatórios
+            $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+            $botaoRel = new Button();
+            $botaoRel->set_title("Relatório dessa pesquisa");
+            $botaoRel->set_url("../grhRelatorios/acumulacao.geral.php");
+            $botaoRel->set_target("_blank");
+            $botaoRel->set_imagem($imagem);
+            #$menu1->add_link($botaoRel,"right");
+
+            $menu1->show();
+            
+            ##########
+            
+            # Exibe os dados do contrado
+            get_DadosContrato($idContrato);
+
+            # Exibe alertas (se tiver)
+            $alerta = new AlertaContrato($idContrato, true);
+
+            $grid->fechaColuna();
+            $grid->abreColuna(4);
+
+            # Exibe o valor
+            $contrato->exibeValorTotal($idContrato);
+
+            $grid->fechaColuna();
+            $grid->abreColuna(8);
+
+            # Exibe a situação atual
+            $situacao->exibeSituacaoAtual($idContrato);
+
+            $grid->fechaColuna();
+            $grid->abreColuna(12);
+            
+            # Exibe outros dados do contrato
+            $contrato->exibeDadosContrato($idContrato);
+
+            # Exibe os aditivos
             $objeto->$fase();
+            
+            # Carrega os dados com contrado editado
+            $conteudo = $contrato->getDados($idContrato);
+            
+            $grid->fechaColuna();
+            $grid->abreColuna(6);
+
+            # Exibe dados da empresa
+            $idEmpresa = $conteudo["idEmpresa"];
+            $empresa->exibeDados($idEmpresa);
+
+            $grid->fechaColuna();
+            $grid->abreColuna(6);
+
+            $comissao->listaComissao($idContrato);
+            $grid->fechaColuna();
+            $grid->fechaGrid();
             break;
 
         case "editar" :
@@ -300,14 +383,14 @@ if ($acesso) {
                         <p>Clique Aqui Para Escolher o Arquivo.</p>
                         <button type='submit' name='submit'>Enviar</button>
                     </form>";
-            
+
             # Extensões possíveis
             $extensoes = array("pdf");
 
             # Pega os valores do php.ini
-            $postMax   = limpa_numero(ini_get('post_max_size'));
+            $postMax = limpa_numero(ini_get('post_max_size'));
             $uploadMax = limpa_numero(ini_get('upload_max_filesize'));
-            $limite    = menorValor(array($postMax, $uploadMax));
+            $limite = menorValor(array($postMax, $uploadMax));
 
             $texto = "Extensões Permitidas:";
             foreach ($extensoes as $pp) {
@@ -327,7 +410,7 @@ if ($acesso) {
             if (!file_exists($pasta) || !is_dir($pasta)) {
                 mkdir($pasta, 0755);
             }
-            
+
             # Se existe uma $_FILES e o nome do arquivo não estiver vazio
             if ($_FILES && !empty($_FILES['file']['name'])) {
 
@@ -339,8 +422,8 @@ if ($acesso) {
                 ];
 
                 # Define o novo nome do arquivo
-                $newFileName = "{$id}.pdf"; 
-                
+                $newFileName = $id . mb_strrchr($fileUpload['name'], ".");
+
                 # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
                 if (in_array($fileUpload['type'], $allowedTypes)) {
                     if (move_uploaded_file($fileUpload['tmp_name'], $pasta . $newFileName)) {

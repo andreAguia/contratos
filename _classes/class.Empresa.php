@@ -1,7 +1,7 @@
 <?php
 
-class Empresa
-{
+class Empresa {
+
     /**
      * Abriga as várias rotina referentes a concurso
      *
@@ -10,10 +10,10 @@ class Empresa
      * @var private $idConcurso integer null O id do concurso
      */
     private $idEmpresa = null;
+
 ##############################################################
 
-    public function __construct($idEmpresa = null)
-    {
+    public function __construct($idEmpresa = null) {
         /**
          * Inicia a Classe somente
          * 
@@ -26,8 +26,7 @@ class Empresa
 
 ##############################################################
 
-    public function getDados($idEmpresa = null)
-    {
+    public function getDados($idEmpresa = null) {
 
         /**
          * Informa os dados da base de dados
@@ -63,8 +62,7 @@ class Empresa
 
     #####################################################################################
 
-    public function getRazaoSocial($idEmpresa)
-    {
+    public function getRazaoSocial($idEmpresa) {
 
         # Joga o valor informado para a variável da classe
         if (!vazio($idEmpresa)) {
@@ -93,14 +91,13 @@ class Empresa
 
     ##########################################################################################
 
-    public function getTelefones($idEmpresa)
-    {
+    public function getTelefones($idEmpresa) {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
         # Parâmetro: id do servidor
 
-        $dados   = $this->getDados($idEmpresa);
+        $dados = $this->getDados($idEmpresa);
         $retorno = null;
 
         if (!empty($dados["telefone1"])) {
@@ -120,14 +117,13 @@ class Empresa
 
     ##########################################################################################
 
-    public function getEmails($idEmpresa)
-    {
+    public function getEmails($idEmpresa) {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
         # Parâmetro: id do servidor
 
-        $dados   = $this->getDados($idEmpresa);
+        $dados = $this->getDados($idEmpresa);
         $retorno = null;
 
         if (!empty($dados["email1"])) {
@@ -147,14 +143,13 @@ class Empresa
 
     ##########################################################################################
 
-    public function getContatos($idEmpresa)
-    {
+    public function getContatos($idEmpresa) {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
         # Parâmetro: id do servidor
 
-        $dados   = $this->getDados($idEmpresa);
+        $dados = $this->getDados($idEmpresa);
         $retorno = null;
 
         if (!empty($dados["contato"])) {
@@ -170,8 +165,7 @@ class Empresa
 
     ##########################################################################################
 
-    public function getEmpresaCnpj($idEmpresa)
-    {
+    public function getEmpresaCnpj($idEmpresa) {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
@@ -190,8 +184,7 @@ class Empresa
 
     ##########################################################################################
 
-    public function getEndereco($idEmpresa)
-    {
+    public function getEndereco($idEmpresa) {
 
         $dados = $this->getDados($idEmpresa);
 
@@ -204,68 +197,29 @@ class Empresa
 
     ###########################################################
 
-    function exibeDados($idEmpresa)
-    {
+    function exibeDados($idEmpresa) {
 
         $conteudo = $this->getDados($idEmpresa);
-        $email    = $this->getEmails($idEmpresa);
-        $telefone = $this->getTelefones($idEmpresa);
-        $contatos = $this->getContatos($idEmpresa);
-        $endereco = $this->getEndereco($idEmpresa);
-
-        $painel = new Callout("primary");
-        $painel->abre();
 
         # Monta o array de exibição
         $dados = [
-            ["razaoSocial", 12, "Razão Social"],
-            ["cnpj", 12],
-            ["telefone", 12],
-            ["email", 12],
-            ["contatos", 12],
-            ["endereco", 12, "Endereço"],
+            ["Razão Social", $conteudo["razaoSocial"]],
+            ["CNPJ", $conteudo["cnpj"]],
+            ["Telefone", $this->getTelefones($idEmpresa)],
+            ["Email", $this->getEmails($idEmpresa)],
+            ["Contatos", $this->getContatos($idEmpresa)],
+            ["Endereço", $this->getEndereco($idEmpresa)],
         ];
 
-        # Rotina de exibição
-        $grid = new Grid();
-        $grid->abreColuna(12);
-
-        titulo("Empresa Contratada");
-        br();
-
-        $grid->fechaColuna();
-
-        foreach ($dados as $item) {
-
-            # Monta a variável para usar o $$
-            $pp = $item[0];
-
-            # label
-            if (empty($item[2])) {
-                $label = plm($pp);
-            } else {
-                $label = $item[2] . ":";
-            }
-
-            # Verifica se tem variável com esse nome
-            if (empty($$pp)) {                      // Se não tem variável com esse nome
-                if (empty($conteudo[$pp])) {        // Se não tiver no array de conteúdo do bd
-                    $valor = "---";                 // Exibe tracinho
-                } else {                              // Se tiver conteúdo do bd exibe ele
-                    $valor = $conteudo[$pp];
-                }
-            } else {                                  // Se tiver variável exibe ela
-                $valor = $$pp;
-            }
-
-            $grid->abreColuna($item[1]);
-            p("{$label}:", "contratoLabel");
-            p($valor, "contratoConteudo");
-            $grid->fechaColuna();
-        }
-        $grid->fechaGrid();
-
-        $painel->fecha();
+        # Monta a tabela
+        $tabela = new Tabela();
+        $tabela->set_titulo("Empresa Contratada");
+        $tabela->set_label(array("Servidor", "Tipo"));
+        $tabela->set_align(array("left", "left"));
+        $tabela->set_width(array(30, 70));
+        #$tabela->set_numeroOrdem(true);
+        $tabela->set_conteudo($dados);
+        $tabela->show();
 
         # Editar
         $div = new Div("divEdita1Comissao");
@@ -285,8 +239,7 @@ class Empresa
 
     ##############################################################
 
-    public function getNumContratos($idEmpresa = null)
-    {
+    public function getNumContratos($idEmpresa = null) {
         # Joga o valor informado para a variável da classe
         if (!vazio($idEmpresa)) {
             $this->idEmpresa = $idEmpresa;

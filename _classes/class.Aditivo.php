@@ -1,7 +1,6 @@
 <?php
 
-class Aditivo
-{
+class Aditivo {
 
     /**
      * Abriga as várias rotina referentes a concurso
@@ -10,21 +9,19 @@ class Aditivo
      * 
      * @var private $idConcurso integer null O id do concurso
      */
-##############################################################
+    ##############################################################
 
-    public function __construct()
-    {
+    public function __construct() {
         
     }
 
-##############################################################
+    ##############################################################
 
     /*
      * Informa todos os dados de um único aditivo
      */
 
-    public function getDados($idAditivo = null)
-    {
+    public function getDados($idAditivo = null) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -43,14 +40,13 @@ class Aditivo
         return $contratos->select($select, false);
     }
 
-##############################################################
+    ##############################################################
 
     /*
      * Informa se o contrato tem  ou não aditivo
      */
 
-    public function temAditivo($idContrato = null)
-    {
+    public function temAditivo($idContrato = null) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -73,14 +69,13 @@ class Aditivo
         }
     }
 
-##############################################################
+    ##############################################################
 
     /*
      * retorna um array com os dados de todos os aditivos de um contrato
      */
 
-    public function getAditivosContrato($idContrato = null)
-    {
+    public function getAditivosContrato($idContrato = null) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -105,8 +100,7 @@ class Aditivo
      * Informa a data de publicação mais a página ( se tiver) de um aditivo
      */
 
-    public function getPublicacao($idAditivo = null)
-    {
+    public function getPublicacao($idAditivo = null) {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -149,8 +143,7 @@ class Aditivo
 
     ###########################################################
 
-    public function getTipoNumerado($idAditivo = null)
-    {
+    public function getTipoNumerado($idAditivo = null) {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -168,7 +161,7 @@ class Aditivo
         $aditivosContrato = $this->getAditivosContrato($idContrato);
 
         # Cria as variáveis para contabilização
-        $aditivo  = 0;
+        $aditivo = 0;
         $apostila = 0;
 
         # Percorre o array para contabilizar cada tipo
@@ -192,8 +185,7 @@ class Aditivo
 
     ###########################################################
 
-    public function exibeTipoNumerado($idAditivo = null)
-    {
+    public function exibeTipoNumerado($idAditivo = null) {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -202,25 +194,22 @@ class Aditivo
         }
 
         # Pega o tipo numerado
-        echo $this->getTipoNumerado($idAditivo);
-
-        # Verifica se tem vinculado
-        $vinculados = $this->getAditivosVinculados($idAditivo);
-
-        # Percorre os vinculados
-        if (count($vinculados) > 0) {
-            foreach ($vinculados as $item) {
-                hr("hrComissao");
-                p($this->getTipoNumerado($item["idAditivo"]), "paditivoVinculado");
-                p("(vinculado)", "paditivoVinculado");
+        if (!empty($this->getVinculado($idAditivo))) {
+            echo $this->getTipoNumerado($idAditivo);
+            if($this->getVinculado($idAditivo) == "contrato"){
+                p("(Contrato)", "paditivoVinculado");
+            }else{
+                p("(" . $this->getTipoNumerado($this->getVinculado($idAditivo)) . ")", "paditivoVinculado");
             }
+        } else {
+            echo $this->getTipoNumerado($idAditivo);
         }
+        return;
     }
 
     ###########################################################
 
-    public function getPeriodo($idAditivo = null)
-    {
+    public function exibePeriodo($idAditivo = null) {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
             alert("É necessário informar o id do Aditivo.");
@@ -232,17 +221,17 @@ class Aditivo
         if (!empty($conteudo["dtInicial"])) {
 
             $dtInicial = date_to_php($conteudo["dtInicial"]);
-            $prazo     = $conteudo["prazo"];
+            $prazo = $conteudo["prazo"];
             $tipoPrazo = $conteudo["tipoPrazo"];
 
-            $tipo    = null;
+            $tipo = null;
             $dtFinal = null;
 
             if ($tipoPrazo == 1) {
-                $tipo    = "Dias";
+                $tipo = "Dias";
                 $dtFinal = $this->getVigencia($idAditivo);
             } else {
-                $tipo    = "Meses";
+                $tipo = "Meses";
                 $dtFinal = $this->getVigencia($idAditivo);
             }
             $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
@@ -255,8 +244,7 @@ class Aditivo
 
     ###########################################################
 
-    public function getValor($idAditivo = null)
-    {
+    public function getValor($idAditivo = null) {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
             alert("É necessário informar o id do Aditivo.");
@@ -270,8 +258,21 @@ class Aditivo
 
     ###########################################################
 
-    public function getGarantia($idAditivo = null)
-    {
+    public function getVinculado($idAditivo = null) {
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idAditivo);
+
+        return $conteudo["vinculado"];
+    }
+
+    ###########################################################
+
+    public function exibeGarantia($idAditivo = null) {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
             alert("É necessário informar o id do Aditivo.");
@@ -296,69 +297,8 @@ class Aditivo
     }
 
     #####################################################################################
-    /*
-     * Lista os aditivos de um contraro
-     */
 
-    public function listaAditivos($idContrato)
-    {
-        # Conecta ao Banco de Dados
-        $contratos = new Contratos();
-
-        # Verifica se foi informado
-        if (vazio($idContrato)) {
-            alert("É necessário informar o id do Contrato.");
-            return;
-        }
-
-        # monta o select
-        $select = "SELECT idAditivo,
-                          idAditivo,
-                          idAditivo,
-                          idAditivo,
-                          idAditivo,
-                          idAditivo
-                     FROM tbaditivo
-                    WHERE idContrato = {$idContrato}
-                 ORDER BY dtAssinatura";
-
-        $row = $contratos->select($select);
-
-        # Monta a tabela
-        $tabela = new Tabela();
-        $tabela->set_titulo("Termos Aditivos & Apostilas");
-        $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia"));
-        $tabela->set_align(array("center", "left", "center"));
-        $tabela->set_width(array(15, 23, 15, 12, 15, 20));
-        $tabela->set_classe(array("Aditivo", "Aditivo", "Aditivo", "Aditivo", "Aditivo", "Aditivo"));
-        #$tabela->set_metodo(array("getTipoNumerado", null, "getPublicacao", null, "getPeriodo", "getGarantia"));
-        $tabela->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "getPublicacao", "exibeAssinatura", "exibePeriodo", "exibeGarantia"));
-        #$tabela->set_funcao(array(null, null, null, "date_to_php"));
-        $tabela->set_conteudo($row);
-        $tabela->set_totalRegistroTexto("Número de Aditivos e Apostilas: ");
-        $tabela->show();
-
-        # Editar
-        $div = new Div("divEdita1Comissao");
-        $div->abre();
-
-        $div = new Div("divEdita2");
-        $div->abre();
-
-        # Editar
-        $botaoEditar = new Link("Editar", "cadastroAditivo.php");
-        $botaoEditar->set_class('tiny button secondary');
-        $botaoEditar->set_title('Editar aditivo');
-        $botaoEditar->show();
-
-        $div->fecha();
-        $div->fecha();
-    }
-
-    ###########################################################
-
-    public function getVigencia($idAditivo)
-    {
+    public function getVigencia($idAditivo) {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -372,10 +312,10 @@ class Aditivo
         if (!empty($conteudo["dtInicial"]) AND!empty($conteudo["prazo"]) AND!empty($conteudo["tipoPrazo"])) {
 
             $dtInicial = date_to_php($conteudo["dtInicial"]);
-            $prazo     = $conteudo["prazo"];
+            $prazo = $conteudo["prazo"];
             $tipoPrazo = $conteudo["tipoPrazo"];
 
-            $tipo    = null;
+            $tipo = null;
             $dtFinal = null;
 
             if ($tipoPrazo == 1) {
@@ -398,8 +338,7 @@ class Aditivo
      * Informa todos os dados do último aditivo com Data (para calculo de vigencia)
      */
 
-    public function getDadosUltimoAditivocomData($idContrato = null)
-    {
+    public function getDadosUltimoAditivocomData($idContrato = null) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -426,8 +365,7 @@ class Aditivo
      * Informa a data inicial de um aditivo considerando a data anterior
      */
 
-    public function getDataInicialNovoAditivo($idContrato = null)
-    {
+    public function getDataInicialNovoAditivo($idContrato = null) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -439,13 +377,13 @@ class Aditivo
         }
 
         if ($this->temAditivo($idContrato)) {
-            $dados    = $this->getDadosUltimoAditivocomData($idContrato);
+            $dados = $this->getDadosUltimoAditivocomData($idContrato);
             $vigencia = $this->getVigencia($dados["idAditivo"]);
-            $return   = addDias($vigencia, 1, false);
+            $return = addDias($vigencia, 1, false);
         } else {
             $contrato = new Contrato();
             $vigencia = $contrato->getVigencia($idContrato);
-            $return   = addDias($vigencia, 1, false);
+            $return = addDias($vigencia, 1, false);
         }
 
         return $return;
@@ -458,8 +396,7 @@ class Aditivo
      * 
      */
 
-    public function getAditivosVinculados($idAditivo = null)
-    {
+    public function getAditivosVinculados($idAditivo = null) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -481,8 +418,7 @@ class Aditivo
 
 ###########################################################
 
-    public function exibeObjeto($idAditivo = null)
-    {
+    public function exibeValor($idAditivo = null) {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -490,153 +426,28 @@ class Aditivo
             return;
         }
 
-        # Pega o objeto
-        $conteudo = $this->getDados($idAditivo);
-        echo $conteudo["objeto"];
-
-        # Verifica se tem vinculado
-        $vinculados = $this->getAditivosVinculados($idAditivo);
-
-        # Percorre os vinculados
-        if (count($vinculados) > 0) {
-            foreach ($vinculados as $item) {
-                hr("hrComissao");
-                p($item["objeto"], "paditivoVinculado");
-                p("(vinculado)", "paditivoVinculado");
-            }
-        }
-    }
-
-    ###########################################################
-
-    public function exibeAssinatura($idAditivo = null)
-    {
-
-        # Verifica se foi informado o id
-        if (vazio($idAditivo)) {
-            alert("É necessário informar o id do Aditivo.");
-            return;
-        }
-
-        # Pega o objeto
-        $conteudo = $this->getDados($idAditivo);
-
-        if (!empty($conteudo["dtAssinatura"])) {
-            echo date_to_php($conteudo["dtAssinatura"]);
-        }
-
-        # Verifica se tem vinculado
-        $vinculados = $this->getAditivosVinculados($idAditivo);
-
-        # Percorre os vinculados
-        if (count($vinculados) > 0) {
-            foreach ($vinculados as $item) {
-                if (!empty($item["dtAssinatura"])) {
-                    hr("hrComissao");
-                    p(date_to_php($item["dtAssinatura"]), "paditivoVinculado");
-                    p("(vinculado)", "paditivoVinculado");
-                }
-            }
-        }
-    }
-
-    ###########################################################
-
-    public function exibePeriodo($idAditivo = null)
-    {
-
-        # Verifica se foi informado o id
-        if (vazio($idAditivo)) {
-            alert("É necessário informar o id do Aditivo.");
-            return;
-        }
-
-        # Pega o objeto
-        $conteudo = $this->getDados($idAditivo);
-
-        # Pega o período normal
-        echo $this->getPeriodo($idAditivo);
-
-        # Verifica se tem vinculado
-        $vinculados = $this->getAditivosVinculados($idAditivo);
-
-        # Percorre os vinculados
-        if (count($vinculados) > 0) {
-            foreach ($vinculados as $item) {
-                if (!empty($item["dtInicial"])) {
-                    hr("hrComissao");
-                    p($this->getPeriodo($item["idAditivo"]), "paditivoVinculado");
-                    p("(vinculado)", "paditivoVinculado");
-                }
-            }
-        }
-    }
-
-    ###########################################################
-
-    public function exibeGarantia($idAditivo = null)
-    {
-
-        # Verifica se foi informado o id
-        if (vazio($idAditivo)) {
-            alert("É necessário informar o id do Aditivo.");
-            return;
-        }
-
-        # Pega o objeto
-        $conteudo = $this->getDados($idAditivo);
-
-        # Pega o período normal
-        echo $this->getGarantia($idAditivo);
-
-        # Verifica se tem vinculado
-        $vinculados = $this->getAditivosVinculados($idAditivo);
-
-        # Percorre os vinculados
-        if (count($vinculados) > 0) {
-            foreach ($vinculados as $item) {
-                if (!empty($item["garantia"])) {
-                    hr("hrComissao");
-                    p($this->getGarantia($item["idAditivo"]), "paditivoVinculado");
-                    p("(vinculado)", "paditivoVinculado");
-                }
-            }
-        }
-    }
-
-    ###########################################################
-
-    public function exibeValor($idAditivo = null)
-    {
-
-        # Verifica se foi informado o id
-        if (vazio($idAditivo)) {
-            alert("É necessário informar o id do Aditivo.");
-            return;
-        }
-
-        # Pega o objeto
+        # Pega os dados
         $conteudo = $this->getDados($idAditivo);
 
         # Prepara a variável do Total
         $ValorTotal = 0;
 
         # Verifica se tem vinculado
-        $vinculados = $this->getAditivosVinculados($idAditivo);
+        $aditivosVinculados = $this->getAditivosVinculados($idAditivo);
 
         # Valor
         if (empty($conteudo["valor"])) {
             p("----", "p#pvalorNulo");
         } else {
             if ($conteudo["valorSinal"]) {
-                if (count($vinculados) > 0) {
+                if (count($aditivosVinculados) > 0) {
                     p("R$ -" . formataMoeda($conteudo['valor']), "paditivoVinculadoValorNegativo");
                 } else {
                     p("R$ -" . formataMoeda($conteudo['valor']), "pvalorNegativo");
                 }
                 $ValorTotal -= $conteudo['valor'];
             } else {
-                if (count($vinculados) > 0) {
+                if (count($aditivosVinculados) > 0) {
                     p("R$ " . formataMoeda($conteudo['valor']), "paditivoVinculadoValorPositivo");
                 } else {
                     p("R$ " . formataMoeda($conteudo['valor']), "pvalorPositivo");
@@ -645,11 +456,9 @@ class Aditivo
             }
         }
 
-
-
         # Percorre os vinculados
-        if (count($vinculados) > 0) {
-            foreach ($vinculados as $item) {
+        if (count($aditivosVinculados) > 0) {
+            foreach ($aditivosVinculados as $item) {
                 if (!empty($item["valor"])) {
 
                     if ($item["valorSinal"]) {
@@ -662,9 +471,22 @@ class Aditivo
                 }
             }
             hr("hrComissao");
-            p("R$ " . formataMoeda($ValorTotal), "pvalorPositivo");
+            if($ValorTotal >=0){
+                p("R$ " . formataMoeda($ValorTotal), "pvalorPositivo");
+            }else{
+                p("R$ " . formataMoeda($ValorTotal), "pvalorNegativo");
+            }
         }
+        
+        # Exibe o vinculo (caso exista)
+        if (!empty($this->getVinculado($idAditivo))) {
+            if($this->getVinculado($idAditivo) == "contrato"){
+                p("(Contrato)", "paditivoVinculado");
+            }else{
+                p("(" . $this->getTipoNumerado($this->getVinculado($idAditivo)) . ")", "paditivoVinculado");
+            }
+        }        
     }
-
+    
     ##########################################################
 }

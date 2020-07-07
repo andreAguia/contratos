@@ -52,7 +52,7 @@ if ($acesso) {
         $menu = new MenuBar();
 
         # Botão voltar
-        $linkBotao1 = new Link("Voltar", "areaContrato.php");
+        $linkBotao1 = new Link("Voltar", "cadastroAditivo.php");
         $linkBotao1->set_class('button');
         $linkBotao1->set_title('Volta para a página anterior');
         $linkBotao1->set_accessKey('V');

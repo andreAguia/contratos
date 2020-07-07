@@ -1,7 +1,6 @@
 <?php
 
-class Comissao
-{
+class Comissao {
 
     /**
      * Abriga as várias rotina referentes a comissao
@@ -12,8 +11,7 @@ class Comissao
      */
 ##############################################################
 
-    public function __construct()
-    {
+    public function __construct() {
         /**
          * Inicia a Classe somente
          *
@@ -25,8 +23,7 @@ class Comissao
 
 ##############################################################
 
-    public function getDados($idComissao = null)
-    {
+    public function getDados($idComissao = null) {
         # Verifica se foi informado
         if (vazio($idComissao)) {
             alert("É necessário informar o id.");
@@ -49,8 +46,7 @@ class Comissao
 
 #####################################################################################
 
-    public function getPortariaEntrada($idComissao)
-    {
+    public function getPortariaEntrada($idComissao) {
 
         # Verifica se foi informado
         if (vazio($idComissao)) {
@@ -93,8 +89,7 @@ class Comissao
 
 #####################################################################################
 
-    public function getTipo($idComissao)
-    {
+    public function getTipo($idComissao) {
 
         # Verifica se o id foi informado
         if (vazio($idComissao)) {
@@ -102,9 +97,9 @@ class Comissao
             return;
         } else {
 
-            $conteudo          = $this->getDados($idComissao);
+            $conteudo = $this->getDados($idComissao);
             $dtPublicacaoSaida = $conteudo["dtPublicacaoSaida"];
-            $tipo              = $conteudo["tipo"];
+            $tipo = $conteudo["tipo"];
 
             # Verifica se foi informado
             if (vazio($tipo)) {
@@ -134,8 +129,7 @@ class Comissao
 
 #####################################################################################
 
-    public function getNomeMembro($idServidor)
-    {
+    public function getNomeMembro($idServidor) {
 
         # Verifica se foi informado
         if (empty($idServidor)) {
@@ -150,8 +144,7 @@ class Comissao
 
 #####################################################################################
 
-    public function getDadosMembro($idComissao)
-    {
+    public function getDadosMembro($idComissao) {
 
         # Verifica se o id foi informado
         if (vazio($idComissao)) {
@@ -162,7 +155,7 @@ class Comissao
             $dados = $this->getDados($idComissao);
             $idServidor = $dados["idServidor"];
 
-            $pessoal  = new Pessoal();
+            $pessoal = new Pessoal();
             $idPessoa = $pessoal->get_idPessoa($idServidor);
 
             p($pessoal->get_nome($idServidor), "pmembroNome");
@@ -182,8 +175,7 @@ class Comissao
 
 #####################################################################################
 
-    public function listaComissao($idContrato)
-    {
+    public function listaComissao($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id.");
@@ -206,22 +198,22 @@ class Comissao
 
         # Colore a llinha de acordo com o tipo
         $formatacaoCondicional = array(
-            array('coluna'   => 1,
-                'valor'    => "Presidente",
+            array('coluna' => 1,
+                'valor' => "Presidente",
                 'operador' => '=',
-                'id'       => 'presidenteComissao'),
-            array('coluna'   => 1,
-                'valor'    => "Membro",
+                'id' => 'presidenteComissao'),
+            array('coluna' => 1,
+                'valor' => "Membro",
                 'operador' => '=',
-                'id'       => 'membroComissao'),
-            array('coluna'   => 1,
-                'valor'    => "Suplente",
+                'id' => 'membroComissao'),
+            array('coluna' => 1,
+                'valor' => "Suplente",
                 'operador' => '=',
-                'id'       => 'cuplenteComissao'),
-            array('coluna'   => 1,
-                'valor'    => "Saiu",
+                'id' => 'cuplenteComissao'),
+            array('coluna' => 1,
+                'valor' => "Saiu",
                 'operador' => '=',
-                'id'       => 'saiuComissao'),
+                'id' => 'saiuComissao'),
         );
 
         # Monta a tabela
@@ -255,8 +247,7 @@ class Comissao
 
 #####################################################################################
 
-    public function getDadosDesignacao($idComissao)
-    {
+    public function getDadosDesignacao($idComissao) {
 
         # Conecta ao Banco de Dados
         $pessoal = new Pessoal();
@@ -267,9 +258,9 @@ class Comissao
             return;
         } else {
 
-            $conteudo          = $this->getDados($idComissao);
-            $portariaSaida     = $conteudo["portariaSaida"];
-            $dtPortariaSaida   = $conteudo["dtPortariaSaida"];
+            $conteudo = $this->getDados($idComissao);
+            $portariaSaida = $conteudo["portariaSaida"];
+            $dtPortariaSaida = $conteudo["dtPortariaSaida"];
             $dtPublicacaoSaida = $conteudo["dtPublicacaoSaida"];
             $pgPublicacaoSaida = $conteudo["pgPublicacaoSaida"];
 
@@ -312,8 +303,7 @@ class Comissao
 
 ###########################################################
 
-    public function exibeComissao($idContrato = null)
-    {
+    public function exibeComissao($idContrato = null) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -323,7 +313,7 @@ class Comissao
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-        $pessoal   = new Pessoal();
+        $pessoal = new Pessoal();
 
         $select = "SELECT *
                      FROM tbcomissao
@@ -345,14 +335,14 @@ class Comissao
 
             # Pega os valores
             $idServidor = $conteudo["idServidor"];
-            $idPessoa   = $pessoal->get_idPessoa($idServidor);
-            $tipo1      = $conteudo["tipo"];
+            $idPessoa = $pessoal->get_idPessoa($idServidor);
+            $tipo1 = $conteudo["tipo"];
 
             $idFuncional = $pessoal->get_idFuncional($idServidor);
-            $servidor    = $pessoal->get_nome($idServidor);
-            $cargo       = $pessoal->get_cargo($idServidor);
-            $lotacao     = $pessoal->get_lotacao($idServidor);
-            $cpf         = $pessoal->get_cpf($idPessoa); # Informa o tipo
+            $servidor = $pessoal->get_nome($idServidor);
+            $cargo = $pessoal->get_cargo($idServidor);
+            $lotacao = $pessoal->get_lotacao($idServidor);
+            $cpf = $pessoal->get_cpf($idPessoa); # Informa o tipo
             # trata Tipo
             if ($tipo1 == 1) {
                 $tipo = "Presidente";
@@ -455,8 +445,7 @@ class Comissao
 
     ##############################################################
 
-    public function exibeProcesso($idContrato = null)
-    {
+    public function exibeProcesso($idContrato = null) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -521,8 +510,7 @@ class Comissao
 
     ##############################################################
 
-    public function exibeMenuDocumentos($idContrato = null)
-    {
+    public function exibeMenuDocumentos($idContrato = null) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -537,7 +525,7 @@ class Comissao
         br();
 
         $tamanhoImage = 60;
-        $menu         = new MenuGrafico(3);
+        $menu = new MenuGrafico(3);
 
         $botao = new BotaoGrafico();
         $botao->set_label('Legislação');
@@ -567,8 +555,7 @@ class Comissao
 
     ##############################################################
 
-    public function getProcesso($idContrato = null)
-    {
+    public function getProcesso($idContrato = null) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -632,8 +619,7 @@ class Comissao
 
     ##############################################################
 
-    public function exibePortarias($idContrato = null)
-    {
+    public function exibePortarias($idContrato = null) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -653,8 +639,8 @@ class Comissao
                     WHERE idContrato = {$idContrato})
                  ORDER BY 2";
 
-        $contratos  = new Contratos();
-        $dados      = $contratos->select($select);
+        $contratos = new Contratos();
+        $dados = $contratos->select($select);
         $quantidade = $contratos->count($select);
 
         $portarias = [];
@@ -692,8 +678,7 @@ class Comissao
 
     #####################################################################################
 
-    public function getUltimaDataPublicacaoEntrada($idContrato)
-    {
+    public function getUltimaDataPublicacaoEntrada($idContrato) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -727,8 +712,7 @@ class Comissao
 
 ####################################################################################
 
-    public function getUltimaPortariaEntrada($idContrato)
-    {
+    public function getUltimaPortariaEntrada($idContrato) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -762,8 +746,7 @@ class Comissao
 
 ####################################################################################
 
-    public function getUltimaDataPortariaEntrada($idContrato)
-    {
+    public function getUltimaDataPortariaEntrada($idContrato) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -797,8 +780,7 @@ class Comissao
 
 ###################################################################################
 
-    public function getUltimaPgPublicacaoEntrada($idContrato)
-    {
+    public function getUltimaPgPublicacaoEntrada($idContrato) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {

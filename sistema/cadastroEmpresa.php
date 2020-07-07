@@ -99,12 +99,11 @@ if ($acesso) {
     $objeto->set_linkGravar("?fase=gravar");
 
     if (!empty($sessionContrato)) {
-        $objeto->set_voltarForm("areaContrato.php");
-        $objeto->set_linkListar("areaContrato.php");
+        $objeto->set_voltarForm("cadastroAditivo.php");
+        $objeto->set_linkListar("cadastroAditivo.php");
     } else {
         $objeto->set_linkListar("?fase=listar");
     }
-
 
     # Parametros da tabela
     $objeto->set_label(array("Empresa", "Telefone", "Email", "Contatos", "Contratos"));

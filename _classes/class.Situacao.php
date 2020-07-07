@@ -137,9 +137,13 @@ class Situacao
         $grid->abreColuna(12);
 
         if (!empty($situacao)) {
-            p("<pre>{$situacao['situacao']}</pre>", "situacaoAtual", "left important");
+            br();
+            p($situacao['situacao'], "situacaoAtual", "left important");
+            br();
         } else {
+            br();
             p("Nenhuma situação cadastrada", "situacaoAtual", "left important");
+            br();
         }
 
         $grid->fechaColuna();

@@ -5,15 +5,13 @@
  *
  * @author alat
  */
-class AlertaContrato
-{
+class AlertaContrato {
     ##############################################################
 
-    public function __construct($idContrato, $painel = false)
-    {
+    public function __construct($idContrato, $painel = false) {
         # Classes usadas
         $contratos = new Contratos();
-        $contrato  = new Contrato();
+        $contrato = new Contrato();
 
         # Inicia a variável de erro
         $erro = array();
@@ -93,7 +91,7 @@ class AlertaContrato
         ################################################################################
         # Verifica se o contrato está ativo e a data de vigência já passou
         $vigencia = $contrato->getVigenciaTotal($idContrato);
-        $status   = $contrato->getStatus($idContrato);
+        $status = $contrato->getStatus($idContrato);
 
         if (jaPassou($vigencia) AND $status == "Ativo") {
             $erro[] = "A vigência do contrato já passou e ele ainda consta como Ativo !! Algo está errado!!";
@@ -108,7 +106,7 @@ class AlertaContrato
         if (!empty($dados["dtInicial"])) {
 
             $dtPublicacao = date_to_php($dados["dtPublicacao"]);
-            $dtInicial    = date_to_php($dados["dtInicial"]);
+            $dtInicial = date_to_php($dados["dtInicial"]);
 
             if ($dtInicial <> $dtPublicacao) {
                 if (dataMaior($dtInicial, $dtPublicacao) == $dtPublicacao) {
@@ -129,13 +127,13 @@ class AlertaContrato
                 $painel->abre();
 
                 $grid = new Grid();
-                $grid->abreColuna(2);
+                $grid->abreColuna(1);
 
-                $figura = new Imagem(PASTA_FIGURAS_GERAIS . 'aviso.png', 'Imagem demonstrativa', 50, 50);
+                $figura = new Imagem(PASTA_FIGURAS_GERAIS . 'aviso.png', 'Alerta', 50, 50);
                 $figura->show();
 
                 $grid->fechaColuna();
-                $grid->abreColuna(10);
+                $grid->abreColuna(11);
 
                 p("ATENÇÂO !!", "palerta");
 

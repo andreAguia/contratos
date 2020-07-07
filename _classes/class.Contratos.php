@@ -1,7 +1,6 @@
 <?php
 
-class Contratos extends Bd
-{
+class Contratos extends Bd {
 
     /**
      * Classe de acesso ao Banco de Dados
@@ -23,43 +22,44 @@ class Contratos extends Bd
     private $sgdb = "mysql";
     private $tabela;
     private $idCampo;
+
 ###########################################################
+
     /**
      * Faz uma conexão
      */
-    public function __construct()
-    {
+    public function __construct() {
         parent::__construct($this->servidor, $this->usuario, $this->senha, $this->banco, $this->sgdb);
     }
 
 ###########################################################
+
     /**
      * Método set_tabela
      * 
      * @param  	$nomeTabela	-> Nome da tabela do banco de dados intra que será utilizada
      */
-    public function set_tabela($nomeTabela)
-    {
+    public function set_tabela($nomeTabela) {
         $this->tabela = $nomeTabela;
     }
 
 ###########################################################
+
     /**
      * Método set_idCampo
      * 
      * @param  	$idCampo)	-> Nome do campo chave da tabela
      */
-    public function set_idCampo($idCampo)
-    {
+    public function set_idCampo($idCampo) {
         $this->idCampo = $idCampo;
     }
 
 ###########################################################
+
     /**
      * Método Gravar
      */
-    public function gravar($campos = null, $valor = null, $idValor = null, $tabela = null, $idCampo = null, $alerta = false)
-    {
+    public function gravar($campos = null, $valor = null, $idValor = null, $tabela = null, $idCampo = null, $alerta = false) {
 
         if (is_null($tabela)) {
             $tabela = $this->tabela;
@@ -73,11 +73,11 @@ class Contratos extends Bd
     }
 
 ###########################################################
+
     /**
      * Método Excluir
      */
-    public function excluir($idValor = null, $tabela = null, $idCampo = 'id')
-    {
+    public function excluir($idValor = null, $tabela = null, $idCampo = 'id') {
 
         # efetua a exclus�o
         parent::excluir($idValor, $this->tabela, $this->idCampo);

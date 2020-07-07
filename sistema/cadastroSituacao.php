@@ -48,7 +48,7 @@ if ($acesso) {
     $objeto->set_nome("Situação");
 
     # Botão de voltar da lista
-    $objeto->set_voltarLista("areaContrato.php");
+    $objeto->set_voltarLista("cadastroAditivo.php");
 
     # select da lista
     $objeto->set_selectLista("SELECT data,                                      
