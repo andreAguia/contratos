@@ -97,48 +97,6 @@ class Contrato {
 
     #####################################################################################
 
-    public function listaContratos() {
-
-        # Conecta ao Banco de Dados
-        $contratos = new Contratos();
-
-        # monta o select
-        $select = "SELECT CONCAT(numero,'<br/>',modalidade,'<br/>',status),
-                          objeto,
-                          idEmpresa,
-                          idContrato,
-                          idContrato,
-                          idContrato,
-                          idContrato
-                     FROM tbcontrato JOIN tbmodalidade USING (idModalidade)
-                                     JOIN tbstatus USING (idStatus)
-                                     JOIN tbempresa USING (idEmpresa)
-                  ORDER BY numero";
-
-        $row = $contratos->select($select);
-
-        # Monta a tabela
-        $tabela = new Tabela();
-        $tabela->set_titulo("Contratos");
-        $tabela->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Prazo", "Situação"));
-        $tabela->set_classe(array(null, null, "Empresa", "Contrato", "Contrato", "Situacao"));
-        $tabela->set_metodo(array(null, null, "get_empresaCnpj", "get_processo", "get_periodo", "get_situacaoAtual"));
-        $tabela->set_width(array(10, 20, 20, 20, 10, 20));
-        $tabela->set_align(array("center", "left", "left", "left", "center", "left"));
-        $tabela->set_idCampo('idContrato');
-
-        if ($this->permiteEditar) {
-            $tabela->set_editar('areaContrato.php?fase=');
-            $tabela->set_nomeColunaEditar("Acessar");
-            $tabela->set_editarBotao("ver.png");
-        }
-
-        $tabela->set_conteudo($row);
-        $tabela->show();
-    }
-
-    ###########################################################
-
     public function exibeNumeroContrato($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -294,28 +252,39 @@ class Contrato {
     ###########################################################
 
     public function exibeTempoEVigencia($idContrato) {
-        # Tempo Total
-        $tempo = $this->getTempoTotal($idContrato);
 
-        # Vigencia Total
-        $vigencia = $this->getVigenciaTotal($idContrato);
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
 
-        # Diferença em dias
-        if (!jaPassou($vigencia)) {
-            $diferenca = abs(dataDif($vigencia));
-        }
-
-        if ($tempo["meses"] >= 60) {
-            p("{$tempo["meses"]} Meses", "pTempoTotal60");
+        # Verifica se tem data inicial
+        if (empty($dados["dtInicial"])) {
+            
+            return null;
         } else {
-            p("{$tempo["meses"]} Meses", "pTempoTotal");
-        }
+            
+            # Tempo Total
+            $tempo = $this->getTempoTotal($idContrato);
 
-        p($vigencia, "pVigencia");
-        if (!jaPassou($vigencia)) {
-            p("Faltam {$diferenca} dias", "pVigencia");
-        } else {
-            p("Já Passou !", "pVigenciaJaPassou");
+            # Vigencia Total
+            $vigencia = $this->getVigenciaTotal($idContrato);
+
+            # Diferença em dias
+            if (!jaPassou($vigencia)) {
+                $diferenca = abs(dataDif($vigencia));
+            }
+
+            if ($tempo["meses"] >= 60) {
+                p("{$tempo["meses"]} Meses", "pTempoTotal60");
+            } else {
+                p("{$tempo["meses"]} Meses", "pTempoTotal");
+            }
+
+            p($vigencia, "pVigencia");
+            if (!jaPassou($vigencia)) {
+                p("Faltam {$diferenca} dias", "pVigencia");
+            } else {
+                p("Já Passou !", "pVigenciaJaPassou");
+            }
         }
     }
 
@@ -384,7 +353,7 @@ class Contrato {
         $conteudo = $this->getDados($idContrato);
 
         # Verifica se a data inicial foi preenchida
-        if (!empty($conteudo["dtInicial"]) AND!empty($conteudo["prazo"]) AND!empty($conteudo["tipoPrazo"])) {
+        if (!empty($conteudo["dtInicial"])) {
 
             $dtInicial = date_to_php($conteudo["dtInicial"]);
             $prazo = $conteudo["prazo"];
@@ -589,13 +558,13 @@ class Contrato {
         }
         # Pega os dados
         $conteudo = $this->getDados($idContrato);
-        
+
         # Prepara a variável do Total
         $ValorTotal = 0;
 
         # Verifica se tem vinculado
         $aditivosVinculados = $this->getAditivosVinculados($idContrato);
-        
+
         # Valor
         if (empty($conteudo["valor"])) {
             p("----", "p#pvalorNulo");
@@ -603,7 +572,7 @@ class Contrato {
             p("R$ " . formataMoeda($conteudo['valor']), "pvalorPositivo");
             $ValorTotal += $conteudo['valor'];
         }
-        
+
         # Percorre os vinculados
         if (count($aditivosVinculados) > 0) {
             foreach ($aditivosVinculados as $item) {
@@ -619,14 +588,14 @@ class Contrato {
                 }
             }
             hr("hrComissao");
-            if($ValorTotal >=0){
+            if ($ValorTotal >= 0) {
                 p("R$ " . formataMoeda($ValorTotal), "pvalorPositivo");
-            }else{
+            } else {
                 p("R$ " . formataMoeda($ValorTotal), "pvalorNegativo");
             }
-        }      
+        }
     }
-    
+
     ##########################################################
     /*
      * Informa a data de publicação mais a página ( se tiver) do Contrato
@@ -675,6 +644,7 @@ class Contrato {
     ###########################################################
 
     function getPeriodo($idContrato = null) {
+
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");

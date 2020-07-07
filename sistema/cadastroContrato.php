@@ -152,7 +152,7 @@ if ($acesso) {
         $objeto->set_voltarForm("cadastroAditivo.php");
     }
 
-    $objeto->set_linkListar("areaContrato.php");
+    $objeto->set_linkListar("cadastroAditivo.php");
 
     $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Tempo e Vigência", "Situação", "Acessar"));
     $objeto->set_classe(array("Contrato", null, "Empresa", "Contrato", "Contrato", "Situacao"));
@@ -725,7 +725,7 @@ if ($acesso) {
                 # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
                 if (in_array($fileUpload['type'], $allowedTypes)) {
                     if (move_uploaded_file($fileUpload['tmp_name'], $pasta . $newFileName)) {
-                        loadPage("areaContrato.php?id={$id}");
+                        loadPage("cadastroAditivo.php?id={$id}");
                     } else {
                         echo "<p class='trigger error'>Erro Inesperado</p>";
                     }

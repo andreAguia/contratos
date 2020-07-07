@@ -2,7 +2,7 @@
 
 /*
  * Faz com que após ser incluído o sistema possa
- * ser redirecionado para a areaContrato.php 
+ * ser redirecionado  
  */
 
 # Joga os parâmetros para as sessions

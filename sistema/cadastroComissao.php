@@ -94,7 +94,7 @@ if ($acesso) {
     $objeto->set_nome("Comissão de Fiscalização");
 
     # Botão de voltar da lista
-    $objeto->set_voltarLista("areaContrato.php");
+    $objeto->set_voltarLista(null);
 
     # select da lista
     $objeto->set_selectLista("SELECT idComissao,

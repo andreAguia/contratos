@@ -309,7 +309,7 @@ class Aditivo {
         $conteudo = $this->getDados($idAditivo);
 
         # Verifica se a data inicial foi preenchida
-        if (!empty($conteudo["dtInicial"]) AND!empty($conteudo["prazo"]) AND!empty($conteudo["tipoPrazo"])) {
+        if (!empty($conteudo["dtInicial"])) {
 
             $dtInicial = date_to_php($conteudo["dtInicial"]);
             $prazo = $conteudo["prazo"];

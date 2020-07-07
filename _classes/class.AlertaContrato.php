@@ -93,8 +93,10 @@ class AlertaContrato {
         $vigencia = $contrato->getVigenciaTotal($idContrato);
         $status = $contrato->getStatus($idContrato);
 
-        if (jaPassou($vigencia) AND $status == "Ativo") {
-            $erro[] = "A vigência do contrato já passou e ele ainda consta como Ativo !! Algo está errado!!";
+        if (!empty($vigencia)) {
+            if (jaPassou($vigencia) AND $status == "Ativo") {
+                $erro[] = "A vigência do contrato já passou e ele ainda consta como Ativo !! Algo está errado!!";
+            }
         }
 
         ################################################################################

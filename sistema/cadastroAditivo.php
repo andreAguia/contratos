@@ -66,7 +66,7 @@ if ($acesso) {
     }
 
     # Botão de voltar da lista
-    $objeto->set_voltarLista('areaContrato.php');
+    $objeto->set_voltarLista('cadastroContrato.php');
 
     # select da lista
     $objeto->set_selectLista("SELECT idAditivo,
@@ -368,7 +368,7 @@ if ($acesso) {
             $grid->abreColuna(12);
 
             # Botão voltar
-            botaoVoltar('areaContrato.php');
+            botaoVoltar('cadastroContrato.php');
 
             # Título
             tituloTable("Upload de Publicação");
