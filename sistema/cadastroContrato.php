@@ -60,16 +60,50 @@ if ($acesso) {
     set_session('parametroEmpresa', $parametroEmpresa);
     set_session('inclusaoEmpresa', $inclusaoEmpresa);
 
+    ################################################################
+    
     # Começa uma nova página
     $page = new Page();
+    # Rotina que aparece o número de arquivos selecionados para upload
     if ($fase == "upload") {
-        $page->set_ready('$(document).ready(function(){
-                                $("form input").change(function(){
-                                    $("form p").text(this.files.length + " arquivo(s) selecionado");
-                                });
-                            });');
+        $page->set_ready('$("form input").change(function(){
+                          $("form p").text(this.files.length + " arquivo(s) selecionado");
+                          });');
+    }
+    
+    # Rotina que esconde o numero do pregão quando a modalidade é outra
+    if($fase == "editar"){
+         # Rotina em Jscript
+    $jscript = '// Pega os valores da modalidade
+                var modalidade = $("#idModalidade").val();
+
+                // Exibe ou não o número do pregão a partir do valor da modalidade
+                // quando o form é carregado
+                if(modalidade == 2){
+                    $("#numPregao").show();
+                    $("#labelnumPregao").show();
+                }else{
+                    $("#numPregao").hide();
+                    $("#labelnumPregao").hide();
+                }
+                
+                // Verifica o valor do número do pregão quando se muda o valor da modalidade
+                $("#idModalidade").change(function(){
+                    var modalidade = $("#idModalidade").val();
+                    if(modalidade == 2){
+                        $("#numPregao").show();
+                        $("#labelnumPregao").show();
+                    }else{
+                        $("#numPregao").hide();
+                        $("#labelnumPregao").hide();
+                    }
+                });';
+    
+        $page->set_ready($jscript);
     }
     $page->iniciaPagina();
+    
+    ################################################################
 
     # Cabeçalho da Página
     AreaServidor::cabecalho();
@@ -120,13 +154,14 @@ if ($acesso) {
     # select do edita
     $objeto->set_selectEdita('SELECT numero,
                                      idModalidade,
+                                     numPregao,
                                      siafe,
                                      idStatus,
-                                     maoDeObra,
                                      dtProposta,
                                      dtAssinatura,
                                      idEmpresa,
                                      objeto,
+                                     maoDeObra,
                                      processoSei,
                                      processo,
                                      valor,
@@ -239,6 +274,14 @@ if ($acesso) {
         ),
         array(
             'linha' => 1,
+            'nome' => 'numPregao',
+            'label' => 'Num.Pregão:',
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 4,
+        ),
+        array(
+            'linha' => 1,
             'nome' => 'siafe',
             'label' => 'Siafe:',
             'tipo' => 'texto',
@@ -255,17 +298,7 @@ if ($acesso) {
             'col' => 2,
             'size' => 30,
             'padrao' => 1
-        ),
-        array(
-            'linha' => 1,
-            'nome' => 'maoDeObra',
-            'label' => 'Mão de Obra Alocada:',
-            'tipo' => 'simnao',
-            'title' => 'Informa se o contrato tem ou não mão de obra alocada na UENF.',
-            'col' => 2,
-            'size' => 5,
-            'padrao' => 0
-        ),
+        ),        
         array(
             'linha' => 2,
             'nome' => 'dtProposta',
@@ -298,8 +331,18 @@ if ($acesso) {
             'nome' => 'objeto',
             'label' => 'Objeto:',
             'tipo' => 'texto',
-            'col' => 12,
+            'col' => 10,
             'size' => 250,
+        ),
+        array(
+            'linha' => 3,
+            'nome' => 'maoDeObra',
+            'label' => 'Mão de Obra Alocada:',
+            'tipo' => 'simnao',
+            'title' => 'Informa se o contrato tem ou não mão de obra alocada na UENF.',
+            'col' => 2,
+            'size' => 5,
+            'padrao' => 0
         ),
         array(
             'linha' => 5,

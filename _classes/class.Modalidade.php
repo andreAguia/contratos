@@ -87,7 +87,7 @@ class Modalidade
 
         $row = $contratos->select($select, false);
 
-        # Retorno
+        # Retorno        
         return $row["modalidade"];
     }
 

@@ -109,8 +109,11 @@ class Contrato {
         $modalidade = new Modalidade();
 
         p($conteudo["numero"], "contratoNumero");
-        p($conteudo['siafe'], "pVigencia");
-        p($modalidade->get_modalidade($conteudo["idModalidade"]), "pVigencia");
+        if(!empty($conteudo['siafe'])){
+            p("Siafe: {$conteudo['siafe']}", "pVigencia");
+        }
+        
+        p($this->exibeModalidade($idContrato), "pVigencia");
 
         $status = $this->getStatus($idContrato);
 
@@ -122,6 +125,11 @@ class Contrato {
             $stilo = "statusEncerrado";
         }
         p($status, "$stilo");
+         
+        if ($conteudo["maoDeObra"]) {
+            hr("hrComissao");
+            echo "Mão de Obra Alocada";
+        }
     }
 
     ###########################################################
@@ -465,24 +473,20 @@ class Contrato {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
+        $modalidade = new Modalidade();
 
         $conteudo = $this->getDados($idContrato);
         $idModalidade = $conteudo["idModalidade"];
-
-        # monta o select
-        $select = "SELECT modalidade
-                     FROM tbmodalidade
-                    WHERE idModalidade = {$idModalidade}";
-
-        $row = $contratos->select($select, false);
-        echo $row["modalidade"];
-
-        if ($conteudo["maoDeObra"]) {
-            hr("hrComissao");
-            echo "Mão de Obra Alocada";
+        
+        $return = $modalidade->get_modalidade($idModalidade);
+        
+        # Verifica se é pregão e se tem o número do pregão
+        if($idModalidade == 2){
+            if(!empty($conteudo["numPregao"])){
+               $return .= " ".str_pad($conteudo["numPregao"], 3, "0", STR_PAD_LEFT);
+            }
         }
-
-        return;
+        return $return;
     }
 
     #####################################################################################

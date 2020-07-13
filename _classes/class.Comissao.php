@@ -224,7 +224,6 @@ class Comissao {
         $tabela->set_width(array(70, 25));
         $tabela->set_classe(array("Comissao", "Comissao"));
         $tabela->set_metodo(array("getNomeMembro", "getTipo"));
-        #$tabela->set_numeroOrdem(true);
         $tabela->set_conteudo($row);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
         $tabela->show();
