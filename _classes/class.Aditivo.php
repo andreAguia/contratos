@@ -169,7 +169,7 @@ class Aditivo {
             # Aumenta o contador e cria variável do tipo
             if ($item["tipo"] == 1) {
                 $aditivo++;
-                $tipoNumerado = "Aditivo {$aditivo}";
+                $tipoNumerado = "Termo Aditivo {$aditivo}";
             } else {
                 $apostila++;
                 $tipoNumerado = "Apostila {$apostila}";
