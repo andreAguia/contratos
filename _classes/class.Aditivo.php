@@ -196,9 +196,9 @@ class Aditivo {
         # Pega o tipo numerado
         if (!empty($this->getVinculado($idAditivo))) {
             echo $this->getTipoNumerado($idAditivo);
-            if($this->getVinculado($idAditivo) == "contrato"){
+            if ($this->getVinculado($idAditivo) == "contrato") {
                 p("(Contrato)", "paditivoVinculado");
-            }else{
+            } else {
                 p("(" . $this->getTipoNumerado($this->getVinculado($idAditivo)) . ")", "paditivoVinculado");
             }
         } else {
@@ -376,17 +376,19 @@ class Aditivo {
             return;
         }
 
+        # Se tem algum aditivo com data retorna a vigencia 
         if ($this->temAditivo($idContrato)) {
             $dados = $this->getDadosUltimoAditivocomData($idContrato);
-            $vigencia = $this->getVigencia($dados["idAditivo"]);
-            $return = addDias($vigencia, 1, false);
-        } else {
-            $contrato = new Contrato();
-            $vigencia = $contrato->getVigencia($idContrato);
-            $return = addDias($vigencia, 1, false);
+            if (!empty($dados["idAditivo"])) {
+                $vigencia = $this->getVigencia($dados["idAditivo"]);
+                return addDias($vigencia, 1, false);
+            }
         }
 
-        return $return;
+        # Se não tiver aditivo com data retorna a vigencia do contraTO   
+        $contrato = new Contrato();
+        $vigencia = $contrato->getVigencia($idContrato);
+        return addDias($vigencia, 1, false);        
     }
 
 ##############################################################
@@ -471,22 +473,22 @@ class Aditivo {
                 }
             }
             hr("hrComissao");
-            if($ValorTotal >=0){
+            if ($ValorTotal >= 0) {
                 p("R$ " . formataMoeda($ValorTotal), "pvalorPositivo");
-            }else{
+            } else {
                 p("R$ " . formataMoeda($ValorTotal), "pvalorNegativo");
             }
         }
-        
+
         # Exibe o vinculo (caso exista)
         if (!empty($this->getVinculado($idAditivo))) {
-            if($this->getVinculado($idAditivo) == "contrato"){
+            if ($this->getVinculado($idAditivo) == "contrato") {
                 p("(Contrato)", "paditivoVinculado");
-            }else{
+            } else {
                 p("(" . $this->getTipoNumerado($this->getVinculado($idAditivo)) . ")", "paditivoVinculado");
             }
-        }        
+        }
     }
-    
+
     ##########################################################
 }

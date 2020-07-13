@@ -113,7 +113,7 @@ if ($acesso) {
         $select .= " AND idStatus = {$parametroStatus}";
     }
 
-    $select .= " ORDER BY numero";
+    $select .= " ORDER BY year(dtAssinatura), numero";
 
     $objeto->set_selectLista($select);
 
