@@ -48,8 +48,8 @@ if ($acesso) {
     $menu->add_item('linkWindow', 'Relatório de Contratos Ativos', '../relatorios/contratos.ativos.php');
     $menu->add_item('linkWindow', 'Relatório de Contratos Pendentes', '../relatorios/contratos.pendentes.php');
     $menu->add_item('linkWindow', 'Relatório de Contratos Encerrados', '../relatorios/contratos.encerrados.php');
-    $menu->add_item('titulo1', 'Aditivos');
-    $menu->add_item('linkWindow', 'Relatório de Contratos Ativos - Com Aditivos e Valores', '../relatorios/contratos.aditivo.valor.ativo.php');
+    #$menu->add_item('titulo1', 'Aditivos');
+    #$menu->add_item('linkWindow', 'Relatório de Contratos Ativos - Com Aditivos e Valores', '../relatorios/contratos.aditivo.valor.ativo.php');
     $menu->add_item('titulo1', 'Comissão de Fiscalização');
     $menu->add_item('linkWindow', 'Relatório Geral das Comissções de Fiscalização dos Contratos Ativos', '../relatorios/comissao.ativos.php');
     $menu->show();
