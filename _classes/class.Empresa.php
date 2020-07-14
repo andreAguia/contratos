@@ -184,6 +184,22 @@ class Empresa {
 
     ##########################################################################################
 
+    public function getEmpresa($idEmpresa) {
+
+        $dados = $this->getDados($idEmpresa);
+        return $dados["razaoSocial"];
+    }
+
+    ##########################################################################################
+
+    public function exibeEmpresaRelatorio($idEmpresa) {
+
+        $dados = $this->getDados($idEmpresa);
+        p($dados["razaoSocial"],"pComissaoImpressao");
+    }
+
+    ##########################################################################################
+
     public function getEndereco($idEmpresa) {
 
         $dados = $this->getDados($idEmpresa);

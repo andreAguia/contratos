@@ -129,7 +129,7 @@ class Comissao {
 
 #####################################################################################
 
-    public function getNomeMembro($idServidor) {
+    public function exibeNomeMembro($idServidor) {
 
         # Verifica se foi informado
         if (empty($idServidor)) {
@@ -139,6 +139,19 @@ class Comissao {
             p($pessoal->get_nome($idServidor), "pmembroNome");
             p($pessoal->get_lotacao($idServidor), "pmembroLotacao");
             p($pessoal->get_cargo($idServidor), "pmembroLotacao");
+        }
+    }
+
+#####################################################################################
+
+    public function getNomeMembro($idServidor) {
+
+        # Verifica se foi informado
+        if (empty($idServidor)) {
+            return "---";
+        } else {
+            $pessoal = new Pessoal();
+            return $pessoal->get_nome($idServidor);
         }
     }
 
@@ -223,7 +236,7 @@ class Comissao {
         $tabela->set_align(array("left", "center"));
         $tabela->set_width(array(70, 25));
         $tabela->set_classe(array("Comissao", "Comissao"));
-        $tabela->set_metodo(array("getNomeMembro", "getTipo"));
+        $tabela->set_metodo(array("exibeNomeMembro", "getTipo"));
         $tabela->set_conteudo($row);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
         $tabela->show();
@@ -809,6 +822,44 @@ class Comissao {
 
         # Retorno
         return $return;
+    }
+
+#####################################################################################
+
+    public function listaComissaoRelatorio($idContrato) {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+        $pessoal = new Pessoal();
+
+        # monta o select
+        $select = "SELECT idServidor,
+                          idComissao
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato}
+                      AND dtPublicacaoSaida IS NULL  
+                 ORDER BY tipo";
+
+        $row = $contratos->select($select);
+        $numItem = $contratos->count($select);
+        $contador = 1;
+
+        foreach ($row as $item) {
+            
+            # Mome do servidor e designação
+            $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
+            p($this->getNomeMembro($item["idServidor"]) . $designacao, "pComissaoImpressao");
+            p($pessoal->get_emails($item["idServidor"],false,false), "pComissaoImpressao");
+            if($contador<$numItem){
+                hr();
+                $contador++;
+            }
+        }
     }
 
 #####################################################################################

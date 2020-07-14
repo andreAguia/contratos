@@ -254,6 +254,13 @@ p#pmembroNome{
     margin: 0px;
 }
 
+p#pComissaoImpressao{
+    font-size: 12px;
+    text-align: left;
+    padding: 0px;
+    margin: 0px;
+}
+
 p#pPortaria{
     font-size: 12px;
     text-align: center;

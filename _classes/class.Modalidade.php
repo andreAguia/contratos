@@ -19,7 +19,7 @@ class Modalidade
 
 ##############################################################
 
-    public function get_dados($idModalidade = null)
+    public function getDados($idModalidade = null)
     {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -43,7 +43,7 @@ class Modalidade
 
 ##############################################################
 
-    public function get_numContratos($idModalidade = null)
+    public function getNumContratos($idModalidade = null)
     {
 
         # Conecta ao Banco de Dados
@@ -68,7 +68,7 @@ class Modalidade
 
 ##############################################################
 
-    public function get_modalidade($idModalidade = null)
+    public function getModalidade($idModalidade = null)
     {
 
         # Conecta ao Banco de Dados

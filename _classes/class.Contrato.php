@@ -109,10 +109,10 @@ class Contrato {
         $modalidade = new Modalidade();
 
         p($conteudo["numero"], "contratoNumero");
-        if(!empty($conteudo['siafe'])){
+        if (!empty($conteudo['siafe'])) {
             p("Siafe: {$conteudo['siafe']}", "pVigencia");
         }
-        
+
         p($this->exibeModalidade($idContrato), "pVigencia");
 
         $status = $this->getStatus($idContrato);
@@ -125,10 +125,30 @@ class Contrato {
             $stilo = "statusEncerrado";
         }
         p($status, "$stilo");
-         
+
         if ($conteudo["maoDeObra"]) {
-            hr("hrComissao");
-            echo "Mão de Obra Alocada";
+           p("Mão de Obra Alocada", "pVigencia");
+        }
+    }
+
+    #####################################################################################
+
+    public function exibeNumeroSiafeRelatorio($idContrato) {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        p($conteudo["numero"], "contratoNumero");
+        if (!empty($conteudo['siafe'])) {
+            p("Siafe: {$conteudo['siafe']}", "pVigencia");
+        }
+
+        if ($conteudo["maoDeObra"]) {
+           p("Mão de Obra Alocada", "pVigencia");
         }
     }
 
@@ -266,10 +286,10 @@ class Contrato {
 
         # Verifica se tem data inicial
         if (empty($dados["dtInicial"])) {
-            
+
             return null;
         } else {
-            
+
             # Tempo Total
             $tempo = $this->getTempoTotal($idContrato);
 
@@ -477,13 +497,13 @@ class Contrato {
 
         $conteudo = $this->getDados($idContrato);
         $idModalidade = $conteudo["idModalidade"];
-        
-        $return = $modalidade->get_modalidade($idModalidade);
-        
+
+        $return = $modalidade->getModalidade($idModalidade);
+
         # Verifica se é pregão e se tem o número do pregão
-        if($idModalidade == 2){
-            if(!empty($conteudo["numPregao"])){
-               $return .= " ".str_pad($conteudo["numPregao"], 3, "0", STR_PAD_LEFT);
+        if ($idModalidade == 2) {
+            if (!empty($conteudo["numPregao"])) {
+                $return .= " " . str_pad($conteudo["numPregao"], 3, "0", STR_PAD_LEFT);
             }
         }
         return $return;
@@ -774,5 +794,13 @@ class Contrato {
         return $contratos->select($select);
     }
 
-###########################################################
+##########################################################################################
+
+    public function exibeObjetoRelatorio($idContrato) {
+
+        $dados = $this->getDados($idContrato);
+        p($dados["objeto"], "pComissaoImpressao");
+    }
+
+    ##########################################################################################
 }

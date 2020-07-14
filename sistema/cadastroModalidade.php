@@ -67,7 +67,7 @@ if ($acesso) {
     $objeto->set_width(array(5, 40, 40, 5));
     $objeto->set_align(array("center", "left", "left", "center"));
     $objeto->set_classe(array(null, null, null, "Modalidade"));
-    $objeto->set_metodo(array(null, null, null, "get_numContratos"));
+    $objeto->set_metodo(array(null, null, null, "getNumContratos"));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -111,7 +111,7 @@ if ($acesso) {
 
     case "excluir" :
         # Verifica se tem contrato com essa modalidade
-        $numContratos = $modalidade->get_numContratos($id);
+        $numContratos = $modalidade->getNumContratos($id);
 
         if ($numContratos > 0) {
             alert("Existem contratos cadastrados com esta modalidade. Dessa forma a mesma NÃO poderá ser excluída.");

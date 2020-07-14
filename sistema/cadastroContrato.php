@@ -195,7 +195,7 @@ if ($acesso) {
     $objeto->set_width(array(10, 18, 20, 20, 14, 18));
     $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
 
-    # Botão de exibição dos servidores com permissão a essa regra
+    # Botão 
     $botao = new BotaoGrafico();
     $botao->set_label('');
     $botao->set_title('Acessar Contrato');
@@ -473,19 +473,18 @@ if ($acesso) {
             $botao->set_class("button secondary");
             $menu1->add_link($botao, "right");
 
-            # Incluir
-            $botaoInserir = new Button("Incluir Contrato", "?fase=incluir");
-            $botaoInserir->set_title("Incluir");
-            $menu1->add_link($botaoInserir, "right");
-
             # Relatórios
             $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
             $botaoRel = new Button();
-            $botaoRel->set_title("Relatório dessa pesquisa");
-            $botaoRel->set_url("#");
-            $botaoRel->set_target("_blank");
+            $botaoRel->set_title("Área de Relatório");
+            $botaoRel->set_url("relatorios.php");
             $botaoRel->set_imagem($imagem);
-            #$menu1->add_link($botaoRel,"right");
+            $menu1->add_link($botaoRel,"right");
+            
+             # Incluir
+            $botaoInserir = new Button("Incluir Contrato", "?fase=incluir");
+            $botaoInserir->set_title("Incluir");
+            $menu1->add_link($botaoInserir, "right");
 
             $menu1->show();
 
