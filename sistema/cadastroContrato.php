@@ -278,7 +278,7 @@ if ($acesso) {
             'label' => 'Num.Pregão:',
             'tipo' => 'texto',
             'col' => 2,
-            'size' => 4,
+            'size' => 9,
         ),
         array(
             'linha' => 1,
