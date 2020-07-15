@@ -381,7 +381,6 @@ if ($acesso) {
             'nome' => 'dtPublicacao',
             'label' => 'Publicação:',
             'tipo' => 'date',
-            'required' => true,
             'col' => 3,
             'size' => 15,
         ),
