@@ -90,7 +90,7 @@ class AlertaContrato {
 
         ################################################################################
         # Verifica se o contrato está ativo e a data de vigência já passou
-        $vigencia = $contrato->getVigenciaTotal($idContrato);
+        $vigencia = $contrato->getVigencia($idContrato);
         $status = $contrato->getStatus($idContrato);
 
         if (!empty($vigencia)) {

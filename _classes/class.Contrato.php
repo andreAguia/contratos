@@ -43,7 +43,10 @@ class Contrato {
         $contratos = new Contratos();
 
         # Pega os dados
-        $select = "SELECT *
+        $select = "SELECT *,
+                          IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbcontrato
                     WHERE idContrato = {$idContrato}";
 
@@ -262,7 +265,7 @@ class Contrato {
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_conteudo($row);
-        $tabela->set_label(["Contrato", "Processo", "Objeto", "Empresa", "Vigência Total"]);
+        $tabela->set_label(["Contrato", "Processo", "Objeto", "Empresa", "Vigência"]);
         $tabela->set_width([15, 20, 25, 25, 15]);
         #$tabela->set_funcao($function);
         $tabela->set_classe(["Contrato", "Contrato", "Contrato", "Empresa", "Contrato"]);
@@ -285,24 +288,26 @@ class Contrato {
 
             return null;
         } else {
+            
+            # Vigência
+            $vigencia = $this->getVigencia($idContrato);
 
-            # Tempo Total
-            $tempo = $this->getTempoTotal($idContrato);
-
-            # Vigencia Total
-            $vigencia = $this->getVigenciaTotal($idContrato);
-
-            # Diferença em dias
+            # Verifica se a data já passou ou quantos dias faltam pra ela
             if (!jaPassou($vigencia)) {
                 $diferenca = abs(dataDif($vigencia));
             }
-
+            
+            # Tempo Total
+            $tempo = $this->getTempoTotal($idContrato);
+            
+            # Verifica se já passou de 60 meses
             if ($tempo["meses"] >= 60) {
                 p("{$tempo["meses"]} Meses", "pTempoTotal60");
             } else {
                 p("{$tempo["meses"]} Meses", "pTempoTotal");
             }
-
+            
+            # Exibe a vigência 
             p($vigencia, "pVigencia");
             if (!jaPassou($vigencia)) {
                 p("Faltam {$diferenca} dias", "pVigencia");
@@ -366,46 +371,27 @@ class Contrato {
 
     ###########################################################
 
-    public function getVigencia($idContrato) {
+    public function getDtFinal($idContrato) {
 
-        # Verifica se foi informado
+        # Verifica se foi informado o id
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
         }
-
+        
+        # Pega os dados
         $conteudo = $this->getDados($idContrato);
-
-        # Verifica se a data inicial foi preenchida
-        if (!empty($conteudo["dtInicial"])) {
-
-            $dtInicial = date_to_php($conteudo["dtInicial"]);
-            $prazo = $conteudo["prazo"];
-            $tipoPrazo = $conteudo["tipoPrazo"];
-
-            $tipo = null;
-            $dtVigencia = null;
-
-            # trata pelo tipo de prazo
-            if ($tipoPrazo == 1) {
-                $dtVigencia = addDias($dtInicial, $prazo);
-            } else {
-                $dtVigencia = addMeses($dtInicial, $prazo);
-                $dtVigencia = addDias($dtVigencia, -1, false);      // retira 1 dia
-            }
-        } else {
-            $dtVigencia = null;
-        }
-
-        return $dtVigencia;
+        
+        # Retorna a data Final
+        return date_to_php($conteudo["dtFinal"]);
     }
 
-    ###########################################################
+    ##############################################################
     /*
      * Informa a vigência geral do contrato
      */
 
-    public function getVigenciaTotal($idContrato) {
+    public function getVigencia($idContrato) {
 
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
@@ -413,8 +399,8 @@ class Contrato {
             return;
         }
 
-        # Define a vigencia total com a vigência do contrato inicial
-        $vigenciaTotal = $this->getVigencia($idContrato);
+        # Define a vigencia com a data final do contrato inicial
+        $vigencia = $this->getDtFinal($idContrato);
 
         # Verifica se tem aditivo e pega os tempo de cada um deles
         $aditivo = new Aditivo();
@@ -425,16 +411,16 @@ class Contrato {
             foreach ($arrayAditivo as $itemAditivo) {
 
                 # Pega a vigência deste aditivo
-                $vigencia = $aditivo->getVigencia($itemAditivo["idAditivo"]);
+                $dtFinal = $aditivo->getDtFinal($itemAditivo["idAditivo"]);
 
-                # Descarta de for nula e atualiza vigencia total se não for
-                if (!empty($vigencia)) {
-                    $vigenciaTotal = $vigencia;
+                # Descarta de for nula e atualiza dtFinal total se não for
+                if (!empty($dtFinal)) {
+                    $vigencia = $dtFinal;
                 }
             }
         }
 
-        return $vigenciaTotal;
+        return $vigencia;
     }
 
     ###########################################################
@@ -686,10 +672,10 @@ class Contrato {
 
             if ($tipoPrazo == 1) {
                 $tipo = "Dias";
-                $dtFinal = $this->getVigencia($idContrato);
+                $dtFinal = $this->getDtFinal($idContrato);
             } else {
                 $tipo = "Meses";
-                $dtFinal = $this->getVigencia($idContrato);
+                $dtFinal = $this->getDtFinal($idContrato);
             }
             $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
         } else {
@@ -783,7 +769,10 @@ class Contrato {
         $contratos = new Contratos();
 
         # monta o select
-        $select = "SELECT *
+        $select = "SELECT *,
+                          IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbaditivo
                     WHERE idContrato = {$idContrato}
                       AND vinculado = 'contrato'

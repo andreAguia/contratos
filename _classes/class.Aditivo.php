@@ -2,21 +2,6 @@
 
 class Aditivo {
 
-    /**
-     * Abriga as várias rotina referentes a concurso
-     *
-     * @author André Águia (Alat) - alataguia@gmail.com
-     * 
-     * @var private $idConcurso integer null O id do concurso
-     */
-    ##############################################################
-
-    public function __construct() {
-        
-    }
-
-    ##############################################################
-
     /*
      * Informa todos os dados de um único aditivo
      */
@@ -33,7 +18,10 @@ class Aditivo {
         }
 
         # Pega os dados
-        $select = 'SELECT * 
+        $select = 'SELECT * ,
+                          IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbaditivo
                     WHERE idAditivo = ' . $idAditivo;
 
@@ -58,7 +46,10 @@ class Aditivo {
         }
 
         # Pega os dados
-        $select = 'SELECT * 
+        $select = 'SELECT * ,
+                          IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbaditivo
                     WHERE idContrato = ' . $idContrato;
 
@@ -87,7 +78,10 @@ class Aditivo {
         }
 
         # monta o select
-        $select = "SELECT *
+        $select = "SELECT * ,
+                          IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbaditivo
                     WHERE idContrato = {$idContrato}
                  ORDER BY dtAssinatura";
@@ -229,10 +223,10 @@ class Aditivo {
 
             if ($tipoPrazo == 1) {
                 $tipo = "Dias";
-                $dtFinal = $this->getVigencia($idAditivo);
+                $dtFinal = $this->getDtFinal($idAditivo);
             } else {
                 $tipo = "Meses";
-                $dtFinal = $this->getVigencia($idAditivo);
+                $dtFinal = $this->getDtFinal($idAditivo);
             }
             $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
         } else {
@@ -298,44 +292,25 @@ class Aditivo {
 
     #####################################################################################
 
-    public function getVigencia($idAditivo) {
+    public function getDtFinal($idAditivo) {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
             alert("É necessário informar o id do Aditivo.");
             return;
         }
-
+        
+        # Pega os dados
         $conteudo = $this->getDados($idAditivo);
-
-        # Verifica se a data inicial foi preenchida
-        if (!empty($conteudo["dtInicial"])) {
-
-            $dtInicial = date_to_php($conteudo["dtInicial"]);
-            $prazo = $conteudo["prazo"];
-            $tipoPrazo = $conteudo["tipoPrazo"];
-
-            $tipo = null;
-            $dtFinal = null;
-
-            if ($tipoPrazo == 1) {
-                $dtFinal = addDias($dtInicial, $prazo);
-            } else {
-                $dtFinal = addMeses($dtInicial, $prazo);
-                $dtFinal = addDias($dtFinal, -1, false);      // retira 1 dia
-            }
-        } else {
-            $dtFinal = null;
-        }
-
-
-        return $dtFinal;
+        
+        # Retorna a data Final
+        return date_to_php($conteudo["dtFinal"]);
     }
 
     ##############################################################
 
     /*
-     * Informa todos os dados do último aditivo com Data (para calculo de vigencia)
+     * Informa todos os dados do último aditivo com Data (para calculo de dtFinal)
      */
 
     public function getDadosUltimoAditivocomData($idContrato = null) {
@@ -350,7 +325,10 @@ class Aditivo {
         }
 
         # monta o select
-        $select = "SELECT *
+        $select = "SELECT *,
+                          IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbaditivo
                     WHERE idContrato = {$idContrato}
                       AND dtInicial IS NOT NULL 
@@ -376,19 +354,19 @@ class Aditivo {
             return;
         }
 
-        # Se tem algum aditivo com data retorna a vigencia 
+        # Se tem algum aditivo com data retorna a dtFinal 
         if ($this->temAditivo($idContrato)) {
             $dados = $this->getDadosUltimoAditivocomData($idContrato);
             if (!empty($dados["idAditivo"])) {
-                $vigencia = $this->getVigencia($dados["idAditivo"]);
-                return addDias($vigencia, 1, false);
+                $dtFinal = $this->getDtFinal($dados["idAditivo"]);
+                return addDias($dtFinal, 1, false);
             }
         }
 
-        # Se não tiver aditivo com data retorna a vigencia do contraTO   
+        # Se não tiver aditivo com data retorna a dtFinal do contraTO   
         $contrato = new Contrato();
-        $vigencia = $contrato->getVigencia($idContrato);
-        return addDias($vigencia, 1, false);        
+        $dtFinal = $contrato->getDtFinal($idContrato);
+        return addDias($dtFinal, 1, false);        
     }
 
 ##############################################################
@@ -410,7 +388,10 @@ class Aditivo {
         }
 
         # monta o select
-        $select = "SELECT *
+        $select = "SELECT *,
+                          IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbaditivo
                     WHERE vinculado = {$idAditivo}
                  ORDER BY dtAssinatura";

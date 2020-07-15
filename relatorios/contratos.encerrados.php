@@ -46,7 +46,7 @@ if ($acesso) {
     # Monta o Relatório
     $relatorio = new Relatorio();
     $relatorio->set_conteudo($resumo);
-   $relatorio->set_label(array("Contrato", "Modalidade", "Objeto", "Empresa", "Processo", "Tempo e Vigência", "Situação"));
+   $relatorio->set_label(array("Contrato", "Modalidade", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação"));
     $relatorio->set_classe(array("Contrato", "Contrato", null, "Empresa", "Contrato", "Contrato", "Situacao"));
     $relatorio->set_metodo(array("exibeNumeroSiafeRelatorio", "exibeModalidade", null, "getEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
     $relatorio->set_width(array(10, 15, 15, 15, 15, 15, 15));
