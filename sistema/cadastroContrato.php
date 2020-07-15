@@ -260,7 +260,7 @@ if ($acesso) {
             'autofocus' => true,
             'col' => 3,
             'size' => 10,
-            'padrao' => $contrato->getNovoNumeroProcesso(),
+            'padrao' => $contrato->getNovoNumeroContrato(),
         ),
         array(
             'linha' => 1,

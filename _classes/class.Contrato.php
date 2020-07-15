@@ -511,14 +511,16 @@ class Contrato {
 
     #####################################################################################
 
-    public function getNovoNumeroProcesso() {
+    public function getNovoNumeroContrato() {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-
+        
+        # Seleciona todos os contratos que tem o número com o caractere /
         $select = "SELECT numero
                      FROM tbcontrato
                     WHERE INSTR(numero,'/')
-                 ORDER BY numero desc LIMIT 1";
+                      AND SUBSTRING(numero,INSTR(numero,'/')+1) = year(now())
+                 ORDER BY SUBSTRING(numero,1,INSTR(numero,'/')-1) desc LIMIT 1";
 
         $numero = $contratos->select($select, false);
 
