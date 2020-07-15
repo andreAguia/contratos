@@ -127,7 +127,7 @@ class Contrato {
         p($status, "$stilo");
 
         if ($conteudo["maoDeObra"]) {
-           p("Mão de Obra Alocada", "pVigencia");
+            p("Mão de Obra Alocada", "pVigencia");
         }
     }
 
@@ -148,7 +148,7 @@ class Contrato {
         }
 
         if ($conteudo["maoDeObra"]) {
-           p("Mão de Obra Alocada", "pVigencia");
+            p("Mão de Obra Alocada", "pVigencia");
         }
     }
 
@@ -199,7 +199,7 @@ class Contrato {
         $conteudo = $this->getDados($idContrato);
 
         $select = "SELECT idContrato,
-                          objeto,
+                          idContrato,
                           idContrato,
                           dtAssinatura,
                           idContrato,
@@ -216,8 +216,8 @@ class Contrato {
         $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
         $tabela->set_align(array("center", "left", "center", "center", "center", "center", "right"));
         $tabela->set_width(array(10, 20, 10, 10, 10, 15, 15, 10));
-        $tabela->set_classe(array("Contrato", null, "Contrato", null, "Contrato", "Contrato", "Contrato"));
-        $tabela->set_metodo(array("exibeModalidade", null, "getPublicacao", null, "getPeriodo", "getGarantia", "exibeValor"));
+        $tabela->set_classe(array("Contrato", "Contrato", "Contrato", null, "Contrato", "Contrato", "Contrato"));
+        $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "getPublicacao", null, "getPeriodo", "getGarantia", "exibeValor"));
         $tabela->set_funcao(array(null, null, null, "date_to_php"));
         $tabela->set_conteudo($row);
         $tabela->set_totalRegistro(false);
@@ -228,13 +228,7 @@ class Contrato {
     }
 
     ###########################################################
-
-    /**
-     * Método exibeDadosConcurso
-     * fornece os dados de uma vaga em forma de tabela
-     *
-     * @param    string $idContrato O id da vaga
-     */
+    
     public function exibeResumoDados($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -244,7 +238,7 @@ class Contrato {
 
         $select = "SELECT idContrato, 
                           idContrato, 
-                          objeto,
+                          idContrato,
                           idEmpresa, 
                           idContrato
                     FROM tbcontrato
@@ -252,14 +246,16 @@ class Contrato {
 
         $contratos = new Contratos();
         $row = $contratos->select($select);
-
+        
+        $empresa = new Empresa();
+        
         # Limita o tamanho da tela
         $grid = new Grid();
         $grid->abreColuna(12);
 
         $formatacaoCondicional = array(array(
-                'coluna' => 2,
-                'valor' => $row[0][2],
+                'coluna' => 3,
+                'valor' => $empresa->getEmpresaCnpj($row[0][3]),
                 'operador' => '=',
                 'id' => 'listaDados'));
 
@@ -269,8 +265,8 @@ class Contrato {
         $tabela->set_label(["Contrato", "Processo", "Objeto", "Empresa", "Vigência Total"]);
         $tabela->set_width([15, 20, 25, 25, 15]);
         #$tabela->set_funcao($function);
-        $tabela->set_classe(["Contrato", "Contrato", null, "Empresa", "Contrato"]);
-        $tabela->set_metodo(["exibeNumeroContrato", "getProcesso", null, "getEmpresaCnpj", "exibeTempoEVigencia"]);
+        $tabela->set_classe(["Contrato", "Contrato", "Contrato", "Empresa", "Contrato"]);
+        $tabela->set_metodo(["exibeNumeroContrato", "getProcesso", "exibeObjeto", "getEmpresaCnpj", "exibeTempoEVigencia"]);
         $tabela->set_totalRegistro(false);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
 
@@ -514,7 +510,7 @@ class Contrato {
     public function getNovoNumeroContrato() {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-        
+
         # Seleciona todos os contratos que tem o número com o caractere /
         $select = "SELECT numero
                      FROM tbcontrato
@@ -796,12 +792,32 @@ class Contrato {
         return $contratos->select($select);
     }
 
-##########################################################################################
+    ##########################################################################################
 
     public function exibeObjetoRelatorio($idContrato) {
 
         $dados = $this->getDados($idContrato);
         p($dados["objeto"], "pComissaoImpressao");
+    }
+
+    ##########################################################################################
+
+    public function exibeObjeto($idContrato) {
+
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+
+        # Exibe o objeto
+        echo $dados["objeto"];
+
+        # Verifica se tem observação, se tiver exibe uma figura com mouseover
+        if (!empty($dados["obs"])) {
+            $div = new Div("divObs");
+            $div->abre();
+            $figura = new Imagem(PASTA_FIGURAS . 'obs.png', $dados["obs"], 20, 20);
+            $figura->show();
+            $div->fecha();
+        }
     }
 
     ##########################################################################################

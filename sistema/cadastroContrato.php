@@ -61,7 +61,6 @@ if ($acesso) {
     set_session('inclusaoEmpresa', $inclusaoEmpresa);
 
     ################################################################
-    
     # Começa uma nova página
     $page = new Page();
     # Rotina que aparece o número de arquivos selecionados para upload
@@ -70,11 +69,11 @@ if ($acesso) {
                           $("form p").text(this.files.length + " arquivo(s) selecionado");
                           });');
     }
-    
+
     # Rotina que esconde o numero do pregão quando a modalidade é outra
-    if($fase == "editar"){
-         # Rotina em Jscript
-    $jscript = '// Pega os valores da modalidade
+    if ($fase == "editar") {
+        # Rotina em Jscript
+        $jscript = '// Pega os valores da modalidade
                 var modalidade = $("#idModalidade").val();
 
                 // Exibe ou não o número do pregão a partir do valor da modalidade
@@ -98,13 +97,12 @@ if ($acesso) {
                         $("#labelnumPregao").hide();
                     }
                 });';
-    
+
         $page->set_ready($jscript);
     }
     $page->iniciaPagina();
-    
-    ################################################################
 
+    ################################################################
     # Cabeçalho da Página
     AreaServidor::cabecalho();
 
@@ -120,7 +118,7 @@ if ($acesso) {
 
     # select da lista
     $select = "SELECT idContrato,
-                      objeto,
+                      idContrato,
                       idEmpresa,
                       idContrato,
                       idContrato,
@@ -190,8 +188,8 @@ if ($acesso) {
     $objeto->set_linkListar("cadastroAditivo.php");
 
     $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Tempo e Vigência", "Situação", "Acessar"));
-    $objeto->set_classe(array("Contrato", null, "Empresa", "Contrato", "Contrato", "Situacao"));
-    $objeto->set_metodo(array("exibeNumeroContrato", null, "getEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
+    $objeto->set_classe(array("Contrato", "Contrato", "Empresa", "Contrato", "Contrato", "Situacao"));
+    $objeto->set_metodo(array("exibeNumeroContrato", "exibeObjeto", "getEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
     $objeto->set_width(array(10, 18, 20, 20, 14, 18));
     $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
 
@@ -298,7 +296,7 @@ if ($acesso) {
             'col' => 2,
             'size' => 30,
             'padrao' => 1
-        ),        
+        ),
         array(
             'linha' => 2,
             'nome' => 'dtProposta',
@@ -478,9 +476,9 @@ if ($acesso) {
             $botaoRel->set_title("Área de Relatório");
             $botaoRel->set_url("relatorios.php");
             $botaoRel->set_imagem($imagem);
-            $menu1->add_link($botaoRel,"right");
-            
-             # Incluir
+            $menu1->add_link($botaoRel, "right");
+
+            # Incluir
             $botaoInserir = new Button("Incluir Contrato", "?fase=incluir");
             $botaoInserir->set_title("Incluir");
             $menu1->add_link($botaoInserir, "right");
