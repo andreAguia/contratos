@@ -340,17 +340,24 @@ if ($acesso) {
             $conteudo = $contrato->getDados($idContrato);
             
             $grid->fechaColuna();
-            $grid->abreColuna(6);
-
+            
             # Exibe dados da empresa
+            $grid->abreColuna(6,6,4);
             $idEmpresa = $conteudo["idEmpresa"];
             $empresa->exibeDados($idEmpresa);
-
             $grid->fechaColuna();
-            $grid->abreColuna(6);
-
-            $comissao->listaComissao($idContrato);
+            
+            # Exibe dados da comissão
+            $grid->abreColuna(6,6,4);
+            $comissao->listaComissao($idContrato);            
             $grid->fechaColuna();
+            
+            # Exibe dados dos pagamentos
+            $grid->abreColuna(6,6,4);
+            $pagamento = new Pagamento();
+            $pagamento->listaPagamentos($idContrato);
+            $grid->fechaColuna();
+            
             $grid->fechaGrid();
             break;
 

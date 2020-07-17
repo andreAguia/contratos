@@ -3,37 +3,21 @@
 class Modalidade
 {
 
-    /**
-     * Abriga as várias rotina referentes a concurso
-     *
-     * @author André Águia (Alat) - alataguia@gmail.com
-     *
-     * @var private $idConcurso integer null O id do concurso
-     */
-##############################################################
-
-    public function __construct()
-    {
-        ##somente para constar
-    }
-
-##############################################################
-
     public function getDados($idModalidade = null)
     {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
         # Verifica se foi informado
-        if (vazio($this->idModalidade)) {
+        if (vazio($idModalidade)) {
             alert("É necessário informar o id da Modalidade.");
             return;
         }
 
         # Pega os dados
-        $select = 'SELECT *
+        $select = "SELECT *
                      FROM tbmodalidade
-                    WHERE idModalidade = ' . $this->idModalidade;
+                    WHERE idModalidade = {$idModalidade}";
 
         $row = $contratos->select($select, false);
 
