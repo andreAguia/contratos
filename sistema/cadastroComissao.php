@@ -225,6 +225,7 @@ if ($acesso) {
             'title'    => 'Servidor membro da comissão',
             'col'      => 9,
             'required' => true,
+            "autofocus" => true,
             'size'     => 30),
         array(
             'linha'  => 1,

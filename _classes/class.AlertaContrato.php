@@ -127,13 +127,13 @@ class AlertaContrato {
 
                 $painel = new Callout("alert");
                 $painel->abre();
-
+                
                 $grid = new Grid();
                 $grid->abreColuna(1);
 
                 $figura = new Imagem(PASTA_FIGURAS_GERAIS . 'aviso.png', 'Alerta', 50, 50);
                 $figura->show();
-
+                
                 $grid->fechaColuna();
                 $grid->abreColuna(11);
 
@@ -142,7 +142,7 @@ class AlertaContrato {
                 foreach ($erro as $item) {
                     p($item, "palerta");
                 }
-
+                
                 $grid->fechaColuna();
                 $grid->fechaGrid();
                 $painel->fecha();

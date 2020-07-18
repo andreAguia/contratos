@@ -94,6 +94,34 @@ class Situacao
 
     #####################################################################################
 
+    public function getSituacaoAtual($idContrato)
+    {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Pega os dados
+        $select = "SELECT situacao
+                     FROM tbsituacao
+                    WHERE idContrato = {$idContrato}
+                 ORDER BY idSituacao desc";
+
+        $row = $contratos->select($select, false);
+
+        # Retorno
+        if (!vazio($row)) {
+            echo $row[0];
+        }
+    }
+
+    #####################################################################################
+
     function exibeSituacaoAtual($idContrato)
     {
 

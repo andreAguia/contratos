@@ -25,7 +25,7 @@ if ($acesso) {
     ######   
     # Título & Subtitulo
     $titulo = "Contratos Ativos";
-    $subTitulo = "Ordenado pelo Número";
+    $subTitulo = "Ordenado pela Data de Vigência";
 
     # Pega os dados
     $select = "SELECT idContrato,
@@ -37,8 +37,16 @@ if ($acesso) {
                       idContrato
                  FROM tbcontrato 
                 WHERE idStatus = 1
-             ORDER BY year(dtAssinatura), numero";
-
+             ORDER BY (IFNULL(
+                      (SELECT IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
+                     FROM tbaditivo
+                    WHERE tbaditivo.idContrato = tbcontrato.idContrato
+                      AND dtInicial IS NOT NULL 
+                 ORDER BY dtAssinatura desc LIMIT 1),
+                 IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY))))";
+    
     $resumo = $contratos->select($select);
 
     # Monta o Relatório
@@ -46,7 +54,7 @@ if ($acesso) {
     $relatorio->set_conteudo($resumo);
     $relatorio->set_label(array("Contrato", "Modalidade", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação"));
     $relatorio->set_classe(array("Contrato", "Contrato", null, "Empresa", "Contrato", "Contrato", "Situacao"));
-    $relatorio->set_metodo(array("exibeNumeroSiafeRelatorio", "exibeModalidade", null, "getEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
+    $relatorio->set_metodo(array("exibeNumeroSiafeRelatorio", "exibeModalidade", null, "getEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtual"));
     $relatorio->set_width(array(10, 15, 15, 15, 15, 15, 15));
     $relatorio->set_align(array("center", "center","left", "left", "left", "center", "left"));
     $relatorio->set_bordaInterna(true);

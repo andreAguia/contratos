@@ -53,7 +53,7 @@ if ($acesso) {
 
     ################################################################
     # Exibe os dados do Servidor
-    if($fase == "editar"){
+    if ($fase == "editar") {
         $objeto->set_rotinaExtra("get_DadosContrato");
         $objeto->set_rotinaExtraParametro($idContrato);
     }
@@ -104,7 +104,7 @@ if ($acesso) {
     $objeto->set_linkExcluir('?fase=excluir');
     $objeto->set_linkGravar('?fase=gravar');
     $objeto->set_linkListar('?fase=listar');
-    
+
     $objeto->set_exibeTempoPesquisa(false);
 
     # Parametros da tabela
@@ -266,7 +266,7 @@ if ($acesso) {
             "col" => 3,
             "size" => 11)
     ));
-    
+
     $objeto->set_botaoVoltarLista(false);
     $objeto->set_botaoIncluir(false);
 
@@ -291,6 +291,11 @@ if ($acesso) {
             $botaoVoltar->set_accessKey('V');
             $menu1->add_link($botaoVoltar, "left");
 
+            # Pagamentos
+            $botaoInserir = new Button("Controle de Saldo", "cadastroPagamento.php");
+            $botaoInserir->set_title("Incluir");
+            $menu1->add_link($botaoInserir, "right");
+
             # Incluir
             $botaoInserir = new Button("Incluir Aditivo", "?fase=editar");
             $botaoInserir->set_title("Incluir");
@@ -306,9 +311,8 @@ if ($acesso) {
             #$menu1->add_link($botaoRel,"right");
 
             $menu1->show();
-            
+
             ##########
-            
             # Exibe os dados do contrado
             get_DadosContrato($idContrato);
 
@@ -329,35 +333,28 @@ if ($acesso) {
 
             $grid->fechaColuna();
             $grid->abreColuna(12);
-            
+
             # Exibe outros dados do contrato
             $contrato->exibeDadosContrato($idContrato);
 
             # Exibe os aditivos
             $objeto->$fase();
-            
+
             # Carrega os dados com contrado editado
             $conteudo = $contrato->getDados($idContrato);
-            
+
             $grid->fechaColuna();
-            
+
             # Exibe dados da empresa
-            $grid->abreColuna(6,6,4);
+            $grid->abreColuna(6);
             $idEmpresa = $conteudo["idEmpresa"];
             $empresa->exibeDados($idEmpresa);
             $grid->fechaColuna();
-            
+
             # Exibe dados da comissão
-            $grid->abreColuna(6,6,4);
-            $comissao->listaComissao($idContrato);            
+            $grid->abreColuna(6);
+            $comissao->listaComissao($idContrato);
             $grid->fechaColuna();
-            
-            # Exibe dados dos pagamentos
-            $grid->abreColuna(6,6,4);
-            $pagamento = new Pagamento();
-            $pagamento->listaPagamentos($idContrato);
-            $grid->fechaColuna();
-            
             $grid->fechaGrid();
             break;
 

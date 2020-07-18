@@ -231,7 +231,7 @@ class Contrato {
     }
 
     ###########################################################
-    
+
     public function exibeResumoDados($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -249,9 +249,9 @@ class Contrato {
 
         $contratos = new Contratos();
         $row = $contratos->select($select);
-        
+
         $empresa = new Empresa();
-        
+
         # Limita o tamanho da tela
         $grid = new Grid();
         $grid->abreColuna(12);
@@ -288,7 +288,7 @@ class Contrato {
 
             return null;
         } else {
-            
+
             # Vigência
             $vigencia = $this->getVigencia($idContrato);
 
@@ -296,17 +296,17 @@ class Contrato {
             if (!jaPassou($vigencia)) {
                 $diferenca = abs(dataDif($vigencia));
             }
-            
+
             # Tempo Total
             $tempo = $this->getTempoTotal($idContrato);
-            
+
             # Verifica se já passou de 60 meses
             if ($tempo["meses"] >= 60) {
                 p("{$tempo["meses"]} Meses", "pTempoTotal60");
             } else {
                 p("{$tempo["meses"]} Meses", "pTempoTotal");
             }
-            
+
             # Exibe a vigência 
             p($vigencia, "pVigencia");
             if (!jaPassou($vigencia)) {
@@ -378,10 +378,10 @@ class Contrato {
             alert("É necessário informar o id do Contrato.");
             return;
         }
-        
+
         # Pega os dados
         $conteudo = $this->getDados($idContrato);
-        
+
         # Retorna a data Final
         return date_to_php($conteudo["dtFinal"]);
     }
@@ -751,7 +751,7 @@ class Contrato {
         return $valorTotal;
     }
 
-    ##############################################################
+    ###########################################################
 
     /*
      * Informa todos os dados de um aditivo vinculado ao aditivo informado
@@ -768,7 +768,7 @@ class Contrato {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
-        # monta o select
+        # Monta o select
         $select = "SELECT *,
                           IF(tipoPrazo = 2,
                           SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),

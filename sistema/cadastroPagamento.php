@@ -42,20 +42,25 @@ if ($acesso) {
 
     ################################################################
     # Exibe os dados do Contrato
-    $objeto->set_rotinaExtra("get_DadosContrato");
+    if($fase == "listar"){
+        $objeto->set_rotinaExtra("get_DadosContratoPagamento");
+    }else{
+        $objeto->set_rotinaExtra("get_DadosContrato");
+    }
     $objeto->set_rotinaExtraParametro($idContrato);
 
     # Nome do Modelo
-    $objeto->set_nome("Comissão de Fiscalização");
+    $objeto->set_nome("Pagamentos");
 
     # Botão de voltar da lista
-    $objeto->set_voltarLista(null);
+    $objeto->set_voltarLista("cadastroAditivo.php");
 
     # select da lista
     $objeto->set_selectLista("SELECT data,
                                      notaFiscal,
-                                     referencia,
+                                     idPagamento,
                                      valor,
+                                     obs,
                                      idPagamento
                                 FROM tbpagamento
                                WHERE idContrato = {$idContrato}
@@ -64,7 +69,8 @@ if ($acesso) {
     # select do edita
     $objeto->set_selectEdita("SELECT data,
                                      notaFiscal,
-                                     referencia,
+                                     mesReferencia,
+                                     anoReferencia,
                                      valor,
                                      obs,
                                      idContrato
@@ -76,17 +82,16 @@ if ($acesso) {
     $objeto->set_linkExcluir("?fase=excluir");
     $objeto->set_linkGravar("?fase=gravar");
     $objeto->set_linkListar("?fase=listar");
-    $objeto->set_linkIncluir("?fase=editar");
 
     # Parametros da tabela
-    $objeto->set_label(array("Data", "Nota Fiscal", "Referência", "Valor"));
-    $objeto->set_align(array("center", "left", "left", "left"));
-    $objeto->set_width(array(10, 20, 20, 20));
-    #$objeto->set_funcao(array(null, null, null, null, null, "exibeFoto"));
-    #$objeto->set_classe(array("Comissao", "pessoal", "Comissao", "pessoal", "Comissao"));
-    #$objeto->set_metodo(array("getTipo", "get_foto", "getDadosMembro", "get_contatos", "getDadosDesignacao"));
+    $objeto->set_label(array("Data", "Nota Fiscal", "Referência", "Valor", "Obs"));
+    $objeto->set_align(array("center", "center", "center", "right"));
+    $objeto->set_width(array(15, 15, 15, 15, 30));
+    $objeto->set_funcao(array("date_to_php", null, null, "formataMoeda"));
+    $objeto->set_classe(array(null, null, "Pagamento"));
+    $objeto->set_metodo(array(null, null, "exibeReferencia"));
     $objeto->set_numeroOrdem(true);
-    
+
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
 
@@ -98,7 +103,12 @@ if ($acesso) {
 
     # Tipo de label do formulário
     $objeto->set_formlabelTipo(1);
-    
+
+    # Cria um array com os anos possíveis para a combo anoReferencia
+    $anoInicial = 2010;
+    $anoAtual = date('Y');
+    $anoReferencia = arrayPreenche($anoAtual + 1, $anoInicial, "d");
+
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
@@ -109,21 +119,33 @@ if ($acesso) {
             'title' => 'Data do pagamento',
             'col' => 3,
             'required' => true,
+            "autofocus" => true,
             'size' => 20),
         array(
             'linha' => 1,
             'nome' => 'notaFiscal',
             'label' => 'Nota Fiscal:',
             'tipo' => 'texto',
-            'col' => 3,
+            'col' => 2,
             'size' => 30),
         array(
             'linha' => 1,
-            'nome' => 'referencia',
-            'label' => 'Refferência:',
-            'tipo' => 'texto',
-            'col' => 3,
-            'size' => 30),
+            'nome' => 'mesReferencia',
+            'label' => 'Mês Referência:',
+            'tipo' => 'combo',
+            'padrao' => date('m'),
+            'array' => $mes,
+            'col' => 2,
+            'size' => 5),
+        array(
+            'linha' => 1,
+            'nome' => 'anoReferencia',
+            'label' => 'Ano Referência:',
+            'tipo' => 'combo',
+            'padrao' => date('Y'),
+            'array' => $anoReferencia,
+            'col' => 2,
+            'size' => 5),
         array(
             'linha' => 1,
             'nome' => 'valor',

@@ -123,7 +123,7 @@ if ($acesso) {
                       idContrato,
                       idContrato,
                       idContrato,
-                      idContrato
+                      idContrato                      
                  FROM tbcontrato JOIN tbmodalidade USING (idModalidade)
                                  JOIN tbstatus USING (idStatus)
                                  JOIN tbempresa USING (idEmpresa)
@@ -145,7 +145,15 @@ if ($acesso) {
         $select .= " AND idStatus = {$parametroStatus}";
     }
 
-    $select .= " ORDER BY year(dtAssinatura), numero";
+    $select .= " ORDER BY (IFNULL(
+                      (SELECT IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
+                     FROM tbaditivo
+                    WHERE tbaditivo.idContrato = tbcontrato.idContrato
+                      AND dtInicial IS NOT NULL 
+                 ORDER BY dtAssinatura desc LIMIT 1),
+                 IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY))))";
 
     $objeto->set_selectLista($select);
 
@@ -190,8 +198,9 @@ if ($acesso) {
     $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação", "Acessar"));
     $objeto->set_classe(array("Contrato", "Contrato", "Empresa", "Contrato", "Contrato", "Situacao"));
     $objeto->set_metodo(array("exibeNumeroContrato", "exibeObjeto", "getEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
-    $objeto->set_width(array(10, 18, 20, 20, 14, 18));
+    $objeto->set_width(array(10, 20, 22, 18, 10, 20));
     $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
+    #$objeto->set_funcao(array(null, null, null, null, null, null, "date_to_php"));
 
     # Botão 
     $botao = new BotaoGrafico();

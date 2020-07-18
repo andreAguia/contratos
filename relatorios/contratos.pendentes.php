@@ -25,7 +25,7 @@ if ($acesso) {
     ######   
     # Título & Subtitulo
     $titulo = "Contratos Pendentes";
-    $subTitulo = "Ordenado pelo Número";
+    $subTitulo = "Ordenado pela Data de Vigência";
 
    # Pega os dados
     $select = "SELECT idContrato,
@@ -39,7 +39,16 @@ if ($acesso) {
                                  JOIN tbstatus USING (idStatus)
                                  JOIN tbempresa USING (idEmpresa)
                 WHERE idStatus = 3
-             ORDER BY year(dtAssinatura), numero";
+             ORDER BY (IFNULL(
+                      (SELECT IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
+                     FROM tbaditivo
+                    WHERE tbaditivo.idContrato = tbcontrato.idContrato
+                      AND dtInicial IS NOT NULL 
+                 ORDER BY dtAssinatura desc LIMIT 1),
+                 IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY))))";
+    
 
     $resumo = $contratos->select($select);
 
