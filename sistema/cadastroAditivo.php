@@ -70,7 +70,7 @@ if ($acesso) {
 
     # select da lista
     $objeto->set_selectLista("SELECT idAditivo,
-                                     objeto,
+                                     idAditivo,
                                      idAditivo,                                   
                                      dtAssinatura,
                                      idAditivo,
@@ -111,8 +111,8 @@ if ($acesso) {
     $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
     $objeto->set_align(array("center", "left", "center", "center", "center", "center", "right"));
     $objeto->set_width(array(15, 25, 10, 10, 10, 15, 15));
-    $objeto->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
-    $objeto->set_metodo(array("exibeTipoNumerado", null, "getPublicacao", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
+    $objeto->set_classe(array("Aditivo", "Aditivo", "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
+    $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "getPublicacao", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
     $objeto->set_funcao(array(null, null, null, "date_to_php"));
 
     # Classe do banco de dados

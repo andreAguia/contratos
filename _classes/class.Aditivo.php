@@ -471,5 +471,24 @@ class Aditivo {
         }
     }
 
-    ##########################################################
+    ##########################################################################################
+
+    public function exibeObjeto($idAditivo) {
+
+        # Pega os dados
+        $dados = $this->getDados($idAditivo);
+        
+        # Exibe o objeto
+        echo $dados["objeto"];
+
+        # Verifica se tem observação, se tiver exibe uma figura com mouseover
+        if (!empty($dados["obs"])) {
+            echo  "&nbsp;&nbsp;";
+            toolTip("(Obs)",$dados["obs"]);
+        }
+
+       
+    }
+
+    #########################################################################################
 }

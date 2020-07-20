@@ -795,18 +795,17 @@ class Contrato {
 
         # Pega os dados
         $dados = $this->getDados($idContrato);
-
+        
         # Exibe o objeto
         echo $dados["objeto"];
 
         # Verifica se tem observação, se tiver exibe uma figura com mouseover
         if (!empty($dados["obs"])) {
-            $div = new Div("divObs");
-            $div->abre();
-            $figura = new Imagem(PASTA_FIGURAS . 'obs.png', $dados["obs"], 20, 20);
-            $figura->show();
-            $div->fecha();
+            echo  "&nbsp;&nbsp;";
+            toolTip("(Obs)",$dados["obs"]);
         }
+
+       
     }
 
     ##########################################################################################

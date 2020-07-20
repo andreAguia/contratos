@@ -201,13 +201,6 @@ p#pAditivoPag{
     font-size: 10px;
 }
 
-div#divObs{
-    position: relative;
-    float: right;
-    left: 0px;
-    bottom: -10px;
-}
-
 /*******************************************
  * Cadastro da comissão
  *******************************************/
