@@ -106,6 +106,11 @@ if ($acesso) {
     # Cabeçalho da Página
     AreaServidor::cabecalho();
 
+    if ($fase == "listar") {
+        p(SISTEMA, 'grhTitulo');
+        p("Versão: " . VERSAO, "versao");
+    }
+
     # Abre um novo objeto Modelo
     $objeto = new Modelo();
 
@@ -200,7 +205,8 @@ if ($acesso) {
     $objeto->set_metodo(array("exibeNumeroContrato", "exibeObjeto", "getEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
     $objeto->set_width(array(10, 20, 22, 18, 10, 20));
     $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
-    #$objeto->set_funcao(array(null, null, null, null, null, null, "date_to_php"));
+    $objeto->set_exibeTempoPesquisa(false);
+
     # Botão 
     $botao = new BotaoGrafico();
     $botao->set_label('');
@@ -598,6 +604,9 @@ if ($acesso) {
             $grid->fechaGrid();
 
             $objeto->listar();
+
+            # Exibe o rodapé
+            AreaServidor::rodape($idUsuario, false);
             break;
 
         ################################################################
