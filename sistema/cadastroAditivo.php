@@ -323,7 +323,7 @@ if ($acesso) {
             $grid->abreColuna(4);
 
             # Exibe o valor
-            $contrato->exibeValorTotal($idContrato);
+            $contrato->exibeValorTotalPainel($idContrato);
 
             $grid->fechaColuna();
             $grid->abreColuna(8);

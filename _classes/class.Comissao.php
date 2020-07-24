@@ -1,6 +1,7 @@
 <?php
 
-class Comissao {
+class Comissao
+{
 
     /**
      * Abriga as várias rotina referentes a comissao
@@ -11,7 +12,8 @@ class Comissao {
      */
 ##############################################################
 
-    public function __construct() {
+    public function __construct()
+    {
         /**
          * Inicia a Classe somente
          *
@@ -23,7 +25,8 @@ class Comissao {
 
 ##############################################################
 
-    public function getDados($idComissao = null) {
+    public function getDados($idComissao = null)
+    {
         # Verifica se foi informado
         if (vazio($idComissao)) {
             alert("É necessário informar o id.");
@@ -46,7 +49,8 @@ class Comissao {
 
 #####################################################################################
 
-    public function getPortariaEntrada($idComissao) {
+    public function getPortariaEntrada($idComissao)
+    {
 
         # Verifica se foi informado
         if (vazio($idComissao)) {
@@ -89,7 +93,8 @@ class Comissao {
 
 #####################################################################################
 
-    public function getTipo($idComissao) {
+    public function getTipo($idComissao)
+    {
 
         # Verifica se o id foi informado
         if (vazio($idComissao)) {
@@ -129,7 +134,8 @@ class Comissao {
 
 #####################################################################################
 
-    public function exibeNomeMembro($idServidor) {
+    public function exibeNomeMembro($idServidor)
+    {
 
         # Verifica se foi informado
         if (empty($idServidor)) {
@@ -144,7 +150,8 @@ class Comissao {
 
 #####################################################################################
 
-    public function getNomeMembro($idServidor) {
+    public function getNomeMembro($idServidor)
+    {
 
         # Verifica se foi informado
         if (empty($idServidor)) {
@@ -157,7 +164,8 @@ class Comissao {
 
 #####################################################################################
 
-    public function getDadosMembro($idComissao) {
+    public function getDadosMembro($idComissao)
+    {
 
         # Verifica se o id foi informado
         if (vazio($idComissao)) {
@@ -188,7 +196,8 @@ class Comissao {
 
 #####################################################################################
 
-    public function listaComissao($idContrato) {
+    public function listaComissao($idContrato)
+    {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id.");
@@ -259,7 +268,8 @@ class Comissao {
 
 #####################################################################################
 
-    public function getDadosDesignacao($idComissao) {
+    public function getDadosDesignacao($idComissao)
+    {
 
         # Conecta ao Banco de Dados
         $pessoal = new Pessoal();
@@ -315,7 +325,8 @@ class Comissao {
 
     ##############################################################
 
-    public function exibeProcesso($idContrato = null) {
+    public function exibeProcesso($idContrato = null)
+    {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -380,7 +391,8 @@ class Comissao {
 
     ##############################################################
 
-    public function exibeMenuDocumentos($idContrato = null) {
+    public function exibeMenuDocumentos($idContrato = null)
+    {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -425,7 +437,8 @@ class Comissao {
 
     ##############################################################
 
-    public function getProcesso($idContrato = null) {
+    public function getProcesso($idContrato = null)
+    {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -489,7 +502,8 @@ class Comissao {
 
     ##############################################################
 
-    public function exibePortarias($idContrato = null) {
+    public function exibePortarias($idContrato = null)
+    {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -548,7 +562,8 @@ class Comissao {
 
     #####################################################################################
 
-    public function getUltimaDataPublicacaoEntrada($idContrato) {
+    public function getUltimaDataPublicacaoEntrada($idContrato)
+    {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -582,7 +597,8 @@ class Comissao {
 
 ####################################################################################
 
-    public function getUltimaPortariaEntrada($idContrato) {
+    public function getUltimaPortariaEntrada($idContrato)
+    {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -616,7 +632,8 @@ class Comissao {
 
 ####################################################################################
 
-    public function getUltimaDataPortariaEntrada($idContrato) {
+    public function getUltimaDataPortariaEntrada($idContrato)
+    {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -650,7 +667,8 @@ class Comissao {
 
 ###################################################################################
 
-    public function getUltimaPgPublicacaoEntrada($idContrato) {
+    public function getUltimaPgPublicacaoEntrada($idContrato)
+    {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -684,7 +702,8 @@ class Comissao {
 
 #####################################################################################
 
-    public function listaComissaoRelatorio($idContrato) {
+    public function listaComissaoRelatorio($idContrato)
+    {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id.");
@@ -708,13 +727,90 @@ class Comissao {
         $contador = 1;
 
         foreach ($row as $item) {
-            
+
             # Mome do servidor e designação
             $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
             p($this->getNomeMembro($item["idServidor"]) . $designacao, "pComissaoImpressao");
-            p($pessoal->get_emails($item["idServidor"],false,false), "pComissaoImpressao");
-            if($contador<$numItem){
+            p($pessoal->get_emails($item["idServidor"], false, false), "pComissaoImpressao");
+            if ($contador < $numItem) {
                 hr();
+                $contador++;
+            }
+        }
+    }
+
+#####################################################################################
+
+    public function listaComissaoTabela($idContrato)
+    {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+        $pessoal = new Pessoal();
+
+        # monta o select
+        $select = "SELECT idServidor,
+                          idComissao
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato}
+                      AND dtPublicacaoSaida IS NULL  
+                 ORDER BY tipo";
+
+        $row = $contratos->select($select);
+        $numItem = $contratos->count($select);
+        $contador = 1;
+
+        foreach ($row as $item) {
+
+            # Mome do servidor e designação
+            $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
+            echo $this->getNomeMembro($item["idServidor"]) . $designacao;
+
+            if ($contador < $numItem) {
+                br();
+                $contador++;
+            }
+        }
+    }
+
+#####################################################################################
+
+    public function listaComissaoEmailTabela($idContrato)
+    {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+        $pessoal = new Pessoal();
+
+        # monta o select
+        $select = "SELECT idServidor,
+                          idComissao
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato}
+                      AND dtPublicacaoSaida IS NULL  
+                 ORDER BY tipo";
+
+        $row = $contratos->select($select);
+        $numItem = $contratos->count($select);
+        $contador = 1;
+
+        foreach ($row as $item) {
+
+            # Mome do servidor e designação
+            $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
+            echo $this->getNomeMembro($item["idServidor"]) . $designacao . " - " . $pessoal->get_emailUenf($item["idServidor"]). " ".$pessoal->get_emailPessoal($item["idServidor"]);
+            if ($contador < $numItem) {
+                br();
                 $contador++;
             }
         }

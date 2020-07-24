@@ -19,7 +19,7 @@ function get_DadosContratoPagamento($idContrato)
     $grid->abreColuna(4);
 
     # Exibe o valor    
-    $contrato->exibeValorTotal($idContrato);
+    $contrato->exibeValorTotalPainel($idContrato);
 
     $grid->fechaColuna();
     $grid->abreColuna(4);

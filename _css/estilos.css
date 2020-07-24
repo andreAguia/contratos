@@ -423,6 +423,20 @@ p#pvalorTotalNegativo{
     text-align: center;
 }
 
+p#pvalorTotalPositivoTabela{
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+    color: blue;
+}
+
+p#pvalorTotalNegativoTabela{
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+    color: red;
+}
+
 p#paditivoVinculado{
     font-size: 10px;
     padding: 0px;

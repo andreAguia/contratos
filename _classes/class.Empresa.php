@@ -167,10 +167,6 @@ class Empresa {
 
     public function getEmpresaCnpj($idEmpresa) {
 
-        # Função que retorna os telefones do servidor cadastrado no sistema
-        #
-        # Parâmetro: id do servidor
-
         $dados = $this->getDados($idEmpresa);
 
         $retorno = $dados["razaoSocial"];
@@ -179,6 +175,15 @@ class Empresa {
             $retorno .= "<br/><p id='f10'> CNPJ: {$dados["cnpj"]}</p>";
         }
 
+        return $retorno;
+    }
+
+    ##########################################################################################
+
+    public function getCnpj($idEmpresa) {
+        
+        $dados = $this->getDados($idEmpresa);
+        $retorno = trataNulo($dados["cnpj"]);        
         return $retorno;
     }
 

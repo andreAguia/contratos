@@ -33,15 +33,29 @@ if ($acesso) {
     $grid = new Grid();
     $grid->abreColuna(12);
 
-    # Botão voltar
-    botaoVoltar('cadastroContrato.php');
+    # Cria um menu
+    $menu1 = new MenuBar();
 
+    # Voltar
+    $botaoVoltar = new Link("Voltar", "cadastroContrato.php");
+    $botaoVoltar->set_class('button');
+    $botaoVoltar->set_title('Voltar a página anterior');
+    $botaoVoltar->set_accessKey('V');
+    $menu1->add_link($botaoVoltar, "left");
+
+    # Empresas
+    $botao = new Button("Gerador de Planilha", "geradorRelatorios.php");
+    $botao->set_title("Rotina de geração de relatórios personalizados");
+    $botao->set_class("button");
+    $menu1->add_link($botao, "right");
+
+    $menu1->show();
+    
+    titulo("Relatórios");
+    
     # Cria uma borda
     $callout = new Callout();
     $callout->abre();
-
-    titulo("Relatórios");
-    br();
 
     $menu = new Menu();
     $menu->add_item('titulo1', 'Contrato');

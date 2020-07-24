@@ -337,7 +337,37 @@ class Aditivo {
         return $contratos->select($select, false);
     }
 
-##############################################################
+    ##############################################################
+
+    /*
+     * Informa todos os dados do último aditivo com Data (para calculo de dtFinal)
+     */
+
+    public function getDadosUltimoAditivocomValor($idContrato = null) {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # monta o select
+        $select = "SELECT *,
+                          IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
+                     FROM tbaditivo
+                    WHERE idContrato = {$idContrato}
+                      AND valor IS NOT NULL 
+                 ORDER BY dtAssinatura desc LIMIT 1";
+
+        return $contratos->select($select, false);
+    }
+
+    ##############################################################
 
     /*
      * Informa a data inicial de um aditivo considerando a data anterior
