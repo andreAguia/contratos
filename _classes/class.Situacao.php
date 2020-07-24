@@ -2,6 +2,7 @@
 
 class Situacao
 {
+
     /**
      * Abriga as várias rotina referentes a concurso
      *
@@ -10,6 +11,7 @@ class Situacao
      * @var private $idConcurso integer null O id do concurso
      */
     private $idSituacao = null;
+
 ##############################################################
 
     public function __construct($idSituacao = null)
@@ -122,7 +124,7 @@ class Situacao
 
     #####################################################################################
 
-    function exibeSituacaoAtual($idContrato)
+    function exibeSituacaoAtual($idContrato, $idUsuario)
     {
 
         # Conecta ao Banco de Dados
@@ -177,22 +179,25 @@ class Situacao
         $grid->fechaColuna();
         $grid->fechaGrid();
 
-        $div = new Div("divEdita1");
-        $div->abre();
-
         # Editar
-        $div = new Div("divEdita2");
-        $div->abre();
+        if (Verifica::acesso($idUsuario, 9)) {
 
-        # Editar
-        $botaoEditar = new Link("Editar", "cadastroSituacao.php");
-        $botaoEditar->set_class('tiny button secondary');
-        $botaoEditar->set_title('Editar situação');
-        $botaoEditar->show();
+            $div = new Div("divEdita1");
+            $div->abre();
 
-        $div->fecha();
+            $div = new Div("divEdita2");
+            $div->abre();
 
-        $div->fecha();
+            # Editar
+            $botaoEditar = new Link("Editar", "cadastroSituacao.php");
+            $botaoEditar->set_class('tiny button secondary');
+            $botaoEditar->set_title('Editar situação');
+            $botaoEditar->show();
+
+            $div->fecha();
+
+            $div->fecha();
+        }
         $painel->fecha();
 
         $grid->fechaColuna();

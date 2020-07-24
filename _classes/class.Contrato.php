@@ -199,7 +199,7 @@ class Contrato
      *
      * @param    string $idContrato O id da vaga
      */
-    public function exibeDadosContrato($idContrato)
+    public function exibeDadosContrato($idContrato, $idUsuario)
     {
 
         # Verifica se foi informado
@@ -226,15 +226,18 @@ class Contrato
         $tabela->set_titulo("Contrato {$conteudo["numero"]}");
         $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
         $tabela->set_align(array("center", "left", "center", "center", "center", "center", "right"));
-        $tabela->set_width(array(10, 20, 10, 10, 10, 15, 15, 10));
+        $tabela->set_width(array(15, 25, 10, 10, 10, 15, 15));
         $tabela->set_classe(array("Contrato", "Contrato", "Contrato", null, "Contrato", "Contrato", "Contrato"));
         $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "getPublicacao", null, "getPeriodo", "getGarantia", "exibeValor"));
         $tabela->set_funcao(array(null, null, null, "date_to_php"));
         $tabela->set_conteudo($row);
         $tabela->set_totalRegistro(false);
 
-        $tabela->set_editar('cadastroContrato.php?fase=editar&id=' . $idContrato);
-        $tabela->set_idCampo('idContrato');
+        if (Verifica::acesso($idUsuario, 9)) {
+            $tabela->set_editar('cadastroContrato.php?fase=editar&id=' . $idContrato);
+            $tabela->set_idCampo('idContrato');
+            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacao", null, "getPeriodo", "getGarantia", "exibeValor"));
+        }
         $tabela->show();
     }
 
@@ -647,7 +650,7 @@ class Contrato
      * Informa a data de publicação mais a página ( se tiver) do Contrato
      */
 
-    public function getPublicacao($idContrato = null)
+    public function exibePublicacao($idContrato = null)
     {
 
         # Verifica se foi informado o id
@@ -677,6 +680,45 @@ class Contrato
             $botao->show();
         }
 
+        # Publicação
+        p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
+
+        if (!empty($conteudo["pgPublicacao"])) {
+            p("pag: {$conteudo["pgPublicacao"]}", "pAditivoPag");
+        }
+
+
+        return;
+    }
+
+    ##########################################################
+    /*
+     * Informa a data de publicação mais a página ( se tiver) do Contrato
+     */
+
+    public function getPublicacao($idContrato = null)
+    {
+
+        # Verifica se foi informado o id
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        # Monta o arquivo
+        $arquivo = PASTA_CONTRATOS . $idContrato . ".pdf";
+
+        # Verifica se ele existe
+        if (file_exists($arquivo)) {
+            # Monta o link
+            $link = new Link(null, $arquivo, "Exibe a Publicação");
+            $link->set_imagem(PASTA_FIGURAS_GERAIS . "ver.png", 20, 20);
+            $link->set_target("_blank");
+            $link->show();
+        }
+        
         # Publicação
         p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
 

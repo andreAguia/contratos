@@ -196,7 +196,7 @@ class Comissao
 
 #####################################################################################
 
-    public function listaComissao($idContrato)
+    public function listaComissao($idContrato, $idUsuario)
     {
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -209,6 +209,7 @@ class Comissao
 
         # monta o select
         $select = "SELECT idServidor,
+                          idServidor,
                           idComissao,
                           idComissao
                      FROM tbcomissao
@@ -220,19 +221,19 @@ class Comissao
 
         # Colore a llinha de acordo com o tipo
         $formatacaoCondicional = array(
-            array('coluna' => 1,
+            array('coluna' => 2,
                 'valor' => "Presidente",
                 'operador' => '=',
                 'id' => 'presidenteComissao'),
-            array('coluna' => 1,
+            array('coluna' => 2,
                 'valor' => "Membro",
                 'operador' => '=',
                 'id' => 'membroComissao'),
-            array('coluna' => 1,
+            array('coluna' => 2,
                 'valor' => "Suplente",
                 'operador' => '=',
                 'id' => 'cuplenteComissao'),
-            array('coluna' => 1,
+            array('coluna' => 2,
                 'valor' => "Saiu",
                 'operador' => '=',
                 'id' => 'saiuComissao'),
@@ -241,29 +242,31 @@ class Comissao
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_titulo("Comissão de Fiscalização");
-        $tabela->set_label(array("Servidor", "Tipo"));
-        $tabela->set_align(array("left", "center"));
-        $tabela->set_width(array(70, 25));
-        $tabela->set_classe(array("Comissao", "Comissao"));
-        $tabela->set_metodo(array("exibeNomeMembro", "getTipo"));
+        $tabela->set_label(array("Foto","Servidor", "Tipo"));
+        $tabela->set_align(array("center","left", "center"));
+        $tabela->set_width(array(10,70, 25));
+        $tabela->set_classe(array("Pessoal","Comissao", "Comissao"));
+        $tabela->set_metodo(array("get_foto","exibeNomeMembro", "getTipo"));
         $tabela->set_conteudo($row);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
         $tabela->show();
 
         # Editar
-        $div = new Div("divEdita1Comissao");
-        $div->abre();
+        if (Verifica::acesso($idUsuario, 9)) {
+            $div = new Div("divEdita1Comissao");
+            $div->abre();
 
-        $div = new Div("divEdita2");
-        $div->abre();
+            $div = new Div("divEdita2");
+            $div->abre();
 
-        $botaoEditar = new Link("Editar", "cadastroComissao.php");
-        $botaoEditar->set_class('tiny button secondary');
-        $botaoEditar->set_title('Editar situação');
-        $botaoEditar->show();
+            $botaoEditar = new Link("Editar", "cadastroComissao.php");
+            $botaoEditar->set_class('tiny button secondary');
+            $botaoEditar->set_title('Editar situação');
+            $botaoEditar->show();
 
-        $div->fecha();
-        $div->fecha();
+            $div->fecha();
+            $div->fecha();
+        }
     }
 
 #####################################################################################
@@ -808,7 +811,7 @@ class Comissao
 
             # Mome do servidor e designação
             $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
-            echo $this->getNomeMembro($item["idServidor"]) . $designacao . " - " . $pessoal->get_emailUenf($item["idServidor"]). " ".$pessoal->get_emailPessoal($item["idServidor"]);
+            echo $this->getNomeMembro($item["idServidor"]) . $designacao . " - " . $pessoal->get_emailUenf($item["idServidor"]) . " " . $pessoal->get_emailPessoal($item["idServidor"]);
             if ($contador < $numItem) {
                 br();
                 $contador++;

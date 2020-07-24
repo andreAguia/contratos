@@ -12,7 +12,7 @@ $idUsuario = null;
 include "_config.php";
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, 9);
+$acesso = Verifica::acesso($idUsuario, [9, 10]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
@@ -201,7 +201,6 @@ if ($acesso) {
     $objeto->set_width(array(10, 20, 22, 18, 10, 20));
     $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
     #$objeto->set_funcao(array(null, null, null, null, null, null, "date_to_php"));
-
     # Botão 
     $botao = new BotaoGrafico();
     $botao->set_label('');
@@ -461,36 +460,39 @@ if ($acesso) {
             $botaoVoltar->set_accessKey('V');
             $menu1->add_link($botaoVoltar, "left");
 
-            # Empresas
-            $botao = new Button("Empresas", "cadastroEmpresa.php");
-            $botao->set_title("Cadastro de Empresas");
-            $botao->set_class("button secondary");
-            $menu1->add_link($botao, "right");
+            if (Verifica::acesso($idUsuario, 9)) {
 
-            # Modalidade
-            $botao = new Button("Modalidade", "cadastroModalidade.php");
-            $botao->set_title("Cadastro de Modalidade");
-            $botao->set_class("button secondary");
-            $menu1->add_link($botao, "right");
+                # Empresas
+                $botao = new Button("Empresas", "cadastroEmpresa.php");
+                $botao->set_title("Cadastro de Empresas");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
 
-            # Status
-            $botao = new Button("Status", "cadastroStatus.php");
-            $botao->set_title("Cadastro de Status");
-            $botao->set_class("button secondary");
-            $menu1->add_link($botao, "right");
+                # Modalidade
+                $botao = new Button("Modalidade", "cadastroModalidade.php");
+                $botao->set_title("Cadastro de Modalidade");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
 
-            # Relatórios
-            $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
-            $botaoRel = new Button();
-            $botaoRel->set_title("Área de Relatório");
-            $botaoRel->set_url("relatorios.php");
-            $botaoRel->set_imagem($imagem);
-            $menu1->add_link($botaoRel, "right");
+                # Status
+                $botao = new Button("Status", "cadastroStatus.php");
+                $botao->set_title("Cadastro de Status");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
 
-            # Incluir
-            $botaoInserir = new Button("Incluir Contrato", "?fase=incluir");
-            $botaoInserir->set_title("Incluir");
-            $menu1->add_link($botaoInserir, "right");
+                # Relatórios
+                $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+                $botaoRel = new Button();
+                $botaoRel->set_title("Área de Relatório");
+                $botaoRel->set_url("relatorios.php");
+                $botaoRel->set_imagem($imagem);
+                $menu1->add_link($botaoRel, "right");
+
+                # Incluir
+                $botaoInserir = new Button("Incluir Contrato", "?fase=incluir");
+                $botaoInserir->set_title("Incluir");
+                $menu1->add_link($botaoInserir, "right");
+            }
 
             $menu1->show();
 

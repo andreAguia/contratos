@@ -1,12 +1,13 @@
 <?php
 
-class Aditivo {
-
+class Aditivo
+{
     /*
      * Informa todos os dados de um único aditivo
      */
 
-    public function getDados($idAditivo = null) {
+    public function getDados($idAditivo = null)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -34,7 +35,8 @@ class Aditivo {
      * Informa se o contrato tem  ou não aditivo
      */
 
-    public function temAditivo($idContrato = null) {
+    public function temAditivo($idContrato = null)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -66,7 +68,8 @@ class Aditivo {
      * retorna um array com os dados de todos os aditivos de um contrato
      */
 
-    public function getAditivosContrato($idContrato = null) {
+    public function getAditivosContrato($idContrato = null)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -94,7 +97,8 @@ class Aditivo {
      * Informa a data de publicação mais a página ( se tiver) de um aditivo
      */
 
-    public function getPublicacao($idAditivo = null) {
+    public function exibePublicacao($idAditivo = null)
+    {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -136,8 +140,49 @@ class Aditivo {
     }
 
     ###########################################################
+    /*
+     * Informa a data de publicação mais a página ( se tiver) de um aditivo
+     */
 
-    public function getTipoNumerado($idAditivo = null) {
+    public function getPublicacao($idAditivo = null)
+    {
+
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idAditivo);
+
+        # Monta o arquivo
+        $arquivo = PASTA_ADITIVOS . $idAditivo . ".pdf";
+
+        # Verifica se ele existe
+        if (file_exists($arquivo)) {
+
+            # Monta o link
+            $link = new Link(null, $arquivo, "Exibe a Publicação");
+            $link->set_imagem(PASTA_FIGURAS_GERAIS . "ver.png", 20, 20);
+            $link->set_target("_blank");
+            $link->show();
+        }
+
+        # Publicação
+        p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
+
+        if (!empty($conteudo["pgPublicacao"])) {
+            p("pag: {$conteudo["pgPublicacao"]}", "pAditivoPag");
+        }
+
+
+        return;
+    }
+
+    ###########################################################
+
+    public function getTipoNumerado($idAditivo = null)
+    {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -179,7 +224,8 @@ class Aditivo {
 
     ###########################################################
 
-    public function exibeTipoNumerado($idAditivo = null) {
+    public function exibeTipoNumerado($idAditivo = null)
+    {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -203,7 +249,8 @@ class Aditivo {
 
     ###########################################################
 
-    public function exibePeriodo($idAditivo = null) {
+    public function exibePeriodo($idAditivo = null)
+    {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
             alert("É necessário informar o id do Aditivo.");
@@ -238,7 +285,8 @@ class Aditivo {
 
     ###########################################################
 
-    public function getValor($idAditivo = null) {
+    public function getValor($idAditivo = null)
+    {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
             alert("É necessário informar o id do Aditivo.");
@@ -252,7 +300,8 @@ class Aditivo {
 
     ###########################################################
 
-    public function getVinculado($idAditivo = null) {
+    public function getVinculado($idAditivo = null)
+    {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
             alert("É necessário informar o id do Aditivo.");
@@ -266,7 +315,8 @@ class Aditivo {
 
     ###########################################################
 
-    public function exibeGarantia($idAditivo = null) {
+    public function exibeGarantia($idAditivo = null)
+    {
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
             alert("É necessário informar o id do Aditivo.");
@@ -292,17 +342,18 @@ class Aditivo {
 
     #####################################################################################
 
-    public function getDtFinal($idAditivo) {
+    public function getDtFinal($idAditivo)
+    {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
             alert("É necessário informar o id do Aditivo.");
             return;
         }
-        
+
         # Pega os dados
         $conteudo = $this->getDados($idAditivo);
-        
+
         # Retorna a data Final
         return date_to_php($conteudo["dtFinal"]);
     }
@@ -313,7 +364,8 @@ class Aditivo {
      * Informa todos os dados do último aditivo com Data (para calculo de dtFinal)
      */
 
-    public function getDadosUltimoAditivocomData($idContrato = null) {
+    public function getDadosUltimoAditivocomData($idContrato = null)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -343,7 +395,8 @@ class Aditivo {
      * Informa todos os dados do último aditivo com Data (para calculo de dtFinal)
      */
 
-    public function getDadosUltimoAditivocomValor($idContrato = null) {
+    public function getDadosUltimoAditivocomValor($idContrato = null)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -373,7 +426,8 @@ class Aditivo {
      * Informa a data inicial de um aditivo considerando a data anterior
      */
 
-    public function getDataInicialNovoAditivo($idContrato = null) {
+    public function getDataInicialNovoAditivo($idContrato = null)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -396,7 +450,7 @@ class Aditivo {
         # Se não tiver aditivo com data retorna a dtFinal do contraTO   
         $contrato = new Contrato();
         $dtFinal = $contrato->getDtFinal($idContrato);
-        return addDias($dtFinal, 1, false);        
+        return addDias($dtFinal, 1, false);
     }
 
 ##############################################################
@@ -406,7 +460,8 @@ class Aditivo {
      * 
      */
 
-    public function getAditivosVinculados($idAditivo = null) {
+    public function getAditivosVinculados($idAditivo = null)
+    {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -431,7 +486,8 @@ class Aditivo {
 
 ###########################################################
 
-    public function exibeValor($idAditivo = null) {
+    public function exibeValor($idAditivo = null)
+    {
 
         # Verifica se foi informado o id
         if (vazio($idAditivo)) {
@@ -503,21 +559,20 @@ class Aditivo {
 
     ##########################################################################################
 
-    public function exibeObjeto($idAditivo) {
+    public function exibeObjeto($idAditivo)
+    {
 
         # Pega os dados
         $dados = $this->getDados($idAditivo);
-        
+
         # Exibe o objeto
         echo $dados["objeto"];
 
         # Verifica se tem observação, se tiver exibe uma figura com mouseover
         if (!empty($dados["obs"])) {
-            echo  "&nbsp;&nbsp;";
-            toolTip("(Obs)",$dados["obs"]);
+            echo "&nbsp;&nbsp;";
+            toolTip("(Obs)", $dados["obs"]);
         }
-
-       
     }
 
     #########################################################################################

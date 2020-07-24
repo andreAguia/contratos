@@ -12,7 +12,7 @@ $idUsuario = null;
 include ("_config.php");
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, 9);
+$acesso = Verifica::acesso($idUsuario, [9, 10]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
@@ -100,8 +100,10 @@ if ($acesso) {
                               WHERE idAditivo = ' . $id);
 
     # Caminhos
-    $objeto->set_linkEditar('?fase=editar');
-    $objeto->set_linkExcluir('?fase=excluir');
+    if (Verifica::acesso($idUsuario, 9)) {
+        $objeto->set_linkEditar('?fase=editar');
+        $objeto->set_linkExcluir('?fase=excluir');
+    }
     $objeto->set_linkGravar('?fase=gravar');
     $objeto->set_linkListar('?fase=listar');
 
@@ -112,7 +114,11 @@ if ($acesso) {
     $objeto->set_align(array("center", "left", "center", "center", "center", "center", "right"));
     $objeto->set_width(array(15, 25, 10, 10, 10, 15, 15));
     $objeto->set_classe(array("Aditivo", "Aditivo", "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
-    $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "getPublicacao", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
+    if (Verifica::acesso($idUsuario, 9)) {
+        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "exibePublicacao", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
+    } else {
+        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "getPublicacao", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
+    }
     $objeto->set_funcao(array(null, null, null, "date_to_php"));
 
     # Classe do banco de dados
@@ -291,24 +297,27 @@ if ($acesso) {
             $botaoVoltar->set_accessKey('V');
             $menu1->add_link($botaoVoltar, "left");
 
-            # Pagamentos
-            $botaoInserir = new Button("Controle de Saldo", "cadastroPagamento.php");
-            $botaoInserir->set_title("Incluir");
-            $menu1->add_link($botaoInserir, "right");
+            if (Verifica::acesso($idUsuario, 9)) {
 
-            # Incluir
-            $botaoInserir = new Button("Incluir Aditivo", "?fase=editar");
-            $botaoInserir->set_title("Incluir");
-            $menu1->add_link($botaoInserir, "right");
+                # Pagamentos
+                $botaoInserir = new Button("Controle de Saldo", "cadastroPagamento.php");
+                $botaoInserir->set_title("Incluir");
+                $menu1->add_link($botaoInserir, "right");
 
-            # Relatórios
-            $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
-            $botaoRel = new Button();
-            $botaoRel->set_title("Relatório dessa pesquisa");
-            $botaoRel->set_url("../grhRelatorios/acumulacao.geral.php");
-            $botaoRel->set_target("_blank");
-            $botaoRel->set_imagem($imagem);
-            #$menu1->add_link($botaoRel,"right");
+                # Incluir
+                $botaoInserir = new Button("Incluir Aditivo", "?fase=editar");
+                $botaoInserir->set_title("Incluir");
+                $menu1->add_link($botaoInserir, "right");
+
+                # Relatórios
+                $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+                $botaoRel = new Button();
+                $botaoRel->set_title("Relatório dessa pesquisa");
+                $botaoRel->set_url("../grhRelatorios/acumulacao.geral.php");
+                $botaoRel->set_target("_blank");
+                $botaoRel->set_imagem($imagem);
+                #$menu1->add_link($botaoRel,"right");
+            }
 
             $menu1->show();
 
@@ -329,13 +338,13 @@ if ($acesso) {
             $grid->abreColuna(8);
 
             # Exibe a situação atual
-            $situacao->exibeSituacaoAtual($idContrato);
+            $situacao->exibeSituacaoAtual($idContrato, $idUsuario);
 
             $grid->fechaColuna();
             $grid->abreColuna(12);
 
             # Exibe outros dados do contrato
-            $contrato->exibeDadosContrato($idContrato);
+            $contrato->exibeDadosContrato($idContrato, $idUsuario);
 
             # Exibe os aditivos
             $objeto->$fase();
@@ -348,12 +357,12 @@ if ($acesso) {
             # Exibe dados da empresa
             $grid->abreColuna(6);
             $idEmpresa = $conteudo["idEmpresa"];
-            $empresa->exibeDados($idEmpresa);
+            $empresa->exibeDados($idEmpresa, $idUsuario);
             $grid->fechaColuna();
 
             # Exibe dados da comissão
             $grid->abreColuna(6);
-            $comissao->listaComissao($idContrato);
+            $comissao->listaComissao($idContrato, $idUsuario);
             $grid->fechaColuna();
             $grid->fechaGrid();
             break;

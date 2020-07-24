@@ -1,6 +1,7 @@
 <?php
 
-class Empresa {
+class Empresa
+{
 
     /**
      * Abriga as várias rotina referentes a concurso
@@ -13,7 +14,8 @@ class Empresa {
 
 ##############################################################
 
-    public function __construct($idEmpresa = null) {
+    public function __construct($idEmpresa = null)
+    {
         /**
          * Inicia a Classe somente
          * 
@@ -26,7 +28,8 @@ class Empresa {
 
 ##############################################################
 
-    public function getDados($idEmpresa = null) {
+    public function getDados($idEmpresa = null)
+    {
 
         /**
          * Informa os dados da base de dados
@@ -62,7 +65,8 @@ class Empresa {
 
     #####################################################################################
 
-    public function getRazaoSocial($idEmpresa) {
+    public function getRazaoSocial($idEmpresa)
+    {
 
         # Joga o valor informado para a variável da classe
         if (!vazio($idEmpresa)) {
@@ -91,7 +95,8 @@ class Empresa {
 
     ##########################################################################################
 
-    public function getTelefones($idEmpresa) {
+    public function getTelefones($idEmpresa)
+    {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
@@ -117,7 +122,8 @@ class Empresa {
 
     ##########################################################################################
 
-    public function getEmails($idEmpresa) {
+    public function getEmails($idEmpresa)
+    {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
@@ -143,7 +149,8 @@ class Empresa {
 
     ##########################################################################################
 
-    public function getContatos($idEmpresa) {
+    public function getContatos($idEmpresa)
+    {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
@@ -165,7 +172,8 @@ class Empresa {
 
     ##########################################################################################
 
-    public function getEmpresaCnpj($idEmpresa) {
+    public function getEmpresaCnpj($idEmpresa)
+    {
 
         $dados = $this->getDados($idEmpresa);
 
@@ -180,16 +188,18 @@ class Empresa {
 
     ##########################################################################################
 
-    public function getCnpj($idEmpresa) {
-        
+    public function getCnpj($idEmpresa)
+    {
+
         $dados = $this->getDados($idEmpresa);
-        $retorno = trataNulo($dados["cnpj"]);        
+        $retorno = trataNulo($dados["cnpj"]);
         return $retorno;
     }
 
     ##########################################################################################
 
-    public function getEmpresa($idEmpresa) {
+    public function getEmpresa($idEmpresa)
+    {
 
         $dados = $this->getDados($idEmpresa);
         return $dados["razaoSocial"];
@@ -197,15 +207,17 @@ class Empresa {
 
     ##########################################################################################
 
-    public function exibeEmpresaRelatorio($idEmpresa) {
+    public function exibeEmpresaRelatorio($idEmpresa)
+    {
 
         $dados = $this->getDados($idEmpresa);
-        p($dados["razaoSocial"],"pComissaoImpressao");
+        p($dados["razaoSocial"], "pComissaoImpressao");
     }
 
     ##########################################################################################
 
-    public function getEndereco($idEmpresa) {
+    public function getEndereco($idEmpresa)
+    {
 
         $dados = $this->getDados($idEmpresa);
 
@@ -218,7 +230,8 @@ class Empresa {
 
     ###########################################################
 
-    function exibeDados($idEmpresa) {
+    function exibeDados($idEmpresa, $idUsuario)
+    {
 
         $conteudo = $this->getDados($idEmpresa);
 
@@ -243,24 +256,27 @@ class Empresa {
         $tabela->show();
 
         # Editar
-        $div = new Div("divEdita1Comissao");
-        $div->abre();
+        if (Verifica::acesso($idUsuario, 9)) {
+            $div = new Div("divEdita1Comissao");
+            $div->abre();
 
-        $div = new Div("divEdita2");
-        $div->abre();
+            $div = new Div("divEdita2");
+            $div->abre();
 
-        $botaoEditar = new Link("Editar", "cadastroEmpresa.php?fase=editar&id={$idEmpresa}");
-        $botaoEditar->set_class('tiny button secondary');
-        $botaoEditar->set_title('Editar situação');
-        $botaoEditar->show();
+            $botaoEditar = new Link("Editar", "cadastroEmpresa.php?fase=editar&id={$idEmpresa}");
+            $botaoEditar->set_class('tiny button secondary');
+            $botaoEditar->set_title('Editar situação');
+            $botaoEditar->show();
 
-        $div->fecha();
-        $div->fecha();
+            $div->fecha();
+            $div->fecha();
+        }
     }
 
     ##############################################################
 
-    public function getNumContratos($idEmpresa = null) {
+    public function getNumContratos($idEmpresa = null)
+    {
         # Joga o valor informado para a variável da classe
         if (!vazio($idEmpresa)) {
             $this->idEmpresa = $idEmpresa;
