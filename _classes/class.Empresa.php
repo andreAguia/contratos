@@ -172,6 +172,26 @@ class Empresa
 
     ##########################################################################################
 
+    public function getContatoComTel($idEmpresa)
+    {
+
+        # Função que retorna o contato
+        #
+        # Parâmetro: id do servidor
+
+        $dados = $this->getDados($idEmpresa);
+        $retorno = null;
+
+        if (!empty($dados["contato"])) {
+            return $dados["contato"]."<br/>".$this->getTelefones($idEmpresa);
+        }
+        
+        
+    }
+
+    ##########################################################################################
+
+
     public function getEmpresaCnpj($idEmpresa)
     {
 

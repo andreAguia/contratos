@@ -79,7 +79,7 @@ class Contratos extends Bd {
      */
     public function excluir($idValor = null, $tabela = null, $idCampo = 'id') {
 
-        # efetua a exclus�o
+        # efetua a exclusão
         parent::excluir($idValor, $this->tabela, $this->idCampo);
 
         return true;

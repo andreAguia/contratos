@@ -17,11 +17,14 @@ $postStatus = post('postStatus');
 $postMaoDeObra = post('postMaoDeObra');
 $postSiafe = post('postSiafe');
 $postEmpresa = post('postEmpresa');
-$postCnpj = post('postCnpj');
+$postEmpresaCnpj = post('postEmpresaCnpj');
+$postEmpresaEmail = post('postEmpresaEmail');
+$postEmpresaContato = post('postEmpresaContato');
 $postPublicacao = post('postPublicacao');
 $postAssinatura = post('postAssinatura');
 $postProcesso = post('postProcesso');
 $postProposta = post('postProposta');
+$postDuracao = post('postDuracao');
 $postObjeto = post('postObjeto');
 $postValorTotal = post('postValorTotal');
 $postValorUltAditivo = post('postValorUltAditivo');
@@ -31,6 +34,7 @@ $postComissaoEmail = post('postComissaoEmail');
 $parametroAno = post('parametroAno');
 $parametroStatus = post('parametroStatus', 1);
 $parametroModalidade = post('parametroModalidade');
+$parametroModalidadeTipo = post('parametroModalidadeTipo','Todos');
 $parametroEmpresa = post('parametroEmpresa');
 $parametroMaoDeObra = post('parametroMaoDeObra');
 
@@ -80,34 +84,16 @@ if ($acesso) {
 
     # Monta o formulário
     $form = new Form('?');
-
-    $controle = new Input('postModalidade', 'simnao', 'Modalidade:', 1);
+    
+    $controle = new Input('postNumero', 'simnao', 'Número:', 1);
     $controle->set_size(5);
-    $controle->set_title('Modalidade do contrato');
-    $controle->set_valor($postModalidade);
-    $controle->set_autofocus(true);
-    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_title('Número do contrato');
+    $controle->set_valor("Sim");
+    $controle->set_disabled(true);
+    $controle->set_readonly(true);
     $controle->set_linha(1);
     $controle->set_col(1);
     $controle->set_fieldset("Informe as Colunas:");
-    $form->add_item($controle);
-
-    $controle = new Input('postStatus', 'simnao', 'Status:', 1);
-    $controle->set_size(5);
-    $controle->set_title('Status do Contrato');
-    $controle->set_valor($postStatus);
-    $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
-    $controle->set_col(1);
-    $form->add_item($controle);
-
-    $controle = new Input('postMaoDeObra', 'simnao', 'MdO:', 1);
-    $controle->set_size(5);
-    $controle->set_title('Mão de Obra Alocada?');
-    $controle->set_valor($postMaoDeObra);
-    $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
-    $controle->set_col(1);
     $form->add_item($controle);
 
     $controle = new Input('postSiafe', 'simnao', 'Siafe:', 1);
@@ -119,6 +105,25 @@ if ($acesso) {
     $controle->set_col(1);
     $form->add_item($controle);
 
+    $controle = new Input('postModalidade', 'simnao', 'Modalidade:', 1);
+    $controle->set_size(5);
+    $controle->set_title('Modalidade do contrato');
+    $controle->set_valor($postModalidade);
+    $controle->set_autofocus(true);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(1);
+    $controle->set_col(1);
+    $form->add_item($controle);
+
+    $controle = new Input('postStatus', 'simnao', 'Status:', 1);
+    $controle->set_size(5);
+    $controle->set_title('Status do Contrato');
+    $controle->set_valor($postStatus);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(1);
+    $controle->set_col(1);
+    $form->add_item($controle);
+    
     $controle = new Input('postObjeto', 'simnao', 'Objeto:', 1);
     $controle->set_size(5);
     $controle->set_title('Objeto do contrato');
@@ -128,24 +133,24 @@ if ($acesso) {
     $controle->set_col(1);
     $form->add_item($controle);
 
-    $controle = new Input('postEmpresa', 'simnao', 'Empresa:', 1);
+    $controle = new Input('postMaoDeObra', 'simnao', 'Mão Obra:', 1);
     $controle->set_size(5);
-    $controle->set_title('A empresa contratada');
-    $controle->set_valor($postEmpresa);
+    $controle->set_title('Mão de Obra Alocada?');
+    $controle->set_valor($postMaoDeObra);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-
-    $controle = new Input('postCnpj', 'simnao', 'CNPJ:', 1);
+    
+    $controle = new Input('postProcesso', 'simnao', 'Processo:', 1);
     $controle->set_size(5);
-    $controle->set_title('O CNPJ da empresa contratada');
-    $controle->set_valor($postCnpj);
+    $controle->set_title('O Processo do contrato');
+    $controle->set_valor($postProcesso);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-
+    
     $controle = new Input('postPublicacao', 'simnao', 'Publicação:', 1);
     $controle->set_size(5);
     $controle->set_title('A data da publicação');
@@ -154,20 +159,11 @@ if ($acesso) {
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-
+    
     $controle = new Input('postAssinatura', 'simnao', 'Assinatura:', 1);
     $controle->set_size(5);
     $controle->set_title('A data da Assinatura');
     $controle->set_valor($postAssinatura);
-    $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
-    $controle->set_col(1);
-    $form->add_item($controle);
-
-    $controle = new Input('postProcesso', 'simnao', 'Processo:', 1);
-    $controle->set_size(5);
-    $controle->set_title('O Processo do contrato');
-    $controle->set_valor($postProcesso);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(1);
     $controle->set_col(1);
@@ -181,22 +177,51 @@ if ($acesso) {
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-
-    $controle = new Input('postValorUltAditivo', 'simnao', 'Val.Ult.TA:', 1);
+    
+    $controle = new Input('postDuracao', 'simnao', 'Duração:', 1);
     $controle->set_size(5);
-    $controle->set_title('O valor do último aditivo');
-    $controle->set_valor($postValorUltAditivo);
+    $controle->set_title('A dduração do contrato');
+    $controle->set_valor($postDuracao);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
+    
+    ####################3
 
-    $controle = new Input('postValorTotal', 'simnao', 'Val.Tot:', 1);
+    $controle = new Input('postEmpresa', 'simnao', 'Empresa:', 1);
     $controle->set_size(5);
-    $controle->set_title('O valor total do contrato');
-    $controle->set_valor($postValorTotal);
+    $controle->set_title('A empresa contratada');
+    $controle->set_valor($postEmpresa);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
+    $controle->set_linha(2);
+    $controle->set_col(1);
+    $form->add_item($controle);
+
+    $controle = new Input('postEmpresaCnpj', 'simnao', 'CNPJ:', 1);
+    $controle->set_size(5);
+    $controle->set_title('O CNPJ da empresa contratada');
+    $controle->set_valor($postEmpresaCnpj);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(2);
+    $controle->set_col(1);
+    $form->add_item($controle);
+    
+    $controle = new Input('postEmpresaEmail', 'simnao', 'Emp.Email:', 1);
+    $controle->set_size(5);
+    $controle->set_title('O e-mail da empresa contratada');
+    $controle->set_valor($postEmpresaEmail);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(2);
+    $controle->set_col(1);
+    $form->add_item($controle);    
+    
+    $controle = new Input('postEmpresaContato', 'simnao', 'Emp.Contato:', 1);
+    $controle->set_size(5);
+    $controle->set_title('O contato da empresa contratada');
+    $controle->set_valor($postEmpresaContato);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
 
@@ -205,7 +230,7 @@ if ($acesso) {
     $controle->set_title('Os membros da comissão');
     $controle->set_valor($postComissao);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
+    $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
 
@@ -214,7 +239,26 @@ if ($acesso) {
     $controle->set_title('Os membros da comissão com e-mail');
     $controle->set_valor($postComissaoEmail);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
+    $controle->set_linha(2);
+    $controle->set_col(1);
+    $form->add_item($controle);
+    
+
+    $controle = new Input('postValorUltAditivo', 'simnao', 'Val.Ult.TA:', 1);
+    $controle->set_size(5);
+    $controle->set_title('O valor do último aditivo');
+    $controle->set_valor($postValorUltAditivo);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(2);
+    $controle->set_col(1);
+    $form->add_item($controle);
+
+    $controle = new Input('postValorTotal', 'simnao', 'Val.Tot:', 1);
+    $controle->set_size(5);
+    $controle->set_title('O valor total do contrato');
+    $controle->set_valor($postValorTotal);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
 
@@ -236,7 +280,7 @@ if ($acesso) {
     $controle->set_title('Ano da assinatura do contrato');
     $controle->set_valor($parametroAno);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(2);
+    $controle->set_linha(3);
     $controle->set_col(2);
     $controle->set_array($comboAno);
     $controle->set_fieldset("Informe o Filtro:");
@@ -259,7 +303,7 @@ if ($acesso) {
     $controle->set_title('Status do contrato');
     $controle->set_valor($parametroStatus);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(2);
+    $controle->set_linha(3);
     $controle->set_col(2);
     $controle->set_array($comboStatus);
     $form->add_item($controle);
@@ -281,9 +325,20 @@ if ($acesso) {
     $controle->set_title('Modalidade do contrato');
     $controle->set_valor($parametroModalidade);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(2);
+    $controle->set_linha(3);
     $controle->set_col(2);
     $controle->set_array($comboModalidade);
+    $form->add_item($controle);
+    
+    # Tipo de Modalidade
+    $controle = new Input('parametroModalidadeTipo', 'combo', 'Tipo:', 1);
+    $controle->set_size(20);
+    $controle->set_title('Se é despesa ou receita');
+    $controle->set_valor($parametroModalidadeTipo);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(3);
+    $controle->set_col(2);
+    $controle->set_array(["Todos","Despesa","Receita"]);    
     $form->add_item($controle);
     
     # Mao de obra alocada
@@ -292,7 +347,7 @@ if ($acesso) {
     $controle->set_title('Se tem mão de obra alocada');
     $controle->set_valor($parametroMaoDeObra);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(2);
+    $controle->set_linha(3);
     $controle->set_col(2);
     $controle->set_array(array(array("S","Sim"),array("N","Não"),array(null,"Todos")));    
     $form->add_item($controle);
@@ -314,8 +369,8 @@ if ($acesso) {
     $controle->set_title('Empresa contratada');
     $controle->set_valor($parametroEmpresa);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(2);
-    $controle->set_col(4);
+    $controle->set_linha(3);
+    $controle->set_col(2);
     $controle->set_array($comboEmpresa);
     $form->add_item($controle);
 
@@ -328,6 +383,15 @@ if ($acesso) {
     $class[] = "";
     $method[] = "";
     $function[] = "";
+
+    if ($postSiafe) {
+        $field[] = "siafe";
+        $label[] = "Siafe";
+        $align[] = "center";
+        $class[] = "";
+        $method[] = "";
+        $function[] = "";
+    }
 
     # Preenche os arrays de acordo com o formulario
     if ($postModalidade) {
@@ -348,24 +412,6 @@ if ($acesso) {
         $function[] = "";
     }
 
-    if ($postMaoDeObra) {
-        $field[] = "IF(maoDeObra,'Sim','---')";
-        $label[] = "Mão de Obra";
-        $align[] = "center";
-        $class[] = "";
-        $method[] = "";
-        $function[] = "";
-    }
-
-    if ($postSiafe) {
-        $field[] = "siafe";
-        $label[] = "Siafe";
-        $align[] = "center";
-        $class[] = "";
-        $method[] = "";
-        $function[] = "";
-    }
-
     if ($postObjeto) {
         $field[] = "objeto";
         $label[] = "Objeto";
@@ -375,21 +421,21 @@ if ($acesso) {
         $function[] = "";
     }
 
-    if ($postEmpresa) {
-        $field[] = "idEmpresa";
-        $label[] = "Empresa";
-        $align[] = "left";
-        $class[] = "Empresa";
-        $method[] = "getEmpresa";
+    if ($postMaoDeObra) {
+        $field[] = "IF(maoDeObra,'Sim','---')";
+        $label[] = "Mão de Obra";
+        $align[] = "center";
+        $class[] = "";
+        $method[] = "";
         $function[] = "";
     }
-
-    if ($postCnpj) {
-        $field[] = "idEmpresa";
-        $label[] = "CNPJ";
-        $align[] = "left";
-        $class[] = "Empresa";
-        $method[] = "getCnpj";
+    
+    if ($postProcesso) {
+        $field[] = "idContrato";
+        $label[] = "Processo";
+        $align[] = "center";
+        $class[] = "Contrato";
+        $method[] = "getProcesso";
         $function[] = "";
     }
 
@@ -409,16 +455,7 @@ if ($acesso) {
         $class[] = "";
         $method[] = "";
         $function[] = "date_to_php";
-    }
-
-    if ($postProcesso) {
-        $field[] = "idContrato";
-        $label[] = "Processo";
-        $align[] = "center";
-        $class[] = "Contrato";
-        $method[] = "getProcesso";
-        $function[] = "";
-    }
+    }    
 
     if ($postProposta) {
         $field[] = "dtProposta";
@@ -428,22 +465,49 @@ if ($acesso) {
         $method[] = "";
         $function[] = "date_to_php";
     }
-
-    if ($postValorUltAditivo) {
+    
+    if ($postDuracao) {
         $field[] = "idContrato";
-        $label[] = "Valor Último Aditivo";
-        $align[] = "right";
+        $label[] = "Duração";
+        $align[] = "center";
         $class[] = "Contrato";
-        $method[] = "exibeValorUltimoAditivo";
+        $method[] = "exibeDuracao";
         $function[] = "";
     }
 
-    if ($postValorTotal) {
-        $field[] = "idContrato";
-        $label[] = "Valor Total";
-        $align[] = "right";
-        $class[] = "Contrato";
-        $method[] = "exibeValorTotal";
+    if ($postEmpresa) {
+        $field[] = "idEmpresa";
+        $label[] = "Empresa";
+        $align[] = "left";
+        $class[] = "Empresa";
+        $method[] = "getEmpresa";
+        $function[] = "";
+    }
+
+    if ($postEmpresaCnpj) {
+        $field[] = "idEmpresa";
+        $label[] = "CNPJ";
+        $align[] = "left";
+        $class[] = "Empresa";
+        $method[] = "getCnpj";
+        $function[] = "";
+    }
+    
+    if ($postEmpresaEmail) {
+        $field[] = "idEmpresa";
+        $label[] = "Empresa Email";
+        $align[] = "left";
+        $class[] = "Empresa";
+        $method[] = "getEmails";
+        $function[] = "";
+    }
+    
+    if ($postEmpresaContato) {
+        $field[] = "idEmpresa";
+        $label[] = "Empresa Contato";
+        $align[] = "left";
+        $class[] = "Empresa";
+        $method[] = "getContatoComTel";
         $function[] = "";
     }
 
@@ -465,6 +529,24 @@ if ($acesso) {
         $function[] = "";
     }
 
+    if ($postValorUltAditivo) {
+        $field[] = "idContrato";
+        $label[] = "Valor Último Aditivo";
+        $align[] = "right";
+        $class[] = "Contrato";
+        $method[] = "exibeValorUltimoAditivo";
+        $function[] = "";
+    }
+
+    if ($postValorTotal) {
+        $field[] = "idContrato";
+        $label[] = "Valor Total";
+        $align[] = "right";
+        $class[] = "Contrato";
+        $method[] = "exibeValorTotal";
+        $function[] = "";
+    }
+
     if (count($field) > 0) {
 
         # Monta o select
@@ -477,7 +559,7 @@ if ($acesso) {
         $select = rtrim($select, ',');
 
         # Adiciona as tabelas
-        $select .= " FROM tbcontrato";
+        $select .= " FROM tbcontrato JOIN tbmodalidade USING (idModalidade)";
 
         # Adiciona filtro
         $select .= " WHERE true";
@@ -492,6 +574,10 @@ if ($acesso) {
 
         if (!empty($parametroModalidade)) {
             $select .= " AND idModalidade = {$parametroModalidade}";
+        }
+        
+        if ($parametroModalidadeTipo <> "Todos") {
+            $select .= " AND tbmodalidade.tipo = '{$parametroModalidadeTipo}'";
         }
 
         if (!empty($parametroStatus)) {

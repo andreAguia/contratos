@@ -23,7 +23,6 @@ p#contratoLabel{
     padding: 0px;
     margin: 0px;
     margin-bottom: -5px;
-
 }
 
 p#contratoConteudo{
@@ -103,7 +102,6 @@ div#divEdita1Contrato{
     bottom: -50px;
 }
 
-
 tr#listaDados{
     background-color: #D7D7D7;
 }
@@ -114,7 +112,6 @@ p#contratoLabelCallout1{
     padding: 0px;
     margin: -10px;
     margin-bottom: 0;
-
 }
 
 p#contratoLabelCallout2{
@@ -123,7 +120,6 @@ p#contratoLabelCallout2{
     padding: 0px;
     margin: -10px;
     margin-bottom: 0;
-
 }
 
 p#situacaoAtual{
@@ -283,7 +279,7 @@ p#pPortaria{
 /*******************************************
  * Tela Inicial
  *******************************************/
- p#ip{
+p#ip{
     font-size: 11px;
     text-align: right;
     color: #02548b;
@@ -337,7 +333,7 @@ p#palertaSpainel{
  * Eventos na tela Inicial
  *******************************************/
 
- table#tableTarefas{
+table#tableTarefas{
     border-collapse: separate;
     border-spacing: 2pt;
     font-size: 13px;
@@ -469,4 +465,16 @@ p#paditivoVinculadoValorNegativo{
     padding: 0px;
     margin: 0px;
     color: red;
+}
+
+/*******************************************
+ * Cadastro de Modalidade
+ *******************************************/
+
+tr#trModalidadeDespesa{
+    background-color: #ffcccc;
+}
+
+tr#trModalidadeReceita{
+    background-color: #97b0e5;
 }

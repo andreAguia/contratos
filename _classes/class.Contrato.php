@@ -331,6 +331,34 @@ class Contrato
     }
 
     ###########################################################
+
+    public function exibeDuracao($idContrato)
+    {
+
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+
+        # Verifica se tem data inicial
+        if (empty($dados["dtInicial"])) {
+
+            return null;
+        } else {
+            # Monta os valores
+            $dtInicial = date_to_php($dados["dtInicial"]);
+            $dtFinal = $this->getVigencia($idContrato);
+            $tempo = $this->getTempoTotal($idContrato);
+            p("{$dtInicial} - {$dtFinal}", "pVigencia");
+
+            # Verifica se já passou de 60 meses
+            if ($tempo["meses"] >= 60) {
+                p("{$tempo["meses"]} Meses", "pTempoTotal60");
+            } else {
+                p("{$tempo["meses"]} Meses", "pTempoTotal");
+            }
+        }
+    }
+
+    ###########################################################
     /*
      * Retorna array com os meses e dias do tempo do contrato
      */
@@ -364,7 +392,8 @@ class Contrato
             $arrayAditivo = $aditivo->getAditivosContrato($idContrato);
 
             # Percorre o array
-            foreach ($arrayAditivo as $itemAditivo) {
+            foreach ($arrayAditivo as $itemAditivo)
+            {
                 if (!empty($itemAditivo["prazo"])) {
                     if ($itemAditivo["tipoPrazo"] == 2) {
                         $prazoMeses += $itemAditivo["prazo"];
@@ -424,7 +453,8 @@ class Contrato
             $arrayAditivo = $aditivo->getAditivosContrato($idContrato);
 
             # Percorre o array
-            foreach ($arrayAditivo as $itemAditivo) {
+            foreach ($arrayAditivo as $itemAditivo)
+            {
 
                 # Pega a vigência deste aditivo
                 $dtFinal = $aditivo->getDtFinal($itemAditivo["idAditivo"]);
@@ -624,7 +654,8 @@ class Contrato
 
         # Percorre os vinculados
         if (count($aditivosVinculados) > 0) {
-            foreach ($aditivosVinculados as $item) {
+            foreach ($aditivosVinculados as $item)
+            {
                 if (!empty($item["valor"])) {
 
                     if ($item["valorSinal"]) {
@@ -718,7 +749,7 @@ class Contrato
             $link->set_target("_blank");
             $link->show();
         }
-        
+
         # Publicação
         p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
 
@@ -849,7 +880,8 @@ class Contrato
 
         # Verifica se tem algum aditivo
         if ($numAditivos > 0) {
-            foreach ($row as $item) {
+            foreach ($row as $item)
+            {
                 if ($item["valorSinal"]) {
                     $valorTotal -= $item["valor"];
                 } else {
