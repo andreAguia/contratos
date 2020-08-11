@@ -24,6 +24,7 @@ $postPublicacao = post('postPublicacao');
 $postAssinatura = post('postAssinatura');
 $postProcesso = post('postProcesso');
 $postProposta = post('postProposta');
+$postVigencia = post('postVigencia');
 $postDuracao = post('postDuracao');
 $postObjeto = post('postObjeto');
 $postValorTotal = post('postValorTotal');
@@ -178,9 +179,18 @@ if ($acesso) {
     $controle->set_col(1);
     $form->add_item($controle);
     
+    $controle = new Input('postVigencia', 'simnao', 'Vigencia:', 1);
+    $controle->set_size(5);
+    $controle->set_title('A vigencia do contrato');
+    $controle->set_valor($postVigencia);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(1);
+    $controle->set_col(1);
+    $form->add_item($controle);
+    
     $controle = new Input('postDuracao', 'simnao', 'Duração:', 1);
     $controle->set_size(5);
-    $controle->set_title('A dduração do contrato');
+    $controle->set_title('A duração do contrato');
     $controle->set_valor($postDuracao);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(1);
@@ -242,7 +252,6 @@ if ($acesso) {
     $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
-    
 
     $controle = new Input('postValorUltAditivo', 'simnao', 'Val.Ult.TA:', 1);
     $controle->set_size(5);
@@ -464,6 +473,15 @@ if ($acesso) {
         $class[] = "";
         $method[] = "";
         $function[] = "date_to_php";
+    }
+    
+    if ($postVigencia) {
+        $field[] = "idContrato";
+        $label[] = "Vigencia";
+        $align[] = "center";
+        $class[] = "Contrato";
+        $method[] = "getVigencia";
+        $function[] = "";
     }
     
     if ($postDuracao) {
