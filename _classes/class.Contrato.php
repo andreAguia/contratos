@@ -61,7 +61,7 @@ class Contrato
 
     ##############################################################
 
-    public function getProcesso($idContrato = null, $br = true)
+    public function getProcesso($idContrato = null, $br = false)
     {
 
         /**
@@ -95,7 +95,7 @@ class Contrato
             if ($br) {
                 $processo = "SEI - {$conteudo["processoSei"]} <br/> {$conteudo["processo"]}";
             } else {
-                $processo = "SEI - {$conteudo["processoSei"]} / {$conteudo["processo"]}";
+                $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
             }
         }
 
