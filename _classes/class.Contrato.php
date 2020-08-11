@@ -358,6 +358,49 @@ class Contrato
         }
     }
 
+     ###########################################################
+
+    public function exibePeriodo($idContrato)
+    {
+
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+
+        # Verifica se tem data inicial
+        if (empty($dados["dtInicial"])) {
+
+            return null;
+        } else {
+            # Monta os valores
+            $dtInicial = date_to_php($dados["dtInicial"]);
+            $dtFinal = $this->getVigencia($idContrato);
+            p("{$dtInicial} - {$dtFinal}", "pVigencia");
+        }
+    }
+
+     ###########################################################
+
+    public function exibePrazo($idContrato)
+    {
+
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+
+        # Verifica se tem data inicial
+        if (empty($dados["dtInicial"])) {
+
+            return null;
+        } else {
+            $tempo = $this->getTempoTotal($idContrato);
+            # Verifica se já passou de 60 meses
+            if ($tempo["meses"] >= 60) {
+                p("{$tempo["meses"]} Meses", "pTempoTotal60");
+            } else {
+                p("{$tempo["meses"]} Meses", "pTempoTotal");
+            }
+        }
+    }
+
     ###########################################################
     /*
      * Retorna array com os meses e dias do tempo do contrato
