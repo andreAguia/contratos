@@ -24,6 +24,7 @@ $postPublicacao = post('postPublicacao');
 $postAssinatura = post('postAssinatura');
 $postProcesso = post('postProcesso');
 $postProposta = post('postProposta');
+$postDuracao = post('postDuracao');
 $postPrazo = post('postPrazo');
 $postVigencia = post('postVigencia');
 $postPeriodo = post('postPeriodo');
@@ -181,6 +182,15 @@ if ($acesso) {
     $form->add_item($controle);
     
     ####################
+    
+    $controle = new Input('postDuracao', 'simnao', 'Duração:', 1);
+    $controle->set_size(5);
+    $controle->set_title('O periodo, prazo e vigência tudo junto ;)');
+    $controle->set_valor($postDuracao);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(2);
+    $controle->set_col(1);
+    $form->add_item($controle);
     
     $controle = new Input('postPeriodo', 'simnao', 'Periodo:', 1);
     $controle->set_size(5);
@@ -485,6 +495,15 @@ if ($acesso) {
         $class[] = "";
         $method[] = "";
         $function[] = "date_to_php";
+    }
+    
+    if ($postDuracao) {
+        $field[] = "idContrato";
+        $label[] = "Duração";
+        $align[] = "center";
+        $class[] = "Contrato";
+        $method[] = "exibeDuracao";
+        $function[] = "";
     }
     
     if ($postPeriodo) {

@@ -61,7 +61,7 @@ class Contrato
 
     ##############################################################
 
-    public function getProcesso($idContrato = null, $br = false)
+    public function getProcesso($idContrato = null, $br = true)
     {
 
         /**
