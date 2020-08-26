@@ -16,23 +16,29 @@ function get_DadosContratoPagamento($idContrato)
     $contrato->exibeResumoDados($idContrato);
     
     $grid = new Grid();
-    $grid->abreColuna(4);
+    $grid->abreColuna(3);
 
     # Exibe o valor    
     $contrato->exibeValorTotalPainel($idContrato);
 
     $grid->fechaColuna();
-    $grid->abreColuna(4);
+    $grid->abreColuna(3);
 
     # Exibe o valor
     $pagamento = new Pagamento();
     $pagamento->exibeValorLiquidado($idContrato);
 
     $grid->fechaColuna();
-    $grid->abreColuna(4);
+    $grid->abreColuna(3);
 
     # Exibe o valor
     $pagamento->exibeValorSaldo($idContrato);
+
+    $grid->fechaColuna();
+    $grid->abreColuna(3);
+
+    # Exibe o valor
+    $pagamento->exibePgtoIdeal($idContrato);
 
     $grid->fechaColuna();
     $grid->fechaGrid();

@@ -42,9 +42,9 @@ if ($acesso) {
 
     ################################################################
     # Exibe os dados do Contrato
-    if($fase == "listar"){
+    if ($fase == "listar") {
         $objeto->set_rotinaExtra("get_DadosContratoPagamento");
-    }else{
+    } else {
         $objeto->set_rotinaExtra("get_DadosContrato");
     }
     $objeto->set_rotinaExtraParametro($idContrato);
@@ -56,15 +56,16 @@ if ($acesso) {
     $objeto->set_voltarLista("cadastroAditivo.php");
 
     # select da lista
-    $objeto->set_selectLista("SELECT data,
-                                     notaFiscal,
+    $objeto->set_selectLista("SELECT anoReferencia,
                                      idPagamento,
+                                     data,
+                                     notaFiscal,
                                      valor,
                                      obs,
                                      idPagamento
                                 FROM tbpagamento
                                WHERE idContrato = {$idContrato}
-                            ORDER BY data");
+                            ORDER BY anoReferencia, mesReferencia, data");
 
     # select do edita
     $objeto->set_selectEdita("SELECT data,
@@ -83,13 +84,16 @@ if ($acesso) {
     $objeto->set_linkGravar("?fase=gravar");
     $objeto->set_linkListar("?fase=listar");
 
+    $objeto->set_rowspan(0);
+    $objeto->set_grupoCorColuna(0);
+
     # Parametros da tabela
-    $objeto->set_label(array("Data", "Nota Fiscal", "Referência", "Valor", "Obs"));
-    $objeto->set_align(array("center", "center", "center", "right"));
-    $objeto->set_width(array(15, 15, 15, 15, 30));
-    $objeto->set_funcao(array("date_to_php", null, null, "formataMoeda"));
-    $objeto->set_classe(array(null, null, "Pagamento"));
-    $objeto->set_metodo(array(null, null, "exibeReferencia"));
+    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Obs"));
+    $objeto->set_align(array("center", "center", "center", "center", "right", "left"));
+    $objeto->set_width(array(10, 15, 15, 15, 15, 30));
+    $objeto->set_funcao(array(null, null, "date_to_php", null, "formataMoeda"));
+    $objeto->set_classe(array(null, "Pagamento"));
+    $objeto->set_metodo(array(null, "exibeReferencia"));
     $objeto->set_numeroOrdem(true);
 
     # Classe do banco de dados

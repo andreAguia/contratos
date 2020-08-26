@@ -478,3 +478,14 @@ tr#trModalidadeDespesa{
 tr#trModalidadeReceita{
     background-color: #97b0e5;
 }
+
+/*******************************************
+ * Cadastro de Pagamentos
+ *******************************************/
+
+p#pPagamentos{
+    font-size: 10px;
+    padding: 0px;
+    margin: -8px;
+    text-align: center;
+}
