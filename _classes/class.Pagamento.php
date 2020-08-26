@@ -160,14 +160,14 @@ class Pagamento {
 
         # Diferença
         $anoDif = $anoVigencia - $anoPago;
-
+        
         # Verifica se e o mesmo ano
         if ($anoDif == 0) {
             $parcelas = $mesVigencia - $mesPago;
         } elseif ($anoDif == 1) {
-            $parcela = (12 - $mesPago) + $mesVigencia;
+            $parcelas = (12 - $mesPago) + $mesVigencia;
         } elseif ($anoDif > 1) {
-            $parcela = (12 - $mesPago) + $mesVigencia + (12 * ($anoDif - 1));
+            $parcelas = (12 - $mesPago) + $mesVigencia + (12 * ($anoDif - 1));
         }
 
         # Desconsidera o ultimo mes caso o dia da vigencia for menor que 20
