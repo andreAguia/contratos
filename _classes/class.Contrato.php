@@ -98,6 +98,15 @@ class Contrato
                 $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
             }
         }
+        
+        # Verifica se tem processo de execução
+        if (!empty($conteudo["processoExecucao"])){
+            if ($br) {
+                $processo .= "<br/>Exec: SEI - {$conteudo["processoExecucao"]}";
+            } else {
+                $processo .= " Exec: SEI - {$conteudo["processoExecucao"]}";
+            }
+        }
 
         return $processo;
     }

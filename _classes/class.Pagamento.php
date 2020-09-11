@@ -100,6 +100,13 @@ class Pagamento {
         $valorTotal = $this->getValorLiquidado($idContrato);
 
         p("R$ " . formataMoeda($valorTotal), "pvalorTotalPositivo");
+
+        if ($this->temNatureza($idContrato)) {
+            $link = new Link("por Natureza", "?fase=porNatureza&id={$idContrato}", "Detalha os pagamanto pela natureza do gasto");
+            $link->set_id("porNatureza");
+            $link->show();
+        }
+
         $painel->fecha();
     }
 
@@ -160,7 +167,7 @@ class Pagamento {
 
         # Diferença
         $anoDif = $anoVigencia - $anoPago;
-        
+
         # Verifica se e o mesmo ano
         if ($anoDif == 0) {
             $parcelas = $mesVigencia - $mesPago;
@@ -182,7 +189,7 @@ class Pagamento {
                 $saldo,
                 $parcelas
             ];
-        }else{
+        } else {
             return null;
         }
     }
@@ -230,6 +237,87 @@ class Pagamento {
         p("R$ " . formataMoeda($valorTotal[0]), "pvalorTotalPositivo");
         p("(R$ " . formataMoeda($valorTotal[1]) . " / {$valorTotal[2]})", "pPagamentos");
         $painel->fecha();
+    }
+
+    ###########################################################
+
+    public function exibeValorLiquidadoPorNatureza($idContrato = null) {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        titulo("Valor Liquidado Por Natureza");
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Monta o select
+        $select = "SELECT concat(natureza,' ',IFnull(codigo,'')), SUM(valor) as jj
+                     FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
+                    WHERE idContrato = {$idContrato}
+                 GROUP BY natureza   
+                 ORDER BY 2 desc ";
+
+        $soma = $contratos->select($select);
+
+        # Exemplo de tabela simples
+        $tabela = new Tabela();
+        $tabela->set_conteudo($soma);
+        $tabela->set_label(array("Natureza", "Valor (R$)"));
+        $tabela->set_width(array(70, 30));
+        $tabela->set_align(array("left", "center"));
+        $tabela->set_funcao(array(null, "formataMoeda"));
+        $tabela->set_rodape("Total: R$ " . formataMoeda($this->getValorLiquidado($idContrato)));
+        $tabela->show();
+    }
+
+    ###########################################################
+
+    public function temNatureza($idContrato = null) {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Monta o select
+        $select = "SELECT natureza
+                     FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
+                    WHERE idContrato = {$idContrato}
+                      AND natureza is not null";
+
+        $soma = $contratos->count($select);
+
+        if ($soma > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    ###########################################################
+
+    public function getNumPgtoNatureza($idNatureza = null) {
+        # Verifica se foi informado
+        if (vazio($idNatureza)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Monta o select
+        $select = "SELECT idNatureza
+                     FROM tbpagamento
+                    WHERE idNatureza = {$idNatureza}";
+
+        return $contratos->count($select);
     }
 
     ############################################################

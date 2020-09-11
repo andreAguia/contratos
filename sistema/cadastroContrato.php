@@ -175,6 +175,7 @@ if ($acesso) {
                                      maoDeObra,
                                      processoSei,
                                      processo,
+                                     processoExecucao,
                                      valor,
                                      garantia,
                                      dtPublicacao,
@@ -369,19 +370,27 @@ if ($acesso) {
             'nome' => 'processo',
             'label' => 'Processo Físico:',
             'tipo' => 'processo',
-            'col' => 3,
+            'col' => 4,
             'size' => 50,
         ),
         array(
             'linha' => 5,
+            'nome' => 'processoExecucao',
+            'label' => 'Processo de Execução:',
+            'tipo' => 'sei',
+            'col' => 4,
+            'size' => 50,
+        ),
+        array(
+            'linha' => 6,
             'nome' => 'valor',
             'label' => 'Valor:',
             'tipo' => 'moeda',
-            'col' => 3,
+            'col' => 4,
             'size' => 15,
         ),
         array(
-            'linha' => 5,
+            'linha' => 6,
             'nome' => 'garantia',
             'label' => 'Garantia: (se houver)',
             'tipo' => 'percentagem',
@@ -401,7 +410,7 @@ if ($acesso) {
             'nome' => 'pgPublicacao',
             'label' => 'Pag:',
             'tipo' => 'texto',
-            'col' => 2,
+            'col' => 3,
             'size' => 10,
         ),
         array(
@@ -485,6 +494,13 @@ if ($acesso) {
                 $botao->set_title("Cadastro de Status");
                 $botao->set_class("button secondary");
                 $menu1->add_link($botao, "right");
+                
+                # Natureza
+                $botao = new Button("Natureza", "cadastroNatureza.php");
+                $botao->set_title("Cadastro de Natureza");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
+
 
                 # Relatórios
                 $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);

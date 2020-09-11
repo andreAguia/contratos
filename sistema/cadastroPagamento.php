@@ -17,6 +17,7 @@ $acesso = Verifica::acesso($idUsuario, 9);
 if ($acesso) {
     # Conecta ao Banco de Dados
     $intra = new Intra();
+    $contratos = new Contratos();
     $contrato = new Contrato();
     $pessoal = new Pessoal();
     $comissao = new Comissao();
@@ -61,9 +62,10 @@ if ($acesso) {
                                      data,
                                      notaFiscal,
                                      valor,
-                                     obs,
+                                     natureza,
+                                     tbpagamento.obs,
                                      idPagamento
-                                FROM tbpagamento
+                                FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
                                WHERE idContrato = {$idContrato}
                             ORDER BY anoReferencia, mesReferencia, data");
 
@@ -73,6 +75,7 @@ if ($acesso) {
                                      mesReferencia,
                                      anoReferencia,
                                      valor,
+                                     idNatureza,
                                      obs,
                                      idContrato
                                 FROM tbpagamento
@@ -88,9 +91,9 @@ if ($acesso) {
     $objeto->set_grupoCorColuna(0);
 
     # Parametros da tabela
-    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Obs"));
-    $objeto->set_align(array("center", "center", "center", "center", "right", "left"));
-    $objeto->set_width(array(10, 15, 15, 15, 15, 30));
+    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Natureza", "Obs"));
+    $objeto->set_align(array("center", "center", "center", "center", "right", "center", "lef"));
+    $objeto->set_width(array(10, 15, 15, 15, 12, 13, 20));
     $objeto->set_funcao(array(null, null, "date_to_php", null, "formataMoeda"));
     $objeto->set_classe(array(null, "Pagamento"));
     $objeto->set_metodo(array(null, "exibeReferencia"));
@@ -107,6 +110,14 @@ if ($acesso) {
 
     # Tipo de label do formulário
     $objeto->set_formlabelTipo(1);
+
+    # Dados da combo natureza
+    $natureza = $contratos->select('SELECT idNatureza,
+                                         natureza
+                                    FROM tbnatureza
+                                ORDER BY natureza');
+
+    array_unshift($natureza, array(null, null));
 
     # Cria um array com os anos possíveis para a combo anoReferencia
     $anoInicial = 2010;
@@ -130,7 +141,7 @@ if ($acesso) {
             'nome' => 'notaFiscal',
             'label' => 'Nota Fiscal:',
             'tipo' => 'texto',
-            'col' => 2,
+            'col' => 3,
             'size' => 30),
         array(
             'linha' => 1,
@@ -139,7 +150,7 @@ if ($acesso) {
             'tipo' => 'combo',
             'padrao' => date('m'),
             'array' => $mes,
-            'col' => 2,
+            'col' => 3,
             'size' => 5),
         array(
             'linha' => 1,
@@ -148,7 +159,7 @@ if ($acesso) {
             'tipo' => 'combo',
             'padrao' => date('Y'),
             'array' => $anoReferencia,
-            'col' => 2,
+            'col' => 3,
             'size' => 5),
         array(
             'linha' => 1,
@@ -157,6 +168,14 @@ if ($acesso) {
             'tipo' => 'moeda',
             'col' => 3,
             'size' => 15),
+        array(
+            'linha' => 1,
+            'nome' => 'idNatureza',
+            'label' => 'Natureza:',
+            'tipo' => 'combo',
+            'array' => $natureza,
+            'col' => 3,
+            'size' => 100),
         array(
             'linha' => 2,
             'nome' => 'obs',
@@ -190,6 +209,39 @@ if ($acesso) {
 
         case "gravar":
             $objeto->gravar($id);
+            break;
+
+        case "porNatureza":
+            # Limita o tamanho da tela
+            $grid1 = new Grid();
+            $grid1->abreColuna(12);
+
+            # Cria um menu
+            $menu1 = new MenuBar();
+
+            # Voltar
+            $linkVoltar = new Link("Voltar", "?");
+            $linkVoltar->set_class('button');
+            $linkVoltar->set_title('Voltar para página anterior');
+            $linkVoltar->set_accessKey('V');
+            $menu1->add_link($linkVoltar, "left");
+
+            $menu1->show();
+            
+            tituloTable("Valor Liquidado Agrupado pela Natureza da Despesa");
+            br();
+            
+            $grid1->fechaColuna();
+            $grid1->fechaGrid();
+            
+            $grid1 = new Grid("center");
+            $grid1->abreColuna(6);
+
+            $pagamento = new Pagamento();
+            $pagamento->exibeValorLiquidadoPorNatureza($id);
+
+            $grid1->fechaColuna();
+            $grid1->fechaGrid();
             break;
         ################################################################    
     }

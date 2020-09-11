@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Cadastro de Status
+ * Cadastro de Natureza de Pgto
  *
  * By Alat
  */
@@ -36,24 +36,25 @@ if ($acesso) {
 
     ################################################################
     # Nome do Modelo
-    $objeto->set_nome("Status de Contrato");
+    $objeto->set_nome("Natureza");
 
     # Botão de voltar da lista
     $objeto->set_voltarLista("cadastroContrato.php");
 
     # select da lista
-    $objeto->set_selectLista("SELECT idStatus,
-                                      status,
+    $objeto->set_selectLista("SELECT  codigo,
+                                      natureza,
                                       obs,
-                                      idStatus
-                                 FROM tbstatus
-                             ORDER BY status");
+                                      idNatureza
+                                 FROM tbnatureza
+                             ORDER BY natureza");
 
     # select do edita
-    $objeto->set_selectEdita("SELECT status,
+    $objeto->set_selectEdita("SELECT codigo,
+                                     natureza,
                                      obs
-                                FROM tbstatus
-                              WHERE idStatus = {$id}");
+                                FROM tbnatureza
+                              WHERE idNatureza = {$id}");
 
     # Caminhos
     $objeto->set_linkEditar("?fase=editar");
@@ -62,20 +63,18 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(array("Id", "Satatus", "Obs", "Contratos"));
-    $objeto->set_width(array(5, 40, 40, 5));
-    $objeto->set_align(array("center", "left", "left", "center"));
-    $objeto->set_classe(array(null, null, null, "Status"));
-    $objeto->set_metodo(array(null, null, null, "get_numContratos"));
+    $objeto->set_label(array("Código", "Natureza", "Obs"));
+    $objeto->set_width(array(15, 20, 50));
+    $objeto->set_align(array("center", "center", "left"));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
 
     # Nome da tabela
-    $objeto->set_tabela("tbstatus");
+    $objeto->set_tabela("tbnatureza");
 
     # Nome do campo id
-    $objeto->set_idCampo("idStatus");
+    $objeto->set_idCampo("idNatureza");
 
     # Tipo de label do formulário
     $objeto->set_formlabelTipo(1);
@@ -83,12 +82,19 @@ if ($acesso) {
     # Campos para o formulario
     $objeto->set_campos(array(
         array("linha" => 1,
-            "nome" => "status",
-            "label" => "Status:",
+            "nome" => "codigo",
+            "label" => "Código:",
+            "tipo" => "texto",
+            "autofocus" => true,
+            "col" => 3,
+            "size" => 10),
+        array("linha" => 1,
+            "nome" => "natureza",
+            "label" => "Natureza:",
             "tipo" => "texto",
             "required" => true,
             "autofocus" => true,
-            "col" => 6,
+            "col" => 9,
             "size" => 100),
         array("linha" => 2,
             "nome" => "obs",
@@ -110,10 +116,11 @@ if ($acesso) {
 
         case "excluir":
             # Verifica se tem contrato com esse status
-            $numContratos = $status->get_numContratos($id);
+            $pagamento = new Pagamento();
+            $getNumPgtoNatureza = $pagamento->getNumPgtoNatureza($id);
 
-            if ($numContratos > 0) {
-                alert("Existem contratos cadastrados com este status. Dessa forma o mesmo NÃO poderá ser excluída.");
+            if ($getNumPgtoNatureza > 0) {
+                alert("Existem pagamentos cadastrados com esta natureza. Dessa forma a mesma NÃO poderá ser excluída.");
                 back(1);
             } else {
                 $objeto->excluir($id);
