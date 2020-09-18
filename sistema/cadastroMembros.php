@@ -75,14 +75,14 @@ if ($acesso) {
             array_unshift($comboMembro, array(null, "Todas"));
 
             # Empresa
-            $controle = new Input('parametroMembro', 'combo', 'Membro:', 1);
+            $controle = new Input('parametroMembro', 'texto', 'Membro:', 1);
             $controle->set_size(20);
             $controle->set_title('Pesquisa por Membro da Comissão');
             $controle->set_valor($parametroMembro);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
             $controle->set_col(5);
-            $controle->set_array($comboMembro);
+            #$controle->set_array($comboMembro);
             $controle->set_autofocus(true);
             $form->add_item($controle);
 
@@ -97,7 +97,7 @@ if ($acesso) {
                      FROM uenf_contratos.tbcomissao LEFT JOIN uenf_grh.tbservidor USING (idServidor)
                                                          JOIN uenf_grh.tbpessoa USING (idPessoa)";
             if(!empty($parametroMembro)){
-                $select .= " WHERE idServidor = {$parametroMembro}";
+                $select .= " WHERE tbpessoa.nome like '%{$parametroMembro}%'";
             }
                                                          
             $select .= " ORDER BY tbpessoa.nome";
