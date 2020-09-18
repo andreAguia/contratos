@@ -45,3 +45,12 @@ function get_DadosContratoPagamento($idContrato)
 }
 
 ##########################################################
+function ressaltaSaiu($tipo){
+    
+    if($tipo == "Saiu"){
+        label("Saiu","alert");
+    }else{
+        return $tipo;
+    }
+    
+}

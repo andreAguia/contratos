@@ -455,7 +455,8 @@ if ($acesso) {
     $objeto->set_idUsuario($idUsuario);
 
     ################################################################
-    switch ($fase) {
+    switch ($fase)
+    {
         case "":
         case "listar":
             # Zera a session da inclusão de contrato
@@ -465,7 +466,10 @@ if ($acesso) {
             $grid = new Grid();
             $grid->abreColuna(12);
 
-            # Cria um menu
+            /*
+             * Menu
+             */
+
             $menu1 = new MenuBar();
 
             # Voltar
@@ -476,31 +480,6 @@ if ($acesso) {
             $menu1->add_link($botaoVoltar, "left");
 
             if (Verifica::acesso($idUsuario, 9)) {
-
-                # Empresas
-                $botao = new Button("Empresas", "cadastroEmpresa.php");
-                $botao->set_title("Cadastro de Empresas");
-                $botao->set_class("button secondary");
-                $menu1->add_link($botao, "right");
-
-                # Modalidade
-                $botao = new Button("Modalidade", "cadastroModalidade.php");
-                $botao->set_title("Cadastro de Modalidade");
-                $botao->set_class("button secondary");
-                $menu1->add_link($botao, "right");
-
-                # Status
-                $botao = new Button("Status", "cadastroStatus.php");
-                $botao->set_title("Cadastro de Status");
-                $botao->set_class("button secondary");
-                $menu1->add_link($botao, "right");
-                
-                # Natureza
-                $botao = new Button("Natureza", "cadastroNatureza.php");
-                $botao->set_title("Cadastro de Natureza");
-                $botao->set_class("button secondary");
-                $menu1->add_link($botao, "right");
-
 
                 # Relatórios
                 $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
@@ -517,6 +496,47 @@ if ($acesso) {
             }
 
             $menu1->show();
+
+            /*
+             * Menu auxiliar
+             */
+
+            if (Verifica::acesso($idUsuario, 9)) {
+
+                $menu2 = new MenuBar();
+
+                # Empresas
+                $botao = new Button("Empresas", "cadastroEmpresa.php");
+                $botao->set_title("Cadastro de Empresas");
+                $botao->set_class("button secondary");
+                $menu2->add_link($botao, "right");
+
+                # Comissões
+                $botao = new Button("Comissões", "cadastroMembros.php");
+                $botao->set_title("Cadastro de Comissões");
+                $botao->set_class("button secondary");
+                $menu2->add_link($botao, "right");
+
+                # Modalidade
+                $botao = new Button("Modalidade", "cadastroModalidade.php");
+                $botao->set_title("Cadastro de Modalidade");
+                $botao->set_class("button secondary");
+                $menu2->add_link($botao, "right");
+
+                # Status
+                $botao = new Button("Status", "cadastroStatus.php");
+                $botao->set_title("Cadastro de Status");
+                $botao->set_class("button secondary");
+                $menu2->add_link($botao, "right");
+
+                # Natureza
+                $botao = new Button("Natureza", "cadastroNatureza.php");
+                $botao->set_title("Cadastro de Natureza");
+                $botao->set_class("button secondary");
+                $menu2->add_link($botao, "right");
+
+                $menu2->show();
+            }
 
             # Formulário de Pesquisa
             $form = new Form('?');
@@ -766,7 +786,8 @@ if ($acesso) {
             $limite = menorValor(array($postMax, $uploadMax));
 
             $texto = "Extensões Permitidas:";
-            foreach ($extensoes as $pp) {
+            foreach ($extensoes as $pp)
+            {
                 $texto .= " $pp";
             }
             $texto .= "<br/>Tamanho Máximo do Arquivo: $limite M";

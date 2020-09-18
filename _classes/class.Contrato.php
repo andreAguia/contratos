@@ -150,6 +150,21 @@ class Contrato
 
     #####################################################################################
 
+    public function exibeNumeroContratoSimples($idContrato)
+    {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        p($conteudo["numero"], "contratoNumero");
+    }
+
+    #####################################################################################
+
     public function exibeNumeroSiafeRelatorio($idContrato)
     {
         # Verifica se foi informado
