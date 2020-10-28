@@ -497,6 +497,24 @@ class Contrato
         return date_to_php($conteudo["dtFinal"]);
     }
 
+    ###########################################################
+
+    public function getDtInicial($idContrato)
+    {
+
+        # Verifica se foi informado o id
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Pega os dados
+        $conteudo = $this->getDados($idContrato);
+
+        # Retorna a data Final
+        return date_to_php($conteudo["dtInicial"]);
+    }
+
     ##############################################################
     /*
      * Informa a vigência geral do contrato

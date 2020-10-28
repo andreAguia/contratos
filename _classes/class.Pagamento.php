@@ -17,7 +17,7 @@ class Pagamento {
                      FROM tbpagamento
                     WHERE idPagamento = ' . $idPagamento;
 
-        $row = $contratos->select($select, false);
+        $row = $contratos->select($select, false, true);
 
         # Retorno
         return $row;
@@ -48,23 +48,43 @@ class Pagamento {
 
     ############################################################
 
-    private function getValorLiquidado($idContrato = null) {
+    private function getValorLiquidado($idContrato = null, $idNatureza = null) {
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
         }
 
-        # Conecta ao Banco de Dados
+        # Inicia a variável de retorno
+        $valorTotal = 0;
+
+        # Pega os valores dos pgtos
         $contratos = new Contratos();
 
-        # Monta o select
-        $select = "SELECT SUM(valor)
-                     FROM tbpagamento
-                    WHERE idContrato = {$idContrato}";
+        if (is_null($idNatureza)) {
+            $select = "SELECT valor, valorNegativo FROM tbpagamento WHERE idContrato = {$idContrato}";
+        } else {
+            if ($idNatureza == 0) {
+                $select = "SELECT valor, valorNegativo FROM tbpagamento WHERE idContrato = {$idContrato} and idNatureza IS NULL";
+            } else {
+                $select = "SELECT valor, valorNegativo FROM tbpagamento WHERE idContrato = {$idContrato} and idNatureza = {$idNatureza}";
+            }
+        }
+        $row = $contratos->select($select);
+        $numPgtos = $contratos->count($select);
 
-        $soma = $contratos->select($select, false);
-        return $soma[0];
+        # Verifica se tem algum aditivo
+        if ($numPgtos > 0) {
+            foreach ($row as $item) {
+                if ($item["valorNegativo"]) {
+                    $valorTotal -= $item["valor"];
+                } else {
+                    $valorTotal += $item["valor"];
+                }
+            }
+        }
+
+        return $valorTotal;
     }
 
     ###########################################################
@@ -99,7 +119,8 @@ class Pagamento {
 
         $valorTotal = $this->getValorLiquidado($idContrato);
 
-        p("R$ " . formataMoeda($valorTotal), "pvalorTotalPositivo");
+
+        p(formataMoeda2($valorTotal), "pvalorTotalPositivo");
 
         if ($this->temNatureza($idContrato)) {
             $link = new Link("por Natureza", "?fase=porNatureza&id={$idContrato}", "Detalha os pagamanto pela natureza do gasto");
@@ -128,9 +149,9 @@ class Pagamento {
         $valorSaldo = $this->getValorSaldo($idContrato);
 
         if ($valorSaldo >= 0) {
-            p("R$ " . formataMoeda($valorSaldo), "pvalorTotalPositivo");
+            p(formataMoeda2($valorSaldo), "pvalorTotalPositivo");
         } else {
-            p("R$ " . formataMoeda($valorSaldo), "pvalorTotalNegativo");
+            p(formataMoeda2($valorSaldo), "pvalorTotalNegativo");
         }
         $painel->fecha();
     }
@@ -156,8 +177,31 @@ class Pagamento {
 
         # Pega o ultimo mes pago
         $ultimoMesPago = $this->getUltimoMesPago($idContrato);
-        $anoPago = $ultimoMesPago["anoReferencia"];
-        $mesPago = $ultimoMesPago["mesReferencia"];
+
+        # Pega a data Inicial
+        $dtInicial = $contrato->getDtInicial($idContrato);
+
+        # Se não tiver data Inicial não podemos calcular a pgto inicial
+        if (empty($dtInicial)) {
+            return [null, null, "0)<br/>(A data inicial do contrato não foi cadastrada"];
+        }
+
+        # Se o saldo for 0 ou menor que 0
+        if ($saldo < 1) {
+            return [null, null, "0)<br>(Não há saldo a ser pago!"];
+        }
+
+        if (!$ultimoMesPago) {
+            $anoPago = year($dtInicial);
+        } else {
+            $anoPago = $ultimoMesPago["anoReferencia"];
+        }
+
+        if (!$ultimoMesPago) {
+            $mesPago = month($dtInicial);
+        } else {
+            $mesPago = $ultimoMesPago["mesReferencia"];
+        }
 
         # Pega a vigencia
         $vigencia = $contrato->getVigencia($idContrato);
@@ -190,7 +234,7 @@ class Pagamento {
                 $parcelas
             ];
         } else {
-            return null;
+            return [null, null, null];
         }
     }
 
@@ -213,8 +257,8 @@ class Pagamento {
                     WHERE idContrato = {$idContrato}
                     ORDER BY anoReferencia desc, mesReferencia desc LIMIT 1";
 
-        $soma = $contratos->select($select, false);
-        return $soma;
+        $ultimo = $contratos->select($select, false);
+        return $ultimo;
     }
 
     ###########################################################
@@ -234,8 +278,8 @@ class Pagamento {
 
         $valorTotal = $this->getPgtoIdeal($idContrato);
 
-        p("R$ " . formataMoeda($valorTotal[0]), "pvalorTotalPositivo");
-        p("(R$ " . formataMoeda($valorTotal[1]) . " / {$valorTotal[2]})", "pPagamentos");
+        p(formataMoeda2($valorTotal[0]), "pvalorTotalPositivo");
+        p("(" . formataMoeda2($valorTotal[1]) . " / {$valorTotal[2]})", "pPagamentos");
         $painel->fecha();
     }
 
@@ -248,28 +292,35 @@ class Pagamento {
             return;
         }
 
-        titulo("Valor Liquidado Por Natureza");
-
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
         # Monta o select
-        $select = "SELECT concat(natureza,' ',IFnull(codigo,'')), SUM(valor) as jj
+        $select = "SELECT distinct idNatureza, natureza
                      FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
-                    WHERE idContrato = {$idContrato}
-                 GROUP BY natureza   
-                 ORDER BY 2 desc ";
+                    WHERE idContrato = {$idContrato} and idNatureza IS NOT NULL
+                 ORDER BY natureza desc ";
 
-        $soma = $contratos->select($select);
+        $row = $contratos->select($select);
+        $numPgtos = $contratos->count($select);
+        $resultado[] = [null, $this->getValorLiquidado($idContrato, 0)];
+        
+        # Percorre o array
+        if ($numPgtos > 0) {
+            foreach ($row as $item) {
+                $resultado[] = [$item["natureza"], $this->getValorLiquidado($idContrato, $item["idNatureza"])];
+            }
+        }
 
         # Exemplo de tabela simples
         $tabela = new Tabela();
-        $tabela->set_conteudo($soma);
-        $tabela->set_label(array("Natureza", "Valor (R$)"));
+        $tabela->set_titulo("Valor Liquidado Por Natureza");
+        $tabela->set_conteudo($resultado);
+        $tabela->set_label(array("Natureza", "Valor"));
         $tabela->set_width(array(70, 30));
         $tabela->set_align(array("left", "center"));
-        $tabela->set_funcao(array(null, "formataMoeda"));
-        $tabela->set_rodape("Total: R$ " . formataMoeda($this->getValorLiquidado($idContrato)));
+        $tabela->set_funcao(array(null, "formataMoeda2"));
+        $tabela->set_rodape("Total: " . formataMoeda2($this->getValorLiquidado($idContrato)));
         $tabela->show();
     }
 
@@ -320,5 +371,30 @@ class Pagamento {
         return $contratos->count($select);
     }
 
-    ############################################################
+    ###########################################################
+
+    public function exibeValor($idPagamento = null) {
+
+        # Verifica se foi informado o id
+        if (vazio($idPagamento)) {
+            alert("É necessário informar o id do Pgto.");
+            return;
+        }
+
+        # Pega os dados
+        $conteudo = $this->getDados($idPagamento);
+
+        # Valor
+        if (empty($conteudo["valor"])) {
+            p("----", "p#pvalorNulo");
+        } else {
+            if ($conteudo["valorNegativo"]) {
+                p("- " . formataMoeda2($conteudo['valor']), "pvalorNegativo");
+            } else {
+                p(formataMoeda2($conteudo['valor']), "pvalorPositivo");
+            }
+        }
+    }
+
+    ##########################################################################################
 }

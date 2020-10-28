@@ -61,13 +61,13 @@ if ($acesso) {
                                      idPagamento,
                                      data,
                                      notaFiscal,
-                                     valor,
+                                     idPagamento,
                                      natureza,
                                      tbpagamento.obs,
                                      idPagamento
                                 FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
                                WHERE idContrato = {$idContrato}
-                            ORDER BY anoReferencia, mesReferencia, data");
+                            ORDER BY anoReferencia desc, mesReferencia desc, data desc");
 
     # select do edita
     $objeto->set_selectEdita("SELECT data,
@@ -75,6 +75,7 @@ if ($acesso) {
                                      mesReferencia,
                                      anoReferencia,
                                      valor,
+                                     valorNegativo,
                                      idNatureza,
                                      obs,
                                      idContrato
@@ -92,12 +93,13 @@ if ($acesso) {
 
     # Parametros da tabela
     $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Natureza", "Obs"));
-    $objeto->set_align(array("center", "center", "center", "center", "right", "center", "lef"));
-    $objeto->set_width(array(10, 15, 15, 15, 12, 13, 20));
-    $objeto->set_funcao(array(null, null, "date_to_php", null, "formataMoeda"));
-    $objeto->set_classe(array(null, "Pagamento"));
-    $objeto->set_metodo(array(null, "exibeReferencia"));
+    $objeto->set_align(array("center", "center", "center", "center", "right", "center", "left"));
+    #$objeto->set_width(array(10, 15, 15, 15, 12, 13, 20));
+    $objeto->set_funcao(array(null, null, "date_to_php"));
+    $objeto->set_classe(array(null, "Pagamento", null, null, "Pagamento"));
+    $objeto->set_metodo(array(null, "exibeReferencia", null, null, "exibeValor"));
     $objeto->set_numeroOrdem(true);
+    $objeto->set_numeroOrdemTipo('d');
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -141,6 +143,7 @@ if ($acesso) {
             'nome' => 'notaFiscal',
             'label' => 'Nota Fiscal:',
             'tipo' => 'texto',
+            'required' => true,
             'col' => 3,
             'size' => 30),
         array(
@@ -168,6 +171,13 @@ if ($acesso) {
             'tipo' => 'moeda',
             'col' => 3,
             'size' => 15),
+        array(
+            'linha' => 1,
+            'nome' => 'valorNegativo',
+            'label' => 'Negativo?',
+            'tipo' => 'simnao',
+            'col' => 3,
+            'size' => 3),
         array(
             'linha' => 1,
             'nome' => 'idNatureza',
@@ -227,13 +237,13 @@ if ($acesso) {
             $menu1->add_link($linkVoltar, "left");
 
             $menu1->show();
-            
+
             tituloTable("Valor Liquidado Agrupado pela Natureza da Despesa");
             br();
-            
+
             $grid1->fechaColuna();
             $grid1->fechaGrid();
-            
+
             $grid1 = new Grid("center");
             $grid1->abreColuna(6);
 
