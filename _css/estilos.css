@@ -498,3 +498,11 @@ a#porNatureza{
     color: blue;
     float:right;
 }
+
+p#pvalorTipo3{
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+    color:darkorchid;
+    font-weight: bold;
+}

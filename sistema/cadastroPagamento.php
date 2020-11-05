@@ -61,7 +61,12 @@ if ($acesso) {
                                      idPagamento,
                                      data,
                                      notaFiscal,
-                                     idPagamento,
+                                     idPagamento,                                     
+                                     CASE
+                                        WHEN tipo = 1 THEN 'Pgto'
+                                        WHEN tipo = 2 THEN 'Estorno'
+                                        WHEN tipo = 3 THEN 'SRA'
+                                     END,
                                      natureza,
                                      tbpagamento.obs,
                                      idPagamento
@@ -71,11 +76,11 @@ if ($acesso) {
 
     # select do edita
     $objeto->set_selectEdita("SELECT data,
-                                     notaFiscal,
+                                     notaFiscal,                                     
                                      mesReferencia,
                                      anoReferencia,
                                      valor,
-                                     valorNegativo,
+                                     tipo,
                                      idNatureza,
                                      obs,
                                      idContrato
@@ -92,8 +97,8 @@ if ($acesso) {
     $objeto->set_grupoCorColuna(0);
 
     # Parametros da tabela
-    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Natureza", "Obs"));
-    $objeto->set_align(array("center", "center", "center", "center", "right", "center", "left"));
+    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Obs"));
+    $objeto->set_align(array("center", "center", "center", "center", "right", "center", "center", "left"));
     #$objeto->set_width(array(10, 15, 15, 15, 12, 13, 20));
     $objeto->set_funcao(array(null, null, "date_to_php"));
     $objeto->set_classe(array(null, "Pagamento", null, null, "Pagamento"));
@@ -152,6 +157,7 @@ if ($acesso) {
             'label' => 'Mês Referência:',
             'tipo' => 'combo',
             'padrao' => date('m'),
+            'required' => true,
             'array' => $mes,
             'col' => 3,
             'size' => 5),
@@ -159,27 +165,32 @@ if ($acesso) {
             'linha' => 1,
             'nome' => 'anoReferencia',
             'label' => 'Ano Referência:',
+            'required' => true,
             'tipo' => 'combo',
             'padrao' => date('Y'),
             'array' => $anoReferencia,
             'col' => 3,
             'size' => 5),
         array(
-            'linha' => 1,
+            'linha' => 2,
             'nome' => 'valor',
-            'label' => 'Valor: (se houver)',
+            'label' => 'Valor:',
             'tipo' => 'moeda',
+            'required' => true,
             'col' => 3,
             'size' => 15),
         array(
-            'linha' => 1,
-            'nome' => 'valorNegativo',
-            'label' => 'Negativo?',
-            'tipo' => 'simnao',
+            'linha' => 2,
+            'nome' => 'tipo',
+            'label' => 'Tipo',
+            'tipo' => 'combo',
+            'required' => true,
+            'padrao' => 1,
+            'array' => [[1, "Pagamento"], [2, "Estorno"], [3, "Saldo Residual Anulado"]],
             'col' => 3,
             'size' => 3),
         array(
-            'linha' => 1,
+            'linha' => 2,
             'nome' => 'idNatureza',
             'label' => 'Natureza:',
             'tipo' => 'combo',
@@ -187,13 +198,13 @@ if ($acesso) {
             'col' => 3,
             'size' => 100),
         array(
-            'linha' => 2,
+            'linha' => 4,
             'nome' => 'obs',
             'label' => 'Observação:',
             'tipo' => 'textarea',
             'size' => array(80, 5)),
         array(
-            "linha" => 3,
+            "linha" => 5,
             "nome" => "idContrato",
             "label" => "idContrato:",
             'tipo' => 'hidden',

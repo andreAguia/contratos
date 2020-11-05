@@ -62,12 +62,12 @@ class Pagamento {
         $contratos = new Contratos();
 
         if (is_null($idNatureza)) {
-            $select = "SELECT valor, valorNegativo FROM tbpagamento WHERE idContrato = {$idContrato}";
+            $select = "SELECT valor, tipo FROM tbpagamento WHERE idContrato = {$idContrato}";
         } else {
             if ($idNatureza == 0) {
-                $select = "SELECT valor, valorNegativo FROM tbpagamento WHERE idContrato = {$idContrato} and idNatureza IS NULL";
+                $select = "SELECT valor, tipo FROM tbpagamento WHERE idContrato = {$idContrato} and idNatureza IS NULL";
             } else {
-                $select = "SELECT valor, valorNegativo FROM tbpagamento WHERE idContrato = {$idContrato} and idNatureza = {$idNatureza}";
+                $select = "SELECT valor, tipo FROM tbpagamento WHERE idContrato = {$idContrato} and idNatureza = {$idNatureza}";
             }
         }
         $row = $contratos->select($select);
@@ -76,11 +76,11 @@ class Pagamento {
         # Verifica se tem algum aditivo
         if ($numPgtos > 0) {
             foreach ($row as $item) {
-                if ($item["valorNegativo"]) {
-                    $valorTotal -= $item["valor"];
-                } else {
-                    $valorTotal += $item["valor"];
-                }
+                if ($item["tipo"] == 2) {
+                    $valorTotal -= $item["valor"];  // Diminui Quando é estorno
+                } elseif ($item["tipo"] == 1) {
+                    $valorTotal += $item["valor"];  // /aumenta quando é pgto
+                }   // Desconsidera o SRA
             }
         }
 
@@ -97,9 +97,15 @@ class Pagamento {
         }
 
         $contrato = new Contrato();
-        $valorTotal = $contrato->getValorTotal($idContrato);
-        $valorLiquidado = $this->getValorLiquidado($idContrato);
-        return $valorTotal - $valorLiquidado;
+        $valorTotal = $contrato->getValorTotal($idContrato);        // Valor Total
+        $valorLiquidado = $this->getValorLiquidado($idContrato);    // Valor Liqwuidado (Pago)
+        # Verifica se tem Sra
+        if ($this->temSra($idContrato)) {
+            $sra = $this->getSra($idContrato);
+            return $valorTotal - $valorLiquidado - $sra;
+        } else {
+            return $valorTotal - $valorLiquidado;
+        }
     }
 
     ###########################################################
@@ -122,6 +128,7 @@ class Pagamento {
 
         p(formataMoeda2($valorTotal), "pvalorTotalPositivo");
 
+        # Verifica se tem lançamento discriminando natureza. Se tem exibe o link para exibir por natureza
         if ($this->temNatureza($idContrato)) {
             $link = new Link("por Natureza", "?fase=porNatureza&id={$idContrato}", "Detalha os pagamanto pela natureza do gasto");
             $link->set_id("porNatureza");
@@ -153,6 +160,14 @@ class Pagamento {
         } else {
             p(formataMoeda2($valorSaldo), "pvalorTotalNegativo");
         }
+
+        # Verifica se ter SRA Se tiver exibe informação
+        if ($this->temSra($idContrato)) {
+            $link = new Link("Considerando o SRA", "#", "O Saldo foi reduzido pelo Saldo Residual Anulado");
+            $link->set_id("porNatureza");
+            $link->show();
+        }
+
         $painel->fecha();
     }
 
@@ -191,19 +206,22 @@ class Pagamento {
             return [null, null, "0)<br>(Não há saldo a ser pago!"];
         }
 
+        # Verifica se tem algum mês pago. Se não tem o valor é false
+        # Pega o ano
         if (!$ultimoMesPago) {
             $anoPago = year($dtInicial);
         } else {
             $anoPago = $ultimoMesPago["anoReferencia"];
         }
 
+        # Pega o mês
         if (!$ultimoMesPago) {
             $mesPago = month($dtInicial);
         } else {
             $mesPago = $ultimoMesPago["mesReferencia"];
         }
 
-        # Pega a vigencia
+        # Pega a vigencia (Data de término do contrato)
         $vigencia = $contrato->getVigencia($idContrato);
         $anoVigencia = year($vigencia);
         $mesVigencia = month($vigencia);
@@ -234,7 +252,14 @@ class Pagamento {
                 $parcelas
             ];
         } else {
-            return [null, null, null];
+            # Quando não temos menos de 1 mês para a vigência
+            # Dai temos 2 situações:
+            # Se temos saldo ainda
+            if ($saldo > 0) {
+                return [$saldo, $saldo, "1)<br/>(Contrato terminando e ainda existe saldo!!"];
+            } else {
+                return [null, null, null];
+            }
         }
     }
 
@@ -257,6 +282,7 @@ class Pagamento {
                     WHERE idContrato = {$idContrato}
                     ORDER BY anoReferencia desc, mesReferencia desc LIMIT 1";
 
+        # Caso não tiver nenhum mês retorna false (comportamento normal do pdo)
         $ultimo = $contratos->select($select, false);
         return $ultimo;
     }
@@ -304,7 +330,7 @@ class Pagamento {
         $row = $contratos->select($select);
         $numPgtos = $contratos->count($select);
         $resultado[] = [null, $this->getValorLiquidado($idContrato, 0)];
-        
+
         # Percorre o array
         if ($numPgtos > 0) {
             foreach ($row as $item) {
@@ -388,13 +414,62 @@ class Pagamento {
         if (empty($conteudo["valor"])) {
             p("----", "p#pvalorNulo");
         } else {
-            if ($conteudo["valorNegativo"]) {
+            if ($conteudo["tipo"] == 2) {
                 p("- " . formataMoeda2($conteudo['valor']), "pvalorNegativo");
-            } else {
+            } elseif ($conteudo["tipo"] == 1) {
                 p(formataMoeda2($conteudo['valor']), "pvalorPositivo");
+            } else {
+                p(formataMoeda2($conteudo['valor']), "pvalorTipo3");
             }
         }
     }
 
-    ##########################################################################################
+    ###########################################################
+    /*
+     * Verifica se tem algum SRA nos lançamentos
+     */
+
+    public function temSra($idContrato = null) {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Monta o select
+        $select = "SELECT idPagamento
+                     FROM tbpagamento 
+                    WHERE idContrato = {$idContrato}
+                      AND tipo = 3";
+
+        $soma = $contratos->count($select);
+
+        if ($soma > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    ############################################################
+
+    private function getSra($idContrato = null) {
+        # Verifica se foi informado o id
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Pega os valores dos pgtos
+        $contratos = new Contratos();
+        $select = "SELECT SUM(valor) as total FROM tbpagamento WHERE idContrato = {$idContrato} AND tipo = 3";
+        $row = $contratos->select($select, false);
+
+        return $row['total'];
+    }
+
 }
