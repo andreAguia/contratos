@@ -62,11 +62,7 @@ if ($acesso) {
                                      data,
                                      notaFiscal,
                                      idPagamento,                                     
-                                     CASE
-                                        WHEN tipo = 1 THEN 'Pgto'
-                                        WHEN tipo = 2 THEN 'Estorno'
-                                        WHEN tipo = 3 THEN 'SRA'
-                                     END,
+                                     tipo,
                                      natureza,
                                      tbpagamento.obs,
                                      idPagamento
@@ -101,8 +97,8 @@ if ($acesso) {
     $objeto->set_align(array("center", "center", "center", "center", "right", "center", "center", "left"));
     #$objeto->set_width(array(10, 15, 15, 15, 12, 13, 20));
     $objeto->set_funcao(array(null, null, "date_to_php"));
-    $objeto->set_classe(array(null, "Pagamento", null, null, "Pagamento"));
-    $objeto->set_metodo(array(null, "exibeReferencia", null, null, "exibeValor"));
+    $objeto->set_classe(array(null, "Pagamento", null, null, "Pagamento", "Pagamento"));
+    $objeto->set_metodo(array(null, "exibeReferencia", null, null, "exibeValor", "exibeTipo"));
     $objeto->set_numeroOrdem(true);
     $objeto->set_numeroOrdemTipo('d');
 

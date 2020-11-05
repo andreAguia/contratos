@@ -472,4 +472,24 @@ class Pagamento {
         return $row['total'];
     }
 
+    ############################################################
+
+    public function exibeTipo($tipo = null) {
+
+        switch ($tipo) {
+            case 1:
+                p("Pgto", "pvalorPositivo", null, "Pagamento normal da nota fiscal");
+                break;
+
+            case 2:
+                p("Estorno", "pvalorNegativo", null, "Estorno de pagamento");
+                break;
+
+            case 3:
+                p("SRA", "pvalorTipo3", null, "Saldo Residual Anulado");
+                break;
+        }
+    }
+
+    ############################################################
 }
