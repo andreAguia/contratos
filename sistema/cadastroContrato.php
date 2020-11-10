@@ -425,7 +425,7 @@ if ($acesso) {
             'linha' => 6,
             'nome' => 'prazo',
             'label' => 'Prazo:',
-            'tipo' => 'texto',
+            'tipo' => 'numero',
             'col' => 2,
             'size' => 15,
         ),

@@ -16,9 +16,9 @@ $acesso = Verifica::acesso($idUsuario, 9);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra    = new Intra();
+    $intra = new Intra();
     $contrato = new Contrato();
-    $pessoal  = new Pessoal();
+    $pessoal = new Pessoal();
     $comissao = new Comissao();
 
     # Verifica a fase do programa
@@ -66,7 +66,7 @@ if ($acesso) {
         $menu->add_link($linkBotao2, "right");
 
         # Relatório
-        $imagem   = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+        $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
         $botaoRel = new Button();
         $botaoRel->set_imagem($imagem);
         $botaoRel->set_title("Imprimir Relatório de Histórico de Processo de readaptação");
@@ -217,16 +217,16 @@ if ($acesso) {
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
-            'linha'    => 1,
-            'nome'     => 'idServidor',
-            'label'    => 'Servidor:',
-            'tipo'     => 'combo',
-            'array'    => $membro,
-            'title'    => 'Servidor membro da comissão',
-            'col'      => 9,
-            'required' => true,
+            'linha'     => 1,
+            'nome'      => 'idServidor',
+            'label'     => 'Servidor:',
+            'tipo'      => 'combo',
+            'array'     => $membro,
+            'title'     => 'Servidor membro da comissão',
+            'col'       => 9,
+            'required'  => true,
             "autofocus" => true,
-            'size'     => 30),
+            'size'      => 30),
         array(
             'linha'  => 1,
             'nome'   => 'tipo',
@@ -270,13 +270,13 @@ if ($acesso) {
             'padrao' => date_to_bd($comissao->getUltimaDataPublicacaoEntrada($idContrato)),
             'size'   => 15),
         array(
-            'linha' => 3,
-            'nome'  => 'pgPublicacaoEntrada',
-            'label' => 'Página:',
-            'tipo'  => 'texto',
-            'col'   => 2,
+            'linha'  => 3,
+            'nome'   => 'pgPublicacaoEntrada',
+            'label'  => 'Página:',
+            'tipo'   => 'texto',
+            'col'    => 2,
             'padrao' => $comissao->getUltimaPgPublicacaoEntrada($idContrato),
-            'size'  => 10),
+            'size'   => 10),
         array(
             'linha' => 4,
             'nome'  => 'portariaSaida',
@@ -373,7 +373,7 @@ if ($acesso) {
         case "gravar":
             $objeto->gravar($id, null, "cadastroComissaoPosGravacao.php");
             break;
-        
+
         case "cadastroProcesso":
 
             botaoVoltar("?");
@@ -436,7 +436,7 @@ if ($acesso) {
 
             # Pega os dados digitados
             $processoComissaoSei = post("processoComissaoSei");
-            $processoComissao    = post("processoComissao");
+            $processoComissao = post("processoComissao");
 
             # Pega os valores anteriores
             $conteudo = $contrato->getDados($idContrato);
@@ -451,28 +451,28 @@ if ($acesso) {
                     $idContrato);
 
             # Registra o log
-            $intra     = new Intra();
-            $data      = date("Y-m-d H:i:s");
+            $intra = new Intra();
+            $data = date("Y-m-d H:i:s");
             $atividade = "Alterou: ";
-            $alterou   = false;
+            $alterou = false;
 
             if ($conteudo["processoComissaoSei"] <> $processoComissaoSei) {
                 $atividade .= "[processoComissaoSei] {$conteudo["processoComissaoSei"]} -> {$processoComissaoSei}; ";
-                $alterou   = true;
+                $alterou = true;
             }
 
             if ($conteudo["processoComissao"] <> $processoComissao) {
                 $atividade .= "[processoComissao] {$conteudo["processoComissao"]} -> {$processoComissao}; ";
-                $alterou   = true;
+                $alterou = true;
             }
 
             if ($alterou) {
                 $intra->registraLog($idUsuario,
-                                    $data,
-                                    $atividade,
-                                    "tbcontrato",
-                                    $idContrato,
-                                    2);
+                        $data,
+                        $atividade,
+                        "tbcontrato",
+                        $idContrato,
+                        2);
             }
             loadPage("?");
             break;

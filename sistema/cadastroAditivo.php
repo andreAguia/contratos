@@ -173,6 +173,7 @@ if ($acesso) {
             'label' => 'Tipo:',
             'tipo' => 'combo',
             'required' => true,
+            'autofocus' => true,
             'array' => array([1, "Aditivo"], [2, "Apostila"]),
             'col' => 3,
             'size' => 15),
@@ -246,7 +247,7 @@ if ($acesso) {
             'linha' => 5,
             'nome' => 'prazo',
             'label' => 'Prazo:',
-            'tipo' => 'texto',
+            'tipo' => 'numero',
             'col' => 2,
             'size' => 15),
         array(
