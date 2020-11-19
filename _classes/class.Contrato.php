@@ -129,6 +129,10 @@ class Contrato
         if (!empty($conteudo['siafe'])) {
             p("Siafe: {$conteudo['siafe']}", "pVigencia");
         }
+        
+        if (!empty($conteudo['rubrica'])) {
+            p("Rubrica:: {$conteudo['rubrica']}", "pVigencia");
+        }
 
         p($this->exibeModalidade($idContrato), "pVigencia");
 
