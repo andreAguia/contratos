@@ -310,6 +310,11 @@ p#versao{
     margin: 0px;
 }
 
+hr#hrMenusecundario{
+    margin-top: 0px;
+    margin-bottom: 10px;
+}
+
 /*******************************************
  * Alertas
  *******************************************/

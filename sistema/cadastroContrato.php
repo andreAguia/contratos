@@ -510,8 +510,14 @@ if ($acesso) {
              */
 
             if (Verifica::acesso($idUsuario, 9)) {
-
+                hr("hrMenusecundario");
                 $menu2 = new MenuBar();
+                
+                # Checklist
+                $botao = new Button("Checklist", "cadastroChecklist.php");
+                $botao->set_title("Modelos de Checklist");
+                $botao->set_class("button");
+                $menu2->add_link($botao, "left");
 
                 # Empresas
                 $botao = new Button("Empresas", "cadastroEmpresa.php");
