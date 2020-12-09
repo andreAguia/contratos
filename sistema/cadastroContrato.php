@@ -265,194 +265,194 @@ if ($acesso) {
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
-            'linha'     => 1,
-            'nome'      => 'numero',
-            'label'     => 'Número:',
-            'tipo'      => 'texto',
-            'required'  => true,
-            'unique'    => true,
+            'linha' => 1,
+            'nome' => 'numero',
+            'label' => 'Número:',
+            'tipo' => 'texto',
+            'required' => true,
+            'unique' => true,
             'autofocus' => true,
-            'col'       => 3,
-            'size'      => 10,
-            'padrao'    => $contrato->getNovoNumeroContrato(),
-        ),
-        array(
-            'linha'    => 1,
-            'nome'     => 'idModalidade',
-            'label'    => 'Modalidade:',
-            'tipo'     => 'combo',
-            'required' => true,
-            'array'    => $modalidade,
-            'col'      => 3,
-            'size'     => 15,
+            'col' => 3,
+            'size' => 10,
+            'padrao' => $contrato->getNovoNumeroContrato(),
         ),
         array(
             'linha' => 1,
-            'nome'  => 'numPregao',
+            'nome' => 'idModalidade',
+            'label' => 'Modalidade:',
+            'tipo' => 'combo',
+            'required' => true,
+            'array' => $modalidade,
+            'col' => 3,
+            'size' => 15,
+        ),
+        array(
+            'linha' => 1,
+            'nome' => 'numPregao',
             'label' => 'Num.Pregão:',
-            'tipo'  => 'texto',
-            'col'   => 2,
-            'size'  => 9,
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 9,
         ),
         array(
             'linha' => 1,
-            'nome'  => 'siafe',
+            'nome' => 'siafe',
             'label' => 'Siafe:',
-            'tipo'  => 'texto',
-            'col'   => 2,
-            'size'  => 15,
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 15,
         ),
         array(
-            'linha'    => 1,
-            'nome'     => 'idStatus',
-            'label'    => 'Status:',
-            'tipo'     => 'combo',
-            'array'    => $status,
+            'linha' => 1,
+            'nome' => 'idStatus',
+            'label' => 'Status:',
+            'tipo' => 'combo',
+            'array' => $status,
             'required' => true,
-            'col'      => 2,
-            'size'     => 30,
-            'padrao'   => 1
+            'col' => 2,
+            'size' => 30,
+            'padrao' => 1
         ),
         array(
             'linha' => 2,
-            'nome'  => 'dtProposta',
+            'nome' => 'dtProposta',
             'label' => 'Proposta:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15,
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15,
         ),
         array(
             'linha' => 2,
-            'nome'  => 'dtAssinatura',
+            'nome' => 'dtAssinatura',
             'label' => 'Assinatura:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15,
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15,
         ),
         array(
-            'linha'    => 2,
-            'nome'     => 'idEmpresa',
-            'label'    => 'Empresa:',
-            'tipo'     => 'combo',
-            'array'    => $empresa,
+            'linha' => 2,
+            'nome' => 'idEmpresa',
+            'label' => 'Empresa:',
+            'tipo' => 'combo',
+            'array' => $empresa,
             'required' => true,
-            'col'      => 6,
-            'size'     => 200,
-            'padrao'   => $inclusaoEmpresa,
+            'col' => 6,
+            'size' => 200,
+            'padrao' => $inclusaoEmpresa,
         ),
         array(
             'linha' => 3,
-            'nome'  => 'objeto',
+            'nome' => 'objeto',
             'label' => 'Objeto:',
-            'tipo'  => 'texto',
-            'col'   => 10,
-            'size'  => 250,
+            'tipo' => 'texto',
+            'col' => 10,
+            'size' => 250,
         ),
         array(
-            'linha'  => 3,
-            'nome'   => 'maoDeObra',
-            'label'  => 'Mão de Obra Alocada:',
-            'tipo'   => 'simnao',
-            'title'  => 'Informa se o contrato tem ou não mão de obra alocada na UENF.',
-            'col'    => 2,
-            'size'   => 5,
+            'linha' => 3,
+            'nome' => 'maoDeObra',
+            'label' => 'Mão de Obra Alocada:',
+            'tipo' => 'simnao',
+            'title' => 'Informa se o contrato tem ou não mão de obra alocada na UENF.',
+            'col' => 2,
+            'size' => 5,
             'padrao' => 0
         ),
         array(
             'linha' => 5,
-            'nome'  => 'processoSei',
+            'nome' => 'processoSei',
             'label' => 'Processo Sei:',
-            'tipo'  => 'sei',
-            'col'   => 4,
-            'size'  => 50,
+            'tipo' => 'sei',
+            'col' => 4,
+            'size' => 50,
         ),
         array(
             'linha' => 5,
-            'nome'  => 'processo',
+            'nome' => 'processo',
             'label' => 'Processo Físico:',
-            'tipo'  => 'processo',
-            'col'   => 4,
-            'size'  => 50,
+            'tipo' => 'processo',
+            'col' => 4,
+            'size' => 50,
         ),
         array(
             'linha' => 5,
-            'nome'  => 'processoExecucao',
+            'nome' => 'processoExecucao',
             'label' => 'Processo de Execução:',
-            'tipo'  => 'sei',
-            'col'   => 4,
-            'size'  => 50,
+            'tipo' => 'sei',
+            'col' => 4,
+            'size' => 50,
         ),
         array(
             'linha' => 6,
-            'nome'  => 'valor',
+            'nome' => 'valor',
             'label' => 'Valor:',
-            'tipo'  => 'moeda',
-            'col'   => 3,
-            'size'  => 15,
+            'tipo' => 'moeda',
+            'col' => 3,
+            'size' => 15,
         ),
         array(
             'linha' => 6,
-            'nome'  => 'garantia',
+            'nome' => 'garantia',
             'label' => 'Garantia: (se houver)',
-            'tipo'  => 'percentagem',
-            'col'   => 2,
-            'size'  => 5,
+            'tipo' => 'percentagem',
+            'col' => 2,
+            'size' => 5,
         ),
         array(
             'linha' => 6,
-            'nome'  => 'dtPublicacao',
+            'nome' => 'dtPublicacao',
             'label' => 'Publicação:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15,
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15,
         ),
         array(
             'linha' => 6,
-            'nome'  => 'pgPublicacao',
+            'nome' => 'pgPublicacao',
             'label' => 'Pag:',
-            'tipo'  => 'texto',
-            'col'   => 2,
-            'size'  => 10,
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 10,
         ),
         array(
             'linha' => 7,
-            'nome'  => 'dtInicial',
+            'nome' => 'dtInicial',
             'label' => 'Data Inicial:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15,
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15,
         ),
         array(
             'linha' => 7,
-            'nome'  => 'prazo',
+            'nome' => 'prazo',
             'label' => 'Prazo:',
-            'tipo'  => 'numero',
-            'col'   => 2,
-            'size'  => 15,
+            'tipo' => 'numero',
+            'col' => 2,
+            'size' => 15,
         ),
         array(
             'linha' => 7,
-            'nome'  => 'tipoPrazo',
+            'nome' => 'tipoPrazo',
             'label' => 'Tipo:',
-            'tipo'  => 'combo',
+            'tipo' => 'combo',
             'array' => $tipo,
-            'col'   => 2,
-            'size'  => 15,
+            'col' => 2,
+            'size' => 15,
         ),
         array(
             'linha' => 7,
-            'nome'  => 'rubrica',
+            'nome' => 'rubrica',
             'label' => 'Rubrica:',
-            'tipo'  => 'texto',
-            'col'   => 3,
-            'size'  => 20,
+            'tipo' => 'texto',
+            'col' => 3,
+            'size' => 20,
         ),
         array(
             'linha' => 8,
-            'nome'  => 'obs',
+            'nome' => 'obs',
             'label' => 'Observação:',
-            'tipo'  => 'textarea',
-            'size'  => array(80, 3),
+            'tipo' => 'textarea',
+            'size' => array(80, 3),
         ),
     ));
 
@@ -486,16 +486,16 @@ if ($acesso) {
             $botaoVoltar->set_title('Voltar a página anterior');
             $botaoVoltar->set_accessKey('V');
             $menu1->add_link($botaoVoltar, "left");
-
+            
+            # Relatórios
+            $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+            $botaoRel = new Button();
+            $botaoRel->set_title("Área de Relatório");
+            $botaoRel->set_url("relatorios.php");
+            $botaoRel->set_imagem($imagem);
+            $menu1->add_link($botaoRel, "right");
+            
             if (Verifica::acesso($idUsuario, 9)) {
-
-                # Relatórios
-                $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
-                $botaoRel = new Button();
-                $botaoRel->set_title("Área de Relatório");
-                $botaoRel->set_url("relatorios.php");
-                $botaoRel->set_imagem($imagem);
-                $menu1->add_link($botaoRel, "right");
 
                 # Incluir
                 $botaoInserir = new Button("Incluir Contrato", "?fase=incluir");
@@ -512,7 +512,7 @@ if ($acesso) {
             if (Verifica::acesso($idUsuario, 9)) {
                 hr("hrMenusecundario");
                 $menu2 = new MenuBar();
-                
+
                 # Checklist
                 $botao = new Button("Checklist", "cadastroChecklist.php");
                 $botao->set_title("Modelos de Checklist");
@@ -652,7 +652,7 @@ if ($acesso) {
 
             $grid->fechaColuna();
             $grid->fechaGrid();
-            
+
             $objeto->listar();
 
             # Exibe o rodapé

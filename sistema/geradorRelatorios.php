@@ -42,7 +42,7 @@ $parametroEmpresa = post('parametroEmpresa');
 $parametroMaoDeObra = post('parametroMaoDeObra');
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, 9);
+$acesso = Verifica::acesso($idUsuario, [9, 10]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
