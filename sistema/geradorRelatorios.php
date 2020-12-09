@@ -301,7 +301,7 @@ if ($acesso) {
     $comboAno = $contratos->select('SELECT DISTINCT YEAR(dtAssinatura), YEAR(dtAssinatura)
                                                   FROM tbcontrato
                                                  WHERE dtAssinatura IS NOT NULL
-                                              ORDER BY YEAR(dtAssinatura)');
+                                              ORDER BY YEAR(dtAssinatura) DESC');
 
     array_unshift($comboAno, array(null, "Todos"));
 

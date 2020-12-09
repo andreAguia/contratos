@@ -510,14 +510,8 @@ if ($acesso) {
              */
 
             if (Verifica::acesso($idUsuario, 9)) {
-                hr("hrMenusecundario");
-                $menu2 = new MenuBar();
-
-                # Checklist
-                $botao = new Button("Checklist", "cadastroChecklist.php");
-                $botao->set_title("Modelos de Checklist");
-                $botao->set_class("button");
-                $menu2->add_link($botao, "left");
+                #hr("hrMenusecundario");
+                $menu2 = new MenuBar();                
 
                 # Empresas
                 $botao = new Button("Empresas", "cadastroEmpresa.php");
@@ -548,6 +542,12 @@ if ($acesso) {
                 $botao->set_title("Cadastro de Natureza");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");
+                
+                # Checklist
+                $botao = new Button("Checklist", "cadastroChecklist.php");
+                $botao->set_title("Modelos de Checklist");
+                $botao->set_class("button secondary");
+                #$menu2->add_link($botao, "right");
 
                 $menu2->show();
             }
@@ -563,7 +563,7 @@ if ($acesso) {
             $comboAno = $contratos->select('SELECT DISTINCT YEAR(dtAssinatura), YEAR(dtAssinatura)
                                                   FROM tbcontrato
                                                  WHERE dtAssinatura IS NOT NULL
-                                              ORDER BY YEAR(dtAssinatura)');
+                                              ORDER BY YEAR(dtAssinatura) DESC');
 
             array_unshift($comboAno, array(null, "Todos"));
 
