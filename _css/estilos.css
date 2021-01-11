@@ -511,3 +511,29 @@ p#pvalorTipo3{
     color:darkorchid;
     font-weight: bold;
 }
+/*******************************************
+* Folha de Rosto
+*******************************************/
+
+div#tituloFichaCadastral{
+    background-color: #e6e6e6;
+    font-weight: normal;
+    font-size: 12px;
+    text-align: left;
+    margin-top: 10px;
+    padding: 4px 2px 2px 10px;
+}
+
+p#pvalorTotalTexto{
+    font-size: 12px;
+    padding: 0px;
+    margin: 0px;
+    text-align: center;
+}
+
+p#pvalorTotalValor{
+    font-size: 16px;
+    padding: 0px;
+    margin: 0px;
+    text-align: center;
+}

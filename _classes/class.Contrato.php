@@ -1,7 +1,6 @@
 <?php
 
-class Contrato
-{
+class Contrato {
 
     /**
      * Abriga as várias rotina referentes a concurso
@@ -12,8 +11,7 @@ class Contrato
      */
 ##############################################################
 
-    public function __construct($idContrato = null)
-    {
+    public function __construct($idContrato = null) {
         /**
          * Inicia a Classe somente
          *
@@ -26,8 +24,7 @@ class Contrato
 
 ##############################################################
 
-    public function getDados($idContrato = null)
-    {
+    public function getDados($idContrato = null) {
 
         /**
          * Informa os dados da base de dados
@@ -61,8 +58,7 @@ class Contrato
 
     ##############################################################
 
-    public function getProcesso($idContrato = null, $br = true)
-    {
+    public function getProcesso($idContrato = null, $br = true) {
 
         /**
          * Informa os dados da base de dados
@@ -98,9 +94,9 @@ class Contrato
                 $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
             }
         }
-        
+
         # Verifica se tem processo de execução
-        if (!empty($conteudo["processoExecucao"])){
+        if (!empty($conteudo["processoExecucao"])) {
             if ($br) {
                 $processo .= "<br/>Exec: SEI - {$conteudo["processoExecucao"]}";
             } else {
@@ -113,8 +109,7 @@ class Contrato
 
     #####################################################################################
 
-    public function exibeNumeroContrato($idContrato)
-    {
+    public function exibeNumeroContrato($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -129,7 +124,7 @@ class Contrato
         if (!empty($conteudo['siafe'])) {
             p("Siafe: {$conteudo['siafe']}", "pVigencia");
         }
-        
+
         if (!empty($conteudo['rubrica'])) {
             p("Rubrica:: {$conteudo['rubrica']}", "pVigencia");
         }
@@ -154,8 +149,47 @@ class Contrato
 
     #####################################################################################
 
-    public function exibeNumeroContratoSimples($idContrato)
-    {
+    public function exibeNumeroContratoRel($idContrato) {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        $modalidade = new Modalidade();
+
+        p($conteudo["numero"], "contratoNumero");
+        if (!empty($conteudo['siafe'])) {
+            p("Siafe: {$conteudo['siafe']}", "pVigencia");
+        }
+
+        if (!empty($conteudo['rubrica'])) {
+            p("Rubrica: {$conteudo['rubrica']}", "pVigencia");
+        }
+
+        p($this->exibeModalidade($idContrato), "pVigencia");
+
+//        $status = $this->getStatus($idContrato);
+//
+//        if ($status == "Ativo") {
+//            $stilo = "statusAtivo";
+//        } elseif ($status == "Pendente") {
+//            $stilo = "statusPendente";
+//        } else {
+//            $stilo = "statusEncerrado";
+//        }
+//        p($status, "$stilo");
+
+        if ($conteudo["maoDeObra"]) {
+            p("Mão de Obra Alocada", "pVigencia");
+        }
+    }
+
+    #####################################################################################
+
+    public function exibeNumeroContratoSimples($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -169,8 +203,7 @@ class Contrato
 
     #####################################################################################
 
-    public function exibeNumeroSiafeRelatorio($idContrato)
-    {
+    public function exibeNumeroSiafeRelatorio($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -191,8 +224,7 @@ class Contrato
 
     ###########################################################
 
-    public function exibeStatus($idContrato)
-    {
+    public function exibeStatus($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -227,8 +259,7 @@ class Contrato
      *
      * @param    string $idContrato O id da vaga
      */
-    public function exibeDadosContrato($idContrato, $idUsuario)
-    {
+    public function exibeDadosContrato($idContrato, $idUsuario) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -271,8 +302,54 @@ class Contrato
 
     ###########################################################
 
-    public function exibeResumoDados($idContrato)
-    {
+    /**
+     * Método exibeDadosConcurso
+     * fornece os dados de uma vaga em forma de tabela
+     *
+     * @param    string $idContrato O id da vaga
+     */
+    public function exibeDadosContratoRel($idContrato) {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+        $conteudo = $this->getDados($idContrato);
+
+        $select = "SELECT idContrato,
+                          dtAssinatura,
+                          idContrato,
+                          idContrato
+                     FROM tbcontrato
+                    WHERE idContrato = {$idContrato}";
+
+        $contratos = new Contratos();
+        $row = $contratos->select($select);
+
+        tituloRelatorio("Contrato {$conteudo["numero"]}");
+
+        # Monta o Relatório
+        $relatorio = new Relatorio();
+        $relatorio->set_label(array("Publicação", "Assinatura", "Duração", "Valor"));
+        $relatorio->set_align(array("center", "center", "center", "center", "center", "right"));
+        #$relatorio->set_width(array(15, 25, 10, 10, 10, 15, 15));
+        $relatorio->set_classe(array("Contrato", null, "Contrato", "Contrato"));
+        $relatorio->set_metodo(array("getPublicacaoRel", null, "getPeriodo", "exibeValor"));
+        $relatorio->set_funcao(array(null, "date_to_php"));
+        $relatorio->set_conteudo($row);
+
+        $relatorio->set_subTotal(false);
+        $relatorio->set_totalRegistro(false);
+        $relatorio->set_dataImpressao(false);
+        $relatorio->set_cabecalhoRelatorio(false);
+        $relatorio->set_menuRelatorio(false);
+        $relatorio->show();
+    }
+
+    ###########################################################
+
+    public function exibeResumoDados($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -318,8 +395,50 @@ class Contrato
 
     ###########################################################
 
-    public function exibeTempoEVigencia($idContrato)
-    {
+    public function exibeResumoDadosRel($idContrato) {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $select = "SELECT idContrato, 
+                          idContrato,
+                          idEmpresa, 
+                          idContrato
+                    FROM tbcontrato
+                   WHERE idContrato = {$idContrato}";
+
+        $contratos = new Contratos();
+        $row = $contratos->select($select);
+
+        $empresa = new Empresa();
+
+        # Limita o tamanho da tela
+        $grid = new Grid();
+        $grid->abreColuna(12);
+
+        # Monta o Relatório
+        $relatorio = new Relatorio();
+        $relatorio->set_conteudo($row);
+        $relatorio->set_label(["Processo", "Objeto", "Empresa", "Vigência"]);
+        $relatorio->set_width([30, 30, 30, 10]);
+        #$relatorio->set_funcao($function);
+        $relatorio->set_classe(["Contrato", "Contrato", "Empresa", "Contrato"]);
+        $relatorio->set_metodo(["getProcesso", "exibeObjetoRel", "getEmpresaCnpj", "exibeVigencia"]);
+        $relatorio->set_totalRegistro(false);
+
+        $relatorio->set_subTotal(false);
+        $relatorio->set_totalRegistro(false);
+        $relatorio->set_dataImpressao(false);
+        $relatorio->set_cabecalhoRelatorio(false);
+        $relatorio->set_menuRelatorio(false);
+        $relatorio->show();
+    }
+
+    ###########################################################
+
+    public function exibeTempoEVigencia($idContrato) {
 
         # Pega os dados
         $dados = $this->getDados($idContrato);
@@ -360,8 +479,42 @@ class Contrato
 
     ###########################################################
 
-    public function exibeDuracao($idContrato)
-    {
+    public function exibeVigencia($idContrato) {
+
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+
+        # Verifica se tem data inicial
+        if (empty($dados["dtInicial"])) {
+            return null;
+        } else {
+
+            # Vigência
+            $vigencia = $this->getVigencia($idContrato);
+
+            # Verifica se a data já passou ou quantos dias faltam pra ela
+            if (!jaPassou($vigencia)) {
+                $diferenca = abs(dataDif($vigencia));
+            }
+
+            # Tempo Total
+            $tempo = $this->getTempoTotal($idContrato);
+
+            # Verifica se já passou de 60 meses
+            if ($tempo["meses"] >= 60) {
+                p("{$tempo["meses"]} Meses", "pTempoTotal60");
+            } else {
+                p("{$tempo["meses"]} Meses", "pTempoTotal");
+            }
+
+            # Exibe a vigência 
+            p($vigencia, "pVigencia");
+        }
+    }
+
+    ###########################################################
+
+    public function exibeDuracao($idContrato) {
 
         # Pega os dados
         $dados = $this->getDados($idContrato);
@@ -386,10 +539,9 @@ class Contrato
         }
     }
 
-     ###########################################################
+    ###########################################################
 
-    public function exibePeriodo($idContrato)
-    {
+    public function exibePeriodo($idContrato) {
 
         # Pega os dados
         $dados = $this->getDados($idContrato);
@@ -406,10 +558,9 @@ class Contrato
         }
     }
 
-     ###########################################################
+    ###########################################################
 
-    public function exibePrazo($idContrato)
-    {
+    public function exibePrazo($idContrato) {
 
         # Pega os dados
         $dados = $this->getDados($idContrato);
@@ -434,8 +585,7 @@ class Contrato
      * Retorna array com os meses e dias do tempo do contrato
      */
 
-    public function getTempoTotal($idContrato)
-    {
+    public function getTempoTotal($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -463,8 +613,7 @@ class Contrato
             $arrayAditivo = $aditivo->getAditivosContrato($idContrato);
 
             # Percorre o array
-            foreach ($arrayAditivo as $itemAditivo)
-            {
+            foreach ($arrayAditivo as $itemAditivo) {
                 if (!empty($itemAditivo["prazo"])) {
                     if ($itemAditivo["tipoPrazo"] == 2) {
                         $prazoMeses += $itemAditivo["prazo"];
@@ -485,8 +634,7 @@ class Contrato
 
     ###########################################################
 
-    public function getDtFinal($idContrato)
-    {
+    public function getDtFinal($idContrato) {
 
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
@@ -503,8 +651,7 @@ class Contrato
 
     ###########################################################
 
-    public function getDtInicial($idContrato)
-    {
+    public function getDtInicial($idContrato) {
 
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
@@ -524,8 +671,7 @@ class Contrato
      * Informa a vigência geral do contrato
      */
 
-    public function getVigencia($idContrato)
-    {
+    public function getVigencia($idContrato) {
 
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
@@ -542,8 +688,7 @@ class Contrato
             $arrayAditivo = $aditivo->getAditivosContrato($idContrato);
 
             # Percorre o array
-            foreach ($arrayAditivo as $itemAditivo)
-            {
+            foreach ($arrayAditivo as $itemAditivo) {
 
                 # Pega a vigência deste aditivo
                 $dtFinal = $aditivo->getDtFinal($itemAditivo["idAditivo"]);
@@ -560,8 +705,7 @@ class Contrato
 
     ###########################################################
 
-    public function getNumero($idContrato)
-    {
+    public function getNumero($idContrato) {
 
         # Verifica se foi informado o id
         if (!vazio($idContrato)) {
@@ -575,8 +719,7 @@ class Contrato
 
     ##############################################################
 
-    public function getStatus($idContrato = null)
-    {
+    public function getStatus($idContrato = null) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -602,8 +745,7 @@ class Contrato
 
     ##############################################################
 
-    public function exibeModalidade($idContrato = null)
-    {
+    public function exibeModalidade($idContrato = null) {
 
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -631,8 +773,7 @@ class Contrato
 
     #####################################################################################
 
-    public function getNovoNumeroContrato()
-    {
+    public function getNovoNumeroContrato() {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
@@ -672,8 +813,7 @@ class Contrato
 
     #####################################################################################
 
-    public function exibeValorTotalPainel($idContrato = null)
-    {
+    public function exibeValorTotalPainel($idContrato = null) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -698,8 +838,26 @@ class Contrato
 
     #####################################################################################
 
-    public function exibeValorTotal($idContrato = null)
-    {
+    public function exibeValorTotalRel($idContrato = null) {
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+        
+        # exibe o resultado
+        $painel = new Callout();
+        $painel->abre();
+
+        $valorTotal = $this->getValorTotal($idContrato);     
+        p("Valor Total:", "pvalorTotalTexto");
+        p("R$ " . formataMoeda($valorTotal), "pvalorTotalValor");
+
+        $painel->fecha();
+    }
+
+    #####################################################################################
+
+    public function exibeValorTotal($idContrato = null) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -717,8 +875,7 @@ class Contrato
 
     #####################################################################################
 
-    public function exibeValor($idContrato = null)
-    {
+    public function exibeValor($idContrato = null) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -743,8 +900,7 @@ class Contrato
 
         # Percorre os vinculados
         if (count($aditivosVinculados) > 0) {
-            foreach ($aditivosVinculados as $item)
-            {
+            foreach ($aditivosVinculados as $item) {
                 if (!empty($item["valor"])) {
 
                     if ($item["valorSinal"]) {
@@ -770,8 +926,7 @@ class Contrato
      * Informa a data de publicação mais a página ( se tiver) do Contrato
      */
 
-    public function exibePublicacao($idContrato = null)
-    {
+    public function exibePublicacao($idContrato = null) {
 
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
@@ -816,8 +971,7 @@ class Contrato
      * Informa a data de publicação mais a página ( se tiver) do Contrato
      */
 
-    public function getPublicacao($idContrato = null)
-    {
+    public function getPublicacao($idContrato = null) {
 
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
@@ -855,8 +1009,33 @@ class Contrato
      * Informa a data de publicação mais a página ( se tiver) do Contrato
      */
 
-    public function getDtPublicacao($idContrato = null)
-    {
+    public function getPublicacaoRel($idContrato = null) {
+
+        # Verifica se foi informado o id
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        # Publicação
+        p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
+
+        if (!empty($conteudo["pgPublicacao"])) {
+            p("pag: {$conteudo["pgPublicacao"]}", "pAditivoPag");
+        }
+
+
+        return;
+    }
+
+    ##########################################################
+    /*
+     * Informa a data de publicação mais a página ( se tiver) do Contrato
+     */
+
+    public function getDtPublicacao($idContrato = null) {
 
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
@@ -878,8 +1057,7 @@ class Contrato
 
     ###########################################################
 
-    function getPeriodo($idContrato = null)
-    {
+    function getPeriodo($idContrato = null) {
 
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
@@ -915,8 +1093,7 @@ class Contrato
 
     ###########################################################
 
-    function getGarantia($idContrato = null)
-    {
+    function getGarantia($idContrato = null) {
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -942,8 +1119,7 @@ class Contrato
 
     ###########################################################
 
-    function getValorTotal($idContrato = null)
-    {
+    function getValorTotal($idContrato = null) {
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -969,8 +1145,7 @@ class Contrato
 
         # Verifica se tem algum aditivo
         if ($numAditivos > 0) {
-            foreach ($row as $item)
-            {
+            foreach ($row as $item) {
                 if ($item["valorSinal"]) {
                     $valorTotal -= $item["valor"];
                 } else {
@@ -984,8 +1159,7 @@ class Contrato
 
     ###########################################################
 
-    function getValorUltimoAditivo($idContrato = null)
-    {
+    function getValorUltimoAditivo($idContrato = null) {
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -1015,8 +1189,7 @@ class Contrato
 
     ###########################################################
 
-    function exibeValorUltimoAditivo($idContrato = null)
-    {
+    function exibeValorUltimoAditivo($idContrato = null) {
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -1041,8 +1214,7 @@ class Contrato
      * 
      */
 
-    public function getAditivosVinculados($idContrato = null)
-    {
+    public function getAditivosVinculados($idContrato = null) {
         # Verifica se foi informado o id
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -1067,8 +1239,7 @@ class Contrato
 
     ##########################################################################################
 
-    public function exibeObjetoRelatorio($idContrato)
-    {
+    public function exibeObjetoRelatorio($idContrato) {
 
         $dados = $this->getDados($idContrato);
         p($dados["objeto"], "pComissaoImpressao");
@@ -1076,8 +1247,7 @@ class Contrato
 
     ##########################################################################################
 
-    public function exibeObjeto($idContrato)
-    {
+    public function exibeObjeto($idContrato) {
 
         # Pega os dados
         $dados = $this->getDados($idContrato);
@@ -1090,6 +1260,17 @@ class Contrato
             echo "&nbsp;&nbsp;";
             toolTip("(Obs)", $dados["obs"]);
         }
+    }
+
+    ##########################################################################################
+
+    public function exibeObjetoRel($idContrato) {
+
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+
+        # Exibe o objeto
+        echo $dados["objeto"];
     }
 
     ##########################################################################################

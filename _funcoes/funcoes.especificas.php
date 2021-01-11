@@ -54,3 +54,18 @@ function ressaltaSaiu($tipo){
     }
     
 }
+##########################################################
+/**
+ * Função que exibe um subtitulo na ficha cadastral
+ * 
+ */
+
+function tituloRelatorio($texto)
+{
+    $div = new Div("tituloFichaCadastral");
+    $div->abre();
+    echo $texto;
+    $div->fecha();
+}
+
+##########################################################

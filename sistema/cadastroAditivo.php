@@ -310,14 +310,14 @@ if ($acesso) {
                 $botaoInserir->set_title("Incluir");
                 $menu1->add_link($botaoInserir, "right");
 
-                # Relatórios
+                # Folha de Rosto
                 $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
                 $botaoRel = new Button();
-                $botaoRel->set_title("Relatório dessa pesquisa");
-                $botaoRel->set_url("../grhRelatorios/acumulacao.geral.php");
+                $botaoRel->set_title("Folha de Rosto");
+                $botaoRel->set_url("../relatorios/contratos.folhaRosto.php");
                 $botaoRel->set_target("_blank");
                 $botaoRel->set_imagem($imagem);
-                #$menu1->add_link($botaoRel,"right");
+                $menu1->add_link($botaoRel,"right");
             }
 
             $menu1->show();
