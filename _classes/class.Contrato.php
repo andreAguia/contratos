@@ -344,6 +344,7 @@ class Contrato {
         $relatorio->set_dataImpressao(false);
         $relatorio->set_cabecalhoRelatorio(false);
         $relatorio->set_menuRelatorio(false);
+        $relatorio->set_log(false);
         $relatorio->show();
     }
 
@@ -433,6 +434,7 @@ class Contrato {
         $relatorio->set_dataImpressao(false);
         $relatorio->set_cabecalhoRelatorio(false);
         $relatorio->set_menuRelatorio(false);
+        $relatorio->set_log(false);
         $relatorio->show();
     }
 

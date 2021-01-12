@@ -31,6 +31,11 @@ if ($acesso) {
     # pega o contrato
     $idContrato = soNumeros(get_session('sessionContrato'));
 
+    # Grava no log a atividade
+    $atividade = "Acessou a página do controle de saldo do contrato " . $contrato->getNumero($idContrato);
+    $data = date("Y-m-d H:i:s");
+    $intra->registraLog($idUsuario, $data, $atividade, null, null, 7);
+
     # Começa uma nova página
     $page = new Page();
     $page->iniciaPagina();

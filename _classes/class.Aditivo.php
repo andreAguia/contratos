@@ -136,6 +136,7 @@ class Aditivo {
         $relatorio->set_cabecalhoRelatorio(false);
         $relatorio->set_menuRelatorio(false);        
         $relatorio->set_bordaInterna(true);
+        $relatorio->set_log(false);
         $relatorio->show();
     }
 

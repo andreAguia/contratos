@@ -57,7 +57,7 @@ if ($acesso) {
     $grid = new Grid();
     $grid->abreColuna(9);
 
-    # Vazio   
+    # Intencionalmente vazio   
 
     $grid->fechaColuna();
     $grid->abreColuna(3);
@@ -78,7 +78,7 @@ if ($acesso) {
     $aditivo->exibeAditivosContratoRel($idContrato);
 
     # Exibe a comissão
-    $comissao->listaComissaoRel($idContrato);
+    $comissao->listaComissaoRel($idContrato,"Visualizou a Folha de Rosto do Contrato " . $conteudo["numero"]);
 
     # Data da Impressão
     p('Emitido em: ' . date('d/m/Y - H:i:s') . " (" . $idUsuario . ")", 'pRelatorioDataImpressao');

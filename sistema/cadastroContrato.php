@@ -767,7 +767,7 @@ if ($acesso) {
              * O sistema passa por aqui somente por causa da session no início desse código
              */
 
-            loadPage("cadastroAditivo.php");
+            loadPage("cadastroAditivo.php?i=true");
             break;
 
         case "upload":

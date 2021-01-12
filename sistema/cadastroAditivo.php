@@ -317,7 +317,7 @@ if ($acesso) {
                 $botaoRel->set_url("../relatorios/contratos.folhaRosto.php");
                 $botaoRel->set_target("_blank");
                 $botaoRel->set_imagem($imagem);
-                $menu1->add_link($botaoRel,"right");
+                $menu1->add_link($botaoRel, "right");
             }
 
             $menu1->show();
@@ -352,6 +352,14 @@ if ($acesso) {
 
             # Carrega os dados com contrado editado
             $conteudo = $contrato->getDados($idContrato);
+
+            # Verifica se veio do menu inicial
+            if (get('i', false)) {
+                # Grava no log a atividade
+                $atividade = "Acessou a página do contrato ". $conteudo["numero"];
+                $data = date("Y-m-d H:i:s");
+                $intra->registraLog($idUsuario, $data, $atividade, "tbcontrato", $idContrato, 7);
+            }
 
             $grid->fechaColuna();
 

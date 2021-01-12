@@ -262,7 +262,7 @@ class Comissao {
 
 #####################################################################################
 
-    public function listaComissaoRel($idContrato) {
+    public function listaComissaoRel($idContrato, $log) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id.");
@@ -277,22 +277,24 @@ class Comissao {
         # monta o select
         $select = "SELECT idServidor,
                           idServidor,
+                          idComissao,
                           idComissao
-                     FROM tbcomissao
+                     FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
+                                     JOIN uenf_grh.tbpessoa USING(idPessoa)
                     WHERE idContrato = {$idContrato}
                       AND dtPublicacaoSaida IS NULL  
-                 ORDER BY dtPublicacaoSaida,tipo";
+                 ORDER BY tipo, uenf_grh.tbpessoa.nome ";
 
         $row = $contratos->select($select);
 
         # Monta o Relatório
         $relatorio = new Relatorio();
         $relatorio->set_conteudo($row);
-        $relatorio->set_label(array("Servidor", "Lotação", "Tipo"));
-        $relatorio->set_align(array("left", "center"));
-        $relatorio->set_width(array(35, 35, 30));
-        $relatorio->set_classe(array("Pessoal", "Pessoal", "Comissao"));
-        $relatorio->set_metodo(array("get_nome", "get_lotacao", "getTipo"));
+        $relatorio->set_label(array("Servidor", "Lotação", "Designação","Tipo"));
+        $relatorio->set_align(array("left", "left", "left"));
+        $relatorio->set_width(array(30, 30, 30,10));
+        $relatorio->set_classe(array("Pessoal", "Pessoal", "Comissao", "Comissao"));
+        $relatorio->set_metodo(array("get_nome", "get_lotacao", "getPortariaEntrada", "getTipo"));
 
         $relatorio->set_subTotal(false);
         $relatorio->set_totalRegistro(false);
@@ -300,6 +302,10 @@ class Comissao {
         $relatorio->set_cabecalhoRelatorio(false);
         $relatorio->set_menuRelatorio(false);
         $relatorio->set_bordaInterna(true);
+        
+        # Grava o log, pois esta rotina é usada no relatória de folha de rosto do contrato
+        $relatorio->set_logDetalhe($log);
+        $relatorio->gravaLog();
         $relatorio->show();
     }
 
