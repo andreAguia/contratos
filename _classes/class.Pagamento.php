@@ -130,9 +130,18 @@ class Pagamento {
 
         # Verifica se tem lançamento discriminando natureza. Se tem exibe o link para exibir por natureza
         if ($this->temNatureza($idContrato)) {
-            $link = new Link("por Natureza", "?fase=porNatureza&id={$idContrato}", "Detalha os pagamanto pela natureza do gasto");
+            $link = new Link("por Natureza");
             $link->set_id("porNatureza");
+            $link->set_onClick("abreFechaDivId('divNatureza');");
+            $link->set_title("Detalha os pagamanto pela natureza do gasto");
             $link->show();
+            
+            $div = new Div("divNatureza");
+            $div->abre();
+            
+            br();
+            $this->exibeValorLiquidadoPorNatureza($idContrato);
+            $div->fecha();
         }
 
         $painel->fecha();
@@ -340,13 +349,14 @@ class Pagamento {
 
         # Exemplo de tabela simples
         $tabela = new Tabela();
-        $tabela->set_titulo("Valor Liquidado Por Natureza");
+        #$tabela->set_titulo("Valor Liquidado Por Natureza");
         $tabela->set_conteudo($resultado);
         $tabela->set_label(array("Natureza", "Valor"));
-        $tabela->set_width(array(70, 30));
+        #$tabela->set_width(array(70, 30));
         $tabela->set_align(array("left", "center"));
         $tabela->set_funcao(array(null, "formataMoeda2"));
-        $tabela->set_rodape("Total: " . formataMoeda2($this->getValorLiquidado($idContrato)));
+        #$tabela->set_rodape("Total: " . formataMoeda2($this->getValorLiquidado($idContrato)));
+        $tabela->set_totalRegistro(false);
         $tabela->show();
     }
 

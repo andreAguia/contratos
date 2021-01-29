@@ -815,7 +815,7 @@ class Contrato {
 
     #####################################################################################
 
-    public function exibeValorTotalPainel($idContrato = null) {
+    public function exibeValorTotalPainel($idContrato = null, $detalhe = false) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
@@ -835,6 +835,59 @@ class Contrato {
         } else {
             p("R$ " . formataMoeda($valorTotal), "pvalorTotalNegativo");
         }
+
+        ####
+        # Exibe o detalhe (somente para a rotina de pagamento - controle de saldo)
+        if ($detalhe) {
+
+            # Exibe um resumo dos aditivos
+            # Pega os dados do contrato
+            $conteudo = $this->getDados($idContrato);
+
+            # Pega os valores dos aditivos
+            $contratos = new Contratos();
+            $select = "SELECT idAditivo, obs FROM tbaditivo WHERE idContrato = {$idContrato} ORDER BY dtAssinatura";
+            $row = $contratos->select($select);
+            $numAditivos = $contratos->count($select);
+
+            # Verifica se tem algum aditivo
+            if ($numAditivos > 0) {
+
+                $link = new Link("Detalhes");
+                $link->set_id("porNatureza");
+                $link->set_onClick("abreFechaDivId('divDetalhes');");
+                $link->set_title("Detalha os pagamanto por termos aditivos");
+                $link->show();
+
+                $div = new Div("divDetalhes");
+                $div->abre();
+
+                br();
+
+                foreach ($row as $item) {
+                    $array2[] = [$item["idAditivo"], $item["idAditivo"]];
+                }
+
+                $div = new Div("tituloTable");
+                $div->abre();
+                p("Contrato: R$ " . formataMoeda($conteudo['valor']), "pvalorPositivo", "center");
+                $div->fecha();
+
+                # tabela
+                $tabela = new Tabela();
+                $tabela->set_conteudo($array2);
+                $tabela->set_label(array("Termos", "Valor"));
+                $tabela->set_align(array("left", "center"));
+
+                $tabela->set_classe(array("Aditivo", "Aditivo"));
+                $tabela->set_metodo(array("exibeTipoNumerado", "exibeValor"));
+
+                $tabela->set_totalRegistro(false);
+                $tabela->show();
+
+                $div->fecha();
+            }
+        }
         $painel->fecha();
     }
 
@@ -845,12 +898,12 @@ class Contrato {
             alert("É necessário informar o id do Contrato.");
             return;
         }
-        
+
         # exibe o resultado
         $painel = new Callout();
         $painel->abre();
 
-        $valorTotal = $this->getValorTotal($idContrato);     
+        $valorTotal = $this->getValorTotal($idContrato);
         p("Valor Total:", "pvalorTotalTexto");
         p("R$ " . formataMoeda($valorTotal), "pvalorTotalValor");
 

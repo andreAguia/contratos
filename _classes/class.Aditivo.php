@@ -116,7 +116,7 @@ class Aditivo {
                     WHERE idContrato = {$idContrato}
                  ORDER BY dtAssinatura";
 
-        $dados =  $contratos->select($select);
+        $dados = $contratos->select($select);
 
         tituloRelatorio("Aditivos");
 
@@ -134,7 +134,7 @@ class Aditivo {
         $relatorio->set_totalRegistro(false);
         $relatorio->set_dataImpressao(false);
         $relatorio->set_cabecalhoRelatorio(false);
-        $relatorio->set_menuRelatorio(false);        
+        $relatorio->set_menuRelatorio(false);
         $relatorio->set_bordaInterna(true);
         $relatorio->set_log(false);
         $relatorio->show();
@@ -301,18 +301,22 @@ class Aditivo {
             return;
         }
 
-        # Pega o tipo numerado
-        if (!empty($this->getVinculado($idAditivo))) {
-            echo $this->getTipoNumerado($idAditivo);
-            if ($this->getVinculado($idAditivo) == "contrato") {
-                p("(Contrato)", "paditivoVinculado");
+        if (is_numeric($idAditivo)) {
+
+            # Pega o tipo numerado
+            if (!empty($this->getVinculado($idAditivo))) {
+                echo $this->getTipoNumerado($idAditivo);
+                if ($this->getVinculado($idAditivo) == "contrato") {
+                    p("(Contrato)", "paditivoVinculado");
+                } else {
+                    p("(" . $this->getTipoNumerado($this->getVinculado($idAditivo)) . ")", "paditivoVinculado");
+                }
             } else {
-                p("(" . $this->getTipoNumerado($this->getVinculado($idAditivo)) . ")", "paditivoVinculado");
+                echo $this->getTipoNumerado($idAditivo);
             }
         } else {
-            echo $this->getTipoNumerado($idAditivo);
+            return $idAditivo;
         }
-        return;
     }
 
     ###########################################################

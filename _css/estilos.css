@@ -511,6 +511,14 @@ p#pvalorTipo3{
     color:darkorchid;
     font-weight: bold;
 }
+
+div#divNatureza{
+    display: none;
+}
+
+div#divDetalhes{
+    display: none;
+}
 /*******************************************
 * Folha de Rosto
 *******************************************/
