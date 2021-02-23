@@ -37,9 +37,10 @@ $postComissaoEmail = post('postComissaoEmail');
 $parametroAno = post('parametroAno');
 $parametroStatus = post('parametroStatus', 1);
 $parametroModalidade = post('parametroModalidade');
-$parametroModalidadeTipo = post('parametroModalidadeTipo','Todos');
+$parametroModalidadeTipo = post('parametroModalidadeTipo', 'Todos');
 $parametroEmpresa = post('parametroEmpresa');
 $parametroMaoDeObra = post('parametroMaoDeObra');
+$parametroContrato = post('parametroContrato',0);
 
 # Permissão de Acesso
 $acesso = Verifica::acesso($idUsuario, [9, 10]);
@@ -87,7 +88,7 @@ if ($acesso) {
 
     # Monta o formulário
     $form = new Form('?');
-    
+
     $controle = new Input('postNumero', 'simnao', 'Número:', 1);
     $controle->set_size(5);
     $controle->set_title('Número do contrato');
@@ -126,7 +127,7 @@ if ($acesso) {
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postObjeto', 'simnao', 'Objeto:', 1);
     $controle->set_size(5);
     $controle->set_title('Objeto do contrato');
@@ -144,7 +145,7 @@ if ($acesso) {
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postProcesso', 'simnao', 'Processo:', 1);
     $controle->set_size(5);
     $controle->set_title('O Processo do contrato');
@@ -153,7 +154,7 @@ if ($acesso) {
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postPublicacao', 'simnao', 'Publicação:', 1);
     $controle->set_size(5);
     $controle->set_title('A data da publicação');
@@ -162,7 +163,7 @@ if ($acesso) {
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postAssinatura', 'simnao', 'Assinatura:', 1);
     $controle->set_size(5);
     $controle->set_title('A data da Assinatura');
@@ -180,9 +181,9 @@ if ($acesso) {
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     ####################
-    
+
     $controle = new Input('postDuracao', 'simnao', 'Duração:', 1);
     $controle->set_size(5);
     $controle->set_title('O periodo, prazo e vigência tudo junto ;)');
@@ -191,7 +192,7 @@ if ($acesso) {
     $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postPeriodo', 'simnao', 'Periodo:', 1);
     $controle->set_size(5);
     $controle->set_title('O periodo do contrato');
@@ -200,7 +201,7 @@ if ($acesso) {
     $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postPrazo', 'simnao', 'Prazo:', 1);
     $controle->set_size(5);
     $controle->set_title('o prazo do contrato');
@@ -209,7 +210,7 @@ if ($acesso) {
     $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postVigencia', 'simnao', 'Vigencia:', 1);
     $controle->set_size(5);
     $controle->set_title('A vigencia do contrato');
@@ -218,7 +219,7 @@ if ($acesso) {
     $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     ####################
 
     $controle = new Input('postEmpresa', 'simnao', 'Empresa:', 1);
@@ -238,7 +239,7 @@ if ($acesso) {
     $controle->set_linha(3);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postEmpresaEmail', 'simnao', 'Emp.Email:', 1);
     $controle->set_size(5);
     $controle->set_title('O e-mail da empresa contratada');
@@ -246,8 +247,8 @@ if ($acesso) {
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(3);
     $controle->set_col(1);
-    $form->add_item($controle);    
-    
+    $form->add_item($controle);
+
     $controle = new Input('postEmpresaContato', 'simnao', 'Emp.Contato:', 1);
     $controle->set_size(5);
     $controle->set_title('O contato da empresa contratada');
@@ -357,10 +358,10 @@ if ($acesso) {
     $controle->set_valor($parametroModalidade);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(4);
-    $controle->set_col(2);
+    $controle->set_col(3);
     $controle->set_array($comboModalidade);
     $form->add_item($controle);
-    
+
     # Tipo de Modalidade
     $controle = new Input('parametroModalidadeTipo', 'combo', 'Tipo:', 1);
     $controle->set_size(20);
@@ -369,7 +370,7 @@ if ($acesso) {
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(4);
     $controle->set_col(2);
-    $controle->set_array(["Todos","Despesa","Receita"]);    
+    $controle->set_array(["Todos", "Despesa", "Receita"]);
     $form->add_item($controle);
     
     # Mao de obra alocada
@@ -380,9 +381,68 @@ if ($acesso) {
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(4);
     $controle->set_col(2);
-    $controle->set_array(array(array("S","Sim"),array("N","Não"),array(null,"Todos")));    
-    $form->add_item($controle);
+    $controle->set_array(array(array("S", "Sim"), array("N", "Não"), array(null, "Todos")));
+    $form->add_item($controle);    
 
+    /*
+     * Contrato
+     */
+
+    # Pega os dados
+    $select = "SELECT idContrato, numero 
+                 FROM tbcontrato
+                WHERE dtAssinatura IS NOT NULL";
+
+    if (!empty($parametroAno)) {
+        $select .= " AND YEAR(dtAssinatura) = {$parametroAno}";
+    }
+
+    if (!empty($parametroEmpresa)) {
+        $select .= " AND idEmpresa = {$parametroEmpresa}";
+    }
+
+    if (!empty($parametroAno)) {
+        $select .= " AND YEAR(dtAssinatura) = {$parametroAno}";
+    }
+
+    if (!empty($parametroModalidade)) {
+        $select .= " AND idModalidade = {$parametroModalidade}";
+    }
+
+    if ($parametroModalidadeTipo <> "Todos") {
+        $select .= " AND tbmodalidade.tipo = '{$parametroModalidadeTipo}'";
+    }
+
+    if (!empty($parametroStatus)) {
+        $select .= " AND idStatus = {$parametroStatus}";
+    }
+
+    if (!empty($parametroMaoDeObra)) {
+        if ($parametroMaoDeObra == "S") {
+            $select .= " AND maoDeObra = 1";
+        } else {
+            $select .= " AND maoDeObra <> 1";
+        }
+    }
+
+    $select .= " ORDER BY YEAR(dtAssinatura) DESC, numero";
+        
+    $comboContrato = $contratos->select($select);
+
+    array_unshift($comboContrato, array(0, "Todos"));
+
+    # Contrato
+    $controle = new Input('parametroContrato', 'combo', 'Contrato:', 1);
+    $controle->set_size(5);
+    $controle->set_title('Contratos');
+    $controle->set_valor($parametroContrato);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(5);
+    $controle->set_multiple(true);
+    $controle->set_col(2);
+    $controle->set_array($comboContrato);
+    $form->add_item($controle);   
+        
     /*
      * Empresa
      */
@@ -400,8 +460,8 @@ if ($acesso) {
     $controle->set_title('Empresa contratada');
     $controle->set_valor($parametroEmpresa);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(4);
-    $controle->set_col(2);
+    $controle->set_linha(5);
+    $controle->set_col(9);
     $controle->set_array($comboEmpresa);
     $form->add_item($controle);
 
@@ -460,7 +520,7 @@ if ($acesso) {
         $method[] = "";
         $function[] = "";
     }
-    
+
     if ($postProcesso) {
         $field[] = "idContrato";
         $label[] = "Processo";
@@ -486,7 +546,7 @@ if ($acesso) {
         $class[] = "";
         $method[] = "";
         $function[] = "date_to_php";
-    }    
+    }
 
     if ($postProposta) {
         $field[] = "dtProposta";
@@ -496,7 +556,7 @@ if ($acesso) {
         $method[] = "";
         $function[] = "date_to_php";
     }
-    
+
     if ($postDuracao) {
         $field[] = "idContrato";
         $label[] = "Duração";
@@ -505,7 +565,7 @@ if ($acesso) {
         $method[] = "exibeDuracao";
         $function[] = "";
     }
-    
+
     if ($postPeriodo) {
         $field[] = "idContrato";
         $label[] = "Periodo";
@@ -514,7 +574,7 @@ if ($acesso) {
         $method[] = "exibePeriodo";
         $function[] = "";
     }
-    
+
     if ($postPrazo) {
         $field[] = "idContrato";
         $label[] = "Prazo";
@@ -523,7 +583,7 @@ if ($acesso) {
         $method[] = "exibePrazo";
         $function[] = "";
     }
-    
+
     if ($postVigencia) {
         $field[] = "idContrato";
         $label[] = "Vigencia";
@@ -550,7 +610,7 @@ if ($acesso) {
         $method[] = "getCnpj";
         $function[] = "";
     }
-    
+
     if ($postEmpresaEmail) {
         $field[] = "idEmpresa";
         $label[] = "Empresa Email";
@@ -559,7 +619,7 @@ if ($acesso) {
         $method[] = "getEmails";
         $function[] = "";
     }
-    
+
     if ($postEmpresaContato) {
         $field[] = "idEmpresa";
         $label[] = "Empresa Contato";
@@ -633,7 +693,7 @@ if ($acesso) {
         if (!empty($parametroModalidade)) {
             $select .= " AND idModalidade = {$parametroModalidade}";
         }
-        
+
         if ($parametroModalidadeTipo <> "Todos") {
             $select .= " AND tbmodalidade.tipo = '{$parametroModalidadeTipo}'";
         }
@@ -641,20 +701,35 @@ if ($acesso) {
         if (!empty($parametroStatus)) {
             $select .= " AND idStatus = {$parametroStatus}";
         }
-        
+
         if (!empty($parametroMaoDeObra)) {
-            if($parametroMaoDeObra == "S"){
+            if ($parametroMaoDeObra == "S") {
                 $select .= " AND maoDeObra = 1";
-            }else{
+            } else {
                 $select .= " AND maoDeObra <> 1";
             }
+        }
+
+        if (is_array($parametroContrato) AND count($parametroContrato) > 0 AND !empty($parametroContrato[0])) {            
+            
+            $contador = 0;
+            $select .= " AND (";
+            
+            foreach ($parametroContrato as $item) {
+                if ($contador <> 0) {
+                    $select .= " OR ";
+                }
+                $select .= "idContrato = {$item}";
+                $contador++;
+            }
+            $select .= ") ";
         }
 
         # Estabelece a ordenação
         $select .= " ORDER BY numero";
 
-        #var_dump($select);
-        
+        #echo $select;
+
         $contratos = new Contratos();
         $row = $contratos->select($select);
     } else {
