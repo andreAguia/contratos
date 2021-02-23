@@ -494,7 +494,7 @@ if ($acesso) {
     $controle->set_title('Empresa contratada');
     $controle->set_valor($parametroEmpresa);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(6);
+    $controle->set_linha(5);
     $controle->set_col(9);
     $controle->set_array($comboEmpresa);
     $form->add_item($controle);
