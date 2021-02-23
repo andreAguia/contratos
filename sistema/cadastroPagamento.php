@@ -69,6 +69,7 @@ if ($acesso) {
                                      idPagamento,                                     
                                      tipo,
                                      natureza,
+                                     pd,
                                      tbpagamento.obs,
                                      idPagamento
                                 FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
@@ -83,6 +84,7 @@ if ($acesso) {
                                      valor,
                                      tipo,
                                      idNatureza,
+                                     pd,
                                      obs,
                                      idContrato
                                 FROM tbpagamento
@@ -98,8 +100,8 @@ if ($acesso) {
     $objeto->set_grupoCorColuna(0);
 
     # Parametros da tabela
-    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Obs"));
-    $objeto->set_align(array("center", "center", "center", "center", "right", "center", "center", "left"));
+    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "PD","Obs"));
+    $objeto->set_align(array("center", "center", "center", "center", "right", "center", "center", "left", "left"));
     #$objeto->set_width(array(10, 15, 15, 15, 12, 13, 20));
     $objeto->set_funcao(array(null, null, "date_to_php"));
     $objeto->set_classe(array(null, "Pagamento", null, null, "Pagamento", "Pagamento"));
@@ -196,6 +198,13 @@ if ($acesso) {
             'label' => 'Natureza:',
             'tipo' => 'combo',
             'array' => $natureza,
+            'col' => 3,
+            'size' => 100),
+        array(
+            'linha' => 2,
+            'nome' => 'pd',
+            'label' => 'PD:',
+            'tipo' => 'texto',
             'col' => 3,
             'size' => 100),
         array(

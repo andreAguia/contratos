@@ -94,17 +94,36 @@ class Contrato {
                 $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
             }
         }
+        return $processo;
+    }
 
-        # Verifica se tem processo de execução
-        if (!empty($conteudo["processoExecucao"])) {
-            if ($br) {
-                $processo .= "<br/>Exec: SEI - {$conteudo["processoExecucao"]}";
-            } else {
-                $processo .= " Exec: SEI - {$conteudo["processoExecucao"]}";
-            }
+    ##############################################################
+
+    public function exibeProcessoExecucao($idContrato = null) {
+
+        /**
+         * Informa os dados da base de dados
+         *
+         * @param $idConcurso integer null O id do concurso
+         *
+         * @syntax $concurso->get_dados([$idConcurso]);
+         */
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
         }
 
-        return $processo;
+        $conteudo = $this->getDados($idContrato);
+
+        $processo = null;
+
+        # Verifica se tem processo de execução
+        if (empty($conteudo["processoExecucao"])) {
+            return null;
+        }else{
+            return "SEI - {$conteudo["processoExecucao"]}";
+        }
     }
 
     #####################################################################################

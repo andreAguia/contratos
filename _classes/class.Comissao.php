@@ -432,6 +432,59 @@ class Comissao {
 
     ##############################################################
 
+    public function exibeProcessoRelatorio($idContrato = null) {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $contrato = new Contrato();
+        $conteudo = $contrato->getDados($idContrato);
+
+        $processo = null;
+
+        # Verifica se tem somente um processo
+        if ((empty($conteudo["processoComissaoSei"])) xor (empty($conteudo["processoComissao"]))) {
+            if (empty($conteudo["processoComissaoSei"])) {
+                $processo = $conteudo["processoComissao"];
+            } else {
+                $processo = "SEI - {$conteudo["processoComissaoSei"]}";
+            }
+        }
+
+        # Verifica se tem os dois
+        if ((!empty($conteudo["processoComissaoSei"])) and (!empty($conteudo["processoComissao"]))) {
+            $processo = "SEI - {$conteudo["processoComissaoSei"]} <br/> {$conteudo["processoComissao"]}";
+        }
+
+        # Exibe os Processos
+        if (empty($processo)) {            
+            p("---", "center", "f12");
+        } else {           
+            p($processo, "center", "f12");
+        }
+        return;
+    }
+
+     ##############################################################
+
+    public function exibeDocumentosRelatorio($idContrato = null) {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $this->exibeProcessoRelatorio($idContrato);
+        $this->exibePortariasRelatorio($idContrato);
+        return;
+    }
+
+    ##############################################################
+
     public function exibeMenuDocumentos($idContrato = null) {
 
         # Verifica se foi informado
@@ -598,7 +651,59 @@ class Comissao {
         return;
     }
 
+    ##############################################################
+
+    public function exibePortariasRelatorio($idContrato = null) {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Monta o select
+        $select = "(SELECT portariaEntrada as portaria,
+                          dtPortariaEntrada as data
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato})
+                        UNION 
+                  (SELECT portariaSaida as portaria,
+                          dtPortariaSaida as data
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato})
+                 ORDER BY 2";
+
+        $contratos = new Contratos();
+        $dados = $contratos->select($select);
+        $quantidade = $contratos->count($select);
+
+        $portarias = [];
+
+        # Monta as portarias
+        foreach ($dados as $item) {
+            if (!empty($item["portaria"])) {
+                $portarias[] = "Portaria {$item["portaria"]} de " . date_to_php($item["data"]);
+            }
+        }
+
+        # Retira as duplicatas
+        $portarias = array_unique($portarias);
+
+        # Exibe as portarias
+        foreach ($portarias as $item) {
+            p($item, "pPortaria");
+        }
+
+        if ($quantidade == 0) {
+            br();
+            p("---", "center", "f14");
+            br();
+        }
+        return;
+    }
+
     #####################################################################################
+
 
     public function getUltimaDataPublicacaoEntrada($idContrato) {
 
