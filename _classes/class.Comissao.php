@@ -313,7 +313,7 @@ class Comissao {
         # Exibe o processo da comissão
         $relatorio = new Relatorio();
         $relatorio->set_conteudo(array(array($idContrato)));
-        $relatorio->set_label(array("Processo da Comissão"));
+        $relatorio->set_label(array("Processo de Fiscalização"));
         $relatorio->set_align(array("center"));
         $relatorio->set_width(array(80));
         $relatorio->set_classe(array("Comissao"));
@@ -400,7 +400,7 @@ class Comissao {
         $painel = new Callout();
         $painel->abre();
 
-        tituloTable("Processos:");
+        tituloTable("Processos de Fiscalização:");
         br();
 
         if (empty($processo)) {
