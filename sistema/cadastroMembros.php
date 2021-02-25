@@ -24,7 +24,7 @@ if ($acesso) {
 
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
-    
+
     # Pega os parâmetros
     $parametroMembro = post("parametroMembro");
 
@@ -37,8 +37,7 @@ if ($acesso) {
 
     ################################################################
 
-    switch ($fase)
-    {
+    switch ($fase) {
         case "":
         case "listar" :
 
@@ -57,7 +56,7 @@ if ($acesso) {
             $menu->add_link($linkBotao1, "left");
 
             $menu->show();
-            
+
             /*
              *  Formulário de Pesquisa
              */
@@ -96,10 +95,10 @@ if ($acesso) {
                               idComissao
                      FROM uenf_contratos.tbcomissao LEFT JOIN uenf_grh.tbservidor USING (idServidor)
                                                          JOIN uenf_grh.tbpessoa USING (idPessoa)";
-            if(!empty($parametroMembro)){
+            if (!empty($parametroMembro)) {
                 $select .= " WHERE tbpessoa.nome like '%{$parametroMembro}%'";
             }
-                                                         
+
             $select .= " ORDER BY tbpessoa.nome";
 
             $row = $contratos->select($select);
@@ -107,12 +106,12 @@ if ($acesso) {
             # Monta a tabela
             $tabela = new Tabela();
             $tabela->set_titulo("Servidores Membros de Comissão de Fiscalização");
-            $tabela->set_label(array("Servidor", "Tipo","Contrato", "Objeto", "Designação"));
-            $tabela->set_align(array("left", "center","center","left","left"));
-            #$tabela->set_width(array(10, 70, 25));
-            $tabela->set_funcaoDepoisClasse(array(null,"ressaltaSaiu"));
-            $tabela->set_classe(array(null, "Comissao","Contrato", "Contrato", "Comissao"));
-            $tabela->set_metodo(array( null, "getTipo","exibeNumeroContratoSimples", "exibeObjeto", "getDadosDesignacao"));
+            $tabela->set_label(array("Servidor", "Tipo", "Contrato", "Objeto", "Designação"));
+            $tabela->set_align(array("left", "center", "center", "left", "left"));
+            $tabela->set_width(array(20, 10, 10, 40, 20));
+            $tabela->set_funcaoDepoisClasse(array(null, "ressaltaSaiu"));
+            $tabela->set_classe(array(null, "Comissao", "Contrato", "Contrato", "Comissao"));
+            $tabela->set_metodo(array(null, "getTipo", "exibeNumeroContratoSimples", "exibeObjeto", "getDadosDesignacao"));
             $tabela->set_conteudo($row);
             $tabela->set_rowspan(0);
             $tabela->set_grupoCorColuna(0);

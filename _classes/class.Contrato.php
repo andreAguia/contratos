@@ -533,7 +533,6 @@ class Contrato {
             $tempo = $this->getTempoTotal($idContrato);
 
             #var_dump($tempo);
-
             # Verifica se já passou de 60 meses
             if (!empty($tempo["meses"])) {
                 if ($tempo["meses"] >= 60) {
@@ -542,7 +541,7 @@ class Contrato {
                     p("{$tempo["meses"]} Meses", "pTempoTotal");
                 }
             }
-            
+
             if (!empty($tempo["dias"])) {
                 if ($tempo["dias"] >= 1800) {
                     p("{$tempo["dias"]} dias", "pTempoTotal60");
@@ -551,8 +550,9 @@ class Contrato {
                 }
             }
 
-            # Exibe a vigência 
             p($vigencia, "pVigencia");
+
+            # Exibe o tempo que falta                        
             if (!jaPassou($vigencia)) {
                 p("Faltam {$diferenca} dias", "pVigencia");
             } else {
@@ -570,6 +570,7 @@ class Contrato {
 
         # Verifica se tem data inicial
         if (empty($dados["dtInicial"])) {
+
             return null;
         } else {
 
@@ -584,14 +585,24 @@ class Contrato {
             # Tempo Total
             $tempo = $this->getTempoTotal($idContrato);
 
+            #var_dump($tempo);
             # Verifica se já passou de 60 meses
-            if ($tempo["meses"] >= 60) {
-                p("{$tempo["meses"]} Meses", "pTempoTotal60");
-            } else {
-                p("{$tempo["meses"]} Meses", "pTempoTotal");
+            if (!empty($tempo["meses"])) {
+                if ($tempo["meses"] >= 60) {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal60");
+                } else {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal");
+                }
             }
 
-            # Exibe a vigência 
+            if (!empty($tempo["dias"])) {
+                if ($tempo["dias"] >= 1800) {
+                    p("{$tempo["dias"]} dias", "pTempoTotal60");
+                } else {
+                    p("{$tempo["dias"]} dias", "pTempoTotal");
+                }
+            }
+
             p($vigencia, "pVigencia");
         }
     }
