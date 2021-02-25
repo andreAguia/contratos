@@ -271,9 +271,11 @@ class Comissao {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
+        $contrato = new Contrato();
 
         tituloRelatorio("Comissão");
 
+        # Exibe a comissão
         # monta o select
         $select = "SELECT idServidor,
                           idServidor,
@@ -290,9 +292,9 @@ class Comissao {
         # Monta o Relatório
         $relatorio = new Relatorio();
         $relatorio->set_conteudo($row);
-        $relatorio->set_label(array("Servidor", "Lotação", "Designação","Tipo"));
+        $relatorio->set_label(array("Servidor", "Lotação", "Designação", "Tipo"));
         $relatorio->set_align(array("left", "left", "left"));
-        $relatorio->set_width(array(30, 30, 30,10));
+        $relatorio->set_width(array(30, 30, 30, 10));
         $relatorio->set_classe(array("Pessoal", "Pessoal", "Comissao", "Comissao"));
         $relatorio->set_metodo(array("get_nome", "get_lotacao", "getPortariaEntrada", "getTipo"));
 
@@ -302,10 +304,27 @@ class Comissao {
         $relatorio->set_cabecalhoRelatorio(false);
         $relatorio->set_menuRelatorio(false);
         $relatorio->set_bordaInterna(true);
-        
-        # Grava o log, pois esta rotina é usada no relatória de folha de rosto do contrato
+
+        # Grava o log, pois esta rotina é usada no relatório de folha de rosto do contrato
         $relatorio->set_logDetalhe($log);
         $relatorio->gravaLog();
+        $relatorio->show();
+
+        # Exibe o processo da comissão
+        $relatorio = new Relatorio();
+        $relatorio->set_conteudo(array(array($idContrato)));
+        $relatorio->set_label(array("Processo da Comissão"));
+        $relatorio->set_align(array("center"));
+        $relatorio->set_width(array(80));
+        $relatorio->set_classe(array("Comissao"));
+        $relatorio->set_metodo(array("getProcesso"));
+
+        $relatorio->set_subTotal(false);
+        $relatorio->set_totalRegistro(false);
+        $relatorio->set_dataImpressao(false);
+        $relatorio->set_cabecalhoRelatorio(false);
+        $relatorio->set_menuRelatorio(false);
+        $relatorio->set_bordaInterna(true);
         $relatorio->show();
     }
 
@@ -375,24 +394,7 @@ class Comissao {
             return;
         }
 
-        $contrato = new Contrato();
-        $conteudo = $contrato->getDados($idContrato);
-
-        $processo = null;
-
-        # Verifica se tem somente um processo
-        if ((empty($conteudo["processoComissaoSei"])) xor (empty($conteudo["processoComissao"]))) {
-            if (empty($conteudo["processoComissaoSei"])) {
-                $processo = $conteudo["processoComissao"];
-            } else {
-                $processo = "SEI - {$conteudo["processoComissaoSei"]}";
-            }
-        }
-
-        # Verifica se tem os dois
-        if ((!empty($conteudo["processoComissaoSei"])) and (!empty($conteudo["processoComissao"]))) {
-            $processo = "SEI - {$conteudo["processoComissaoSei"]} <br/> {$conteudo["processoComissao"]}";
-        }
+        $processo = $this->getProcesso($idContrato);
 
         # Exibe os Processos
         $painel = new Callout();
@@ -460,15 +462,15 @@ class Comissao {
         }
 
         # Exibe os Processos
-        if (empty($processo)) {            
+        if (empty($processo)) {
             p("---", "center", "f12");
-        } else {           
+        } else {
             p($processo, "center", "f12");
         }
         return;
     }
 
-     ##############################################################
+    ##############################################################
 
     public function exibeDocumentosRelatorio($idContrato = null) {
 
@@ -557,39 +559,7 @@ class Comissao {
             $processo = "SEI - {$conteudo["processoComissaoSei"]} <br/> {$conteudo["processoComissao"]}";
         }
 
-        # Exibe os Processos
-        $painel = new Callout();
-        $painel->abre();
-
-        tituloTable("Processos:");
-        br();
-
-        if (empty($processo)) {
-            br();
-            P("Nenhum processo cadastrado", "center", "f14");
-        } else {
-            br();
-            p($processo, "center", "f14");
-        }
-
-        # Editar    
-        $div = new Div("divEdita1");
-        $div->abre();
-
-        $div = new Div("divEdita2");
-        $div->abre();
-
-        $botaoEditar = new Link("Editar", "?fase=cadastroProcesso");
-        $botaoEditar->set_class('tiny button secondary');
-        $botaoEditar->set_title('Editar contrato');
-        $botaoEditar->show();
-
-        $div->fecha();
-        $div->fecha();
-
-        $painel->fecha();
-
-        return;
+       return $processo;
     }
 
     ##############################################################
@@ -703,7 +673,6 @@ class Comissao {
     }
 
     #####################################################################################
-
 
     public function getUltimaDataPublicacaoEntrada($idContrato) {
 

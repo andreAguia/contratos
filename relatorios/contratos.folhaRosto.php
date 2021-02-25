@@ -38,7 +38,16 @@ if ($acesso) {
     # Relatório
     $relatorio = new Relatorio();
     $relatorio->exibeCabecalho();
+    
+    # Exibe o valor e a comissão
+    $grid = new Grid();
+    $grid->abreColuna(3);
 
+    # Intencionalmente vazio   
+
+    $grid->fechaColuna();
+    $grid->abreColuna(6);
+    
     # Título
     p("Contrato " . $conteudo["numero"], "pRelatorioTitulo");
     
@@ -51,14 +60,7 @@ if ($acesso) {
     }
 
     p($contrato->exibeModalidade($idContrato), "pRelatorioSubtitulo");
-
-
-    # Exibe o valor e a comissão
-    $grid = new Grid();
-    $grid->abreColuna(9);
-
-    # Intencionalmente vazio   
-
+    
     $grid->fechaColuna();
     $grid->abreColuna(3);
 
@@ -77,7 +79,7 @@ if ($acesso) {
     # Exibe os aditivos
     $aditivo->exibeAditivosContratoRel($idContrato);
 
-    # Exibe a comissão
+    # Exibe a comissão    
     $comissao->listaComissaoRel($idContrato,"Visualizou a Folha de Rosto do Contrato " . $conteudo["numero"]);
 
     # Data da Impressão

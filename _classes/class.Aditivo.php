@@ -117,27 +117,34 @@ class Aditivo {
                  ORDER BY dtAssinatura";
 
         $dados = $contratos->select($select);
+        $numDados = $contratos->count($select);
 
         tituloRelatorio("Aditivos");
 
-        # Monta o Relatório
-        $relatorio = new Relatorio();
-        $relatorio->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Valor"));
-        $relatorio->set_align(array("center", "left", "center", "center", "center", "right"));
-        $relatorio->set_width(array(15, 40, 10, 10, 10, 15));
-        $relatorio->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo"));
-        $relatorio->set_metodo(array("exibeTipoNumerado", null, "exibePublicacaoRel", null, "exibePeriodo", "exibeValor"));
-        $relatorio->set_funcao(array(null, null, null, "date_to_php"));
-        $relatorio->set_conteudo($dados);
+        if ($numDados > 0) {
 
-        $relatorio->set_subTotal(false);
-        $relatorio->set_totalRegistro(false);
-        $relatorio->set_dataImpressao(false);
-        $relatorio->set_cabecalhoRelatorio(false);
-        $relatorio->set_menuRelatorio(false);
-        $relatorio->set_bordaInterna(true);
-        $relatorio->set_log(false);
-        $relatorio->show();
+            # Monta o Relatório
+            $relatorio = new Relatorio();
+            $relatorio->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Valor"));
+            $relatorio->set_align(array("center", "left", "center", "center", "center", "right"));
+            $relatorio->set_width(array(15, 40, 10, 10, 10, 15));
+            $relatorio->set_classe(array("Aditivo", null, "Aditivo", null, "Aditivo", "Aditivo"));
+            $relatorio->set_metodo(array("exibeTipoNumerado", null, "exibePublicacaoRel", null, "exibePeriodo", "exibeValor"));
+            $relatorio->set_funcao(array(null, null, null, "date_to_php"));
+            $relatorio->set_conteudo($dados);
+
+            $relatorio->set_subTotal(false);
+            $relatorio->set_totalRegistro(false);
+            $relatorio->set_dataImpressao(false);
+            $relatorio->set_cabecalhoRelatorio(false);
+            $relatorio->set_menuRelatorio(false);
+            $relatorio->set_bordaInterna(true);
+            $relatorio->set_log(false);
+            $relatorio->show();
+        } else {
+            br();
+            p("Não há aditivos neste contrato","f12","center");
+        }
     }
 
     ###########################################################
