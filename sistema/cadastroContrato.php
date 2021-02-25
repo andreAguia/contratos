@@ -511,7 +511,7 @@ if ($acesso) {
 
             if (Verifica::acesso($idUsuario, 9)) {
                 #hr("hrMenusecundario");
-                $menu2 = new MenuBar();                
+                $menu2 = new MenuBar(); 
 
                 # Empresas
                 $botao = new Button("Empresas", "cadastroEmpresa.php");
