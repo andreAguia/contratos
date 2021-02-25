@@ -58,7 +58,7 @@ class Contrato {
 
     ##############################################################
 
-    public function getProcesso($idContrato = null, $br = true) {
+    public function getProcessoAdm($idContrato = null, $br = true) {
 
         /**
          * Informa os dados da base de dados
@@ -99,6 +99,57 @@ class Contrato {
 
     ##############################################################
 
+    public function getProcesso($idContrato = null, $br = true) {
+
+        /**
+         * Informa os dados da base de dados
+         *
+         * @param $idConcurso integer null O id do concurso
+         *
+         * @syntax $concurso->get_dados([$idConcurso]);
+         */
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        $processo = null;
+
+        # Verifica se tem somente um processo
+        if ((empty($conteudo["processoSei"])) xor (empty($conteudo["processo"]))) {
+            if (empty($conteudo["processoSei"])) {
+                $processo = $conteudo["processo"];
+            } else {
+                $processo = "SEI - {$conteudo["processoSei"]}";
+            }
+        }
+
+        # Verifica se tem os dois
+        if ((!empty($conteudo["processoSei"])) and (!empty($conteudo["processo"]))) {
+            if ($br) {
+                $processo = "SEI - {$conteudo["processoSei"]} <br/> {$conteudo["processo"]}";
+            } else {
+                $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
+            }
+        }
+
+        # Verifica se tem processo de execução
+        if (!empty($conteudo["processoExecucao"])) {
+            if ($br) {
+                $processo .= "<br/>Exec: SEI - {$conteudo["processoExecucao"]}";
+            } else {
+                $processo .= " Exec: SEI - {$conteudo["processoExecucao"]}";
+            }
+        }
+
+        return $processo;
+    }
+
+    #####################################################################################
+
     public function exibeProcessoExecucao($idContrato = null) {
 
         /**
@@ -121,7 +172,7 @@ class Contrato {
         # Verifica se tem processo de execução
         if (empty($conteudo["processoExecucao"])) {
             return null;
-        }else{
+        } else {
             return "SEI - {$conteudo["processoExecucao"]}";
         }
     }
@@ -445,7 +496,7 @@ class Contrato {
         $relatorio->set_width([30, 30, 30, 10]);
         #$relatorio->set_funcao($function);
         $relatorio->set_classe(["Contrato", "Contrato", "Empresa", "Contrato"]);
-        $relatorio->set_metodo(["getProcesso", "exibeObjetoRel", "getEmpresaCnpj", "exibeVigencia"]);
+        $relatorio->set_metodo(["getProcessoAdm", "exibeObjetoRel", "getEmpresaCnpj", "exibeVigencia"]);
         $relatorio->set_totalRegistro(false);
 
         $relatorio->set_subTotal(false);
@@ -481,11 +532,23 @@ class Contrato {
             # Tempo Total
             $tempo = $this->getTempoTotal($idContrato);
 
+            #var_dump($tempo);
+
             # Verifica se já passou de 60 meses
-            if ($tempo["meses"] >= 60) {
-                p("{$tempo["meses"]} Meses", "pTempoTotal60");
-            } else {
-                p("{$tempo["meses"]} Meses", "pTempoTotal");
+            if (!empty($tempo["meses"])) {
+                if ($tempo["meses"] >= 60) {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal60");
+                } else {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal");
+                }
+            }
+            
+            if (!empty($tempo["dias"])) {
+                if ($tempo["dias"] >= 1800) {
+                    p("{$tempo["dias"]} dias", "pTempoTotal60");
+                } else {
+                    p("{$tempo["dias"]} dias", "pTempoTotal");
+                }
             }
 
             # Exibe a vigência 
