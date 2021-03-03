@@ -956,19 +956,27 @@ class Contrato {
                 $div->abre();
 
                 br();
-
-                foreach ($row as $item) {
-                    $array2[] = [$item["idAditivo"], $item["idAditivo"]];
-                }
-
-                $div = new Div("tituloTable");
-                $div->abre();
-                p("Contrato: R$ " . formataMoeda($conteudo['valor']), "pvalorPositivo", "center");
-                $div->fecha();
+                $array2[] = [$idContrato];
 
                 # tabela
                 $tabela = new Tabela();
                 $tabela->set_conteudo($array2);
+                $tabela->set_label(array("Contrato"));
+                $tabela->set_align(array("center"));
+
+                $tabela->set_classe(array("Contrato"));
+                $tabela->set_metodo(array("exibeValor"));
+
+                $tabela->set_totalRegistro(false);
+                $tabela->show();
+
+                foreach ($row as $item) {
+                    $array3[] = [$item["idAditivo"], $item["idAditivo"]];
+                }
+
+                # tabela
+                $tabela = new Tabela();
+                $tabela->set_conteudo($array3);
                 $tabela->set_label(array("Termos", "Valor"));
                 $tabela->set_align(array("left", "center"));
 
