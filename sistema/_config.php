@@ -1,39 +1,10 @@
 <?php
 
 /**
- * Configuração do Sistema de Pessoal
+ * Configuração do Sistema de Contratos
  * 
  * By Alat
  */
-header("Content-Type: text/html; charset=utf-8");
-
-
-/**
- * [ PHP Basic Config ] Configurações basicas do sistema
- * Configura o timezone da aplicação
- * Define a função para output de erros.
- */
-date_default_timezone_set("America/Sao_Paulo");
-set_error_handler("fullStackPHPErrorHandler");
-
-/**
- * [ php config ] Altera modo de erro e exibição do var_dump.
- * display_errors: Erros devem ser exibidos.
- * error_reporting: Todos os tipos de erros
- * overload_var_dump: Omitir a linha de caminho do var_dump.
- */
-ini_set("display_errors", 1);
-ini_set("error_reporting", E_ALL);
-ini_set('xdebug.overload_var_dump', 1);
-
-/**
- * [ Default errors ] Função para exibir erros do PHP
- */
-function fullStackPHPErrorHandler($error, $message, $file, $line)
-{
-    $color = ($error == E_USER_ERROR ? "red" : "yellow");
-    echo "<div class='trigger' style='border-color: var(--{$color}); color:var(--{$color});'>[ Linha {$line} ] {$message}<small>{$file}</small></div>";
-}
 
 /*
  *  Classes
@@ -65,9 +36,11 @@ define("PASTA_ESTILOS", "../_css/");                                 // Estilos 
  *  Arquivos
  */
 define("PASTA_FOTOS", "../../_arquivos/fotos/");                    // Fotos dos Servidores
-define("PASTA_CONTRATOS", "../../_arquivos/contratos/");            // Publicação de Contratos
-define("PASTA_ADITIVOS", "../../_arquivos/contratosAditivos/");     // Publicação de Aditivos
-define("PASTA_DOCUMENTOS", "../../_arquivos/contratosDocumentos/"); // Documentos extras
+define("PASTA_CONTRATOS_PUBLICACAO", "../../_arquivos/contratos/contratosPublicacao/");            // Publicação de Contratos
+define("PASTA_ADITIVOS_PUBLICACAO", "../../_arquivos/contratos/aditivosPublicacao/");     // Publicação de Aditivos
+define("PASTA_CONTRATOS", "../../_arquivos/contratos/contratos/");            // Os Contratos
+define("PASTA_ADITIVOS", "../../_arquivos/contratos/aditivos/");     // Os Aditivos
+define("PASTA_DOCUMENTOS", "../../_arquivos/contratos/documentos/"); // Documentos extras
 
 /*
  *  Tags aceitas em campos com htmlTag = true
@@ -103,28 +76,28 @@ $nomeMes = array(null,
     "Dezembro");
 
 /* Inicia a sessão */
-$lifetime = 2000;
+$lifetime = 20000;
 session_start();
 setcookie(session_name(), session_id(), time() + $lifetime);
 
-# Funçõess gerais	
+# Funções gerais	
 include_once (PASTA_FUNCOES_GERAIS . "funcoes.gerais.php");
 include_once (PASTA_FUNCOES . "funcoes.especificas.php");
 
-# Framework gráfico 
-#include ('../../_framework/_outros/libchart/classes/libchart.php');
 # Dados do Browser
 $browser = get_BrowserName();
-define("BROWSER_NAME", $browser['browser']); # Nome do browser
-define("BROWSER_VERSION", $browser['version']); # Versão do browser
+define("BROWSER_NAME", $browser['browser']);
+define("BROWSER_VERSION", $browser['version']);
+
 # Pega o ip e nome da máquina
-define("IP", getenv("REMOTE_ADDR"));     # Ip da máquina
+define("IP", getenv("REMOTE_ADDR"));
+
 # Sistema Operacional
 define("SO", get_So());
 
 # carrega as session
-$idUsuario            = get_session('idUsuario');                          // Servidor Logado
-$idServidorPesquisado = get_session('idServidorPesquisado');    // Servidor Editado na pesquisa do sistema do GRH
+$idUsuario = get_session('idUsuario');
+
 # Define o horário
 date_default_timezone_set("America/Sao_Paulo");
 setlocale(LC_ALL, 'pt_BR');
@@ -137,10 +110,9 @@ setlocale(LC_CTYPE, 'pt_BR');
  * 
  * @param  $classe = a classe instanciada
  */
-function autoload($classe)
-{
+function autoload($classe) {
     # Array com as pastas existentes
-    $pastasClasses     = [PASTA_CLASSES_GERAIS, PASTA_CLASSES, PASTA_CLASSES_ADMIN, PASTA_CLASSES_GRH];
+    $pastasClasses = [PASTA_CLASSES_GERAIS, PASTA_CLASSES, PASTA_CLASSES_ADMIN, PASTA_CLASSES_GRH];
     $categoriasClasses = ["class", "interface", "container", "html", "outros", "rel", "bd", "documento", "w3"];
 
     # Percorre as pastas
@@ -157,7 +129,7 @@ function autoload($classe)
 spl_autoload_register("autoload");
 
 # Sobre o Sistema
-$intra  = new Intra();
+$intra = new Intra();
 define("SISTEMA", $intra->get_variavel("sistemaContratos"));             # Nome do sistema
 define("DESCRICAO", $intra->get_variavel("sistemaContratosDescricao"));  # Descrição do sistema
 define("AUTOR", $intra->get_variavel("sistemaAutor"));             # Autor do sistema
