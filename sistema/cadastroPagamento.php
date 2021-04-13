@@ -98,9 +98,9 @@ if ($acesso) {
     $objeto->set_grupoCorColuna(0);
 
     # Parametros da tabela
-    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza","Obs"));
+    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Obs"));
     $objeto->set_align(array("center", "center", "center", "center", "right", "center", "center", "left"));
-    #$objeto->set_width(array(10, 15, 15, 15, 12, 13, 20));
+    $objeto->set_width(array(5, 13, 10, 10, 12, 5, 5, 30));
     $objeto->set_funcao(array(null, null, "date_to_php"));
     $objeto->set_classe(array(null, "Pagamento", null, null, "Pagamento", "Pagamento"));
     $objeto->set_metodo(array(null, "exibeReferencia", null, null, "exibeValor", "exibeTipo"));
@@ -130,7 +130,7 @@ if ($acesso) {
     # Cria um array com os anos possíveis para a combo anoReferencia
     $anoInicial = 2010;
     $anoAtual = date('Y');
-    $anoReferencia = arrayPreenche($anoAtual + 1, $anoInicial, "d");
+    $anoReferencia = arrayPreenche($anoInicial, $anoAtual + 1, "d");
 
     # Campos para o formulario
     $objeto->set_campos(array(
