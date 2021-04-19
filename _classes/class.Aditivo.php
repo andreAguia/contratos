@@ -163,21 +163,42 @@ class Aditivo {
         $conteudo = $this->getDados($idAditivo);
 
         # Monta o arquivo
-        $arquivo = PASTA_ADITIVOS . $idAditivo . ".pdf";
+        $arquivo = PASTA_ADITIVOS_PUBLICACAO . $idAditivo . ".pdf";
 
         # Verifica se ele existe
         if (file_exists($arquivo)) {
+            # Limita o tamanho da tela
+            $grid = new Grid("center");
+            $grid->abreColuna(6);
 
-            # Monta o link
-            $link = new Link(null, $arquivo, "Exibe a Publicação");
-            $link->set_imagem(PASTA_FIGURAS_GERAIS . "ver.png", 20, 20);
-            $link->set_target("_blank");
-            $link->show();
+            # Ver a Publicação
+            $botao = new BotaoGrafico();
+            $botao->set_label("Ver");
+            $botao->set_title("Exibe a Publicação");
+            $botao->set_url($arquivo);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
+            $botao->set_target("_blank");
+            $botao->show();
+
+            $grid->fechaColuna();
+            $grid->abreColuna(6);
+
+            # Botão de Upload
+            $botao = new BotaoGrafico();
+            $botao->set_label("Upload");
+            $botao->set_title("Altera a Publicação");
+            $botao->set_url("cadastroAditivo.php?fase=uploadPublicacao&id={$idAditivo}");
+            $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
+            $botao->show();
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
         } else {
             # Botão de Upload
             $botao = new BotaoGrafico();
-            $botao->set_title('Faça upload do arquivo!');
-            $botao->set_url("cadastroAditivo.php?fase=upload&id={$idAditivo}");
+            $botao->set_label("Upload");
+            $botao->set_title("Faça upload da Publicação");
+            $botao->set_url("cadastroAditivo.php?fase=uploadPublicacao&id={$idAditivo}");
             $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
             $botao->show();
         }
@@ -193,7 +214,47 @@ class Aditivo {
         return;
     }
 
-    ###########################################################
+    ##########################################################
+    /*
+     * Informa a data de publicação mais a página ( se tiver) do Contrato
+     */
+
+    public function exibePublicacaoDiretoria($idAditivo = null) {
+
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idAditivo);
+
+        # Monta o arquivo
+        $arquivo = PASTA_ADITIVOS_PUBLICACAO . $idAditivo . ".pdf";
+
+        # Verifica se ele existe
+        if (file_exists($arquivo)) {
+            
+            # Ver a Publicação
+            $botao = new BotaoGrafico();
+            $botao->set_label("Ver");
+            $botao->set_title("Exibe a Publicação");
+            $botao->set_url($arquivo);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
+            $botao->set_target("_blank");
+            $botao->show();
+        }
+
+        # Publicação
+        p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
+
+        if (!empty($conteudo["pgPublicacao"])) {
+            p("pag: {$conteudo["pgPublicacao"]}", "pAditivoPag");
+        }
+        return;
+    }
+
+    ##########################################################
     /*
      * Informa a data de publicação mais a página ( se tiver) de um aditivo
      */

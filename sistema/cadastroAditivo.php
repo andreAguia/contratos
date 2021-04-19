@@ -36,7 +36,7 @@ if ($acesso) {
 
     # Começa uma nova página
     $page = new Page();
-    if ($fase == "upload") {
+     if ($fase == "uploadPublicacao" OR $fase == "uploadAditivo") {
         $page->set_ready('$(document).ready(function(){
                                 $("form input").change(function(){
                                     $("form p").text(this.files.length + " arquivo(s) selecionado");
@@ -117,7 +117,7 @@ if ($acesso) {
     if (Verifica::acesso($idUsuario, 9)) {
         $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "exibePublicacao", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
     } else {
-        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "getPublicacao", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
+        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "exibePublicacaoDiretoria", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
     }
     $objeto->set_funcao(array(null, null, null, "date_to_php"));
 
@@ -384,13 +384,15 @@ if ($acesso) {
         case "gravar" :
             $objeto->gravar($id, "cadastroAditivoExtra.php");
             break;
-
-        case "upload":
+        
+        ################################################################
+        
+        case "uploadPublicacao":
             $grid = new Grid("center");
             $grid->abreColuna(12);
 
             # Botão voltar
-            botaoVoltar('cadastroContrato.php');
+            botaoVoltar('cadastroAditivo.php');
 
             # Título
             tituloTable("Upload de Publicação");
@@ -400,7 +402,96 @@ if ($acesso) {
             $grid->abreColuna(6);
 
             # Monta o formulário
-            echo "<form name='post' action='?fase=upload&id={$id}&post=true' class='upload' method='post' enctype='multipart/form-data'><br>
+            echo "<form name='post' action='?fase=uploadPublicacao&id={$id}&post=true' class='upload' method='post' enctype='multipart/form-data'><br>
+                        <input type='file' name='file'>
+                        <p>Clique Aqui Para Escolher o Arquivo.</p>
+                        <button type='submit' name='submit'>Enviar</button>
+                    </form>";
+
+            # Extensões possíveis
+            $extensoes = array("pdf");
+
+            # Pega os valores do php.ini
+            $postMax = limpa_numero(ini_get('post_max_size'));
+            $uploadMax = limpa_numero(ini_get('upload_max_filesize'));
+            $limite = menorValor(array($postMax, $uploadMax));
+
+            $texto = "Extensões Permitidas:";
+            foreach ($extensoes as $pp) {
+                $texto .= " $pp";
+            }
+            $texto .= "<br/>Tamanho Máximo do Arquivo: $limite M";
+
+            br();
+            p($texto, "f14", "center");
+
+            $pasta = PASTA_ADITIVOS_PUBLICACAO;
+
+            # Retorna true se existir um get de nome post e for boleano
+            $getPost = filter_input(INPUT_GET, "post", FILTER_VALIDATE_BOOLEAN);
+
+            # Se não existe o programa cria
+            if (!file_exists($pasta) || !is_dir($pasta)) {
+                mkdir($pasta, 0755);
+            }
+
+            # Se existe uma $_FILES e o nome do arquivo não estiver vazio
+            if ($_FILES && !empty($_FILES['file']['name'])) {
+
+                $fileUpload = $_FILES["file"];
+
+                # Define no array os nameTypes permitidos
+                $allowedTypes = [
+                    "application/pdf",
+                ];
+
+                # Define o novo nome do arquivo
+                $newFileName = $id . mb_strrchr($fileUpload['name'], ".");
+
+                # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
+                if (in_array($fileUpload['type'], $allowedTypes)) {
+                    if (move_uploaded_file($fileUpload['tmp_name'], $pasta . $newFileName)) {
+                        # Registra log
+                        $Objetolog = new Intra();
+                        $data = date("Y-m-d H:i:s");
+                        $atividade = "Fez o upload da publicação do(a) " . $aditivo->getTipoNumerado($id) . " do contrato " . $contrato->getNumero($idContrato);
+                        $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
+
+                        loadPage("cadastroAditivo.php");
+                    } else {
+                        echo "<p class='trigger error'>Erro Inesperado</p>";
+                    }
+                } else {
+                    echo "<p class='trigger error'>Tipo de arquivo não permitido</p>";
+                }
+            } elseif ($_FILES) {
+                echo "<p class='trigger warning'>Selecione um arquivo antes de enviar</p>";
+            } elseif ($getPost) {
+                echo "<p class='trigger warning'>Parece que o arquivo é muito grande</p>";
+            }
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
+            break;
+
+        ################################################################
+
+        case "uploadAditivo":
+            $grid = new Grid("center");
+            $grid->abreColuna(12);
+
+            # Botão voltar
+            botaoVoltar('cadastroAditivo.php');
+
+            # Título
+            tituloTable("Upload do Aditivo");
+
+            # Limita a tela
+            $grid->fechaColuna();
+            $grid->abreColuna(6);
+
+            # Monta o formulário
+            echo "<form name='post' action='?fase=uploadAditivo&id={$id}&post=true' class='upload' method='post' enctype='multipart/form-data'><br>
                         <input type='file' name='file'>
                         <p>Clique Aqui Para Escolher o Arquivo.</p>
                         <button type='submit' name='submit'>Enviar</button>
@@ -449,7 +540,13 @@ if ($acesso) {
                 # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
                 if (in_array($fileUpload['type'], $allowedTypes)) {
                     if (move_uploaded_file($fileUpload['tmp_name'], $pasta . $newFileName)) {
-                        loadPage("?id={$id}");
+                        # Registra log
+                        $Objetolog = new Intra();
+                        $data = date("Y-m-d H:i:s");
+                        $atividade = "Fez o upload do(a) " . $aditivo->getTipoNumerado($id) . " do contrato " . $contrato->getNumero($idContrato);
+                        $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
+
+                        loadPage("cadastroAditivo.php");
                     } else {
                         echo "<p class='trigger error'>Erro Inesperado</p>";
                     }
@@ -465,6 +562,8 @@ if ($acesso) {
             $grid->fechaColuna();
             $grid->fechaGrid();
             break;
+
+        ################################################################
     }
 
     $page->terminaPagina();
