@@ -1106,10 +1106,10 @@ class Contrato {
 
             # Ver a Publicação
             $botao = new BotaoGrafico();
-            $botao->set_label("Ver");
-            $botao->set_title("Exibe a Publicação");
+            #$botao->set_label("Ver");
+            $botao->set_title("Ver a Publicação");
             $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
             $botao->set_target("_blank");
             $botao->show();
 
@@ -1118,7 +1118,7 @@ class Contrato {
 
             # Botão de Upload
             $botao = new BotaoGrafico();
-            $botao->set_label("Upload");
+            #$botao->set_label("Upload");
             $botao->set_title("Altera a Publicação");
             $botao->set_url("cadastroContrato.php?fase=uploadPublicacao&id={$idContrato}");
             $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
@@ -1129,7 +1129,7 @@ class Contrato {
         } else {
             # Botão de Upload
             $botao = new BotaoGrafico();
-            $botao->set_label("Upload");
+            #$botao->set_label("Upload");
             $botao->set_title("Faça upload da Publicação");
             $botao->set_url("cadastroContrato.php?fase=uploadPublicacao&id={$idContrato}");
             $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
@@ -1170,10 +1170,10 @@ class Contrato {
             
             # Ver a Publicação
             $botao = new BotaoGrafico();
-            $botao->set_label("Ver");
-            $botao->set_title("Exibe a Publicação");
+            #$botao->set_label("Ver");
+            $botao->set_title("Ver a Publicação");
             $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
             $botao->set_target("_blank");
             $botao->show();
         }
@@ -1215,10 +1215,10 @@ class Contrato {
 
             # Ver o Contrato
             $botao = new BotaoGrafico();
-            $botao->set_label("Ver");
-            $botao->set_title("Exibe o contrato");
+            #$botao->set_label("Ver");
+            $botao->set_title("Ver o contrato");
             $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
             $botao->set_target("_blank");
             $botao->show();
 
@@ -1227,7 +1227,7 @@ class Contrato {
 
             # Botão de Upload
             $botao = new BotaoGrafico();
-            $botao->set_label("Upload");
+            #$botao->set_label("Upload");
             $botao->set_title("Altera o contrato");
             $botao->set_url("cadastroContrato.php?fase=uploadPublicacao&id={$idContrato}");
             $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
@@ -1238,7 +1238,7 @@ class Contrato {
         } else {
             # Botão de Upload
             $botao = new BotaoGrafico();
-            $botao->set_label("Upload");
+            #$botao->set_label("Upload");
             $botao->set_title("Faça upload do contrato");
             $botao->set_url("cadastroContrato.php?fase=uploadPublicacao&id={$idContrato}");
             $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
@@ -1270,10 +1270,10 @@ class Contrato {
             
             # Ver o Contrato
             $botao = new BotaoGrafico();
-            $botao->set_label("Ver");
-            $botao->set_title("Exibe o contrato");
+            #$botao->set_label("Ver");
+            $botao->set_title("Ver o contrato");
             $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
             $botao->set_target("_blank");
             $botao->show();
         }

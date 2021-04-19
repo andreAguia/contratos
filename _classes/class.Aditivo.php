@@ -173,10 +173,10 @@ class Aditivo {
 
             # Ver a Publicação
             $botao = new BotaoGrafico();
-            $botao->set_label("Ver");
-            $botao->set_title("Exibe a Publicação");
+            #$botao->set_label("Ver");
+            $botao->set_title("Ver a Publicação");
             $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
             $botao->set_target("_blank");
             $botao->show();
 
@@ -185,7 +185,7 @@ class Aditivo {
 
             # Botão de Upload
             $botao = new BotaoGrafico();
-            $botao->set_label("Upload");
+            #$botao->set_label("Upload");
             $botao->set_title("Altera a Publicação");
             $botao->set_url("cadastroAditivo.php?fase=uploadPublicacao&id={$idAditivo}");
             $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
@@ -196,7 +196,7 @@ class Aditivo {
         } else {
             # Botão de Upload
             $botao = new BotaoGrafico();
-            $botao->set_label("Upload");
+            #$botao->set_label("Upload");
             $botao->set_title("Faça upload da Publicação");
             $botao->set_url("cadastroAditivo.php?fase=uploadPublicacao&id={$idAditivo}");
             $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
@@ -237,10 +237,10 @@ class Aditivo {
             
             # Ver a Publicação
             $botao = new BotaoGrafico();
-            $botao->set_label("Ver");
-            $botao->set_title("Exibe a Publicação");
+            #$botao->set_label("Ver");
+            $botao->set_title("Ver a Publicação");
             $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'ver.png', 20, 20);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
             $botao->set_target("_blank");
             $botao->show();
         }
