@@ -1097,13 +1097,15 @@ class Contrato {
 
         # Monta o arquivo
         $arquivo = PASTA_CONTRATOS_PUBLICACAO . $idContrato . ".pdf";
-        
+
         # Verifica se ele existe
         if (file_exists($arquivo)) {
             # Limita o tamanho da tela
-            $grid = new Grid("center");
-            $grid->abreColuna(6);
+            $grid1 = new Grid("center");
+            $grid1->abreColuna(10);
 
+            $grid = new Grid();
+            $grid->abreColuna(6);
             # Ver a Publicação
             $botao = new BotaoGrafico();
             #$botao->set_label("Ver");
@@ -1126,6 +1128,9 @@ class Contrato {
 
             $grid->fechaColuna();
             $grid->fechaGrid();
+
+            $grid1->fechaColuna();
+            $grid1->fechaGrid();
         } else {
             # Botão de Upload
             $botao = new BotaoGrafico();
@@ -1167,7 +1172,7 @@ class Contrato {
 
         # Verifica se ele existe
         if (file_exists($arquivo)) {
-            
+
             # Ver a Publicação
             $botao = new BotaoGrafico();
             #$botao->set_label("Ver");
@@ -1210,7 +1215,10 @@ class Contrato {
         # Verifica se ele existe
         if (file_exists($arquivo)) {
             # Limita o tamanho da tela
-            $grid = new Grid("center");
+            $grid1 = new Grid("center");
+            $grid1->abreColuna(10);
+
+            $grid = new Grid();
             $grid->abreColuna(6);
 
             # Ver o Contrato
@@ -1235,6 +1243,9 @@ class Contrato {
 
             $grid->fechaColuna();
             $grid->fechaGrid();
+
+            $grid1->fechaColuna();
+            $grid1->fechaGrid();
         } else {
             # Botão de Upload
             $botao = new BotaoGrafico();
@@ -1267,7 +1278,7 @@ class Contrato {
 
         # Verifica se ele existe
         if (file_exists($arquivo)) {
-            
+
             # Ver o Contrato
             $botao = new BotaoGrafico();
             #$botao->set_label("Ver");

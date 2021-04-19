@@ -36,7 +36,7 @@ if ($acesso) {
 
     # Começa uma nova página
     $page = new Page();
-     if ($fase == "uploadPublicacao" OR $fase == "uploadAditivo") {
+    if ($fase == "uploadPublicacao" OR $fase == "uploadAditivo") {
         $page->set_ready('$(document).ready(function(){
                                 $("form input").change(function(){
                                     $("form p").text(this.files.length + " arquivo(s) selecionado");
@@ -71,7 +71,8 @@ if ($acesso) {
     # select da lista
     $objeto->set_selectLista("SELECT idAditivo,
                                      idAditivo,
-                                     idAditivo,                                   
+                                     idAditivo,
+                                     idAditivo,
                                      dtAssinatura,
                                      idAditivo,
                                      idAditivo,
@@ -110,16 +111,16 @@ if ($acesso) {
     $objeto->set_exibeTempoPesquisa(false);
 
     # Parametros da tabela
-    $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
-    $objeto->set_align(array("center", "left", "center", "center", "center", "center", "right"));
-    $objeto->set_width(array(15, 25, 10, 10, 10, 15, 15));
-    $objeto->set_classe(array("Aditivo", "Aditivo", "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
+    $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Aditivo", "Assinatura", "Duração", "Garantia", "Valor"));
+    $objeto->set_align(array("center", "left", "center", "center", "center", "center", "center", "right"));
+    $objeto->set_width(array(15, 25, 10, 10, 10, 10, 10, 10));
+    $objeto->set_classe(array("Aditivo", "Aditivo", "Aditivo", "Aditivo", null, "Aditivo", "Aditivo", "Aditivo"));
     if (Verifica::acesso($idUsuario, 9)) {
-        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "exibePublicacao", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
+        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "exibePublicacao", "exibeAditivo", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
     } else {
-        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "exibePublicacaoDiretoria", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
+        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "exibePublicacaoDiretoria", "exibeAditivoDiretoria", null, "exibePeriodo", "exibeGarantia", "exibeValor"));
     }
-    $objeto->set_funcao(array(null, null, null, "date_to_php"));
+    $objeto->set_funcao(array(null, null, null, null, "date_to_php"));
 
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
@@ -356,7 +357,7 @@ if ($acesso) {
             # Verifica se veio do menu inicial
             if (get('i', false)) {
                 # Grava no log a atividade
-                $atividade = "Acessou a página do contrato ". $conteudo["numero"];
+                $atividade = "Acessou a página do contrato " . $conteudo["numero"];
                 $data = date("Y-m-d H:i:s");
                 $intra->registraLog($idUsuario, $data, $atividade, "tbcontrato", $idContrato, 7);
             }
@@ -384,9 +385,9 @@ if ($acesso) {
         case "gravar" :
             $objeto->gravar($id, "cadastroAditivoExtra.php");
             break;
-        
+
         ################################################################
-        
+
         case "uploadPublicacao":
             $grid = new Grid("center");
             $grid->abreColuna(12);

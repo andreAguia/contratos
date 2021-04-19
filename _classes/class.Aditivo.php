@@ -143,7 +143,7 @@ class Aditivo {
             $relatorio->show();
         } else {
             br();
-            p("Não há aditivos neste contrato","f12","center");
+            p("Não há aditivos neste contrato", "f12", "center");
         }
     }
 
@@ -168,7 +168,10 @@ class Aditivo {
         # Verifica se ele existe
         if (file_exists($arquivo)) {
             # Limita o tamanho da tela
-            $grid = new Grid("center");
+            $grid1 = new Grid("center");
+            $grid1->abreColuna(10);
+
+            $grid = new Grid();
             $grid->abreColuna(6);
 
             # Ver a Publicação
@@ -193,6 +196,9 @@ class Aditivo {
 
             $grid->fechaColuna();
             $grid->fechaGrid();
+
+            $grid1->fechaColuna();
+            $grid1->fechaGrid();
         } else {
             # Botão de Upload
             $botao = new BotaoGrafico();
@@ -234,7 +240,7 @@ class Aditivo {
 
         # Verifica se ele existe
         if (file_exists($arquivo)) {
-            
+
             # Ver a Publicação
             $botao = new BotaoGrafico();
             #$botao->set_label("Ver");
@@ -254,7 +260,106 @@ class Aditivo {
         return;
     }
 
+    ###########################################################
+    /*
+     * Exibe o aditivo
+     */
+
+    public function exibeAditivo($idAditivo = null) {
+
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idAditivo);
+
+        # Monta o arquivo
+        $arquivo = PASTA_ADITIVOS . $idAditivo . ".pdf";
+
+        # Verifica se ele existe
+        if (file_exists($arquivo)) {
+            # Limita o tamanho da tela
+            $grid1 = new Grid("center");
+            $grid1->abreColuna(10);
+
+            $grid = new Grid();
+            $grid->abreColuna(6);
+
+            # Ver o Aditivo
+            $botao = new BotaoGrafico();
+            #$botao->set_label("Ver");
+            $botao->set_title("Ver o Aditivo");
+            $botao->set_url($arquivo);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
+            $botao->set_target("_blank");
+            $botao->show();
+
+            $grid->fechaColuna();
+            $grid->abreColuna(6);
+
+            # Botão de Upload
+            $botao = new BotaoGrafico();
+            #$botao->set_label("Upload");
+            $botao->set_title("Altera o Aditivo");
+            $botao->set_url("cadastroAditivo.php?fase=uploadAditivo&id={$idAditivo}");
+            $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
+            $botao->show();
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
+
+            $grid1->fechaColuna();
+            $grid1->fechaGrid();
+        } else {
+            # Botão de Upload
+            $botao = new BotaoGrafico();
+            #$botao->set_label("Upload");
+            $botao->set_title("Faça upload do Aditivo");
+            $botao->set_url("cadastroAditivo.php?fase=uploadAditivo&id={$idAditivo}");
+            $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
+            $botao->show();
+        }
+
+
+        return;
+    }
+
     ##########################################################
+    /*
+     * Informa a data de publicação mais a página ( se tiver) do Contrato
+     */
+
+    public function exibeAditivoDiretoria($idAditivo = null) {
+
+        # Verifica se foi informado o id
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idAditivo);
+
+        # Monta o arquivo
+        $arquivo = PASTA_ADITIVOS . $idAditivo . ".pdf";
+
+        # Verifica se ele existe
+        if (file_exists($arquivo)) {
+
+            # Ver o Arquivo
+            $botao = new BotaoGrafico();
+            #$botao->set_label("Ver");
+            $botao->set_title("Ver o Aditivo");
+            $botao->set_url($arquivo);
+            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
+            $botao->set_target("_blank");
+            $botao->show();
+        }
+        return;
+    }
+
+    ###########################################################
     /*
      * Informa a data de publicação mais a página ( se tiver) de um aditivo
      */
