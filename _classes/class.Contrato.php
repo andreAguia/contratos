@@ -362,7 +362,7 @@ class Contrato {
         $tabela->set_totalRegistro(false);
 
         if (Verifica::acesso($idUsuario, 9)) {
-            $tabela->set_editar('cadastroContrato.php?fase=editar&id=' . $idContrato);
+            $tabela->set_editar('cadastroContrato.php?fase=editar');
             $tabela->set_idCampo('idContrato');
             $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", null, "Contrato", "Contrato", "Contrato"));
             $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacao", "exibeContrato", null, "getPeriodo", "getGarantia", "exibeValor"));
@@ -1097,7 +1097,7 @@ class Contrato {
 
         # Monta o arquivo
         $arquivo = PASTA_CONTRATOS_PUBLICACAO . $idContrato . ".pdf";
-
+        
         # Verifica se ele existe
         if (file_exists($arquivo)) {
             # Limita o tamanho da tela
