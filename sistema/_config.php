@@ -76,9 +76,9 @@ $nomeMes = array(null,
     "Dezembro");
 
 /* Inicia a sessão */
-$lifetime = 20000;
+//$lifetime = 20000;
 session_start();
-setcookie(session_name(), session_id(), time() + $lifetime);
+//setcookie(session_name(), session_id(), time() + $lifetime);
 
 # Funções gerais	
 include_once (PASTA_FUNCOES_GERAIS . "funcoes.gerais.php");
