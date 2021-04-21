@@ -5,7 +5,6 @@
  * 
  * By Alat
  */
-
 /*
  *  Classes
  */
@@ -75,10 +74,10 @@ $nomeMes = array(null,
     "Novembro",
     "Dezembro");
 
-/* Inicia a sessão */
-//$lifetime = 20000;
-session_start();
-//setcookie(session_name(), session_id(), time() + $lifetime);
+# Inicia a Session
+if (!isset($_SESSION)) {
+    session_start();
+}
 
 # Funções gerais	
 include_once (PASTA_FUNCOES_GERAIS . "funcoes.gerais.php");
