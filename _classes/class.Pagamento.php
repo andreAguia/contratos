@@ -8,7 +8,7 @@ class Pagamento {
 
         # Verifica se foi informado
         if (vazio($idPagamento)) {
-            alert("É necessário informar o id dp Pagamento.");
+            alert("É necessário informar o id do Pagamento.");
             return;
         }
 

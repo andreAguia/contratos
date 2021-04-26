@@ -289,6 +289,9 @@ if ($acesso) {
             $grid = new Grid();
             $grid->abreColuna(12);
 
+            # Carrega os dados com contrado editado
+            $conteudo = $contrato->getDados($idContrato);
+
             # Cria um menu
             $menu1 = new MenuBar();
 
@@ -301,14 +304,22 @@ if ($acesso) {
 
             if (Verifica::acesso($idUsuario, 9)) {
 
-                # Pagamentos
-                $botaoInserir = new Button("Controle de Saldo", "cadastroPagamento.php");
-                $botaoInserir->set_title("Incluir");
-                $menu1->add_link($botaoInserir, "right");
+                $modalidade = new Modalidade();
+
+                # Exibe o controle de pgto ou de aluguel dependendo do contrato
+                if ($modalidade->getTipo($conteudo["idModalidade"]) == "Despesa") {
+                    $botaoControle = new Button("Controle de Saldo", "cadastroPagamento.php");
+                    $botaoControle->set_title("Acessa a rotina de controle de saldo para contratos de despesa");
+                    $menu1->add_link($botaoControle, "right");
+                } else {
+                    $botaoControle = new Button("Controle de Aluguel", "cadastroReceita.php");
+                    $botaoControle->set_title("Acessa a rotina de controle de aluguel para contratos de receita");
+                    $menu1->add_link($botaoControle, "right");
+                }
 
                 # Incluir
                 $botaoInserir = new Button("Incluir Aditivo", "?fase=editar");
-                $botaoInserir->set_title("Incluir");
+                $botaoInserir->set_title("Inclui um novo aditivo");
                 $menu1->add_link($botaoInserir, "right");
 
                 # Folha de Rosto
@@ -350,9 +361,6 @@ if ($acesso) {
 
             # Exibe os aditivos
             $objeto->$fase();
-
-            # Carrega os dados com contrado editado
-            $conteudo = $contrato->getDados($idContrato);
 
             # Verifica se veio do menu inicial
             if (get('i', false)) {

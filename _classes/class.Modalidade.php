@@ -74,5 +74,30 @@ class Modalidade
         # Retorno        
         return $row["modalidade"];
     }
+    
+##############################################################
+
+    public function getTipo($idModalidade = null)
+    {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idModalidade)) {
+            alert("É necessário informar o id da Modalidade.");
+            return;
+        }
+
+        # Pega os dados
+        $select = "SELECT tipo
+                     FROM tbmodalidade
+                    WHERE idModalidade = {$idModalidade}";
+
+        $row = $contratos->select($select, false);
+
+        # Retorno        
+        return $row["tipo"];
+    }
 
 }

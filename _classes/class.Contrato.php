@@ -188,8 +188,6 @@ class Contrato {
 
         $conteudo = $this->getDados($idContrato);
 
-        $modalidade = new Modalidade();
-
         p($conteudo["numero"], "contratoNumero");
         if (!empty($conteudo['siafe'])) {
             p("Siafe: {$conteudo['siafe']}", "pVigencia");
@@ -200,6 +198,15 @@ class Contrato {
         }
 
         p($this->exibeModalidade($idContrato), "pVigencia");
+
+        # Informa se o contrato é de despesa ou de receita
+        $modalidade = new Modalidade();
+        br();
+        if ($modalidade->getTipo($conteudo["idModalidade"]) == "Receita") {
+            label("Receita", "primary", null, "Contrato de Receita");
+        } else {
+            label("Despesa", "warning", null, "Contrato de Despesa");
+        }
 
         $status = $this->getStatus($idContrato);
 
@@ -858,15 +865,16 @@ class Contrato {
         $conteudo = $this->getDados($idContrato);
         $idModalidade = $conteudo["idModalidade"];
 
-        $return = $modalidade->getModalidade($idModalidade);
+        # Informa a modadlidade
+        echo $modalidade->getModalidade($idModalidade);
 
         # Verifica se é pregão e se tem o número do pregão
         if ($idModalidade == 2) {
             if (!empty($conteudo["numPregao"])) {
-                $return .= " " . str_pad($conteudo["numPregao"], 3, "0", STR_PAD_LEFT);
+                echo " " . str_pad($conteudo["numPregao"], 3, "0", STR_PAD_LEFT);
             }
         }
-        return $return;
+        return;
     }
 
     #####################################################################################
