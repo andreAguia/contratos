@@ -342,13 +342,17 @@ if ($acesso) {
             $alerta = new AlertaContrato($idContrato, true);
 
             $grid->fechaColuna();
-            $grid->abreColuna(4);
+            if ($modalidade->getTipo($conteudo["idModalidade"]) == "Despesa") {
+                $grid->abreColuna(4);
 
-            # Exibe o valor
-            $contrato->exibeValorTotalPainel($idContrato);
+                # Exibe o valor
+                $contrato->exibeValorTotalPainel($idContrato);
 
-            $grid->fechaColuna();
-            $grid->abreColuna(8);
+                $grid->fechaColuna();
+                $grid->abreColuna(8);
+            } else {
+                $grid->abreColuna(12);
+            }
 
             # Exibe a situação atual
             $situacao->exibeSituacaoAtual($idContrato, $idUsuario);
