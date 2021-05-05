@@ -247,10 +247,9 @@ if ($acesso) {
     );
 
     # Dados da combo modalidade
-    $modalidade = $contratos->select('SELECT idModalidade,
-                                            modalidade
-                                       FROM tbmodalidade
-                                   ORDER BY modalidade');
+    $modalidade = $contratos->select('SELECT idModalidade, modalidade, tipo
+                                        FROM tbmodalidade
+                                    ORDER BY tipo,modalidade');
 
     array_unshift($modalidade, array(null, null));
 
@@ -282,6 +281,7 @@ if ($acesso) {
             'label' => 'Modalidade:',
             'tipo' => 'combo',
             'required' => true,
+            'optgroup' => true,
             'array' => $modalidade,
             'col' => 3,
             'size' => 15,
@@ -486,7 +486,7 @@ if ($acesso) {
             $botaoVoltar->set_title('Voltar a página anterior');
             $botaoVoltar->set_accessKey('V');
             $menu1->add_link($botaoVoltar, "left");
-            
+
             # Relatórios
             $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
             $botaoRel = new Button();
@@ -494,7 +494,7 @@ if ($acesso) {
             $botaoRel->set_url("relatorios.php");
             $botaoRel->set_imagem($imagem);
             $menu1->add_link($botaoRel, "right");
-            
+
             if (Verifica::acesso($idUsuario, 9)) {
 
                 # Incluir
@@ -511,7 +511,7 @@ if ($acesso) {
 
             if (Verifica::acesso($idUsuario, 9)) {
                 #hr("hrMenusecundario");
-                $menu2 = new MenuBar(); 
+                $menu2 = new MenuBar();
 
                 # Empresas
                 $botao = new Button("Empresas", "cadastroEmpresa.php");
@@ -542,7 +542,7 @@ if ($acesso) {
                 $botao->set_title("Cadastro de Natureza");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");
-                
+
                 # Checklist
                 $botao = new Button("Checklist", "cadastroChecklist.php");
                 $botao->set_title("Modelos de Checklist");
@@ -607,9 +607,9 @@ if ($acesso) {
              */
 
             # Pega os dados
-            $comboModalidade = $contratos->select('SELECT idModalidade, modalidade
+            $comboModalidade = $contratos->select('SELECT idModalidade, modalidade, tipo
                                                FROM tbmodalidade
-                                           ORDER BY idModalidade');
+                                           ORDER BY tipo, modalidade');
 
             array_unshift($comboModalidade, array(null, "Todos"));
 
@@ -620,6 +620,7 @@ if ($acesso) {
             $controle->set_valor($parametroModalidade);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
+            $controle->set_optgroup(true);
             $controle->set_col(3);
             $controle->set_array($comboModalidade);
             $controle->set_autofocus(true);
@@ -665,13 +666,13 @@ if ($acesso) {
         case "excluir":
             $objeto->$fase($id);
             break;
-        
+
         ################################################################
 
         case "gravar":
             $objeto->gravar($id, null, "cadastroContratoPosGravacao.php");
             break;
-        
+
         ################################################################
 
         case "incluir":
@@ -714,7 +715,6 @@ if ($acesso) {
             callout("Inicialmente informe a empresa contratada, caso seja uma empresa nova o cadastro deverá ser feito antes do cadastro do contrato !!");
             br();
 
-
             # Pega os dados
             $comboEmpresa = $contratos->select('SELECT idEmpresa, razaoSocial
                                                FROM tbempresa
@@ -744,11 +744,10 @@ if ($acesso) {
 
             $form->show();
 
-
             $grid->fechaColuna();
             $grid->fechaGrid();
             break;
-        
+
         ################################################################
 
         case "valida":
@@ -767,9 +766,9 @@ if ($acesso) {
             }
 
             break;
-            
+
         ################################################################
-            
+
         case "editaContrato":
             /*
              * O sistema passa por aqui somente por causa da session no início desse código
