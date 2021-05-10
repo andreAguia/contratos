@@ -5,15 +5,16 @@
  * 
  * By Alat
  */
-########################################################33
-# Iniciando a sessão
+
+/*
+ *  Iniciando a sessão
+ */
 
 if (session_status() !== PHP_SESSION_ACTIVE) { 
     session_cache_expire(300);
     session_start();
 }
 
-########################################################
 /*
  *  Classes
  */
