@@ -298,7 +298,7 @@ class Comissao {
         $relatorio->set_metodo(array("get_nome", "get_lotacao", "getPortariaEntrada", "getTipo"));
 
         $relatorio->set_subTotal(false);
-        #$relatorio->set_totalRegistro(false);
+        $relatorio->set_totalRegistro(false);
         $relatorio->set_dataImpressao(false);
         $relatorio->set_cabecalhoRelatorio(false);
         $relatorio->set_menuRelatorio(false);
@@ -308,23 +308,32 @@ class Comissao {
         $relatorio->set_logDetalhe($log);
         $relatorio->gravaLog();
         $relatorio->show();
+    }
 
-        # Exibe o processo da comissão
-        $relatorio = new Relatorio();
-        $relatorio->set_conteudo(array(array($idContrato)));
-        $relatorio->set_label(array("Processo de Fiscalização"));
-        $relatorio->set_align(array("center"));
-        $relatorio->set_width(array(80));
-        $relatorio->set_classe(array("Comissao"));
-        $relatorio->set_metodo(array("getProcesso"));
+#####################################################################################
 
-        $relatorio->set_subTotal(false);
-        $relatorio->set_totalRegistro(false);
-        $relatorio->set_dataImpressao(false);
-        $relatorio->set_cabecalhoRelatorio(false);
-        $relatorio->set_menuRelatorio(false);
-        $relatorio->set_bordaInterna(true);
-        $relatorio->show();
+    public function exibeProcessoFiscalizacaoRel($idContrato) {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+        $contrato = new Contrato();
+
+        tituloRelatorio("Processo de Fiscalização");
+        br();
+        
+        $processo = $this->getProcesso($idContrato);
+        
+        if(empty($processo)){
+            p("Não existe nenhum processo cadastrado !", "f12", "center");
+        }else{
+            p($this->getProcesso($idContrato), "f12", "center");
+        }        
+        hr("nenhumItem");
     }
 
 #####################################################################################
@@ -542,23 +551,27 @@ class Comissao {
         $contrato = new Contrato();
         $conteudo = $contrato->getDados($idContrato);
 
-        $processo = null;
+        if (empty($conteudo["processoComissaoSei"]) AND empty($conteudo["processoComissao"])) {
+            return null;
+        } else {
+            $processo = null;
 
-        # Verifica se tem somente um processo
-        if ((empty($conteudo["processoComissaoSei"])) xor (empty($conteudo["processoComissao"]))) {
-            if (empty($conteudo["processoComissaoSei"])) {
-                $processo = $conteudo["processoComissao"];
-            } else {
-                $processo = "SEI - {$conteudo["processoComissaoSei"]}";
+            # Verifica se tem somente um processo
+            if ((empty($conteudo["processoComissaoSei"])) xor (empty($conteudo["processoComissao"]))) {
+                if (empty($conteudo["processoComissaoSei"])) {
+                    $processo = $conteudo["processoComissao"];
+                } else {
+                    $processo = "SEI - {$conteudo["processoComissaoSei"]}";
+                }
             }
-        }
 
-        # Verifica se tem os dois
-        if ((!empty($conteudo["processoComissaoSei"])) and (!empty($conteudo["processoComissao"]))) {
-            $processo = "SEI - {$conteudo["processoComissaoSei"]} <br/> {$conteudo["processoComissao"]}";
-        }
+            # Verifica se tem os dois
+            if ((!empty($conteudo["processoComissaoSei"])) and (!empty($conteudo["processoComissao"]))) {
+                $processo = "SEI - {$conteudo["processoComissaoSei"]} <br/> {$conteudo["processoComissao"]}";
+            }
 
-        return $processo;
+            return $processo;
+        }
     }
 
     ##############################################################

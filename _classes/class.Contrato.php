@@ -1678,10 +1678,11 @@ class Contrato {
         $relatorio->set_width(array(20, 80));
 
         $relatorio->set_subTotal(false);
-        #$relatorio->set_totalRegistro(false);
+        $relatorio->set_totalRegistro(false);
         $relatorio->set_dataImpressao(false);
         $relatorio->set_cabecalhoRelatorio(false);
         $relatorio->set_menuRelatorio(false);
+        $relatorio->set_textoMensagemSemRegistro("Não existe nenhum processo cadastrado !");
         $relatorio->show();
     }
 
