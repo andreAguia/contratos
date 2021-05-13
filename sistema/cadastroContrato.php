@@ -175,7 +175,6 @@ if ($acesso) {
                                      maoDeObra,
                                      processoSei,
                                      processo,
-                                     processoExecucao,
                                      valor,
                                      garantia,
                                      dtPublicacao,
@@ -363,7 +362,7 @@ if ($acesso) {
             'nome' => 'processoSei',
             'label' => 'Processo Sei:',
             'tipo' => 'sei',
-            'col' => 4,
+            'col' => 5,
             'size' => 50,
         ),
         array(
@@ -371,15 +370,7 @@ if ($acesso) {
             'nome' => 'processo',
             'label' => 'Processo Físico:',
             'tipo' => 'processo',
-            'col' => 4,
-            'size' => 50,
-        ),
-        array(
-            'linha' => 5,
-            'nome' => 'processoExecucao',
-            'label' => 'Processo de Execução:',
-            'tipo' => 'sei',
-            'col' => 4,
+            'col' => 5,
             'size' => 50,
         ),
         array(

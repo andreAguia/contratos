@@ -252,7 +252,7 @@ class Comissao {
 
             $botaoEditar = new Link("Editar", "cadastroComissao.php");
             $botaoEditar->set_class('tiny button secondary');
-            $botaoEditar->set_title('Editar situação');
+            $botaoEditar->set_title('Editar comissão');
             $botaoEditar->show();
 
             $div->fecha();
@@ -273,10 +273,9 @@ class Comissao {
         $contratos = new Contratos();
         $contrato = new Contrato();
 
-        tituloRelatorio("Comissão");
+        tituloRelatorio("Comissão de Fiscalização");
 
-        # Exibe a comissão
-        # monta o select
+        # Monta o select
         $select = "SELECT idServidor,
                           idServidor,
                           idComissao,
@@ -299,7 +298,7 @@ class Comissao {
         $relatorio->set_metodo(array("get_nome", "get_lotacao", "getPortariaEntrada", "getTipo"));
 
         $relatorio->set_subTotal(false);
-        $relatorio->set_totalRegistro(false);
+        #$relatorio->set_totalRegistro(false);
         $relatorio->set_dataImpressao(false);
         $relatorio->set_cabecalhoRelatorio(false);
         $relatorio->set_menuRelatorio(false);
@@ -559,7 +558,7 @@ class Comissao {
             $processo = "SEI - {$conteudo["processoComissaoSei"]} <br/> {$conteudo["processoComissao"]}";
         }
 
-       return $processo;
+        return $processo;
     }
 
     ##############################################################

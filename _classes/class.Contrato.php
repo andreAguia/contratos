@@ -135,16 +135,6 @@ class Contrato {
                 $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
             }
         }
-
-        # Verifica se tem processo de execução
-        if (!empty($conteudo["processoExecucao"])) {
-            if ($br) {
-                $processo .= "<br/>Exec: SEI - {$conteudo["processoExecucao"]}";
-            } else {
-                $processo .= " Exec: SEI - {$conteudo["processoExecucao"]}";
-            }
-        }
-
         return $processo;
     }
 
@@ -165,15 +155,94 @@ class Contrato {
             return;
         }
 
-        $conteudo = $this->getDados($idContrato);
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
 
-        $processo = null;
+        $retorno = null;
+        $contador = 1;
+
+        # Pega os dados
+        $select = "SELECT processo
+                     FROM tbprocessoexecucao
+                    WHERE idContrato = {$idContrato}";
+
+        $conteudo = $contratos->select($select);
+        $num = $contratos->count($select);
 
         # Verifica se tem processo de execução
-        if (empty($conteudo["processoExecucao"])) {
-            return null;
+        if ($num > 0) {
+
+            foreach ($conteudo as $rr) {
+                $retorno .= "SEI - {$rr[0]}";
+
+                if ($contador < $num) {
+                    $contador++;
+                    $retorno .= "<br/>";
+                }
+            }
         } else {
-            return "SEI - {$conteudo["processoExecucao"]}";
+            return null;
+        }
+
+        return $retorno;
+    }
+
+    #####################################################################################
+
+    public function listaProcessosExecucao($idContrato, $idUsuario) {
+
+        /**
+         * Exibe uma tabela com os processos de execução deste contrato
+         *
+         * @param $idContrato integer null O id do contrato
+         *
+         * @syntax $contrato->exibeProcessosExecucao([$idContrato]);
+         */
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Pega os dados
+        $select = "SELECT SUBSTR(processo, -4),
+                                     CONCAT('SEI - ',processo),
+                                     idProcessoExecucao
+                                FROM tbprocessoexecucao
+                               WHERE idContrato = {$idContrato}
+                            ORDER BY SUBSTR(processo, -4)";
+
+        $conteudo = $contratos->select($select);
+        $num = $contratos->count($select);
+
+        # Monta a tabela
+        $tabela = new Tabela();
+        $tabela->set_titulo("Processo(s) de Execução");
+        $tabela->set_label(array("Ano", "Processo"));
+        $tabela->set_align(array("center", "left"));
+        $tabela->set_width(array(20, 80));
+        $tabela->set_conteudo($conteudo);
+        $tabela->set_mensagemTabelaVazia("Nenhum Processo Encontrado !<br/><br/>");
+        $tabela->show();
+
+        # Editar
+        if (Verifica::acesso($idUsuario, 9)) {
+            $div = new Div("divEdita1Comissao");
+            $div->abre();
+
+            $div = new Div("divEdita2");
+            $div->abre();
+
+            $botaoEditar = new Link("Editar", "cadastroProcessoExecucao.php");
+            $botaoEditar->set_class('tiny button secondary');
+            $botaoEditar->set_title('Editar processo');
+            $botaoEditar->show();
+
+            $div->fecha();
+            $div->fecha();
         }
     }
 
@@ -194,14 +263,14 @@ class Contrato {
         }
 
         if (!empty($conteudo['rubrica'])) {
-            p("Rubrica:: {$conteudo['rubrica']}", "pVigencia");
+            p("Rubrica: {$conteudo['rubrica']}", "pVigencia");
         }
 
         p($this->exibeModalidade($idContrato), "pVigencia");
 
         # Informa se o contrato é de despesa ou de receita
         $modalidade = new Modalidade();
-        br();
+
         if ($modalidade->getTipo($conteudo["idModalidade"]) == "Receita") {
             label("Receita", "primary", null, "Contrato de Receita");
         } else {
@@ -400,6 +469,7 @@ class Contrato {
         $select = "SELECT idContrato,
                           dtAssinatura,
                           idContrato,
+                          idContrato,
                           idContrato
                      FROM tbcontrato
                     WHERE idContrato = {$idContrato}";
@@ -411,11 +481,11 @@ class Contrato {
 
         # Monta o Relatório
         $relatorio = new Relatorio();
-        $relatorio->set_label(array("Publicação", "Assinatura", "Duração", "Valor"));
+        $relatorio->set_label(array("Publicação", "Assinatura", "Duração", "Garantia", "Valor"));
         $relatorio->set_align(array("center", "center", "center", "center", "center", "right"));
         #$relatorio->set_width(array(15, 25, 10, 10, 10, 15, 15));
-        $relatorio->set_classe(array("Contrato", null, "Contrato", "Contrato"));
-        $relatorio->set_metodo(array("exibePublicacaoRel", null, "getPeriodo", "exibeValor"));
+        $relatorio->set_classe(array("Contrato", null, "Contrato", "Contrato", "Contrato"));
+        $relatorio->set_metodo(array("exibePublicacaoRel", null, "getPeriodo", "getGarantia", "exibeValor"));
         $relatorio->set_funcao(array(null, "date_to_php"));
         $relatorio->set_conteudo($row);
 
@@ -866,15 +936,15 @@ class Contrato {
         $idModalidade = $conteudo["idModalidade"];
 
         # Informa a modadlidade
-        echo $modalidade->getModalidade($idModalidade);
+        $retorno = $modalidade->getModalidade($idModalidade);
 
         # Verifica se é pregão e se tem o número do pregão
         if ($idModalidade == 2) {
             if (!empty($conteudo["numPregao"])) {
-                echo " " . str_pad($conteudo["numPregao"], 3, "0", STR_PAD_LEFT);
+                $retorno .= " " . str_pad($conteudo["numPregao"], 3, "0", STR_PAD_LEFT);
             }
         }
-        return;
+        return $retorno;
     }
 
     #####################################################################################
@@ -1568,5 +1638,52 @@ class Contrato {
         echo $dados["objeto"];
     }
 
-    ##########################################################################################
+    #####################################################################################
+
+    public function listaProcessosExecucaoRel($idContrato) {
+
+        /**
+         * Exibe uma tabela com os processos de execução deste contrato
+         *
+         * @param $idContrato integer null O id do contrato
+         *
+         * @syntax $contrato->exibeProcessosExecucao([$idContrato]);
+         */
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Pega os dados
+        $select = "SELECT SUBSTR(processo, -4),
+                                     CONCAT('SEI - ',processo),
+                                     idProcessoExecucao
+                                FROM tbprocessoexecucao
+                               WHERE idContrato = {$idContrato}
+                            ORDER BY SUBSTR(processo, -4)";
+
+        $conteudo = $contratos->select($select);
+        
+        tituloRelatorio("Processo(s) de Execução");
+
+        # Monta o Relatório
+        $relatorio = new Relatorio();
+        $relatorio->set_conteudo($conteudo);
+        $relatorio->set_label(array("Ano", "Processo"));
+        $relatorio->set_align(array("center", "left"));
+        $relatorio->set_width(array(20, 80));
+
+        $relatorio->set_subTotal(false);
+        #$relatorio->set_totalRegistro(false);
+        $relatorio->set_dataImpressao(false);
+        $relatorio->set_cabecalhoRelatorio(false);
+        $relatorio->set_menuRelatorio(false);
+        $relatorio->show();
+    }
+
+    #####################################################################################
 }

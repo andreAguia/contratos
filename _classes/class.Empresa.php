@@ -285,7 +285,7 @@ class Empresa
 
             $botaoEditar = new Link("Editar", "cadastroEmpresa.php?fase=editar&id={$idEmpresa}");
             $botaoEditar->set_class('tiny button secondary');
-            $botaoEditar->set_title('Editar situação');
+            $botaoEditar->set_title('Editar empresa');
             $botaoEditar->show();
 
             $div->fecha();
@@ -293,7 +293,42 @@ class Empresa
         }
     }
 
+    ###########################################################
+
+    function exibeDadosRel($idEmpresa)
+    {
+
+        $conteudo = $this->getDados($idEmpresa);
+        
+        tituloRelatorio("Empresa Contratada");
+
+        # Monta o array de exibição
+        $dados = [
+            ["Razão Social", $conteudo["razaoSocial"]],
+            ["CNPJ", $conteudo["cnpj"]],
+            ["Telefone", $this->getTelefones($idEmpresa)],
+            ["Email", $this->getEmails($idEmpresa)],
+            ["Contatos", $this->getContatos($idEmpresa)],
+            ["Endereço", $this->getEndereco($idEmpresa)],
+        ];
+        
+        # Monta o Relatório
+        $relatorio = new Relatorio();
+        $relatorio->set_conteudo($dados);
+        $relatorio->set_label(array("Servidor", "Tipo"));
+        $relatorio->set_align(array("left", "left"));
+        $relatorio->set_width(array(30, 70));
+        
+        $relatorio->set_subTotal(false);
+        $relatorio->set_totalRegistro(false);
+        $relatorio->set_dataImpressao(false);
+        $relatorio->set_cabecalhoRelatorio(false);
+        $relatorio->set_menuRelatorio(false);
+        $relatorio->show();
+    }
+
     ##############################################################
+
 
     public function getNumContratos($idEmpresa = null)
     {

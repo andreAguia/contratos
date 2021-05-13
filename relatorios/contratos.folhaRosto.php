@@ -19,6 +19,7 @@ if ($acesso) {
     $contrato = new Contrato();
     $comissao = new Comissao();
     $aditivo = new Aditivo();
+    $empresa = new Empresa();
 
     # Começa uma nova página
     $page = new Page();
@@ -56,7 +57,7 @@ if ($acesso) {
     }
 
     if (!empty($conteudo['rubrica'])) {
-        p("Rubrica:: {$conteudo['rubrica']}", "pRelatorioSubtitulo");
+        p("Rubrica: {$conteudo['rubrica']}", "pRelatorioSubtitulo");
     }
 
     p($contrato->exibeModalidade($idContrato), "pRelatorioSubtitulo");
@@ -78,6 +79,18 @@ if ($acesso) {
 
     # Exibe os aditivos
     $aditivo->exibeAditivosContratoRel($idContrato);
+    
+    # Exibe dados da Empresa
+    $grid = new Grid();
+    $grid->abreColuna(6);
+    $empresa->exibeDadosRel($conteudo["idEmpresa"]);
+    $grid->fechaColuna();
+    
+    # Exibe processos de execução
+    $grid->abreColuna(6);
+    $contrato->listaProcessosExecucaoRel($idContrato);
+    $grid->fechaColuna();
+    $grid->fechaGrid();
 
     # Exibe a comissão    
     $comissao->listaComissaoRel($idContrato,"Visualizou a Folha de Rosto do Contrato " . $conteudo["numero"]);

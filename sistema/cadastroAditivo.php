@@ -377,13 +377,18 @@ if ($acesso) {
             $grid->fechaColuna();
 
             # Exibe dados da empresa
-            $grid->abreColuna(6);
+            $grid->abreColuna(4);
             $idEmpresa = $conteudo["idEmpresa"];
             $empresa->exibeDados($idEmpresa, $idUsuario);
             $grid->fechaColuna();
 
+            # Exibe os contratos de Execução
+            $grid->abreColuna(3);
+            $contrato->listaProcessosExecucao($idContrato, $idUsuario);
+            $grid->fechaColuna();
+
             # Exibe dados da comissão
-            $grid->abreColuna(6);
+            $grid->abreColuna(5);
             $comissao->listaComissao($idContrato, $idUsuario);
             $grid->fechaColuna();
             $grid->fechaGrid();
