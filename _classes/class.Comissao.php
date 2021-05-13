@@ -324,15 +324,13 @@ class Comissao {
         $contrato = new Contrato();
 
         tituloRelatorio("Processo de Fiscalização");
-        br();
-        
         $processo = $this->getProcesso($idContrato);
-        
-        if(empty($processo)){
+        if (empty($processo)) {
+            br();
             p("Não existe nenhum processo cadastrado !", "f12", "center");
-        }else{
+        } else {
             p($this->getProcesso($idContrato), "f12", "center");
-        }        
+        }
         hr("nenhumItem");
     }
 
