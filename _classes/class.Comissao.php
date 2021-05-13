@@ -331,7 +331,7 @@ class Comissao {
             hr("nenhumItem");
         } else {
             p($this->getProcesso($idContrato), "f12", "center");
-            hr("relatorio");
+            hr("nenhumItem");
         }
     }
 
