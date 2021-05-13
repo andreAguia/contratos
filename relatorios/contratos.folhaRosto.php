@@ -82,12 +82,12 @@ if ($acesso) {
     
     # Exibe dados da Empresa
     $grid = new Grid();
-    $grid->abreColuna(6);
+    $grid->abreColuna(7);
     $empresa->exibeDadosRel($conteudo["idEmpresa"]);
     $grid->fechaColuna();
     
     # Exibe processos de execução
-    $grid->abreColuna(6);
+    $grid->abreColuna(5);
     $contrato->listaProcessosExecucaoRel($idContrato);
     
     # Exibe o processo de fiscalização

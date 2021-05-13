@@ -556,7 +556,7 @@ class Comissao {
             $processo = null;
 
             # Verifica se tem somente um processo
-            if ((empty($conteudo["processoComissaoSei"])) xor (empty($conteudo["processoComissao"]))) {
+            if ((empty($conteudo["processoComissaoSei"])) XOR (empty($conteudo["processoComissao"]))) {
                 if (empty($conteudo["processoComissaoSei"])) {
                     $processo = $conteudo["processoComissao"];
                 } else {
@@ -565,7 +565,7 @@ class Comissao {
             }
 
             # Verifica se tem os dois
-            if ((!empty($conteudo["processoComissaoSei"])) and (!empty($conteudo["processoComissao"]))) {
+            if ((!empty($conteudo["processoComissaoSei"])) AND (!empty($conteudo["processoComissao"]))) {
                 $processo = "SEI - {$conteudo["processoComissaoSei"]} <br/> {$conteudo["processoComissao"]}";
             }
 
