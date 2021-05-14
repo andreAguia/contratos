@@ -420,7 +420,7 @@ if ($acesso) {
              *  submit
              */
             $controle = new Input('submit', 'submit');
-            $controle->set_valor('Entrar');
+            $controle->set_valor('Salvar');
             $controle->set_linha(3);
             $controle->set_tabIndex(3);
             $controle->set_accessKey('E');
