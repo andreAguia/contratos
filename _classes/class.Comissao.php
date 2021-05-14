@@ -328,11 +328,13 @@ class Comissao {
         if (empty($processo)) {
             br();
             p("Não existe nenhum processo cadastrado !", "f12", "center");
-            hr("nenhumItem");
         } else {
-            p($this->getProcesso($idContrato), "f12", "center");
             hr("nenhumItem");
+            p("Processo", "pprocessoFiscalizacao");
+            hr("nenhumItem");
+            p($this->getProcesso($idContrato), "pprocessoFiscalizacao");
         }
+        hr("nenhumItem");
     }
 
 #####################################################################################

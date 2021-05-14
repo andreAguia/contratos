@@ -8,7 +8,7 @@ $dtPublicacaoEntrada = $campoValor[5];
 $pgPublicacaoEntrada = $campoValor[6];
 
 # Verifica se houve alguma substutuição
-if (!vazio($substituindo)) {
+if (!empty($substituindo)) {
     
     # Monta os arrays de gravação
     $nomes = ["portariaSaida","dtPortariaSaida","dtPublicacaoSaida","pgPublicacaoSaida"];

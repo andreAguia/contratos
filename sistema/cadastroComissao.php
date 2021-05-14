@@ -435,8 +435,8 @@ if ($acesso) {
         case "valida":
 
             # Pega os dados digitados
-            $processoComissaoSei = post("processoComissaoSei");
-            $processoComissao = post("processoComissao");
+            $processoComissaoSei = trim(post("processoComissaoSei"));
+            $processoComissao = trim(post("processoComissao"));            
 
             # Pega os valores anteriores
             $conteudo = $contrato->getDados($idContrato);
