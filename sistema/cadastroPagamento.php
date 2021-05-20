@@ -230,7 +230,7 @@ if ($acesso) {
             break;
 
         case "gravar":
-            $objeto->gravar($id);
+            $objeto->gravar($id, 'cadastroPagamentoExtra.php');
             break;
 
         case "porNatureza":
