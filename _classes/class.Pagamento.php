@@ -125,7 +125,6 @@ class Pagamento {
 
         $valorTotal = $this->getValorLiquidado($idContrato);
 
-
         p(formataMoeda2($valorTotal), "pvalorTotalPositivo");
 
         # Verifica se tem lançamento discriminando natureza. Se tem exibe o link para exibir por natureza
@@ -135,10 +134,10 @@ class Pagamento {
             $link->set_onClick("abreFechaDivId('divNatureza');");
             $link->set_title("Detalha os pagamanto pela natureza do gasto");
             $link->show();
-            
+
             $div = new Div("divNatureza");
             $div->abre();
-            
+
             br();
             $this->exibeValorLiquidadoPorNatureza($idContrato);
             $div->fecha();
@@ -500,6 +499,4 @@ class Pagamento {
                 break;
         }
     }
-
-    ############################################################
 }

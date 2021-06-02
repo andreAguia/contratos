@@ -505,31 +505,31 @@ if ($acesso) {
                 $menu2 = new MenuBar();
 
                 # Empresas
-                $botao = new Button("Empresas", "cadastroEmpresa.php");
+                $botao = new Button("Empresas", "cadastroEmpresa.php?i=true");
                 $botao->set_title("Cadastro de Empresas");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");
 
                 # Comissões
-                $botao = new Button("Comissões", "cadastroMembros.php");
+                $botao = new Button("Comissões", "cadastroMembros.php?i=true");
                 $botao->set_title("Cadastro de Comissões");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");
 
                 # Modalidade
-                $botao = new Button("Modalidade", "cadastroModalidade.php");
+                $botao = new Button("Modalidade", "cadastroModalidade.php?i=true");
                 $botao->set_title("Cadastro de Modalidade");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");
 
                 # Status
-                $botao = new Button("Status", "cadastroStatus.php");
+                $botao = new Button("Status", "cadastroStatus.php?i=true");
                 $botao->set_title("Cadastro de Status");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");
 
                 # Natureza
-                $botao = new Button("Natureza", "cadastroNatureza.php");
+                $botao = new Button("Natureza", "cadastroNatureza.php?i=true");
                 $botao->set_title("Cadastro de Natureza");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");

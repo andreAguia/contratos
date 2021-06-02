@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Cadastro de Campus
+ * Cadastro de Situação atual de um contrato
  *  
  * By Alat
  */
@@ -40,7 +40,7 @@ if ($acesso) {
     $objeto = new Modelo();
 
     ################################################################
-    # Exibe os dados do Servidor
+    # Exibe os dados do Contrato
     $objeto->set_rotinaExtra("get_DadosContrato");
     $objeto->set_rotinaExtraParametro($idContrato);
 

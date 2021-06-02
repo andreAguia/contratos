@@ -23,12 +23,20 @@ if ($acesso) {
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
-
+    
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
 
     # pega o contrato
     $idContrato = soNumeros(get_session('sessionContrato'));
+
+    # Carrega os dados com contrado editado
+    $conteudo = $contrato->getDados($idContrato);
+
+    # log
+    $atividade = "Acessou o cadastro da comissão de fiscalização do contrato " . $conteudo["numero"];
+    $data = date("Y-m-d H:i:s");
+    $intra->registraLog($idUsuario, $data, $atividade, null, null, 7);
 
     # Começa uma nova página
     $page = new Page();
@@ -131,22 +139,26 @@ if ($acesso) {
     $objeto->set_linkIncluir("?fase=editar");
 
     $formatacaoCondicional = array(
-        array('coluna'   => 0,
-            'valor'    => "Presidente",
+        array(
+            'coluna' => 0,
+            'valor' => "Presidente",
             'operador' => '=',
-            'id'       => 'presidenteComissao'),
-        array('coluna'   => 0,
-            'valor'    => "Membro",
+            'id' => 'presidenteComissao'),
+        array(
+            'coluna' => 0,
+            'valor' => "Membro",
             'operador' => '=',
-            'id'       => 'membroComissao'),
-        array('coluna'   => 0,
-            'valor'    => "Suplente",
+            'id' => 'membroComissao'),
+        array(
+            'coluna' => 0,
+            'valor' => "Suplente",
             'operador' => '=',
-            'id'       => 'cuplenteComissao'),
-        array('coluna'   => 0,
-            'valor'    => "Saiu",
+            'id' => 'cuplenteComissao'),
+        array(
+            'coluna' => 0,
+            'valor' => "Saiu",
             'operador' => '=',
-            'id'       => 'saiuComissao'),
+            'id' => 'saiuComissao'),
     );
 
     # Parametros da tabela
@@ -217,108 +229,108 @@ if ($acesso) {
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
-            'linha'     => 1,
-            'nome'      => 'idServidor',
-            'label'     => 'Servidor:',
-            'tipo'      => 'combo',
-            'array'     => $membro,
-            'title'     => 'Servidor membro da comissão',
-            'col'       => 9,
-            'required'  => true,
+            'linha' => 1,
+            'nome' => 'idServidor',
+            'label' => 'Servidor:',
+            'tipo' => 'combo',
+            'array' => $membro,
+            'title' => 'Servidor membro da comissão',
+            'col' => 9,
+            'required' => true,
             "autofocus" => true,
-            'size'      => 30),
+            'size' => 30),
         array(
-            'linha'  => 1,
-            'nome'   => 'tipo',
-            'label'  => 'Tipo:',
-            'tipo'   => 'combo',
-            'array'  => $tipo,
+            'linha' => 1,
+            'nome' => 'tipo',
+            'label' => 'Tipo:',
+            'tipo' => 'combo',
+            'array' => $tipo,
             'padrao' => 2,
-            'col'    => 3,
-            'size'   => 15),
+            'col' => 3,
+            'size' => 15),
         array(
             'linha' => 2,
-            'nome'  => 'substituindo',
+            'nome' => 'substituindo',
             'label' => 'Substituindo:',
-            'tipo'  => 'combo',
+            'tipo' => 'combo',
             'array' => $substituindo,
             'title' => 'Servidor que sai para dar vaga',
-            'col'   => 9,
-            'size'  => 30),
+            'col' => 9,
+            'size' => 30),
         array(
-            'linha'  => 3,
-            'nome'   => 'portariaEntrada',
-            'label'  => 'Portaria Designação:',
-            'tipo'   => 'texto',
-            'col'    => 2,
+            'linha' => 3,
+            'nome' => 'portariaEntrada',
+            'label' => 'Portaria Designação:',
+            'tipo' => 'texto',
+            'col' => 2,
             'padrao' => $comissao->getUltimaPortariaEntrada($idContrato),
-            'size'   => 10),
+            'size' => 10),
         array(
-            'linha'  => 3,
-            'nome'   => 'dtPortariaEntrada',
-            'label'  => 'De:',
-            'tipo'   => 'date',
-            'col'    => 3,
-            'padrao' => date_to_bd($comissao->getUltimaDataPortariaEntrada($idContrato)),
-            'size'   => 15),
-        array(
-            'linha'  => 3,
-            'nome'   => 'dtPublicacaoEntrada',
-            'label'  => 'Publicado no DOERJ em:',
-            'tipo'   => 'date',
-            'col'    => 3,
-            'padrao' => date_to_bd($comissao->getUltimaDataPublicacaoEntrada($idContrato)),
-            'size'   => 15),
-        array(
-            'linha'  => 3,
-            'nome'   => 'pgPublicacaoEntrada',
-            'label'  => 'Página:',
-            'tipo'   => 'texto',
-            'col'    => 2,
-            'padrao' => $comissao->getUltimaPgPublicacaoEntrada($idContrato),
-            'size'   => 10),
-        array(
-            'linha' => 4,
-            'nome'  => 'portariaSaida',
-            'label' => 'Portaria de Saída:',
-            'tipo'  => 'texto',
-            'col'   => 2,
-            'size'  => 10),
-        array(
-            'linha' => 4,
-            'nome'  => 'dtPortariaSaida',
+            'linha' => 3,
+            'nome' => 'dtPortariaEntrada',
             'label' => 'De:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15),
+            'tipo' => 'date',
+            'col' => 3,
+            'padrao' => date_to_bd($comissao->getUltimaDataPortariaEntrada($idContrato)),
+            'size' => 15),
         array(
-            'linha' => 4,
-            'nome'  => 'dtPublicacaoSaida',
+            'linha' => 3,
+            'nome' => 'dtPublicacaoEntrada',
             'label' => 'Publicado no DOERJ em:',
-            'tipo'  => 'date',
-            'col'   => 3,
-            'size'  => 15),
+            'tipo' => 'date',
+            'col' => 3,
+            'padrao' => date_to_bd($comissao->getUltimaDataPublicacaoEntrada($idContrato)),
+            'size' => 15),
+        array(
+            'linha' => 3,
+            'nome' => 'pgPublicacaoEntrada',
+            'label' => 'Página:',
+            'tipo' => 'texto',
+            'col' => 2,
+            'padrao' => $comissao->getUltimaPgPublicacaoEntrada($idContrato),
+            'size' => 10),
         array(
             'linha' => 4,
-            'nome'  => 'pgPublicacaoSaida',
+            'nome' => 'portariaSaida',
+            'label' => 'Portaria de Saída:',
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 10),
+        array(
+            'linha' => 4,
+            'nome' => 'dtPortariaSaida',
+            'label' => 'De:',
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15),
+        array(
+            'linha' => 4,
+            'nome' => 'dtPublicacaoSaida',
+            'label' => 'Publicado no DOERJ em:',
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15),
+        array(
+            'linha' => 4,
+            'nome' => 'pgPublicacaoSaida',
             'label' => 'Página:',
-            'tipo'  => 'texto',
-            'col'   => 2,
-            'size'  => 10),
+            'tipo' => 'texto',
+            'col' => 2,
+            'size' => 10),
         array(
             'linha' => 5,
-            'nome'  => 'obs',
+            'nome' => 'obs',
             'label' => 'Observação:',
-            'tipo'  => 'textarea',
-            'size'  => array(80, 5)),
+            'tipo' => 'textarea',
+            'size' => array(80, 5)),
         array(
-            "linha"  => 5,
-            "nome"   => "idContrato",
-            "label"  => "idContrato:",
-            'tipo'   => 'hidden',
+            "linha" => 5,
+            "nome" => "idContrato",
+            "label" => "idContrato:",
+            'tipo' => 'hidden',
             'padrao' => $idContrato,
-            "col"    => 3,
-            "size"   => 11),
+            "col" => 3,
+            "size" => 11),
     ));
 
     # idUsuário para o Log
@@ -381,9 +393,6 @@ if ($acesso) {
             # Exibe dados do contrato
             get_DadosContrato($idContrato);
 
-            # Pega os valores do banco
-            $conteudo = $contrato->getDados($idContrato);
-
             $painel = new Callout();
             $painel->abre();
 
@@ -436,10 +445,7 @@ if ($acesso) {
 
             # Pega os dados digitados
             $processoComissaoSei = trim(post("processoComissaoSei"));
-            $processoComissao = trim(post("processoComissao"));            
-
-            # Pega os valores anteriores
-            $conteudo = $contrato->getDados($idContrato);
+            $processoComissao = trim(post("processoComissao"));
 
             # Grava os valores
             $objeto = new Contratos();

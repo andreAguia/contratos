@@ -18,6 +18,14 @@ if ($acesso) {
     # Conecta ao Banco de Dados
     $status = new Status();
 
+    # log
+    if (get('i', false)) {
+        # Grava no log a atividade
+        $atividade = "Acessou o cadastro de natureza.";
+        $data = date("Y-m-d H:i:s");
+        $intra->registraLog($idUsuario, $data, $atividade, null, null, 7);
+    }
+
     # Verifica a fase do programa
     $fase = get("fase", "listar");
 

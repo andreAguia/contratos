@@ -48,7 +48,11 @@ if ($acesso) {
 
     ################################################################
     # Exibe os dados do Contrato
-    $objeto->set_rotinaExtra("get_DadosContrato");
+    if ($fase == "listar") {
+        $objeto->set_rotinaExtra("get_DadosContratoReceita");
+    } else {
+        $objeto->set_rotinaExtra("get_DadosContrato");
+    }
     $objeto->set_rotinaExtraParametro($idContrato);
 
     # Nome do Modelo
@@ -209,6 +213,11 @@ if ($acesso) {
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
+    
+    # Edita Obs
+    $botaoObs = new Button("Obs Geral", "cadastroObsSaldo.php");
+    $botaoObs->set_title("Insere / edita as observações gerais.");
+    $objeto->set_botaoListarExtra([$botaoObs]);
 
     ################################################################
     switch ($fase) {

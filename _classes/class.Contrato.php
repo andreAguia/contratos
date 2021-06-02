@@ -1667,7 +1667,7 @@ class Contrato {
                             ORDER BY SUBSTR(processo, -4)";
 
         $conteudo = $contratos->select($select);
-        
+
         tituloRelatorio("Processo(s) de Execução");
 
         # Monta o Relatório
@@ -1686,5 +1686,44 @@ class Contrato {
         $relatorio->show();
     }
 
-    #####################################################################################
+    ############################################################
+
+    function exibeObsSaldo($idContrato) {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Pega os dados
+        $select = "SELECT obsSaldo
+                     FROM tbcontrato
+                    WHERE idContrato = {$idContrato}";
+
+        $obs = $contratos->select($select, false);
+
+        # Exibe somente se tiver dados
+        if (!empty($obs['obsSaldo'])) {
+            # Limita a tela
+            $grid = new Grid();
+            $grid->abreColuna(12);
+
+            $painel = new Callout("warning");
+            $painel->abre();
+
+            p("Observação:", "contratoLabelCallout1");
+            p($obs['obsSaldo'], "situacaoAtual", "left important");
+
+            $painel->fecha();
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
+        }
+    }
+
+    ############################################################
 }

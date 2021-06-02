@@ -216,6 +216,11 @@ if ($acesso) {
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
+    
+    # Edita Obs
+    $botaoObs = new Button("Obs Geral", "cadastroObsSaldo.php");
+    $botaoObs->set_title("Insere / edita as observações gerais.");
+    $objeto->set_botaoListarExtra([$botaoObs]);
 
     ################################################################
     switch ($fase) {
