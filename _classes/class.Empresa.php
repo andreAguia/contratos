@@ -268,7 +268,7 @@ class Empresa
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_titulo("Empresa Contratada");
-        $tabela->set_label(array("Servidor", "Tipo"));
+        $tabela->set_label(array("Descrição", "Valor"));
         $tabela->set_align(array("left", "left"));
         $tabela->set_width(array(30, 70));
         #$tabela->set_numeroOrdem(true);
