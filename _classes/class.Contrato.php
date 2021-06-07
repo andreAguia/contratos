@@ -94,10 +94,15 @@ class Contrato {
                 $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
             }
         }
+        
+        # Processo de prestação de contas
+        if (!empty($conteudo["processoPrestacao"])) {
+            $processo .= "<br/>Prestação de Contas:<br/>{$conteudo["processoPrestacao"]}";
+        }
         return $processo;
     }
 
-    ##############################################################
+    #####################################################################################
 
     public function getProcesso($idContrato = null, $br = true) {
 
@@ -134,6 +139,11 @@ class Contrato {
             } else {
                 $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
             }
+        }
+        
+        # Processo de prestação de contas
+        if (!empty($conteudo["processoPrestacao"])) {
+            $processo .= "<br/>Prestação de Contas:<br/>{$conteudo["processoPrestacao"]}";
         }
         return $processo;
     }
