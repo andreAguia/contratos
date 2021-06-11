@@ -405,7 +405,7 @@ if ($acesso) {
             /*
              *  processo Sei
              */
-            $controle = new Input('processoComissaoSei', 'seif', 'Processo Sei:', 1);
+            $controle = new Input('processoComissaoSei', 'sei', 'Processo Sei:', 1);
             $controle->set_autofocus(true);
             $controle->set_size(50);
             $controle->set_linha(1);

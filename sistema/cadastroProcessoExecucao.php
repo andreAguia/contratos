@@ -108,7 +108,7 @@ if ($acesso) {
             'linha' => 1,
             'nome' => 'processo',
             'label' => 'Processo de Execução:',
-            'tipo' => 'seif',
+            'tipo' => 'sei',
             'required'  => true,
             "autofocus" => true,
             'col' => 6,
