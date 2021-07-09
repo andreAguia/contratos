@@ -37,6 +37,9 @@ $postComissaoEmail = post('postComissaoEmail');
 $postComissaoProcesso = post('postComissaoProcesso');
 $postComissaoPortarias = post('postComissaoPortarias');
 
+$parametroOrdenaTipo = post('parametroOrdenaTipo', 'asc');
+$parametroOrdena = post('parametroOrdena', "numero");
+
 $parametroAno = post('parametroAno');
 $parametroStatus = post('parametroStatus', 1);
 $parametroModalidade = post('parametroModalidade');
@@ -77,13 +80,6 @@ if ($acesso) {
     $botaoVoltar->set_title('Voltar a página anterior');
     $botaoVoltar->set_accessKey('V');
     $menu1->add_link($botaoVoltar, "left");
-
-    # Empresas
-    $botao = new Button("Gerador de Relatório", "geradorRelatorios.php");
-    $botao->set_title("Rotina de geração de relatórios personalizados");
-    $botao->set_class("button");
-    #$menu1->add_link($botao, "right");
-
     $menu1->show();
 
     titulo("Gerador de Planilha Personalizada");
@@ -157,7 +153,7 @@ if ($acesso) {
     $controle->set_linha(1);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postProcessoExec', 'simnao', 'Execução:', 1);
     $controle->set_size(5);
     $controle->set_title('O Processo de execução do contrato');
@@ -287,7 +283,7 @@ if ($acesso) {
     $controle->set_linha(3);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     ###
 
     $controle = new Input('postComissao', 'simnao', 'Comissão:', 1);
@@ -326,7 +322,49 @@ if ($acesso) {
     $controle->set_col(1);
     $form->add_item($controle);
 
+#################################### Ordenação #######################################
+    # Ordenação
+    $ordena = [
+        ["numero", "Número"],
+        [" (IFNULL(
+                      (SELECT IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
+                     FROM tbaditivo
+                    WHERE tbaditivo.idContrato = tbcontrato.idContrato
+                      AND dtInicial IS NOT NULL 
+                 ORDER BY dtAssinatura desc LIMIT 1),
+                 IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY))))", "Vigência"],
+        ["razaoSocial", "Empresa"]
+    ];
 
+    # Campo
+    $controle = new Input('parametroOrdena', 'combo', 'Ordenação', 1);
+    $controle->set_size(20);
+    $controle->set_title('Ano da assinatura do contrato');
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(5);
+    $controle->set_col(3);
+    $controle->set_valor($parametroOrdena);
+    $controle->set_array($ordena);
+    $controle->set_fieldset("Ordenação:");
+    $form->add_item($controle);
+
+    # Tipo
+    $controle = new Input('parametroOrdenaTipo', 'combo', 'Tipo', 1);
+    $controle->set_size(20);
+    $controle->set_title('Ano da assinatura do contrato');
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(5);
+    $controle->set_col(2);
+    $controle->set_valor($parametroOrdenaTipo);
+    $controle->set_array([
+        ["asc", "asc"],
+        ["desc", "desc"],
+    ]);
+    $form->add_item($controle);
+
+#################################### Filtro #######################################
 
     /*
      * Ano do Contrato
@@ -346,7 +384,7 @@ if ($acesso) {
     $controle->set_title('Ano da assinatura do contrato');
     $controle->set_valor($parametroAno);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(5);
+    $controle->set_linha(6);
     $controle->set_col(2);
     $controle->set_array($comboAno);
     $controle->set_fieldset("Informe o Filtro:");
@@ -369,7 +407,7 @@ if ($acesso) {
     $controle->set_title('Status do contrato');
     $controle->set_valor($parametroStatus);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(5);
+    $controle->set_linha(6);
     $controle->set_col(2);
     $controle->set_array($comboStatus);
     $form->add_item($controle);
@@ -391,7 +429,7 @@ if ($acesso) {
     $controle->set_title('Modalidade do contrato');
     $controle->set_valor($parametroModalidade);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(5);
+    $controle->set_linha(6);
     $controle->set_col(3);
     $controle->set_array($comboModalidade);
     $form->add_item($controle);
@@ -402,7 +440,7 @@ if ($acesso) {
     $controle->set_title('Se é despesa ou receita');
     $controle->set_valor($parametroModalidadeTipo);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(5);
+    $controle->set_linha(6);
     $controle->set_col(2);
     $controle->set_array(["Todos", "Despesa", "Receita"]);
     $form->add_item($controle);
@@ -413,7 +451,7 @@ if ($acesso) {
     $controle->set_title('Se tem mão de obra alocada');
     $controle->set_valor($parametroMaoDeObra);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(5);
+    $controle->set_linha(6);
     $controle->set_col(2);
     $controle->set_array(array(array("S", "Sim"), array("N", "Não"), array(null, "Todos")));
     $form->add_item($controle);
@@ -459,19 +497,24 @@ if ($acesso) {
         }
     }
 
-    $select .= " ORDER BY YEAR(dtAssinatura) DESC, numero";
+    # Estabelece a ordenação
+    if ($parametroOrdena == "numero") {
+        $select .= " ORDER BY YEAR(dtAssinatura) {$parametroOrdenaTipo}, numero {$parametroOrdenaTipo}";
+    } else {
+        $select .= " ORDER BY YEAR(dtAssinatura) DESC, numero";
+    }
 
     $comboContrato = $contratos->select($select);
 
     array_unshift($comboContrato, array(0, "Todos"));
 
     # Contrato
-    $controle = new Input('parametroContrato', 'combo', 'Contrato:', 1);
+    $controle = new Input('parametroContrato', 'combo', 'Contrato: (use a tecla CTRL)', 1);
     $controle->set_size(6);
     $controle->set_title('Contratos');
     $controle->set_valor($parametroContrato);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(5);
+    $controle->set_linha(7);
     $controle->set_multiple(true);
     $controle->set_col(2);
     $controle->set_array($comboContrato);
@@ -494,7 +537,7 @@ if ($acesso) {
     $controle->set_title('Empresa contratada');
     $controle->set_valor($parametroEmpresa);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(5);
+    $controle->set_linha(7);
     $controle->set_col(9);
     $controle->set_array($comboEmpresa);
     $form->add_item($controle);
@@ -563,7 +606,7 @@ if ($acesso) {
         $method[] = "getProcesso";
         $function[] = "";
     }
-    
+
     if ($postProcessoExec) {
         $field[] = "idContrato";
         $label[] = "Execução";
@@ -689,7 +732,7 @@ if ($acesso) {
         $method[] = "listaComissaoEmailTabela";
         $function[] = "";
     }
-    
+
     if ($postComissaoProcesso) {
         $field[] = "idContrato";
         $label[] = "Processo da Comissão";
@@ -698,7 +741,7 @@ if ($acesso) {
         $method[] = "exibeProcessoRelatorio";
         $function[] = "";
     }
-    
+
     if ($postComissaoPortarias) {
         $field[] = "idContrato";
         $label[] = "Portarias da Comissão";
@@ -738,7 +781,8 @@ if ($acesso) {
         $select = rtrim($select, ',');
 
         # Adiciona as tabelas
-        $select .= " FROM tbcontrato JOIN tbmodalidade USING (idModalidade)";
+        $select .= " FROM tbcontrato JOIN tbmodalidade USING (idModalidade) 
+                                     JOIN tbempresa USING (idEmpresa)";
 
         # Adiciona filtro
         $select .= " WHERE true";
@@ -787,7 +831,11 @@ if ($acesso) {
         }
 
         # Estabelece a ordenação
-        $select .= " ORDER BY numero";
+        if ($parametroOrdena == "numero") {
+            $select .= " ORDER BY YEAR(dtAssinatura) {$parametroOrdenaTipo}, numero {$parametroOrdenaTipo}";
+        } else {
+            $select .= " ORDER BY {$parametroOrdena} {$parametroOrdenaTipo}";
+        }
 
         #echo $select;
 
@@ -796,6 +844,28 @@ if ($acesso) {
     } else {
         $row = null;
     }
+    br();
+
+    # Cria as session para o relatório
+    set_session("sessionSelect", $select);
+    set_session("sessionLabel", $label);
+    set_session("sessionAlign", $align);
+    set_session("sessionClass", $class);
+    set_session("sessionMethod", $method);
+    set_session("sessionFunction", $function);
+
+    # Cria um menu
+    $menu1 = new MenuBar();
+
+    # Relatórios
+    $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+    $botaoRel = new Button();
+    $botaoRel->set_title("Relatório dessa pesquisa");
+    $botaoRel->set_url("../relatorios/contratos.gerador.php");
+    $botaoRel->set_target("_blank");
+    $botaoRel->set_imagem($imagem);
+    $menu1->add_link($botaoRel, "right");
+    $menu1->show();
 
     $tabela = new Tabela();
     $tabela->set_titulo("Planilha Personalizada para Cópia");

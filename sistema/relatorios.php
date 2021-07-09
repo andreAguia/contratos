@@ -21,6 +21,14 @@ if ($acesso) {
 
     # Verifica a fase do programa
     $fase = get('fase', 'menu');
+    
+    # Zera as session do relatório
+    set_session("sessionSelect");
+    set_session("sessionLabel");
+    set_session("sessionAlign");
+    set_session("sessionClass");
+    set_session("sessionMethod");
+    set_session("sessionFunction");
 
     # Começa uma nova página
     $page = new Page();
