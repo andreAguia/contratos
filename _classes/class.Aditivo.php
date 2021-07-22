@@ -406,7 +406,7 @@ class Aditivo {
 
             # Monta o link
             $link = new Link(null, $arquivo, "Exibe a Publicação");
-            $link->set_imagem(PASTA_FIGURAS_GERAIS . "ver.png", 20, 20);
+            $link->set_imagem(PASTA_FIGURAS_GERAIS . "olho.png", 20, 20);
             $link->set_target("_blank");
             $link->show();
         }
