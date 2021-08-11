@@ -1,7 +1,6 @@
 <?php
 
-class Empresa
-{
+class Empresa {
 
     /**
      * Abriga as várias rotina referentes a concurso
@@ -14,8 +13,7 @@ class Empresa
 
 ##############################################################
 
-    public function __construct($idEmpresa = null)
-    {
+    public function __construct($idEmpresa = null) {
         /**
          * Inicia a Classe somente
          * 
@@ -28,8 +26,7 @@ class Empresa
 
 ##############################################################
 
-    public function getDados($idEmpresa = null)
-    {
+    public function getDados($idEmpresa = null) {
 
         /**
          * Informa os dados da base de dados
@@ -65,8 +62,7 @@ class Empresa
 
     #####################################################################################
 
-    public function getRazaoSocial($idEmpresa)
-    {
+    public function getRazaoSocial($idEmpresa) {
 
         # Joga o valor informado para a variável da classe
         if (!vazio($idEmpresa)) {
@@ -95,8 +91,7 @@ class Empresa
 
     ##########################################################################################
 
-    public function getTelefones($idEmpresa)
-    {
+    public function getTelefones($idEmpresa) {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
@@ -122,8 +117,7 @@ class Empresa
 
     ##########################################################################################
 
-    public function getEmails($idEmpresa)
-    {
+    public function getEmails($idEmpresa) {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
@@ -149,8 +143,7 @@ class Empresa
 
     ##########################################################################################
 
-    public function getContatos($idEmpresa)
-    {
+    public function getContatos($idEmpresa) {
 
         # Função que retorna os telefones do servidor cadastrado no sistema
         #
@@ -166,14 +159,17 @@ class Empresa
         if (!empty($dados["usuarioSei"])) {
             $retorno .= "SEI: {$dados["usuarioSei"]}<br/>";
         }
+        
+        if (!empty($dados["preposto"])) {
+            $retorno .= "Preposto: {$dados["preposto"]}<br/>";
+        }
 
         return $retorno;
     }
 
     ##########################################################################################
 
-    public function getContatoComTel($idEmpresa)
-    {
+    public function getContatoComTel($idEmpresa) {
 
         # Função que retorna o contato
         #
@@ -183,17 +179,13 @@ class Empresa
         $retorno = null;
 
         if (!empty($dados["contato"])) {
-            return $dados["contato"]."<br/>".$this->getTelefones($idEmpresa);
+            return $dados["contato"] . "<br/>" . $this->getTelefones($idEmpresa);
         }
-        
-        
     }
 
     ##########################################################################################
 
-
-    public function getEmpresaCnpj($idEmpresa)
-    {
+    public function getEmpresaCnpj($idEmpresa) {
 
         $dados = $this->getDados($idEmpresa);
 
@@ -208,18 +200,16 @@ class Empresa
 
     ##########################################################################################
 
-
-    public function exibeEmpresaCnpj($idEmpresa)
-    {
+    public function exibeEmpresaCnpj($idEmpresa) {
 
         $dados = $this->getDados($idEmpresa);
 
-       echo $dados["razaoSocial"];
+        echo $dados["razaoSocial"];
 
         if (!empty($dados["cnpj"])) {
-            p("CNPJ: {$dados["cnpj"]}","empresaCnpj");
+            p("CNPJ: {$dados["cnpj"]}", "empresaCnpj");
         }
-        
+
         # Verifica se tem observação, se tiver exibe uma figura com mouseover
         if (!empty($dados["obs"])) {
             toolTip("(Obs)", $dados["obs"]);
@@ -227,8 +217,8 @@ class Empresa
     }
 
     ##########################################################################################
-    public function getCnpj($idEmpresa)
-    {
+
+    public function getCnpj($idEmpresa) {
 
         $dados = $this->getDados($idEmpresa);
         $retorno = trataNulo($dados["cnpj"]);
@@ -237,8 +227,7 @@ class Empresa
 
     ##########################################################################################
 
-    public function getEmpresa($idEmpresa)
-    {
+    public function getEmpresa($idEmpresa) {
 
         $dados = $this->getDados($idEmpresa);
         return $dados["razaoSocial"];
@@ -246,8 +235,7 @@ class Empresa
 
     ##########################################################################################
 
-    public function exibeEmpresaRelatorio($idEmpresa)
-    {
+    public function exibeEmpresaRelatorio($idEmpresa) {
 
         $dados = $this->getDados($idEmpresa);
         p($dados["razaoSocial"], "pComissaoImpressao");
@@ -255,8 +243,7 @@ class Empresa
 
     ##########################################################################################
 
-    public function getEndereco($idEmpresa)
-    {
+    public function getEndereco($idEmpresa) {
 
         $dados = $this->getDados($idEmpresa);
 
@@ -269,21 +256,50 @@ class Empresa
 
     ###########################################################
 
-    function exibeDados($idEmpresa, $idUsuario)
-    {
+    function exibeDados($idEmpresa, $idUsuario) {
 
         $conteudo = $this->getDados($idEmpresa);
 
         # Monta o array de exibição
         $dados = [
             ["Razão Social", $conteudo["razaoSocial"]],
-            ["CNPJ", $conteudo["cnpj"]],
-            ["Telefone", $this->getTelefones($idEmpresa)],
-            ["Email", $this->getEmails($idEmpresa)],
-            ["Contatos", $this->getContatos($idEmpresa)],
-            ["Endereço", $this->getEndereco($idEmpresa)],
-            ["Obs",  trataNulo($conteudo["obs"])],
+            ["CNPJ", $conteudo["cnpj"]]
         ];
+
+        # Telefone
+        if (!empty($this->getTelefones($idEmpresa))) {
+            array_push($dados, ["Telefone", $this->getTelefones($idEmpresa)]);
+        }
+
+        # Endereço
+        if (!empty($this->getEndereco($idEmpresa))) {
+            array_push($dados, ["Endereço", $this->getEndereco($idEmpresa)]);
+        }
+
+        # Email
+        if (!empty($this->getEmails($idEmpresa))) {
+            array_push($dados, ["Email", $this->getEmails($idEmpresa)]);
+        }
+
+        # Contatos
+        if (!empty($conteudo["contato"])) {
+            array_push($dados, ["Contatos", $conteudo["contato"]]);
+        }
+
+        # Pessoa - SEI
+        if (!empty($conteudo["usuarioSei"])) {
+            array_push($dados, ["Usuário SEI", $conteudo["usuarioSei"]]);
+        }
+
+        # Preposto
+        if (!empty($conteudo["preposto"])) {
+            array_push($dados, ["Preposto", $conteudo["preposto"]]);
+        }
+
+        # Obs
+        if (!empty($conteudo["obs"])) {
+            array_push($dados, ["Obs", nl2br($conteudo["obs"])]);
+        }
 
         # Monta a tabela
         $tabela = new Tabela();
@@ -315,11 +331,10 @@ class Empresa
 
     ###########################################################
 
-    function exibeDadosRel($idEmpresa)
-    {
+    function exibeDadosRel($idEmpresa) {
 
         $conteudo = $this->getDados($idEmpresa);
-        
+
         tituloRelatorio("Empresa Contratada");
 
         # Monta o array de exibição
@@ -331,14 +346,14 @@ class Empresa
             ["Contatos", $this->getContatos($idEmpresa)],
             ["Endereço", $this->getEndereco($idEmpresa)],
         ];
-        
+
         # Monta o Relatório
         $relatorio = new Relatorio();
         $relatorio->set_conteudo($dados);
         $relatorio->set_label(array("Servidor", "Tipo"));
         $relatorio->set_align(array("left", "left"));
         $relatorio->set_width(array(30, 70));
-        
+
         $relatorio->set_subTotal(false);
         $relatorio->set_totalRegistro(false);
         $relatorio->set_dataImpressao(false);
@@ -349,9 +364,7 @@ class Empresa
 
     ##############################################################
 
-
-    public function getNumContratos($idEmpresa = null)
-    {
+    public function getNumContratos($idEmpresa = null) {
         # Joga o valor informado para a variável da classe
         if (!vazio($idEmpresa)) {
             $this->idEmpresa = $idEmpresa;
