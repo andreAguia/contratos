@@ -24,6 +24,7 @@ if ($acesso) {
     $aditivo = new Aditivo();
     $empresa = new Empresa();
     $situacao = new Situacao();
+    $modalidade = new Modalidade();
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
@@ -303,8 +304,6 @@ if ($acesso) {
             $menu1->add_link($botaoVoltar, "left");
 
             if (Verifica::acesso($idUsuario, 9)) {
-
-                $modalidade = new Modalidade();
 
                 # Exibe o controle de pgto ou de aluguel dependendo do contrato
                 if ($modalidade->getTipo($conteudo["idModalidade"]) == "Despesa") {

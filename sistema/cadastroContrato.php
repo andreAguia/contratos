@@ -204,7 +204,7 @@ if ($acesso) {
 
     $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação", "Acessar"));
     $objeto->set_classe(array("Contrato", "Contrato", "Empresa", "Contrato", "Contrato", "Situacao"));
-    $objeto->set_metodo(array("exibeNumeroContrato", "exibeObjeto", "getEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
+    $objeto->set_metodo(array("exibeNumeroContrato", "exibeObjeto", "exibeEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
     $objeto->set_width(array(10, 20, 22, 18, 10, 20));
     $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
     $objeto->set_exibeTempoPesquisa(false);

@@ -208,6 +208,25 @@ class Empresa
 
     ##########################################################################################
 
+
+    public function exibeEmpresaCnpj($idEmpresa)
+    {
+
+        $dados = $this->getDados($idEmpresa);
+
+       echo $dados["razaoSocial"];
+
+        if (!empty($dados["cnpj"])) {
+            p("CNPJ: {$dados["cnpj"]}","empresaCnpj");
+        }
+        
+        # Verifica se tem observação, se tiver exibe uma figura com mouseover
+        if (!empty($dados["obs"])) {
+            toolTip("(Obs)", $dados["obs"]);
+        }
+    }
+
+    ##########################################################################################
     public function getCnpj($idEmpresa)
     {
 
@@ -263,6 +282,7 @@ class Empresa
             ["Email", $this->getEmails($idEmpresa)],
             ["Contatos", $this->getContatos($idEmpresa)],
             ["Endereço", $this->getEndereco($idEmpresa)],
+            ["Obs",  trataNulo($conteudo["obs"])],
         ];
 
         # Monta a tabela

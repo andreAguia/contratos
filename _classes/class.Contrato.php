@@ -528,15 +528,15 @@ class Contrato {
         $contratos = new Contratos();
         $row = $contratos->select($select);
 
-        $empresa = new Empresa();
-
+        $contrato = new Contrato();
+        
         # Limita o tamanho da tela
         $grid = new Grid();
         $grid->abreColuna(12);
 
         $formatacaoCondicional = array(array(
-                'coluna' => 3,
-                'valor' => $empresa->getEmpresaCnpj($row[0][3]),
+                'coluna' => 1,
+                'valor' => $contrato->getProcesso($row[0][1]),
                 'operador' => '=',
                 'id' => 'listaDados'));
 
@@ -547,7 +547,7 @@ class Contrato {
         $tabela->set_width([15, 20, 25, 25, 15]);
         #$tabela->set_funcao($function);
         $tabela->set_classe(["Contrato", "Contrato", "Contrato", "Empresa", "Contrato"]);
-        $tabela->set_metodo(["exibeNumeroContrato", "getProcesso", "exibeObjeto", "getEmpresaCnpj", "exibeTempoEVigencia"]);
+        $tabela->set_metodo(["exibeNumeroContrato", "getProcesso", "exibeObjeto", "exibeEmpresaCnpj", "exibeTempoEVigencia"]);
         $tabela->set_totalRegistro(false);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
 
