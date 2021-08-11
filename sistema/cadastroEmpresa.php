@@ -68,6 +68,7 @@ if ($acesso) {
                                      idEmpresa,
                                      idEmpresa,
                                      idEmpresa,
+                                     obs,
                                      idEmpresa
                                 FROM tbempresa
                                WHERE razaosocial LIKE '%{$parametro}%'
@@ -115,11 +116,12 @@ if ($acesso) {
     }
 
     # Parametros da tabela
-    $objeto->set_label(array("Empresa", "Telefone", "Email", "Contatos", "Contratos"));
-    $objeto->set_width(array(30, 15, 15, 20, 5));
-    $objeto->set_align(array("left", "left", "left", "left"));
-    $objeto->set_classe(array("Empresa", "Empresa", "Empresa", "Empresa", "Empresa"));
-    $objeto->set_metodo(array("getEmpresaCnpj", "getTelefones", "getEmails", "getContatos", "getNumContratos"));
+    $objeto->set_label(array("Empresa", "Telefone", "Email", "Contatos", "Obs", "Contratos"));
+    $objeto->set_width(array(25, 10, 15, 20, 10, 5));
+    $objeto->set_align(array("left", "left", "left", "left", "left"));
+    $objeto->set_classe(array("Empresa", "Empresa", "Empresa", "Empresa", null, "Empresa"));
+    $objeto->set_metodo(array("getEmpresaCnpj", "getTelefones", "getEmails", "getContatos", null, "getNumContratos"));
+    $objeto->set_funcao(array(null, null, null, null, "nl2br"));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
