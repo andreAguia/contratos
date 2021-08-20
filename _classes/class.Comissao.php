@@ -926,7 +926,7 @@ class Comissao {
 
             # Mome do servidor e designação
             $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
-            echo $this->getNomeMembro($item["idServidor"]) . $designacao . " - " . $pessoal->get_emailUenf($item["idServidor"]) . " " . $pessoal->get_emailPessoal($item["idServidor"]);
+            echo $this->getNomeMembro($item["idServidor"]) . $designacao . " - " . $pessoal->get_emailUenf($item["idServidor"]) . " " . $pessoal->get_emailPessoal($item["idServidor"]) . " " . $pessoal->get_emailOutro($item["idServidor"]);
             if ($contador < $numItem) {
                 br();
                 $contador++;
