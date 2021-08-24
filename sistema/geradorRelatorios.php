@@ -462,7 +462,8 @@ if ($acesso) {
 
     # Pega os dados
     $select = "SELECT idContrato, numero 
-                 FROM tbcontrato
+                 FROM tbcontrato JOIN tbmodalidade USING (idModalidade) 
+                                 JOIN tbempresa USING (idEmpresa)
                 WHERE dtAssinatura IS NOT NULL";
 
     if (!empty($parametroAno)) {
@@ -837,7 +838,7 @@ if ($acesso) {
             $select .= " ORDER BY {$parametroOrdena} {$parametroOrdenaTipo}";
         }
 
-        #echo $select;
+       #echo $select;
 
         $contratos = new Contratos();
         $row = $contratos->select($select);
