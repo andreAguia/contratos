@@ -1325,7 +1325,7 @@ class Contrato {
             $botao = new BotaoGrafico();
             #$botao->set_label("Upload");
             $botao->set_title("Altera o contrato");
-            $botao->set_url("cadastroContrato.php?fase=uploadPublicacao&id={$idContrato}");
+            $botao->set_url("cadastroContrato.php?fase=uploadContrato&id={$idContrato}");
             $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
             $botao->show();
 
@@ -1339,7 +1339,7 @@ class Contrato {
             $botao = new BotaoGrafico();
             #$botao->set_label("Upload");
             $botao->set_title("Faça upload do contrato");
-            $botao->set_url("cadastroContrato.php?fase=uploadPublicacao&id={$idContrato}");
+            $botao->set_url("cadastroContrato.php?fase=uploadContrato&id={$idContrato}");
             $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
             $botao->show();
         }

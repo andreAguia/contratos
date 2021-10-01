@@ -794,11 +794,19 @@ if ($acesso) {
             $grid->abreColuna(6);
 
             # Monta o formulário
-            echo "<form name='post' action='?fase=uploadPublicacao&id={$id}&post=true' class='upload' method='post' enctype='multipart/form-data'><br>
-                        <input type='file' name='file'>
-                        <p>Clique Aqui Para Escolher o Arquivo.</p>
+            echo "<form class='upload' method='post' enctype='multipart/form-data'><br>
+                        <input type='file' name='doc'>
+                        <p>Click aqui ou arraste o arquivo.</p>
                         <button type='submit' name='submit'>Enviar</button>
                     </form>";
+            
+            # Pasta onde será guardado o arquivo
+            $pasta = PASTA_CONTRATOS_PUBLICACAO;
+            
+            # Se não existe o programa cria
+            if (!file_exists($pasta) || !is_dir($pasta)) {
+                mkdir($pasta, 0755);
+            }
 
             # Extensões possíveis
             $extensoes = array("pdf");
@@ -812,54 +820,35 @@ if ($acesso) {
             foreach ($extensoes as $pp) {
                 $texto .= " $pp";
             }
-            $texto .= "<br/>Tamanho Máximo do Arquivo: $limite M";
+            $texto .= "<br/>Tamanho Máximo do Arquivo: {$limite} M";
 
             br();
             p($texto, "f14", "center");
+            
+            if ((isset($_POST["submit"])) && (!empty($_FILES['doc']))) {
+                $upload = new UploadDoc($_FILES['doc'], $pasta, $id, $extensoes);
 
-            $pasta = PASTA_CONTRATOS_PUBLICACAO;
+                # Salva e verifica se houve erro
+                if ($upload->salvar()) {
 
-            # Retorna true se existir um get de nome post e for boleano
-            $getPost = filter_input(INPUT_GET, "post", FILTER_VALIDATE_BOOLEAN);
+                    # Registra log
+                    $Objetolog = new Intra();
+                    $data = date("Y-m-d H:i:s");
+                    $atividade = "Fez o upload da publicação do contrato " . $contrato->getNumero($id);
+                    $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
 
-            # Se não existe o programa cria
-            if (!file_exists($pasta) || !is_dir($pasta)) {
-                mkdir($pasta, 0755);
+                    # Volta para o menu
+                    loadPage('cadastroAditivo.php');
+                } else {
+                    loadPage("?fase=uploadPublicacao&id=$id");
+                }
             }
 
-            # Se existe uma $_FILES e o nome do arquivo não estiver vazio
-            if ($_FILES && !empty($_FILES['file']['name'])) {
-
-                $fileUpload = $_FILES["file"];
-
-                # Define no array os nameTypes permitidos
-                $allowedTypes = [
-                    "application/pdf",
-                ];
-
-                # Define o novo nome do arquivo
-                $newFileName = $id . mb_strrchr($fileUpload['name'], ".");
-
-                # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
-                if (in_array($fileUpload['type'], $allowedTypes)) {
-                    if (move_uploaded_file($fileUpload['tmp_name'], $pasta . $newFileName)) {
-                        # Registra log
-                        $Objetolog = new Intra();
-                        $data = date("Y-m-d H:i:s");
-                        $atividade = "Fez o upload da publicação do contrato " . $contrato->getNumero($id);
-                        $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
-
-                        loadPage("cadastroAditivo.php?id={$id}");
-                    } else {
-                        echo "<p class='trigger error'>Erro Inesperado</p>";
-                    }
-                } else {
-                    echo "<p class='trigger error'>Tipo de arquivo não permitido</p>";
-                }
-            } elseif ($_FILES) {
-                echo "<p class='trigger warning'>Selecione um arquivo antes de enviar</p>";
-            } elseif ($getPost) {
-                echo "<p class='trigger warning'>Parece que o arquivo é muito grande</p>";
+            # Informa caso exista um arquivo com o mesmo nome
+            $arquivoDocumento = $pasta . $id . ".pdf";
+            if (file_exists($arquivoDocumento)) {
+                p("Já existe um documento para este registro no servidor!!<br/>O novo documento irá sobrescrevê-lo e o antigo será apagado !!", "puploadMensagem");
+                br();
             }
 
             $grid->fechaColuna();
@@ -883,12 +872,13 @@ if ($acesso) {
             $grid->abreColuna(6);
 
             # Monta o formulário
-            echo "<form name='post' action='?fase=uploadContrato&id={$id}&post=true' class='upload' method='post' enctype='multipart/form-data'><br>
-                        <input type='file' name='file'>
-                        <p>Clique Aqui Para Escolher o Arquivo.</p>
+            echo "<form class='upload' method='post' enctype='multipart/form-data'><br>
+                        <input type='file' name='doc'>
+                        <p>Click aqui ou arraste o arquivo.</p>
                         <button type='submit' name='submit'>Enviar</button>
                     </form>";
 
+            # Pasta onde será guardado o arquivo
             $pasta = PASTA_CONTRATOS;
 
             # Se não existe o programa cria
@@ -908,49 +898,38 @@ if ($acesso) {
             foreach ($extensoes as $pp) {
                 $texto .= " $pp";
             }
-            $texto .= "<br/>Tamanho Máximo do Arquivo: $limite M";
+            $texto .= "<br/>Tamanho Máximo do Arquivo: {$limite} M";
 
             br();
             p($texto, "f14", "center");
+            
+            
+            if ((isset($_POST["submit"])) && (!empty($_FILES['doc']))) {
+                $upload = new UploadDoc($_FILES['doc'], $pasta, $id, $extensoes);
 
-            # Retorna true se existir um get de nome post e for boleano
-            $getPost = filter_input(INPUT_GET, "post", FILTER_VALIDATE_BOOLEAN);
+                # Salva e verifica se houve erro
+                if ($upload->salvar()) {
 
-            # Se existe uma $_FILES e o nome do arquivo não estiver vazio
-            if ($_FILES && !empty($_FILES['file']['name'])) {
+                    # Registra log
+                    $Objetolog = new Intra();
+                    $data = date("Y-m-d H:i:s");
+                    $atividade = "Fez o upload do contrato " . $contrato->getNumero($id);
+                    $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
 
-                $fileUpload = $_FILES["file"];
-
-                # Define no array os nameTypes permitidos
-                $allowedTypes = [
-                    "application/pdf",
-                ];
-
-                # Define o novo nome do arquivo
-                $newFileName = $id . mb_strrchr($fileUpload['name'], ".");
-
-                # Percorre o array de tipos permitidos. Se o arquivo uploadeado for igual a um deles...
-                if (in_array($fileUpload['type'], $allowedTypes)) {
-                    if (move_uploaded_file($fileUpload['tmp_name'], $pasta . $newFileName)) {
-                        # Registra log
-                        $Objetolog = new Intra();
-                        $data = date("Y-m-d H:i:s");
-                        $atividade = "Fez o upload do contrato " . $contrato->getNumero($id);
-                        $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
-
-                        loadPage("cadastroAditivo.php?id={$id}");
-                    } else {
-                        echo "<p class='trigger error'>Erro Inesperado</p>";
-                    }
+                    # Volta para o menu
+                    loadPage('cadastroAditivo.php');
                 } else {
-                    echo "<p class='trigger error'>Tipo de arquivo não permitido</p>";
+                    loadPage("?fase=uploadContrato&id=$id");
                 }
-            } elseif ($_FILES) {
-                echo "<p class='trigger warning'>Selecione um arquivo antes de enviar</p>";
-            } elseif ($getPost) {
-                echo "<p class='trigger warning'>Parece que o arquivo é muito grande</p>";
             }
 
+            # Informa caso exista um arquivo com o mesmo nome
+            $arquivoDocumento = $pasta . $id . ".pdf";
+            if (file_exists($arquivoDocumento)) {
+                p("Já existe um documento para este registro no servidor!!<br/>O novo documento irá sobrescrevê-lo e o antigo será apagado !!", "puploadMensagem");
+                br();
+            }
+            
             $grid->fechaColuna();
             $grid->fechaGrid();
             break;
