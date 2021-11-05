@@ -512,14 +512,19 @@ class Aditivo {
             $tipo = null;
             $dtFinal = null;
 
-            if ($tipoPrazo == 1) {
-                $tipo = "Dias";
-                $dtFinal = $this->getDtFinal($idAditivo);
+            if (empty($prazo)) {
+                $retorno = "{$dtInicial}<br/>---<br/>---";
             } else {
-                $tipo = "Meses";
-                $dtFinal = $this->getDtFinal($idAditivo);
+                if ($tipoPrazo == 1) {
+                    $tipo = "Dias";
+                    $dtFinal = $this->getDtFinal($idAditivo);
+                } else {
+                    $tipo = "Meses";
+                    $dtFinal = $this->getDtFinal($idAditivo);
+                }
+
+                $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
             }
-            $retorno = "{$dtInicial}<br/>{$prazo} {$tipo}<br/>$dtFinal";
         } else {
             $retorno = null;
         }
