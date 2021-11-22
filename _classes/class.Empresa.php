@@ -159,7 +159,7 @@ class Empresa {
         if (!empty($dados["usuarioSei"])) {
             $retorno .= "SEI: {$dados["usuarioSei"]}<br/>";
         }
-        
+
         if (!empty($dados["preposto"])) {
             $retorno .= "Preposto: {$dados["preposto"]}<br/>";
         }
@@ -247,8 +247,61 @@ class Empresa {
 
         $dados = $this->getDados($idEmpresa);
 
-        if (!empty($dados["endereco"])) {
-            return "{$dados["endereco"]}<br/>{$dados["bairro"]}<br/>{$dados["cep"]}";
+        if (empty($dados["endereco"])) {
+            return null;            
+        } else {
+            $cidade = new Cidade();
+            return "{$dados['endereco']}<br/>"
+            . "{$dados['bairro']}<br/>"
+            . $cidade->getCidade($dados['idCidade'])."<br/>"
+            . "Cep: {$dados["cep"]}";
+        }
+    }
+
+    ##########################################################################################
+
+    public function getRepresentanteDados($idEmpresa) {
+
+        $dados = $this->getDados($idEmpresa);
+        $retorno = null;
+
+        # Verifica se o representante foi cadastrado
+        if (!empty($dados["representanteNome"])) {
+            $retorno = $dados["representanteNome"];
+
+            # cpf
+            if (!empty($dados["representanteCpf"])) {
+                $retorno .= "<br/>CPF: {$dados["representanteCpf"]}";
+            }
+
+            # identidade
+            if (!empty($dados["representanteIdentidade"])) {
+                $retorno .= "<br/>Identidade: {$dados["representanteIdentidade"]}";
+            }
+            
+            # Endereço
+            if (!empty($dados["representanteEndereco"])) {
+                $retorno .= "<br/><br/>{$dados["representanteEndereco"]}";
+            }
+            
+            # Bairro
+            if (!empty($dados["representanteBairro"])) {
+                $retorno .= "<br/>{$dados["representanteBairro"]}";
+            }
+            
+            
+            # Cidade
+            if (!empty($dados["representanteIdCidade"])) {
+                $cidade = new Cidade();
+                $retorno .= " - ".$cidade->getCidade($dados["representanteIdCidade"]);
+            }
+            
+            # Cep
+            if (!empty($dados["representanteCep"])) {
+                $retorno .= "<br/>Cep: {$dados["representanteCep"]}";
+            }
+                        
+            return $retorno;
         } else {
             return null;
         }
@@ -294,6 +347,11 @@ class Empresa {
         # Preposto
         if (!empty($conteudo["preposto"])) {
             array_push($dados, ["Preposto", $conteudo["preposto"]]);
+        }
+
+        # Representante Legal
+        if (!empty($conteudo["representanteNome"])) {
+            array_push($dados, ["Representante Legal", $this->getRepresentanteDados($idEmpresa)]);
         }
 
         # Obs
