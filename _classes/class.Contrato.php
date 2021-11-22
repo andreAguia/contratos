@@ -1748,11 +1748,32 @@ class Contrato {
         if (!empty($dados["dtProposta"])) {
             $return .= date_to_php($dados["dtProposta"]) . "<br/>";
         }
-        
+
         # Garantia
         $return .= $this->getGarantia($idContrato);
-        
+
         return $return;
+    }
+
+    ###########################################################
+
+    public function exibeRequisitante($idContrato) {
+
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+
+        tituloTable("Setor Requisitante");
+        $painel = new Callout();
+        $painel->abre();
+
+        # Data da proposta
+        if (empty($dados["requisitante"])) {
+            p("---", "center");
+        } else {
+            p($dados["requisitante"], "center");
+        }
+
+        $painel->fecha();
     }
 
     ###########################################################

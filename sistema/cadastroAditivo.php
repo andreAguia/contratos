@@ -384,6 +384,7 @@ if ($acesso) {
             # Exibe os contratos de Execução
             $grid->abreColuna(3);
             $contrato->listaProcessosExecucao($idContrato, $idUsuario);
+            $contrato->exibeRequisitante($idContrato);
             $grid->fechaColuna();
 
             # Exibe dados da comissão

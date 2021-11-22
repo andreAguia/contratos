@@ -184,6 +184,7 @@ if ($acesso) {
                                      prazo,
                                      tipoPrazo,
                                      rubrica,
+                                     requisitante,
                                      obs
                                 FROM tbcontrato
                               WHERE idContrato = ' . $id);
@@ -449,6 +450,14 @@ if ($acesso) {
         ),
         array(
             'linha' => 8,
+            'nome' => 'requisitante',
+            'label' => 'Setor Requisitante:',
+            'tipo' => 'texto',
+            'col' => 10,
+            'size' => 250,
+        ),
+        array(
+            'linha' => 9,
             'nome' => 'obs',
             'label' => 'Observação:',
             'tipo' => 'textarea',
