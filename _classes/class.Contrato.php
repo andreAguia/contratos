@@ -94,7 +94,7 @@ class Contrato {
                 $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
             }
         }
-        
+
         # Processo de prestação de contas
         if (!empty($conteudo["processoPrestacao"])) {
             $processo .= "<br/>Prestação de Contas:<br/>{$conteudo["processoPrestacao"]}";
@@ -140,7 +140,7 @@ class Contrato {
                 $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
             }
         }
-        
+
         # Processo de prestação de contas
         if (!empty($conteudo["processoPrestacao"])) {
             $processo .= "<br/>Prestação de Contas:<br/>{$conteudo["processoPrestacao"]}";
@@ -431,6 +431,7 @@ class Contrato {
                           dtAssinatura,
                           idContrato,
                           idContrato,
+                          idContrato,
                           idContrato
                      FROM tbcontrato
                     WHERE idContrato = {$idContrato}";
@@ -440,7 +441,7 @@ class Contrato {
 
         $tabela = new Tabela();
         $tabela->set_titulo("Contrato {$conteudo["numero"]}");
-        $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Contrato", "Assinatura", "Duração", "Garantia", "Valor"));
+        $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Contrato", "Assinatura", "Duração", "Proposta e Garantia", "Valor"));
         $tabela->set_align(array("center", "left", "center", "center", "center", "center", "center", "right"));
         $tabela->set_width(array(15, 25, 10, 10, 10, 10, 10, 10));
         $tabela->set_funcao(array(null, null, null, null, "date_to_php"));
@@ -451,10 +452,10 @@ class Contrato {
             $tabela->set_editar('cadastroContrato.php?fase=editar');
             $tabela->set_idCampo('idContrato');
             $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", null, "Contrato", "Contrato", "Contrato"));
-            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacao", "exibeContrato", null, "getPeriodo", "getGarantia", "exibeValor"));
+            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacao", "exibeContrato", null, "getPeriodo", "exibePropostaEGarantia", "exibeValor"));
         } else {
             $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", null, "Contrato", "Contrato", "Contrato"));
-            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacaoDiretoria", "exibeContratoDiretoria", null, "getPeriodo", "getGarantia", "exibeValor"));
+            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacaoDiretoria", "exibeContratoDiretoria", null, "getPeriodo", "exibePropostaEGarantia", "exibeValor"));
         }
         $tabela->show();
     }
@@ -529,7 +530,7 @@ class Contrato {
         $row = $contratos->select($select);
 
         $contrato = new Contrato();
-        
+
         # Limita o tamanho da tela
         $grid = new Grid();
         $grid->abreColuna(12);
@@ -1735,5 +1736,24 @@ class Contrato {
         }
     }
 
-    ############################################################
+    ###########################################################
+
+    public function exibePropostaEGarantia($idContrato) {
+
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+        $return = null;
+
+        # Data da proposta
+        if (!empty($dados["dtProposta"])) {
+            $return .= date_to_php($dados["dtProposta"]) . "<br/>";
+        }
+        
+        # Garantia
+        $return .= $this->getGarantia($idContrato);
+        
+        return $return;
+    }
+
+    ###########################################################
 }
