@@ -158,7 +158,7 @@ if ($acesso) {
                     WHERE tbaditivo.idContrato = tbcontrato.idContrato
                       AND prazo IS NOT NULL 
                  ORDER BY dtAssinatura desc LIMIT 1),
-                 IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY))))";
+                 IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY)))), numero";
 
     $objeto->set_selectLista($select);
 
