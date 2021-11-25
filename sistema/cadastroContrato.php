@@ -149,6 +149,14 @@ if ($acesso) {
     if (!empty($parametroStatus)) {
         $select .= " AND idStatus = {$parametroStatus}";
     }
+    
+    /*
+     * Rotina abaixo ordena seguindo os seguintes critérios:
+     * 1 - pela data de término do último termo aditivo onde o prezo não é nulo
+     *     quando tiver termo aditivo. Caso não tenha termo pega a data de término
+     *     do contrato.
+     * 2 - pelo número do contrato
+     */
 
     $select .= " ORDER BY (IFNULL(
                       (SELECT IF(tipoPrazo = 2,
