@@ -156,7 +156,7 @@ if ($acesso) {
                           ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbaditivo
                     WHERE tbaditivo.idContrato = tbcontrato.idContrato
-                      AND dtInicial IS NOT NULL 
+                      AND prazo IS NOT NULL 
                  ORDER BY dtAssinatura desc LIMIT 1),
                  IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY))))";
 
