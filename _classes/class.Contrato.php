@@ -432,6 +432,7 @@ class Contrato {
                           idContrato,
                           idContrato,
                           idContrato,
+                          idContrato,
                           idContrato
                      FROM tbcontrato
                     WHERE idContrato = {$idContrato}";
@@ -444,18 +445,18 @@ class Contrato {
         $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Contrato", "Assinatura", "Duração", "Proposta e Garantia", "Valor"));
         $tabela->set_align(array("center", "left", "center", "center", "center", "center", "center", "right"));
         $tabela->set_width(array(15, 25, 10, 10, 10, 10, 10, 10));
-        $tabela->set_funcao(array(null, null, null, null, "date_to_php"));
+        #$tabela->set_funcao(array(null, null, null, null, "date_to_php"));
         $tabela->set_conteudo($row);
         $tabela->set_totalRegistro(false);
 
         if (Verifica::acesso($idUsuario, 9)) {
             $tabela->set_editar('cadastroContrato.php?fase=editar');
             $tabela->set_idCampo('idContrato');
-            $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", null, "Contrato", "Contrato", "Contrato"));
-            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacao", "exibeContrato", null, "getPeriodo", "exibePropostaEGarantia", "exibeValor"));
+            $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato"));
+            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacao", "exibeContrato", "exibeAssinaturaEReitor", "getPeriodo", "exibePropostaEGarantia", "exibeValor"));
         } else {
-            $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", null, "Contrato", "Contrato", "Contrato"));
-            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacaoDiretoria", "exibeContratoDiretoria", null, "getPeriodo", "exibePropostaEGarantia", "exibeValor"));
+            $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato"));
+            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacaoDiretoria", "exibeContratoDiretoria", "exibeAssinaturaEReitor", "getPeriodo", "exibePropostaEGarantia", "exibeValor"));
         }
         $tabela->show();
     }
@@ -1774,6 +1775,33 @@ class Contrato {
         }
 
         $painel->fecha();
+    }
+
+    ###########################################################
+
+    public function exibeAssinaturaEReitor($dtAssinatura) {
+        
+        
+
+        # Verifica se tem data de assinatura
+        if (empty($dtAssinatura)) {
+            return null;
+        } else {
+            # Pega a data
+            $dtAssinatura = date_to_php($dtAssinatura);
+
+            # Pega o id do reitor desta data
+            $cargo = new CargoComissao();
+            $idServidor = $cargo->get_idServidorReitorData($dtAssinatura);
+
+            # Pega o nome e o cpf
+            $pessoal = new Pessoal();
+            $nome = $pessoal->get_nome($idServidor);
+            $idPessoa = $pessoal->get_idPessoa($idServidor);
+            $cpf = $pessoal->get_cpf($idPessoa);
+            
+             plista($dtAssinatura,$nome, $cpf);
+        }
     }
 
     ###########################################################
