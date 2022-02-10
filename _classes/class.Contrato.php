@@ -1780,8 +1780,8 @@ class Contrato {
     ###########################################################
 
     public function exibeAssinaturaEReitor($dtAssinatura) {
-        
-        
+
+
 
         # Verifica se tem data de assinatura
         if (empty($dtAssinatura)) {
@@ -1794,13 +1794,18 @@ class Contrato {
             $cargo = new CargoComissao();
             $idServidor = $cargo->get_idServidorReitorData($dtAssinatura);
 
-            # Pega o nome e o cpf
-            $pessoal = new Pessoal();
-            $nome = $pessoal->get_nome($idServidor);
-            $idPessoa = $pessoal->get_idPessoa($idServidor);
-            $cpf = $pessoal->get_cpf($idPessoa);
-            
-             plista($dtAssinatura,$nome, $cpf);
+            if (empty($idServidor)) {
+                $nome = null;
+                $cpf = null;                
+            } else {
+                # Pega o nome e o cpf
+                $pessoal = new Pessoal();
+                $nome = $pessoal->get_nome($idServidor);
+                $idPessoa = $pessoal->get_idPessoa($idServidor);
+                $cpf = $pessoal->get_cpf($idPessoa);
+            }
+
+            plista($dtAssinatura, $nome, $cpf);
         }
     }
 
