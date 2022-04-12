@@ -814,5 +814,63 @@ class Aditivo {
         }
     }
 
-    ##########################################################################################
+    ##############################################################
+
+    /*
+     * Exibe os aditivos com prazo
+     * Usado na rotina de planilha
+     */
+
+    public function exibeAditivosPrazo($idContrato = null) {
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # monta o select
+        $select = "SELECT idAditivo,
+                          objeto,
+                          dtInicial,
+                          prazo,
+                          tipoPrazo
+                     FROM tbaditivo
+                    WHERE idContrato = {$idContrato}
+                      AND prazo IS NOT NULL  
+                 ORDER BY dtAssinatura";
+
+        $dados = $contratos->select($select);
+        $numDados = $contratos->count($select);
+
+        if ($numDados > 0) {
+            
+            # Percorre os registros
+            foreach($dados as $item){
+                # Exibe o número do aditivo
+                echo $this->getTipoNumerado($item["idAditivo"]);
+                br();
+                echo $item["objeto"];
+                br();
+                echo date_to_php($item["dtInicial"]);
+                echo " - ";
+                
+                if($item["tipoPrazo"] == 1){
+                    echo $item["prazo"]," dias";
+                } else{
+                    echo $item["prazo"]," meses";
+                }
+                echo " - ";
+                echo $this->getDtFinal($item["idAditivo"]);                
+                hr("nenhumItem");
+            }
+            
+        } else {
+           p("---", "center");
+        }
+    }
+
+    ###########################################################
 }
