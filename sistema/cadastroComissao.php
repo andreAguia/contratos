@@ -12,7 +12,7 @@ $idUsuario = null;
 include "_config.php";
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, 9);
+$acesso = Verifica::acesso($idUsuario, [1, 9]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
@@ -23,7 +23,7 @@ if ($acesso) {
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
-    
+
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
 
@@ -348,9 +348,7 @@ if ($acesso) {
              */
 
             $grid->abreColuna(12, 4);
-
             $comissao->exibeProcesso($idContrato);
-
             $grid->fechaColuna();
 
             /*
@@ -358,9 +356,7 @@ if ($acesso) {
              */
 
             $grid->abreColuna(12, 4);
-
             $comissao->exibePortarias($idContrato);
-
             $grid->fechaColuna();
 
             /*
@@ -368,9 +364,7 @@ if ($acesso) {
              */
 
             $grid->abreColuna(12, 4);
-
             $comissao->exibeMenuDocumentos($idContrato);
-
             $grid->fechaColuna();
             $grid->fechaGrid();
 

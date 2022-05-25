@@ -12,7 +12,7 @@ $idUsuario = null;
 include "_config.php";
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, 9);
+$acesso = Verifica::acesso($idUsuario, [1, 9]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
@@ -81,15 +81,14 @@ if ($acesso) {
     $objeto->set_grupoCorColuna(0);
 
     # Parametros da tabela
-    $objeto->set_label(array("Ano","Processo"));
-    $objeto->set_align(array("center","left"));
-    $objeto->set_width(array(10,70));
+    $objeto->set_label(array("Ano", "Processo"));
+    $objeto->set_align(array("center", "left"));
+    $objeto->set_width(array(10, 70));
     #$objeto->set_funcao(array(null, null, "date_to_php"));
     #$objeto->set_classe(array(null, "Receita", null, null, "Receita", "Receita"));
     #$objeto->set_metodo(array(null, "exibeReferencia", null, null, "exibeValor", "exibeValorEnergia"));
     $objeto->set_numeroOrdem(true);
     #$objeto->set_numeroOrdemTipo('d');
-
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
 
@@ -109,7 +108,7 @@ if ($acesso) {
             'nome' => 'processo',
             'label' => 'Processo de Execução:',
             'tipo' => 'sei',
-            'required'  => true,
+            'required' => true,
             "autofocus" => true,
             'col' => 6,
             'size' => 50),
@@ -127,14 +126,14 @@ if ($acesso) {
     $objeto->set_idUsuario($idUsuario);
 
     ################################################################
-    
+
     switch ($fase) {
         case "":
         case "listar" :
             $objeto->listar();
             break;
 
-        case "editar":            
+        case "editar":
         case "excluir":
             $objeto->$fase($id);
             break;
@@ -142,7 +141,7 @@ if ($acesso) {
         case "gravar":
             $objeto->gravar($id);
             break;
-        
+
         ################################################################    
     }
 

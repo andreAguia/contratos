@@ -12,13 +12,13 @@ $idUsuario = null;
 include ("_config.php");
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, 9);
+$acesso = Verifica::acesso($idUsuario, [1, 9]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $intra    = new Intra();
+    $intra = new Intra();
     $contrato = new Contrato();
-    $pessoal  = new Pessoal();
+    $pessoal = new Pessoal();
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
@@ -81,12 +81,11 @@ if ($acesso) {
     #$objeto->set_classe(array(null,"Situacao"));
     #$objeto->set_metodo(array(null,"get_situacao"));
 
-    $objeto->set_formatacaoCondicional(array(array('coluna'   => 0,
-            'valor'    => 0,
+    $objeto->set_formatacaoCondicional(array(array('coluna' => 0,
+            'valor' => 0,
             'operador' => '=',
-            'id'       => 'logLogin')
+            'id' => 'logLogin')
     ));
-
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -103,38 +102,38 @@ if ($acesso) {
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
-            'linha'     => 1,
-            'nome'      => 'data',
-            'label'     => 'Data:',
-            'tipo'      => 'date',
-            'required'  => true,
-            'col'       => 3,
-            'padrao'    => date("Y-m-d"),
-            'size'      => 15),
+            'linha' => 1,
+            'nome' => 'data',
+            'label' => 'Data:',
+            'tipo' => 'date',
+            'required' => true,
+            'col' => 3,
+            'padrao' => date("Y-m-d"),
+            'size' => 15),
         array(
-            "linha"    => 1,
-            'col'      => 9,
-            "nome"     => "situacao",
-            "label"    => "Situacao:",
+            "linha" => 1,
+            'col' => 9,
+            "nome" => "situacao",
+            "label" => "Situacao:",
             'required' => true,
             'autofocus' => true,
-            "tipo"     => "texto",
-            "size"     => 250),
+            "tipo" => "texto",
+            "size" => 250),
         array(
             'linha' => 2,
-            'nome'  => 'obs',
+            'nome' => 'obs',
             'label' => 'Observação:',
-            'tipo'  => 'textarea',
-            'size'  => array(80, 5),
+            'tipo' => 'textarea',
+            'size' => array(80, 5),
         ),
         array(
-            "linha"  => 3,
-            "nome"   => "idContrato",
-            "label"  => "idContrato:",
-            'tipo'   => 'hidden',
+            "linha" => 3,
+            "nome" => "idContrato",
+            "label" => "idContrato:",
+            'tipo' => 'hidden',
             'padrao' => $idContrato,
-            "col"    => 3,
-            "size"   => 11),
+            "col" => 3,
+            "size" => 11),
     ));
 
     # idUsuário para o Log

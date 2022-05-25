@@ -12,7 +12,7 @@ $idUsuario = null;
 include "_config.php";
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, [9, 10]);
+$acesso = Verifica::acesso($idUsuario, [1, 9, 10]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
@@ -149,7 +149,7 @@ if ($acesso) {
     if (!empty($parametroStatus)) {
         $select .= " AND idStatus = {$parametroStatus}";
     }
-    
+
     /*
      * Rotina abaixo ordena seguindo os seguintes critérios:
      * 1 - pela data de término do último termo aditivo onde o prezo não é nulo
@@ -512,7 +512,7 @@ if ($acesso) {
             $botaoRel->set_imagem($imagem);
             $menu1->add_link($botaoRel, "right");
 
-            if (Verifica::acesso($idUsuario, 9)) {
+            if (Verifica::acesso($idUsuario, [1, 9])) {
 
                 # Incluir
                 $botaoInserir = new Button("Incluir Contrato", "?fase=incluir");
@@ -526,7 +526,7 @@ if ($acesso) {
              * Menu auxiliar
              */
 
-            if (Verifica::acesso($idUsuario, 9)) {
+            if (Verifica::acesso($idUsuario,  [1, 9])) {
                 #hr("hrMenusecundario");
                 $menu2 = new MenuBar();
 
@@ -816,10 +816,10 @@ if ($acesso) {
                         <p>Click aqui ou arraste o arquivo.</p>
                         <button type='submit' name='submit'>Enviar</button>
                     </form>";
-            
+
             # Pasta onde será guardado o arquivo
             $pasta = PASTA_CONTRATOS_PUBLICACAO;
-            
+
             # Se não existe o programa cria
             if (!file_exists($pasta) || !is_dir($pasta)) {
                 mkdir($pasta, 0755);
@@ -841,7 +841,7 @@ if ($acesso) {
 
             br();
             p($texto, "f14", "center");
-            
+
             if ((isset($_POST["submit"])) && (!empty($_FILES['doc']))) {
                 $upload = new UploadDoc($_FILES['doc'], $pasta, $id, $extensoes);
 
@@ -919,8 +919,7 @@ if ($acesso) {
 
             br();
             p($texto, "f14", "center");
-            
-            
+
             if ((isset($_POST["submit"])) && (!empty($_FILES['doc']))) {
                 $upload = new UploadDoc($_FILES['doc'], $pasta, $id, $extensoes);
 
@@ -946,7 +945,7 @@ if ($acesso) {
                 p("Já existe um documento para este registro no servidor!!<br/>O novo documento irá sobrescrevê-lo e o antigo será apagado !!", "puploadMensagem");
                 br();
             }
-            
+
             $grid->fechaColuna();
             $grid->fechaGrid();
             break;

@@ -12,7 +12,7 @@ $idUsuario = null;
 include "_config.php";
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, 9);
+$acesso = Verifica::acesso($idUsuario, [1, 9]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
@@ -213,7 +213,7 @@ if ($acesso) {
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
-    
+
     # Edita Obs
     $botaoObs = new Button("Obs Geral", "cadastroObsSaldo.php");
     $botaoObs->set_title("Insere / edita as observações gerais.");

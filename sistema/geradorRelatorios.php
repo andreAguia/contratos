@@ -50,7 +50,7 @@ $parametroMaoDeObra = post('parametroMaoDeObra');
 $parametroContrato = post('parametroContrato', 0);
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, [9, 10]);
+$acesso = Verifica::acesso($idUsuario, [1, 9, 10]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
@@ -88,11 +88,11 @@ if ($acesso) {
 
     # Monta o formulário
     $form = new Form('?');
-    
+
     /*
      * Dados Gerais
      */
-    
+
     $controle = new Input('postNumero', 'simnao', 'Número:', 1);
     $controle->set_size(5);
     $controle->set_title('Número do contrato');
@@ -252,7 +252,7 @@ if ($acesso) {
     $controle->set_linha(3);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     /*
      *  Empresa
      */
@@ -332,11 +332,11 @@ if ($acesso) {
     $controle->set_linha(4);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     /*
      * Aditivos
      */
-    
+
     $controle = new Input('postAditivosPrazo', 'simnao', 'Aditivos com Prazo:', 1);
     $controle->set_size(5);
     $controle->set_title('Informa os aditivos com Prazo');
@@ -345,7 +345,6 @@ if ($acesso) {
     $controle->set_linha(5);
     $controle->set_col(1);
     $form->add_item($controle);
-    
 
 #################################### Ordenação #######################################
     # Ordenação
@@ -776,7 +775,7 @@ if ($acesso) {
         $method[] = "exibePortariasRelatorio";
         $function[] = "";
     }
-    
+
     if ($postAditivosPrazo) {
         $field[] = "idContrato";
         $label[] = "Aditivos com Prazo";
@@ -872,7 +871,7 @@ if ($acesso) {
             $select .= " ORDER BY {$parametroOrdena} {$parametroOrdenaTipo}";
         }
 
-       #echo $select;
+        #echo $select;
 
         $contratos = new Contratos();
         $row = $contratos->select($select);

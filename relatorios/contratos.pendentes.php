@@ -11,7 +11,7 @@ $idUsuario = null;              # Servidor logado
 include ("../sistema/_config.php");
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, [9, 10]);
+$acesso = Verifica::acesso($idUsuario, [1, 9, 10]);
 
 if ($acesso) {
 

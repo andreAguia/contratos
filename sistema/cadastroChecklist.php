@@ -5,6 +5,17 @@
  *
  * By Alat
  */
+
+/*
+ * 
+ * ainda não está sendo usado !!!!!!!
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
 # Reservado para o servidor logado
 $idUsuario = null;
 

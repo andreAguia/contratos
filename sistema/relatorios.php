@@ -12,7 +12,7 @@ $idUsuario = null;
 include ("_config.php");
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, [9, 10]);
+$acesso = Verifica::acesso($idUsuario, [1, 9, 10]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
@@ -21,7 +21,7 @@ if ($acesso) {
 
     # Verifica a fase do programa
     $fase = get('fase', 'menu');
-    
+
     # Zera as session do relatório
     set_session("sessionSelect");
     set_session("sessionLabel");
@@ -58,9 +58,9 @@ if ($acesso) {
     $menu1->add_link($botao, "right");
 
     $menu1->show();
-    
+
     titulo("Relatórios");
-    
+
     # Cria uma borda
     $callout = new Callout();
     $callout->abre();
