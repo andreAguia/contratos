@@ -112,14 +112,15 @@ if ($acesso) {
     $objeto->set_exibeTempoPesquisa(false);
 
     # Parametros da tabela
-    $objeto->set_label(array("Tipo", "Objeto", "Publicação", "Aditivo", "Assinatura", "Duração", "Garantia", "Valor"));
-    $objeto->set_align(array("center", "left", "center", "center", "center", "center", "center", "right"));
-    $objeto->set_width(array(15, 25, 10, 10, 10, 10, 10, 10));
-    $objeto->set_classe(array("Aditivo", "Aditivo", "Aditivo", "Aditivo", "Contrato", "Aditivo", "Aditivo", "Aditivo"));
+    $objeto->set_label(["Tipo", "Objeto", "Publicação", "Aditivo", "Assinatura", "Duração", "Garantia", "Valor"]);
+    $objeto->set_align(["center", "left", "center", "center", "center", "center", "center", "right"]);
+    $objeto->set_width([15, 25, 10, 10, 10, 10, 10, 10]);
+    $objeto->set_classe(["Aditivo", "Aditivo", "Aditivo", "Aditivo", "Contrato", "Aditivo", "Aditivo", "Aditivo"]);
+    
     if (Verifica::acesso($idUsuario, [1, 9])) {
-        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "exibePublicacao", "exibeAditivo", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"));
+        $objeto->set_metodo(["exibeTipoNumerado", "exibeObjeto", "exibePublicacao", "exibeAditivo", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"]);
     } else {
-        $objeto->set_metodo(array("exibeTipoNumerado", "exibeObjeto", "exibePublicacaoDiretoria", "exibeAditivoDiretoria", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"));
+        $objeto->set_metodo(["exibeTipoNumerado", "exibeObjeto", "exibePublicacaoDiretoria", "exibeAditivoDiretoria", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"]);
     }
     #$objeto->set_funcao(array(null, null, null, null, "date_to_php"));
     # Classe do banco de dados

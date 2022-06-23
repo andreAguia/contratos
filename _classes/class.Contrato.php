@@ -239,7 +239,7 @@ class Contrato {
         $tabela->show();
 
         # Editar
-        if (Verifica::acesso($idUsuario, 9)) {
+        if (Verifica::acesso($idUsuario, [1, 9])) {
             $div = new Div("divEdita1Comissao");
             $div->abre();
 
@@ -449,7 +449,7 @@ class Contrato {
         $tabela->set_conteudo($row);
         $tabela->set_totalRegistro(false);
 
-        if (Verifica::acesso($idUsuario, 9)) {
+        if (Verifica::acesso($idUsuario, [1, 9])) {
             $tabela->set_editar('cadastroContrato.php?fase=editar');
             $tabela->set_idCampo('idContrato');
             $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato"));
@@ -1796,7 +1796,7 @@ class Contrato {
 
             if (empty($idServidor)) {
                 $nome = null;
-                $cpf = null;                
+                $cpf = null;
             } else {
                 # Pega o nome e o cpf
                 $pessoal = new Pessoal();

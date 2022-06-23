@@ -1,7 +1,6 @@
 <?php
 
-class Situacao
-{
+class Situacao {
 
     /**
      * Abriga as várias rotina referentes a concurso
@@ -14,8 +13,7 @@ class Situacao
 
 ##############################################################
 
-    public function __construct($idSituacao = null)
-    {
+    public function __construct($idSituacao = null) {
         /**
          * Inicia a Classe somente
          * 
@@ -28,8 +26,7 @@ class Situacao
 
 ##############################################################
 
-    public function getDados($idSituacao = null)
-    {
+    public function getDados($idSituacao = null) {
 
         /**
          * Informa os dados da base de dados
@@ -65,8 +62,7 @@ class Situacao
 
     #####################################################################################
 
-    public function getSituacaoAtualEAlerta($idContrato)
-    {
+    public function getSituacaoAtualEAlerta($idContrato) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -96,8 +92,7 @@ class Situacao
 
     #####################################################################################
 
-    public function getSituacaoAtual($idContrato)
-    {
+    public function getSituacaoAtual($idContrato) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -124,8 +119,7 @@ class Situacao
 
     #####################################################################################
 
-    function exibeSituacaoAtual($idContrato, $idUsuario)
-    {
+    function exibeSituacaoAtual($idContrato, $idUsuario) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -180,7 +174,7 @@ class Situacao
         $grid->fechaGrid();
 
         # Editar
-        if (Verifica::acesso($idUsuario, 9)) {
+        if (Verifica::acesso($idUsuario, [1, 9])) {
 
             $div = new Div("divEdita1");
             $div->abre();
@@ -206,8 +200,7 @@ class Situacao
 
     #####################################################################################
 
-    public function getSituacao($idSituacao)
-    {
+    public function getSituacao($idSituacao) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();

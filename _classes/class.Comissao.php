@@ -243,7 +243,7 @@ class Comissao {
         $tabela->show();
 
         # Editar
-        if (Verifica::acesso($idUsuario, 9)) {
+        if (Verifica::acesso($idUsuario, [1, 9])) {
             $div = new Div("divEdita1Comissao");
             $div->abre();
 
@@ -927,6 +927,7 @@ class Comissao {
             # Mome do servidor e designação
             $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
             echo $this->getNomeMembro($item["idServidor"]) . $designacao . " - " . $pessoal->get_emailUenf($item["idServidor"]) . " " . $pessoal->get_emailPessoal($item["idServidor"]) . " " . $pessoal->get_emailOutro($item["idServidor"]);
+
             if ($contador < $numItem) {
                 br();
                 $contador++;
