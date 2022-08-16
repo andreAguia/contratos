@@ -58,15 +58,16 @@ if ($acesso) {
     $objeto->set_voltarLista("cadastroAditivo.php");
 
     # select da lista
-    $objeto->set_selectLista("SELECT SUBSTR(processo, -4),
-                                     CONCAT('SEI - ',processo),
+    $objeto->set_selectLista("SELECT IF(processo IS NUll, SUBSTR(processoAntigo, -4), SUBSTR(processo, -4)),
+                                     IF(processo IS NUll, CONCAT('E-26/009/',processoAntigo), CONCAT('SEI - ',processo)),
                                      idProcessoExecucao
                                 FROM tbprocessoexecucao
                                WHERE idContrato = {$idContrato}
-                            ORDER BY SUBSTR(processo, -4)");
+                            ORDER BY 1");
 
     # select do edita
     $objeto->set_selectEdita("SELECT processo,
+                                     processoAntigo,
                                      idContrato
                                 FROM tbprocessoexecucao
                               WHERE idProcessoExecucao = {$id}");
@@ -81,9 +82,9 @@ if ($acesso) {
     $objeto->set_grupoCorColuna(0);
 
     # Parametros da tabela
-    $objeto->set_label(array("Ano", "Processo"));
-    $objeto->set_align(array("center", "left"));
-    $objeto->set_width(array(10, 70));
+    $objeto->set_label(["Ano", "Processo"]);
+    $objeto->set_align(["center", "left"]);
+    $objeto->set_width([10, 70]);
     #$objeto->set_funcao(array(null, null, "date_to_php"));
     #$objeto->set_classe(array(null, "Receita", null, null, "Receita", "Receita"));
     #$objeto->set_metodo(array(null, "exibeReferencia", null, null, "exibeValor", "exibeValorEnergia"));
@@ -106,11 +107,17 @@ if ($acesso) {
         array(
             'linha' => 1,
             'nome' => 'processo',
-            'label' => 'Processo de Execução:',
+            'label' => 'Processo Sei:',
             'tipo' => 'sei',
-            'required' => true,
             "autofocus" => true,
-            'col' => 6,
+            'col' => 4,
+            'size' => 50),
+        array(
+            'linha' => 1,
+            'nome' => 'processoAntigo',
+            'label' => 'Processo Antigo:',
+            'tipo' => 'processoAntigo',
+            'col' => 4,
             'size' => 50),
         array(
             "linha" => 5,
@@ -124,6 +131,10 @@ if ($acesso) {
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
+    
+    # Mensagem ao editar e inserir
+    $objeto->set_rotinaExtraEditar("callout");
+    $objeto->set_rotinaExtraEditarParametro("Observe que somente um campo de processo deverá ser preenchido. Ou o Campo do Processo SEi ou do Processo Antigo.");
 
     ################################################################
 
@@ -139,7 +150,7 @@ if ($acesso) {
             break;
 
         case "gravar":
-            $objeto->gravar($id);
+            $objeto->gravar($id,"cadastroProcessoExecucaoExtra.php");
             break;
 
         ################################################################    

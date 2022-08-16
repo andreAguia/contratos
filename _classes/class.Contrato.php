@@ -172,7 +172,7 @@ class Contrato {
         $contador = 1;
 
         # Pega os dados
-        $select = "SELECT processo
+        $select = "SELECT IF(processo IS NUll, CONCAT('E-26/009/',processoAntigo), CONCAT('SEI - ',processo))
                      FROM tbprocessoexecucao
                     WHERE idContrato = {$idContrato}";
 
@@ -183,7 +183,7 @@ class Contrato {
         if ($num > 0) {
 
             foreach ($conteudo as $rr) {
-                $retorno .= "SEI - {$rr[0]}";
+                $retorno .= $rr[0];
 
                 if ($contador < $num) {
                     $contador++;
@@ -218,12 +218,12 @@ class Contrato {
         $contratos = new Contratos();
 
         # Pega os dados
-        $select = "SELECT SUBSTR(processo, -4),
-                                     CONCAT('SEI - ',processo),
-                                     idProcessoExecucao
-                                FROM tbprocessoexecucao
-                               WHERE idContrato = {$idContrato}
-                            ORDER BY SUBSTR(processo, -4)";
+        $select = "SELECT IF(processo IS NUll, SUBSTR(processoAntigo, -4), SUBSTR(processo, -4)),
+                          IF(processo IS NUll, CONCAT('E-26/009/',processoAntigo), CONCAT('SEI - ',processo)),
+                          idProcessoExecucao
+                     FROM tbprocessoexecucao
+                    WHERE idContrato = {$idContrato}
+                 ORDER BY 1";
 
         $conteudo = $contratos->select($select);
         $num = $contratos->count($select);
@@ -1671,12 +1671,12 @@ class Contrato {
         $contratos = new Contratos();
 
         # Pega os dados
-        $select = "SELECT SUBSTR(processo, -4),
-                                     CONCAT('SEI - ',processo),
-                                     idProcessoExecucao
-                                FROM tbprocessoexecucao
-                               WHERE idContrato = {$idContrato}
-                            ORDER BY SUBSTR(processo, -4)";
+        $select = "SELECT IF(processo IS NUll, SUBSTR(processoAntigo, -4), SUBSTR(processo, -4)),
+                          IF(processo IS NUll, CONCAT('E-26/009/',processoAntigo), CONCAT('SEI - ',processo)),
+                          idProcessoExecucao
+                     FROM tbprocessoexecucao
+                    WHERE idContrato = {$idContrato}
+                 ORDER BY 1";
 
         $conteudo = $contratos->select($select);
 
