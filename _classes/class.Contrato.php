@@ -267,26 +267,38 @@ class Contrato {
 
         $conteudo = $this->getDados($idContrato);
 
+        # Verifica se tem Acompanhamento Especial
+        if ($conteudo['especial']) {
+            $figura = new Imagem(PASTA_FIGURAS . 'flag.png', 'Acompanhamento Especial', 15, 15);
+            $figura->set_id('flagContrato');
+            $figura->show();
+        }
+
+        # Exibe o Número do Contrato
         p($conteudo["numero"], "contratoNumero");
+
+        # Exibe o número Siafe
         if (!empty($conteudo['siafe'])) {
             p("Siafe: {$conteudo['siafe']}", "pVigencia");
         }
 
+        # Exibe a Rúbrica
         if (!empty($conteudo['rubrica'])) {
             p("Rubrica: {$conteudo['rubrica']}", "pVigencia");
         }
 
+        # Exibe a Modalidade
         p($this->exibeModalidade($idContrato), "pVigencia");
 
         # Informa se o contrato é de despesa ou de receita
         $modalidade = new Modalidade();
-
         if ($modalidade->getTipo($conteudo["idModalidade"]) == "Receita") {
             label("Receita", "primary", null, "Contrato de Receita");
         } else {
             label("Despesa", "warning", null, "Contrato de Despesa");
         }
 
+        # Exibe os Status
         $status = $this->getStatus($idContrato);
 
         if ($status == "Ativo") {
@@ -298,6 +310,7 @@ class Contrato {
         }
         p($status, "$stilo");
 
+        # Exibe se te Mão de obra alocada
         if ($conteudo["maoDeObra"]) {
             p("Mão de Obra Alocada", "pVigencia");
         }

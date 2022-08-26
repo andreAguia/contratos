@@ -209,6 +209,13 @@ p#pAditivoPag{
     font-size: 10px;
 }
 
+img#flagContrato{
+    position: relative;
+    float: left;
+    left: -5px;
+    top: -5px;
+}
+
 /*******************************************
  * Cadastro da empresas
  *******************************************/

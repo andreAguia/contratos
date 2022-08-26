@@ -158,7 +158,7 @@ if ($acesso) {
      * 2 - pelo número do contrato
      */
 
-    $select .= " ORDER BY (IFNULL(
+    $select .= " ORDER BY especial desc, (IFNULL(
                       (SELECT IF(tipoPrazo = 2,
                           SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
                           ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
@@ -193,6 +193,7 @@ if ($acesso) {
                                      tipoPrazo,
                                      rubrica,
                                      requisitante,
+                                     especial,
                                      obs
                                 FROM tbcontrato
                               WHERE idContrato = ' . $id);
@@ -211,11 +212,11 @@ if ($acesso) {
 
     $objeto->set_linkListar("cadastroAditivo.php");
 
-    $objeto->set_label(array("Contrato", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação", "Acessar"));
-    $objeto->set_classe(array("Contrato", "Contrato", "Empresa", "Contrato", "Contrato", "Situacao"));
-    $objeto->set_metodo(array("exibeNumeroContrato", "exibeObjeto", "exibeEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"));
-    $objeto->set_width(array(10, 20, 22, 18, 10, 20));
-    $objeto->set_align(array("center", "left", "left", "left", "center", "left"));
+    $objeto->set_label(["Contrato", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação", "Acessar"]);
+    $objeto->set_classe(["Contrato", "Contrato", "Empresa", "Contrato", "Contrato", "Situacao"]);
+    $objeto->set_metodo(["exibeNumeroContrato", "exibeObjeto", "exibeEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"]);
+    $objeto->set_width([10, 20, 22, 18, 10, 20]);
+    $objeto->set_align(["center", "left", "left", "left", "center", "left"]);
     $objeto->set_exibeTempoPesquisa(false);
 
     # Botão 
@@ -463,6 +464,16 @@ if ($acesso) {
             'tipo' => 'texto',
             'col' => 10,
             'size' => 250,
+        ),
+        array(
+            'linha' => 8,
+            'nome' => 'especial',
+            'label' => 'Acompanhamento Especial:',
+            'tipo' => 'simnao',
+            'title' => 'Informa se o contrato terá acompanhamento especial.',
+            'col' => 2,
+            'size' => 5,
+            'padrao' => 0
         ),
         array(
             'linha' => 9,
