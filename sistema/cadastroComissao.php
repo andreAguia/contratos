@@ -162,12 +162,12 @@ if ($acesso) {
     );
 
     # Parametros da tabela
-    $objeto->set_label(array("Tipo", "Foto", "Nome", "Contatos", "Designação"));
-    $objeto->set_align(array("center", "left", "left", "left", "left"));
-    $objeto->set_width(array(8, 8, 25, 20, 20));
+    $objeto->set_label(["Tipo", "Foto", "Nome", "Contatos", "Designação"]);
+    $objeto->set_align(["center", "left", "left", "left", "left"]);
+    $objeto->set_width([10, 10, 25, 18, 18]);
     #$objeto->set_funcao(array(null, null, null, null, null, "exibeFoto"));
-    $objeto->set_classe(array("Comissao", "pessoal", "Comissao", "pessoal", "Comissao"));
-    $objeto->set_metodo(array("getTipo", "get_foto", "getDadosMembro", "get_contatos", "getDadosDesignacao"));
+    $objeto->set_classe(["Comissao", "Comissao", "Comissao", "pessoal", "Comissao"]);
+    $objeto->set_metodo(["getTipo", "get_foto", "getDadosMembro", "get_contatos", "getDadosDesignacao"]);
     $objeto->set_numeroOrdem(true);
     $objeto->set_formatacaoCondicional($formatacaoCondicional);
 

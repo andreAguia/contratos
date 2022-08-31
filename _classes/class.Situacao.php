@@ -142,13 +142,13 @@ class Situacao {
         $grid = new Grid();
         $grid->abreColuna(12);
 
+        tituloTable("Situação Atual");
+        
         $painel = new Callout("warning");
         $painel->abre();
 
         $grid = new Grid();
         $grid->abreColuna(6);
-
-        p("Situação Atual", "contratoLabelCallout1");
 
         $grid->fechaColuna();
         $grid->abreColuna(6);

@@ -116,7 +116,7 @@ if ($acesso) {
     $objeto->set_align(["center", "left", "center", "center", "center", "center", "center", "right"]);
     $objeto->set_width([15, 25, 10, 10, 10, 10, 10, 10]);
     $objeto->set_classe(["Aditivo", "Aditivo", "Aditivo", "Aditivo", "Contrato", "Aditivo", "Aditivo", "Aditivo"]);
-    
+
     if (Verifica::acesso($idUsuario, [1, 9])) {
         $objeto->set_metodo(["exibeTipoNumerado", "exibeObjeto", "exibePublicacao", "exibeAditivo", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"]);
     } else {
@@ -337,20 +337,34 @@ if ($acesso) {
             # Exibe os dados do contrado
             get_DadosContrato($idContrato);
 
+            $grid->fechaColuna();
+            $grid->abreColuna(12);
+
             # Exibe alertas (se tiver)
             $alerta = new AlertaContrato($idContrato, true);
 
             $grid->fechaColuna();
+
+            # Exibe o Valor / Setor Requisitante / Situação
             if ($modalidade->getTipo($conteudo["idModalidade"]) == "Despesa") {
-                $grid->abreColuna(4);
-
+                
                 # Exibe o valor
+                $grid->abreColuna(3);                
                 $contrato->exibeValorTotalPainel($idContrato);
+                $grid->fechaColuna();
+                
+                # Exibe o Setor Requisitante
+                $grid->abreColuna(3);                
+                $contrato->exibeRequisitante($idContrato, $idUsuario);
+                $grid->fechaColuna();
 
+                $grid->abreColuna(6);
+            } else {
+                # Exibe o Setor Requisitante
+                $grid->abreColuna(4);                
+                $contrato->exibeRequisitante($idContrato, $idUsuario);
                 $grid->fechaColuna();
                 $grid->abreColuna(8);
-            } else {
-                $grid->abreColuna(12);
             }
 
             # Exibe a situação atual
@@ -374,21 +388,27 @@ if ($acesso) {
             }
 
             $grid->fechaColuna();
+            $grid->abreColuna(4);
+
+            # Exibe os Processos de Execução
+            $contrato->listaProcessosExecucao($idContrato, $idUsuario);
+
+            $grid->fechaColuna();
+            $grid->abreColuna(8);
+
+            # Exibe as Características do Contrato
+            $contrato->exibeCaracteristicas($idContrato, $idUsuario);
+
+            $grid->fechaColuna();
 
             # Exibe dados da empresa
-            $grid->abreColuna(4);
+            $grid->abreColuna(6);
             $idEmpresa = $conteudo["idEmpresa"];
             $empresa->exibeDados($idEmpresa, $idUsuario);
             $grid->fechaColuna();
 
-            # Exibe os contratos de Execução
-            $grid->abreColuna(3);
-            $contrato->listaProcessosExecucao($idContrato, $idUsuario);
-            $contrato->exibeRequisitante($idContrato);
-            $grid->fechaColuna();
-
             # Exibe dados da comissão
-            $grid->abreColuna(5);
+            $grid->abreColuna(6);
             $comissao->listaComissao($idContrato, $idUsuario);
             $grid->fechaColuna();
             $grid->fechaGrid();

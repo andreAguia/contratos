@@ -118,10 +118,10 @@ class Pagamento {
         }
 
         # exibe o resultado
+        tituloTable("Valor Liquidado");
+        
         $painel = new Callout("secondary");
-        $painel->abre();
-
-        titulo("Valor Liquidado");
+        $painel->abre();        
 
         $valorTotal = $this->getValorLiquidado($idContrato);
 
@@ -156,10 +156,10 @@ class Pagamento {
         }
 
         # exibe o resultado
+        tituloTable("Saldo");
+        
         $painel = new Callout("secondary");
         $painel->abre();
-
-        titulo("Saldo");
 
         $valorSaldo = $this->getValorSaldo($idContrato);
 
@@ -305,10 +305,10 @@ class Pagamento {
         }
 
         # exibe o resultado
+        tituloTable("Parcela Mensal Ideal");
+        
         $painel = new Callout("success");
         $painel->abre();
-
-        titulo("Parcela Mensal Ideal");
 
         $valorTotal = $this->getPgtoIdeal($idContrato);
 

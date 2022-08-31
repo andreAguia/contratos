@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Cadastro de Campus
+ * Cadastro de Pagamento
  *
  * By Alat
  */

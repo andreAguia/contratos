@@ -1,4 +1,4 @@
-p#grhTitulo{
+situap#grhTitulo{
     font-size: 25px;
     text-align: center;
     color: #02548b;
@@ -125,6 +125,20 @@ p#situacaoAtual{
     font-size: 14px;
     text-align: center;
     padding: 0px;
+    margin: 0px;
+}
+
+p#caracteristicas{
+    font-size: 14px;
+    text-align: left;
+    padding: 10px;
+    margin: 0px;
+}
+
+p#requisitante{
+    font-size: 14px;
+    text-align: center;
+    padding: 10px;
     margin: 0px;
 }
 
@@ -316,6 +330,14 @@ p#idServidor{
     padding: 0px;
     margin: 0px;
     float: right;
+}
+
+p#grhTitulo{
+    font-size: 25px;
+    text-align: center;
+    color: #02548b;
+    padding: 0px;
+    margin: 0px;
 }
 
 p#versao{

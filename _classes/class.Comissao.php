@@ -233,11 +233,11 @@ class Comissao {
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_titulo("Comissão de Fiscalização");
-        $tabela->set_label(array("Foto", "Servidor", "Tipo"));
-        $tabela->set_align(array("center", "left", "center"));
-        $tabela->set_width(array(10, 70, 25));
-        $tabela->set_classe(array("Pessoal", "Comissao", "Comissao"));
-        $tabela->set_metodo(array("get_foto", "exibeNomeMembro", "getTipo"));
+        $tabela->set_label(["Foto", "Servidor", "Tipo"]);
+        $tabela->set_align(["center", "left", "center"]);
+        $tabela->set_width([20, 60, 20]);
+        $tabela->set_classe(["Comissao", "Comissao", "Comissao"]);
+        $tabela->set_metodo(["get_foto", "exibeNomeMembro", "getTipo"]);
         $tabela->set_conteudo($row);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
         $tabela->show();
@@ -260,7 +260,23 @@ class Comissao {
         }
     }
 
-#####################################################################################
+##########################################################################################
+
+    public function get_foto($idServidor) {
+
+        # Função que retorna a foto do servidor
+        #
+        # Parâmetro: id do servidor
+
+        $pessoal = new Pessoal();
+        $idPessoa = $pessoal->get_idPessoa($idServidor);
+        $arquivo = PASTA_FOTOS . "$idPessoa.jpg";
+
+        $figura = new Imagem(PASTA_FOTOS . "$idPessoa.jpg", null, 100, 150);
+        $figura->show();
+    }
+
+    ##########################################################################################
 
     public function listaComissaoRel($idContrato, $log) {
         # Verifica se foi informado

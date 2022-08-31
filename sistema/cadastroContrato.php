@@ -180,6 +180,7 @@ if ($acesso) {
                                      dtAssinatura,
                                      idEmpresa,
                                      objeto,
+                                     especial,
                                      maoDeObra,
                                      processoSei,
                                      processo,
@@ -192,8 +193,6 @@ if ($acesso) {
                                      prazo,
                                      tipoPrazo,
                                      rubrica,
-                                     requisitante,
-                                     especial,
                                      obs
                                 FROM tbcontrato
                               WHERE idContrato = ' . $id);
@@ -354,9 +353,19 @@ if ($acesso) {
             'linha' => 3,
             'nome' => 'objeto',
             'label' => 'Objeto:',
-            'tipo' => 'texto',
-            'col' => 10,
-            'size' => 250,
+            'tipo' => 'textarea',
+            'size' => array(80, 3),
+            'col' => 8,
+        ),
+        array(
+            'linha' => 3,
+            'nome' => 'especial',
+            'label' => 'Acompanhamento Especial:',
+            'tipo' => 'simnao',
+            'title' => 'Informa se o contrato terá acompanhamento especial.',
+            'col' => 2,
+            'size' => 5,
+            'padrao' => 0
         ),
         array(
             'linha' => 3,
@@ -458,24 +467,6 @@ if ($acesso) {
             'size' => 20,
         ),
         array(
-            'linha' => 8,
-            'nome' => 'requisitante',
-            'label' => 'Setor Requisitante:',
-            'tipo' => 'texto',
-            'col' => 10,
-            'size' => 250,
-        ),
-        array(
-            'linha' => 8,
-            'nome' => 'especial',
-            'label' => 'Acompanhamento Especial:',
-            'tipo' => 'simnao',
-            'title' => 'Informa se o contrato terá acompanhamento especial.',
-            'col' => 2,
-            'size' => 5,
-            'padrao' => 0
-        ),
-        array(
             'linha' => 9,
             'nome' => 'obs',
             'label' => 'Observação:',
@@ -537,7 +528,7 @@ if ($acesso) {
              * Menu auxiliar
              */
 
-            if (Verifica::acesso($idUsuario,  [1, 9])) {
+            if (Verifica::acesso($idUsuario, [1, 9])) {
                 #hr("hrMenusecundario");
                 $menu2 = new MenuBar();
 

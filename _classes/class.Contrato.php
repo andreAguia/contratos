@@ -1021,11 +1021,11 @@ class Contrato {
             return;
         }
 
+        tituloTable("Valor Total");
+
         # exibe o resultado
         $painel = new Callout("secondary");
         $painel->abre();
-
-        titulo("Valor Total");
 
         $valorTotal = $this->getValorTotal($idContrato);
 
@@ -1771,7 +1771,7 @@ class Contrato {
 
     ###########################################################
 
-    public function exibeRequisitante($idContrato) {
+    public function exibeRequisitante($idContrato = null, $idUsuario = null) {
 
         # Pega os dados
         $dados = $this->getDados($idContrato);
@@ -1782,15 +1782,35 @@ class Contrato {
 
         # Data da proposta
         if (empty($dados["requisitante"])) {
-            p("---", "center");
+            p("---", "requisitante");
         } else {
-            p($dados["requisitante"], "center");
+            p($dados["requisitante"], "requisitante");
+        }
+
+        # Editar
+        if (Verifica::acesso($idUsuario, [1, 9])) {
+            br();
+            $div = new Div("divEdita1");
+            $div->abre();
+
+            $div = new Div("divEdita2");
+            $div->abre();
+
+            # Botão
+            $botaoEditar = new Link("Editar", "cadastroRequisitante.php");
+            $botaoEditar->set_class('tiny button secondary');
+            $botaoEditar->set_title('Editar características especiais do contrato');
+            $botaoEditar->show();
+
+            $div->fecha();
+
+            $div->fecha();
         }
 
         $painel->fecha();
     }
 
-    ###########################################################
+    #####################################################################################
 
     public function exibeAssinaturaEReitor($dtAssinatura) {
 
@@ -1822,5 +1842,58 @@ class Contrato {
         }
     }
 
-    ###########################################################
+    #####################################################################################
+
+    function exibeCaracteristicas($idContrato = null, $idUsuario = null) {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Pega os dados
+        $select = "SELECT caracteristicas
+                     FROM tbcontrato
+                    WHERE idContrato = {$idContrato}";
+
+        $caracteristica = $contratos->select($select, false);
+
+        tituloTable("Características Especiais do Contrato");
+
+        $painel = new Callout();
+        $painel->abre();
+
+        if (!empty($caracteristica['caracteristicas'])) {
+            p($caracteristica['caracteristicas'], "caracteristicas");
+        } else {
+            p("---", "requisitante");
+        }
+
+        # Editar
+        if (Verifica::acesso($idUsuario, [1, 9])) {
+            $div = new Div("divEdita1");
+            $div->abre();
+
+            $div = new Div("divEdita2");
+            $div->abre();
+
+            # Botão
+            $botaoEditar = new Link("Editar", "cadastroCaracteristicas.php");
+            $botaoEditar->set_class('tiny button secondary');
+            $botaoEditar->set_title('Editar características especiais do contrato');
+            $botaoEditar->show();
+
+            $div->fecha();
+
+            $div->fecha();
+        }
+
+        $painel->fecha();
+    }
+
+    #####################################################################################
 }
