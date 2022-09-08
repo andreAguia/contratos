@@ -180,7 +180,6 @@ if ($acesso) {
                                      dtAssinatura,
                                      idEmpresa,
                                      objeto,
-                                     especial,
                                      maoDeObra,
                                      processoSei,
                                      processo,
@@ -355,17 +354,7 @@ if ($acesso) {
             'label' => 'Objeto:',
             'tipo' => 'textarea',
             'size' => array(80, 3),
-            'col' => 8,
-        ),
-        array(
-            'linha' => 3,
-            'nome' => 'especial',
-            'label' => 'Acompanhamento Especial:',
-            'tipo' => 'simnao',
-            'title' => 'Informa se o contrato terá acompanhamento especial.',
-            'col' => 2,
-            'size' => 5,
-            'padrao' => 0
+            'col' => 10,
         ),
         array(
             'linha' => 3,

@@ -333,6 +333,12 @@ if ($acesso) {
 
             $menu1->show();
 
+            ##########                       
+            # Exibe alerta de Acompanhamento Especial
+            if ($conteudo["especial"]) {                
+                titulo2("Contrato com Acompanhamento Especial","Contratos com Acompanhamento Especial SEMPRE aparecerão no início de uma lista, independente de qualquer outra característica.");
+            }
+
             ##########
             # Exibe os dados do contrado
             get_DadosContrato($idContrato);
@@ -347,28 +353,57 @@ if ($acesso) {
 
             # Exibe o Valor / Setor Requisitante / Situação
             if ($modalidade->getTipo($conteudo["idModalidade"]) == "Despesa") {
-                
+
                 # Exibe o valor
-                $grid->abreColuna(3);                
+                $grid->abreColuna(3);
                 $contrato->exibeValorTotalPainel($idContrato);
                 $grid->fechaColuna();
-                
+
                 # Exibe o Setor Requisitante
-                $grid->abreColuna(3);                
+                $grid->abreColuna(3);
                 $contrato->exibeRequisitante($idContrato, $idUsuario);
                 $grid->fechaColuna();
 
-                $grid->abreColuna(6);
+                # Exibe a situação atual
+                $grid->abreColuna(4);
+                $situacao->exibeSituacaoAtual($idContrato, $idUsuario);
+                $grid->fechaColuna();
             } else {
                 # Exibe o Setor Requisitante
-                $grid->abreColuna(4);                
+                $grid->abreColuna(4);
                 $contrato->exibeRequisitante($idContrato, $idUsuario);
                 $grid->fechaColuna();
-                $grid->abreColuna(8);
+
+                # Exibe a situação atual
+                $grid->abreColuna(6);
+                $situacao->exibeSituacaoAtual($idContrato, $idUsuario);
+                $grid->fechaColuna();
             }
 
-            # Exibe a situação atual
-            $situacao->exibeSituacaoAtual($idContrato, $idUsuario);
+            # Exibe botão de acompanhamento especial
+            $grid->abreColuna(2);
+
+            tituloTable("Acompanhamento Especial?");
+
+            $div = new Div("center");
+            $div->abre();
+            br();
+
+            # Formuário exemplo de login
+            $form = new Form('?fase=especial');
+
+            # botão de acompanhamento especial
+            $controle = new Input('especial', 'simnao');
+            $controle->set_size(4);
+            $controle->set_linha(1);
+            $controle->set_valor($conteudo["especial"]);
+            $controle->set_col(12);
+            $controle->set_title('Informa se o contrato terá Acompanhamento Especial ou não');
+            $controle->set_onChange('formPadrao.submit();');
+            $form->add_item($controle);
+
+            $form->show();
+            $div->fecha();
 
             $grid->fechaColuna();
             $grid->abreColuna(12);
@@ -422,6 +457,29 @@ if ($acesso) {
         case "gravar" :
             #$objeto->gravar($id, "cadastroAditivoExtra.php"); // retirado a pedido de Kátia
             $objeto->gravar($id);
+            break;
+
+        ################################################################
+
+        case "especial" :
+            # Pega o post
+            $post = post("especial");
+
+            # Trata o valor
+            if ($post) {
+                $post = 1;
+            } else {
+                $post = 0;
+            }
+
+            # grava
+            $objeto = new Contratos;
+            $objeto->set_tabela("tbcontrato");
+            $objeto->set_idCampo("idContrato");
+            $objeto->gravar(["especial"], [$post], $idContrato);
+
+            # Retorna 
+            loadPage("?");
             break;
 
         ################################################################
