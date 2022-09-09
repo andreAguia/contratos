@@ -469,7 +469,7 @@ if ($acesso) {
             if ($post) {
                 $post = 1;
             } else {
-                $post = 0;
+                $post = null;
             }
 
             # grava
