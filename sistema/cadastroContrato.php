@@ -51,6 +51,7 @@ if ($acesso) {
     $parametroStatus = post('parametroStatus', get_session('parametroStatus', 1));
     $parametroModalidade = post('parametroModalidade', get_session('parametroModalidade'));
     $parametroEmpresa = post('parametroEmpresa', get_session('parametroEmpresa'));
+    $parametroObjeto = post('parametroObjeto', get_session('parametroObjeto'));
     $inclusaoEmpresa = post('inclusaoEmpresa', get_session('inclusaoEmpresa'));
 
     # Joga os parâmetros par as sessions
@@ -58,6 +59,7 @@ if ($acesso) {
     set_session('parametroStatus', $parametroStatus);
     set_session('parametroModalidade', $parametroModalidade);
     set_session('parametroEmpresa', $parametroEmpresa);
+    set_session('parametroObjeto', $parametroObjeto);
     set_session('inclusaoEmpresa', $inclusaoEmpresa);
 
     ################################################################
@@ -148,6 +150,10 @@ if ($acesso) {
 
     if (!empty($parametroStatus)) {
         $select .= " AND idStatus = {$parametroStatus}";
+    }
+    
+    if (!empty($parametroObjeto)) {
+        $select .= " AND objeto LIKE '%{$parametroObjeto}%'";
     }
 
     /*
@@ -582,7 +588,7 @@ if ($acesso) {
             $controle->set_valor($parametroAno);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
-            $controle->set_col(2);
+            $controle->set_col(3);
             $controle->set_array($comboAno);
             $controle->set_autofocus(true);
             $form->add_item($controle);
@@ -605,9 +611,8 @@ if ($acesso) {
             $controle->set_valor($parametroStatus);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
-            $controle->set_col(2);
+            $controle->set_col(3);
             $controle->set_array($comboStatus);
-            $controle->set_autofocus(true);
             $form->add_item($controle);
 
             /*
@@ -629,9 +634,8 @@ if ($acesso) {
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
             $controle->set_optgroup(true);
-            $controle->set_col(3);
+            $controle->set_col(6);
             $controle->set_array($comboModalidade);
-            $controle->set_autofocus(true);
             $form->add_item($controle);
 
             /*
@@ -651,10 +655,19 @@ if ($acesso) {
             $controle->set_title('Empresa contratada');
             $controle->set_valor($parametroEmpresa);
             $controle->set_onChange('formPadrao.submit();');
-            $controle->set_linha(1);
-            $controle->set_col(5);
+            $controle->set_linha(2);
+            $controle->set_col(6);
             $controle->set_array($comboEmpresa);
-            $controle->set_autofocus(true);
+            $form->add_item($controle);
+            
+             # Objeto
+            $controle = new Input('parametroObjeto', 'texto', 'Objeto:', 1);
+            $controle->set_size(50);
+            $controle->set_title('Objeto do contrato');
+            $controle->set_valor($parametroObjeto);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(2);
+            $controle->set_col(6);
             $form->add_item($controle);
 
             $form->show();
