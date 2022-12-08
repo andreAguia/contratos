@@ -335,8 +335,8 @@ if ($acesso) {
 
             ##########                       
             # Exibe alerta de Acompanhamento Especial
-            if ($conteudo["especial"]) {                
-                titulo2("Contrato com Acompanhamento Especial","Contratos com Acompanhamento Especial SEMPRE aparecerão no início de uma lista, independente de qualquer outra característica.");
+            if ($conteudo["especial"]) {
+                titulo2("Contrato com Acompanhamento Especial", "Contratos com Acompanhamento Especial SEMPRE aparecerão no início de uma lista, independente de qualquer outra característica.");
             }
 
             ##########
@@ -351,61 +351,70 @@ if ($acesso) {
 
             $grid->fechaColuna();
 
+            # Define as colunas a serem exibidas
+            if (Verifica::acesso($idUsuario, [1, 9])) {
+                $colunas = [3, 3, 4, 4, 6];
+            } else {
+                $colunas = [3, 3, 6, 4, 8];
+            }
+
             # Exibe o Valor / Setor Requisitante / Situação
             if ($modalidade->getTipo($conteudo["idModalidade"]) == "Despesa") {
 
                 # Exibe o valor
-                $grid->abreColuna(3);
+                $grid->abreColuna($colunas[0]);
                 $contrato->exibeValorTotalPainel($idContrato);
                 $grid->fechaColuna();
 
                 # Exibe o Setor Requisitante
-                $grid->abreColuna(3);
+                $grid->abreColuna($colunas[1]);
                 $contrato->exibeRequisitante($idContrato, $idUsuario);
                 $grid->fechaColuna();
 
                 # Exibe a situação atual
-                $grid->abreColuna(4);
+                $grid->abreColuna($colunas[2]);
                 $situacao->exibeSituacaoAtual($idContrato, $idUsuario);
                 $grid->fechaColuna();
             } else {
                 # Exibe o Setor Requisitante
-                $grid->abreColuna(4);
+                $grid->abreColuna($colunas[3]);
                 $contrato->exibeRequisitante($idContrato, $idUsuario);
                 $grid->fechaColuna();
 
                 # Exibe a situação atual
-                $grid->abreColuna(6);
+                $grid->abreColuna($colunas[4]);
                 $situacao->exibeSituacaoAtual($idContrato, $idUsuario);
                 $grid->fechaColuna();
             }
 
             # Exibe botão de acompanhamento especial
-            $grid->abreColuna(2);
+            if (Verifica::acesso($idUsuario, [1, 9])) {
+                $grid->abreColuna(2);
 
-            tituloTable("Acompanhamento Especial?");
+                tituloTable("Acompanhamento Especial?");
 
-            $div = new Div("center");
-            $div->abre();
-            br();
+                $div = new Div("center");
+                $div->abre();
+                br();
 
-            # Formuário exemplo de login
-            $form = new Form('?fase=especial');
+                # Formuário exemplo de login
+                $form = new Form('?fase=especial');
 
-            # botão de acompanhamento especial
-            $controle = new Input('especial', 'simnao');
-            $controle->set_size(4);
-            $controle->set_linha(1);
-            $controle->set_valor($conteudo["especial"]);
-            $controle->set_col(12);
-            $controle->set_title('Informa se o contrato terá Acompanhamento Especial ou não');
-            $controle->set_onChange('formPadrao.submit();');
-            $form->add_item($controle);
+                # botão de acompanhamento especial
+                $controle = new Input('especial', 'simnao');
+                $controle->set_size(4);
+                $controle->set_linha(1);
+                $controle->set_valor($conteudo["especial"]);
+                $controle->set_col(12);
+                $controle->set_title('Informa se o contrato terá Acompanhamento Especial ou não');
+                $controle->set_onChange('formPadrao.submit();');
+                $form->add_item($controle);
 
-            $form->show();
-            $div->fecha();
+                $form->show();
+                $div->fecha();
 
-            $grid->fechaColuna();
+                $grid->fechaColuna();
+            }
             $grid->abreColuna(12);
 
             # Exibe outros dados do contrato
