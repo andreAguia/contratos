@@ -90,8 +90,8 @@ if ($acesso) {
     $grid->abreColuna(5);
     $contrato->listaProcessosExecucaoRel($idContrato);
     
-    # Exibe o processo de fiscalização
-    $comissao->exibeProcessoFiscalizacaoRel($idContrato);
+//    # Exibe o processo de fiscalização
+//    $comissao->exibeProcessoFiscalizacaoRel($idContrato);   // retirado a pedido de Kátia
     $grid->fechaColuna();
     $grid->fechaGrid();
 
