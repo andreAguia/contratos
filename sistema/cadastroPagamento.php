@@ -220,6 +220,20 @@ if ($acesso) {
     # Edita Obs
     $botaoObs = new Button("Obs Geral", "cadastroObsSaldo.php");
     $botaoObs->set_title("Insere / edita as observações gerais.");
+
+    # Cronograma Físico Financeiro
+    $botaoCronograma = new Button("Cronograma", "../relatorios/contratos.cronograma.fisicoFinanceiro.php");
+    $botaoCronograma->set_title("Exibe o cronograma físico-financeiro");
+    $botaoCronograma->set_target("_blank");
+
+    # Relatório
+    $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
+    $botaoRel = new Button();
+    $botaoRel->set_title("Relatório dos Pagamentos");
+    $botaoRel->set_url("../relatorios/contratos.folhaRosto.php");
+    $botaoRel->set_target("_blank");
+    $botaoRel->set_imagem($imagem);
+
     $objeto->set_botaoListarExtra([$botaoObs]);
 
     ################################################################
@@ -235,7 +249,8 @@ if ($acesso) {
             break;
 
         case "gravar":
-            $objeto->gravar($id, 'cadastroPagamentoExtra.php');
+            #$objeto->gravar($id, 'cadastroPagamentoExtra.php'); // Retirado a pedido de Kátia
+            $objeto->gravar($id);
             break;
 
         case "porNatureza":
