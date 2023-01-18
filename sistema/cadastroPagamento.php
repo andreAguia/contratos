@@ -98,12 +98,12 @@ if ($acesso) {
     $objeto->set_grupoCorColuna(0);
 
     # Parametros da tabela
-    $objeto->set_label(array("Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Obs"));
-    $objeto->set_align(array("center", "center", "center", "center", "right", "center", "center", "left"));
-    $objeto->set_width(array(5, 13, 10, 10, 12, 5, 5, 30));
-    $objeto->set_funcao(array(null, null, "date_to_php"));
-    $objeto->set_classe(array(null, "Pagamento", null, null, "Pagamento", "Pagamento"));
-    $objeto->set_metodo(array(null, "exibeReferencia", null, null, "exibeValor", "exibeTipo"));
+    $objeto->set_label(["Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Obs"]);
+    $objeto->set_align(["center", "center", "center", "center", "right", "center", "center", "left"]);
+    $objeto->set_width([5, 13, 10, 10, 12, 5, 5, 30]);
+    $objeto->set_funcao([null, null, "date_to_php"]);
+    $objeto->set_classe([null, "Pagamento", null, null, "Pagamento", "Pagamento"]);
+    $objeto->set_metodo([null, "exibeReferencia", null, null, "exibeValor", "exibeTipo"]);
     $objeto->set_numeroOrdem(true);
     $objeto->set_numeroOrdemTipo('d');
 
@@ -230,11 +230,11 @@ if ($acesso) {
     $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
     $botaoRel = new Button();
     $botaoRel->set_title("Relatório dos Pagamentos");
-    $botaoRel->set_url("../relatorios/contratos.folhaRosto.php");
+    $botaoRel->set_url("../relatorios/contratos.pagamentos.php");
     $botaoRel->set_target("_blank");
     $botaoRel->set_imagem($imagem);
 
-    $objeto->set_botaoListarExtra([$botaoObs]);
+    $objeto->set_botaoListarExtra([$botaoObs, $botaoRel]);
 
     ################################################################
     switch ($fase) {

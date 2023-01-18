@@ -119,9 +119,9 @@ class Pagamento {
 
         # exibe o resultado
         tituloTable("Valor Liquidado");
-        
+
         $painel = new Callout("secondary");
-        $painel->abre();        
+        $painel->abre();
 
         $valorTotal = $this->getValorLiquidado($idContrato);
 
@@ -157,7 +157,7 @@ class Pagamento {
 
         # exibe o resultado
         tituloTable("Saldo");
-        
+
         $painel = new Callout("secondary");
         $painel->abre();
 
@@ -306,7 +306,7 @@ class Pagamento {
 
         # exibe o resultado
         tituloTable("Parcela Mensal Ideal");
-        
+
         $painel = new Callout("success");
         $painel->abre();
 
@@ -468,7 +468,7 @@ class Pagamento {
 
     private function getSra($idContrato = null) {
         # Verifica se foi informado o id
-        if (vazio($idContrato)) {
+        if (empty($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
         }
@@ -499,4 +499,39 @@ class Pagamento {
                 break;
         }
     }
+
+    ############################################################
+
+    public function exibeSaldosPgtoRel($idContrato = null) {
+
+        if (empty($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $contrato = new Contrato();
+
+        # Pega os Valores
+        $valorTotal = formataMoeda2($contrato->getValorTotal($idContrato));
+        $valorLiquidado = formataMoeda2($this->getValorLiquidado($idContrato));
+        $saldo = formataMoeda2($this->getValorSaldo($idContrato));
+
+        $row = [["<br/>{$valorTotal}<br/>.", $valorLiquidado, $saldo]];
+
+        # Monta o Relatório
+        $relatorio = new Relatorio();
+        $relatorio->set_tituloTabela('<br/>Valores');
+        $relatorio->set_label(["Valor Total", "Valor Liquidado", "Saldo"]);
+        $relatorio->set_conteudo($row);
+
+        $relatorio->set_subTotal(false);
+        $relatorio->set_totalRegistro(false);
+        $relatorio->set_dataImpressao(false);
+        $relatorio->set_cabecalhoRelatorio(false);
+        $relatorio->set_menuRelatorio(false);
+        $relatorio->set_log(false);
+        $relatorio->show();
+    }
+
+    ############################################################
 }

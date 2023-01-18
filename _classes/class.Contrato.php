@@ -714,6 +714,27 @@ class Contrato {
 
     ###########################################################
 
+    public function exibeDuracaoSimples($idContrato) {
+        /**
+         * Exibe a duração sem a contagem de meses
+         */
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+
+        # Verifica se tem data inicial
+        if (empty($dados["dtInicial"])) {
+            return null;
+        } else {
+            # Monta os valores
+            $dtInicial = date_to_php($dados["dtInicial"]);
+            $dtFinal = $this->getVigencia($idContrato);
+            $tempo = $this->getTempoTotal($idContrato);
+            p("{$dtInicial} - {$dtFinal}", "pVigencia");
+        }
+    }
+
+    ###########################################################
+
     public function exibeDuracao($idContrato) {
 
         # Pega os dados
@@ -721,7 +742,6 @@ class Contrato {
 
         # Verifica se tem data inicial
         if (empty($dados["dtInicial"])) {
-
             return null;
         } else {
             # Monta os valores
