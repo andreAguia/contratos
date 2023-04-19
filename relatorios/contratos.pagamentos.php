@@ -60,9 +60,9 @@ if ($acesso) {
     # Exibe o valor
     $pagamento = new Pagamento();
     $pagamento->exibeSaldosPgtoRel($idContrato);
-    
+
     br();
-    p("<b>Pagamentos</b>","center","f16");
+    p("<b>Pagamentos</b>", "center", "f16");
 
     # Exibe os pagamentos
     $select = "SELECT CONCAT('Ano Referência: ',anoReferencia),
@@ -79,25 +79,24 @@ if ($acesso) {
              ORDER BY anoReferencia desc, mesReferencia desc, data desc";
 
     $row = $contratos->select($select);
-    
+
     $relatorio->set_label(["Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Obs"]);
     $relatorio->set_align(["left", "left", "center", "left", "right", "center", "center", "left"]);
     $relatorio->set_width([5, 15, 10, 15, 15, 5, 5, 30]);
-    $relatorio->set_funcao([null, null, "date_to_php"]);
+    $relatorio->set_funcao([null, null, "date_to_php"]);    
     $relatorio->set_classe([null, "Pagamento", null, null, "Pagamento", "Pagamento"]);
     $relatorio->set_metodo([null, "exibeReferencia", null, null, "exibeValor", "exibeTipo"]);
     $relatorio->set_bordaInterna(true);
     $relatorio->set_numGrupo(0);
-    
+
     $relatorio->set_numeroOrdem(true);
     $relatorio->set_numeroOrdemTipo('d');
-    #$relatorio->set_dataImpressao(false);
     $relatorio->set_cabecalhoRelatorio(false);
     $relatorio->set_menuRelatorio(false);
     $relatorio->set_log(false);
 
     $relatorio->set_conteudo($row);
     $relatorio->show();
-    
+
     $page->terminaPagina();
 }
