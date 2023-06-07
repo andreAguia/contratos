@@ -78,8 +78,7 @@ if ($acesso) {
         $jscript = '// Pega os valores da modalidade
                 var modalidade = $("#idModalidade").val();
 
-                // Exibe ou não o número do pregão a partir do valor da modalidade
-                // quando o form é carregado
+                // Exibe ou não o número do pregão a partir do valor da modalidade quando o form é carregado
                 if(modalidade == 2){
                     $("#numPregao").show();
                     $("#labelnumPregao").show();
@@ -88,7 +87,17 @@ if ($acesso) {
                     $("#labelnumPregao").hide();
                 }
                 
-                // Verifica o valor do número do pregão quando se muda o valor da modalidade
+                // Exibe ou não a natureza da despesa a partir do valor da modalidade quando o form é carregado
+                if(modalidade == 6){
+                    $("#natDespesa").hide();
+                    $("#labelnatDespesa").hide();                    
+                }else{
+                    $("#natDespesa").show();
+                    $("#labelnatDespesa").show();
+                    
+                }
+                
+                // Exibe ou não o do número do pregão quando se muda o valor da modalidade
                 $("#idModalidade").change(function(){
                     var modalidade = $("#idModalidade").val();
                     if(modalidade == 2){
@@ -97,6 +106,15 @@ if ($acesso) {
                     }else{
                         $("#numPregao").hide();
                         $("#labelnumPregao").hide();
+                    }
+                    
+                    // Exibe ou não a natureza da despesa quando se muda o valor da modalidade
+                    if(modalidade == 6){
+                        $("#natDespesa").hide();
+                        $("#labelnatDespesa").hide();                    
+                    }else{
+                        $("#natDespesa").show();
+                        $("#labelnatDespesa").show();
                     }
                 });';
 
@@ -151,7 +169,7 @@ if ($acesso) {
     if (!empty($parametroStatus)) {
         $select .= " AND idStatus = {$parametroStatus}";
     }
-    
+
     if (!empty($parametroObjeto)) {
         $select .= " AND objeto LIKE '%{$parametroObjeto}%'";
     }
@@ -182,11 +200,13 @@ if ($acesso) {
                                      numPregao,
                                      siafe,
                                      idStatus,
+                                     natDespesa,
                                      dtProposta,
                                      dtAssinatura,
-                                     idEmpresa,
-                                     objeto,
                                      maoDeObra,
+                                     localExecucao,
+                                     idEmpresa,
+                                     objeto,                                     
                                      processoSei,
                                      processo,
                                      processoPrestacao,
@@ -329,6 +349,15 @@ if ($acesso) {
         ),
         array(
             'linha' => 2,
+            'nome' => 'natDespesa',
+            'label' => 'Natureza da Despesa:',
+            'tipo' => 'combo',
+            'array' => [[null, null], [1, "Obra"], [2, "Serviço"]],
+            'col' => 3,
+            'size' => 30,
+        ),
+        array(
+            'linha' => 2,
             'nome' => 'dtProposta',
             'label' => 'Proposta:',
             'tipo' => 'date',
@@ -343,27 +372,9 @@ if ($acesso) {
             'col' => 3,
             'size' => 15,
         ),
+        
         array(
             'linha' => 2,
-            'nome' => 'idEmpresa',
-            'label' => 'Empresa:',
-            'tipo' => 'combo',
-            'array' => $empresa,
-            'required' => true,
-            'col' => 6,
-            'size' => 200,
-            'padrao' => $inclusaoEmpresa,
-        ),
-        array(
-            'linha' => 3,
-            'nome' => 'objeto',
-            'label' => 'Objeto:',
-            'tipo' => 'textarea',
-            'size' => array(80, 3),
-            'col' => 10,
-        ),
-        array(
-            'linha' => 3,
             'nome' => 'maoDeObra',
             'label' => 'Mão de Obra Alocada:',
             'tipo' => 'simnao',
@@ -373,7 +384,34 @@ if ($acesso) {
             'padrao' => 0
         ),
         array(
+            'linha' => 3,
+            'nome' => 'localExecucao',
+            'label' => 'Local de Execução:',
+            'tipo' => 'texto',
+            'col' => 12,
+            'size' => 250,
+        ),
+        array(
+            'linha' => 4,
+            'nome' => 'idEmpresa',
+            'label' => 'Empresa:',
+            'tipo' => 'combo',
+            'array' => $empresa,
+            'required' => true,
+            'col' => 12,
+            'size' => 200,
+            'padrao' => $inclusaoEmpresa,
+        ),
+        array(
             'linha' => 5,
+            'nome' => 'objeto',
+            'label' => 'Objeto:',
+            'tipo' => 'textarea',
+            'size' => array(80, 3),
+            'col' => 12,
+        ),
+        array(
+            'linha' => 6,
             'nome' => 'processoSei',
             'label' => 'Processo Sei:',
             'tipo' => 'sei',
@@ -381,7 +419,7 @@ if ($acesso) {
             'size' => 50,
         ),
         array(
-            'linha' => 5,
+            'linha' => 6,
             'nome' => 'processo',
             'label' => 'Processo Físico:',
             'tipo' => 'processo',
@@ -389,7 +427,7 @@ if ($acesso) {
             'size' => 50,
         ),
         array(
-            'linha' => 5,
+            'linha' => 6,
             'nome' => 'processoPrestacao',
             'label' => 'Processo de Prestação de Contas:',
             'tipo' => 'processo',
@@ -397,7 +435,7 @@ if ($acesso) {
             'size' => 50,
         ),
         array(
-            'linha' => 6,
+            'linha' => 7,
             'nome' => 'valor',
             'label' => 'Valor:',
             'tipo' => 'moeda',
@@ -405,7 +443,7 @@ if ($acesso) {
             'size' => 15,
         ),
         array(
-            'linha' => 6,
+            'linha' => 7,
             'nome' => 'garantia',
             'label' => 'Garantia: (se houver)',
             'tipo' => 'percentagem',
@@ -413,7 +451,7 @@ if ($acesso) {
             'size' => 5,
         ),
         array(
-            'linha' => 6,
+            'linha' => 7,
             'nome' => 'dtPublicacao',
             'label' => 'Publicação:',
             'tipo' => 'date',
@@ -421,7 +459,7 @@ if ($acesso) {
             'size' => 15,
         ),
         array(
-            'linha' => 6,
+            'linha' => 7,
             'nome' => 'pgPublicacao',
             'label' => 'Pag:',
             'tipo' => 'texto',
@@ -429,7 +467,7 @@ if ($acesso) {
             'size' => 10,
         ),
         array(
-            'linha' => 7,
+            'linha' => 8,
             'nome' => 'dtInicial',
             'label' => 'Data Inicial:',
             'tipo' => 'date',
@@ -437,7 +475,7 @@ if ($acesso) {
             'size' => 15,
         ),
         array(
-            'linha' => 7,
+            'linha' => 8,
             'nome' => 'prazo',
             'label' => 'Prazo:',
             'tipo' => 'numero',
@@ -445,7 +483,7 @@ if ($acesso) {
             'size' => 15,
         ),
         array(
-            'linha' => 7,
+            'linha' => 8,
             'nome' => 'tipoPrazo',
             'label' => 'Tipo:',
             'tipo' => 'combo',
@@ -454,7 +492,7 @@ if ($acesso) {
             'size' => 15,
         ),
         array(
-            'linha' => 7,
+            'linha' => 8,
             'nome' => 'rubrica',
             'label' => 'Rubrica:',
             'tipo' => 'texto',
@@ -658,8 +696,8 @@ if ($acesso) {
             $controle->set_col(6);
             $controle->set_array($comboEmpresa);
             $form->add_item($controle);
-            
-             # Objeto
+
+            # Objeto
             $controle = new Input('parametroObjeto', 'texto', 'Objeto:', 1);
             $controle->set_size(50);
             $controle->set_title('Objeto do contrato');

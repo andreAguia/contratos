@@ -310,6 +310,20 @@ if ($acesso) {
                     $botaoControle = new Button("Controle de Saldo", "cadastroPagamento.php");
                     $botaoControle->set_title("Acessa a rotina de controle de saldo para contratos de despesa");
                     $menu1->add_link($botaoControle, "right");
+
+//                    # Cronograma Físico-Financeiro
+//                    if (empty($contrato->getNaturezaDespesa($idContrato))) {
+//                        $botaoCronograma = new Button("Cronograma Físico-Financeiro");
+//                        $botaoCronograma->set_title("te acesso ao Cronograma Físico-Financeiro");
+//                        $botaoCronograma->set_onClick("alert('É necessário cadastrar a naturaza da despesa do contrato para emitir o Cronograma Físico-Financeiro')");
+//                        $menu1->add_link($botaoCronograma, "right");
+//                    } else {
+//                        $botaoCronograma = new Button("Cronograma Físico-Financeiro", "../relatorios/contratos.cronograma.fisicoFinanceiro.php");
+//                        $botaoCronograma->set_title("te acesso ao Cronograma Físico-Financeiro");
+//                        $botaoCronograma->set_target("_blank");
+//                        #$botaoCronograma->set_class('button secondary');
+//                        $menu1->add_link($botaoCronograma, "right");
+//                    }
                 } else {
                     $botaoControle = new Button("Controle de Aluguel", "cadastroReceita.php");
                     $botaoControle->set_title("Acessa a rotina de controle de aluguel para contratos de receita");

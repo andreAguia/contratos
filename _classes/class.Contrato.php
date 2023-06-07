@@ -295,7 +295,14 @@ class Contrato {
         if ($modalidade->getTipo($conteudo["idModalidade"]) == "Receita") {
             label("Receita", "primary", null, "Contrato de Receita");
         } else {
-            label("Despesa", "warning", null, "Contrato de Despesa");
+            # Pega a natureza da Despesa
+            $natDespesa = $this->getNaturezaDespesa($idContrato);
+
+            if (empty($natDespesa)) {
+                label("Despesa", "warning", null, "Contrato de Despesa");
+            } else {
+                label($natDespesa == 1 ? "Despesa - Obra" : "Despesa - Serviço", "warning", null, "Contrato de Despesa");
+            }
         }
 
         # Exibe os Status
@@ -311,46 +318,6 @@ class Contrato {
         p($status, "$stilo");
 
         # Exibe se te Mão de obra alocada
-        if ($conteudo["maoDeObra"]) {
-            p("Mão de Obra Alocada", "pVigencia");
-        }
-    }
-
-    #####################################################################################
-
-    public function exibeNumeroContratoRel($idContrato) {
-        # Verifica se foi informado
-        if (vazio($idContrato)) {
-            alert("É necessário informar o id do Contrato.");
-            return;
-        }
-
-        $conteudo = $this->getDados($idContrato);
-
-        $modalidade = new Modalidade();
-
-        p($conteudo["numero"], "contratoNumero");
-        if (!empty($conteudo['siafe'])) {
-            p("Siafe: {$conteudo['siafe']}", "pVigencia");
-        }
-
-        if (!empty($conteudo['rubrica'])) {
-            p("Rubrica: {$conteudo['rubrica']}", "pVigencia");
-        }
-
-        p($this->exibeModalidade($idContrato), "pVigencia");
-
-//        $status = $this->getStatus($idContrato);
-//
-//        if ($status == "Ativo") {
-//            $stilo = "statusAtivo";
-//        } elseif ($status == "Pendente") {
-//            $stilo = "statusPendente";
-//        } else {
-//            $stilo = "statusEncerrado";
-//        }
-//        p($status, "$stilo");
-
         if ($conteudo["maoDeObra"]) {
             p("Mão de Obra Alocada", "pVigencia");
         }
@@ -987,6 +954,50 @@ class Contrato {
         if ($idModalidade == 2) {
             if (!empty($conteudo["numPregao"])) {
                 $retorno .= " " . str_pad($conteudo["numPregao"], 3, "0", STR_PAD_LEFT);
+            }
+        }
+        return $retorno;
+    }
+
+    ##############################################################
+
+    public function exibeModalidadeRel($idContrato = null) {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+        $modalidade = new Modalidade();
+
+        $conteudo = $this->getDados($idContrato);
+        $idModalidade = $conteudo["idModalidade"];
+        $tipo = $modalidade->getTipo($conteudo["idModalidade"]);
+
+        # Informa a modadlidade
+        $retorno = $modalidade->getModalidade($idModalidade);
+
+        # Verifica se é pregão e se tem o número do pregão
+        if ($idModalidade == 2) {
+            if (!empty($conteudo["numPregao"])) {
+                $retorno .= " " . str_pad($conteudo["numPregao"], 3, "0", STR_PAD_LEFT);
+            }
+        }
+
+        # Informa se o contrato é de despesa ou de receita
+        if ($tipo == "Receita") {
+            $retorno .= "<br/>Receita";
+        } else {
+            # Pega a natureza da Despesa
+            $natDespesa = $this->getNaturezaDespesa($idContrato);
+
+            if (empty($natDespesa)) {
+                $retorno .= "<br/>Despesa";
+            } else {
+                $retorno .= ($natDespesa == 1 ? "<br/>Despesa - Obra" : "<br/>Despesa - Serviço");
             }
         }
         return $retorno;
@@ -1913,6 +1924,30 @@ class Contrato {
         }
 
         $painel->fecha();
+    }
+
+    #####################################################################################
+
+    public function getNaturezaDespesa($idContrato = null) {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Pega os dados
+        $select = "SELECT natDespesa
+                     FROM tbcontrato
+                    WHERE idContrato = {$idContrato}";
+
+        $row = $contratos->select($select, false);
+
+        # Retorno        
+        return $row["natDespesa"];
     }
 
     #####################################################################################

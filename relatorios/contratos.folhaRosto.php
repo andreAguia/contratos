@@ -60,7 +60,7 @@ if ($acesso) {
         p("Rubrica: {$conteudo['rubrica']}", "pRelatorioSubtitulo");
     }
 
-    p($contrato->exibeModalidade($idContrato), "pRelatorioSubtitulo");
+    p($contrato->exibeModalidadeRel($idContrato), "pRelatorioSubtitulo");
     
     $grid->fechaColuna();
     $grid->abreColuna(3);

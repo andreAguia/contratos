@@ -97,8 +97,9 @@ class Pagamento {
         }
 
         $contrato = new Contrato();
-        $valorTotal = $contrato->getValorTotal($idContrato);        // Valor Total
-        $valorLiquidado = $this->getValorLiquidado($idContrato);    // Valor Liqwuidado (Pago)
+        $valorTotal = $contrato->getValorTotal($idContrato);
+        $valorLiquidado = $this->getValorLiquidado($idContrato);
+
         # Verifica se tem Sra
         if ($this->temSra($idContrato)) {
             $sra = $this->getSra($idContrato);
@@ -534,4 +535,35 @@ class Pagamento {
     }
 
     ############################################################
+
+    private function getValorLiquidadoAno($idContrato = null, $anoReferencia = null) {
+
+        # Inicia a variável de retorno
+        $valorTotal = 0;
+
+        # Pega os valores dos pgtos
+        $contratos = new Contratos();
+
+        if (is_null($anoReferencia)) {
+            return $this->getValorLiquidado($idContrato);
+        } else {
+            $select = "SELECT valor, tipo FROM tbpagamento WHERE idContrato = {$idContrato} and anoReferencia = {$anoReferencia} ";
+            $row = $contratos->select($select);
+            $numPgtos = $contratos->count($select);
+
+            # Verifica se tem algum aditivo
+            if ($numPgtos > 0) {
+                foreach ($row as $item) {
+                    if ($item["tipo"] == 2) {
+                        $valorTotal -= $item["valor"];  // Diminui Quando é estorno
+                    } elseif ($item["tipo"] == 1) {
+                        $valorTotal += $item["valor"];  // /aumenta quando é pgto
+                    }   // Desconsidera o SRA
+                }
+            }
+            return $valorTotal;
+        }
+    }
+
+    ###########################################################
 }

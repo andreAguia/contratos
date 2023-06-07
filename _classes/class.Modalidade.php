@@ -1,10 +1,8 @@
 <?php
 
-class Modalidade
-{
+class Modalidade {
 
-    public function getDados($idModalidade = null)
-    {
+    public function getDados($idModalidade = null) {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
@@ -27,8 +25,7 @@ class Modalidade
 
 ##############################################################
 
-    public function getNumContratos($idModalidade = null)
-    {
+    public function getNumContratos($idModalidade = null) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -52,8 +49,7 @@ class Modalidade
 
 ##############################################################
 
-    public function getModalidade($idModalidade = null)
-    {
+    public function getModalidade($idModalidade = null) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -74,11 +70,10 @@ class Modalidade
         # Retorno        
         return $row["modalidade"];
     }
-    
+
 ##############################################################
 
-    public function getTipo($idModalidade = null)
-    {
+    public function getTipo($idModalidade = null) {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
@@ -100,4 +95,5 @@ class Modalidade
         return $row["tipo"];
     }
 
+    ##############################################################   
 }

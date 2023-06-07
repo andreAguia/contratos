@@ -51,7 +51,7 @@ if ($acesso) {
         p("Rubrica: {$conteudo['rubrica']}", "pRelatorioSubtitulo");
     }
 
-    p($contrato->exibeModalidade($idContrato), "pRelatorioSubtitulo");
+    p($contrato->exibeModalidadeRel($idContrato), "pRelatorioSubtitulo");
 
     # Exibe o Resumo
     br();
