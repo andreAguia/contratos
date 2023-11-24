@@ -952,4 +952,28 @@ class Comissao {
     }
 
 #####################################################################################
+
+    public function getPresidente($idContrato) {
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # monta o select
+        $select = "SELECT idServidor
+                     FROM tbcomissao
+                    WHERE idContrato = {$idContrato}
+                      AND tipo = 1";
+
+        $row = $contratos->select($select, false);
+
+        $pessoa = new Pessoal();
+        return $pessoa->get_nome($row[0]);
+    }
+
+##########################################################################################
 }

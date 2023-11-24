@@ -38,6 +38,8 @@ $postComissao = post('postComissao');
 $postComissaoEmail = post('postComissaoEmail');
 $postComissaoProcesso = post('postComissaoProcesso');
 $postComissaoPortarias = post('postComissaoPortarias');
+$postComissaoPresidente = post('postComissaoPresidente');
+
 $postAditivosPrazo = post('postAditivosPrazo');
 
 $parametroOrdenaTipo = post('parametroOrdenaTipo', 'asc');
@@ -339,6 +341,15 @@ if ($acesso) {
     $controle->set_size(5);
     $controle->set_title('As portarias da comissão');
     $controle->set_valor($postComissaoPortarias);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(4);
+    $controle->set_col(1);
+    $form->add_item($controle);
+    
+    $controle = new Input('postComissaoPresidente', 'simnao', 'Presidente:', 1);
+    $controle->set_size(5);
+    $controle->set_title('O Presidente da Comissão');
+    $controle->set_valor($postComissaoPresidente);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(4);
     $controle->set_col(1);
@@ -793,6 +804,15 @@ if ($acesso) {
         $align[] = "left";
         $class[] = "Comissao";
         $method[] = "exibePortariasRelatorio";
+        $function[] = "";
+    }
+    
+    if ($postComissaoPresidente) {
+        $field[] = "idContrato";
+        $label[] = "Presidente da Comissão";
+        $align[] = "left";
+        $class[] = "Comissao";
+        $method[] = "getPresidente";
         $function[] = "";
     }
 
