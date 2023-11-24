@@ -28,6 +28,8 @@ $postProposta = post('postProposta');
 $postDuracao = post('postDuracao');
 $postPrazo = post('postPrazo');
 $postVigencia = post('postVigencia');
+$postSetorReq = post('postSetorReq');
+
 $postPeriodo = post('postPeriodo');
 $postObjeto = post('postObjeto');
 $postValorTotal = post('postValorTotal');
@@ -190,6 +192,15 @@ if ($acesso) {
     $controle->set_size(5);
     $controle->set_title('A data da proposta');
     $controle->set_valor($postProposta);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(1);
+    $controle->set_col(1);
+    $form->add_item($controle);
+    
+    $controle = new Input('postSetorReq', 'simnao', 'Requisitante:', 1);
+    $controle->set_size(5);
+    $controle->set_title('O Setor Requisitante');
+    $controle->set_valor($postSetorReq);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(1);
     $controle->set_col(1);
@@ -666,6 +677,15 @@ if ($acesso) {
         $class[] = "";
         $method[] = "";
         $function[] = "date_to_php";
+    }
+    
+    if ($postSetorReq) {
+        $field[] = "requisitante";
+        $label[] = "Requisitante";
+        $align[] = "left";
+        $class[] = "";
+        $method[] = "";
+        $function[] = "";
     }
 
     if ($postDuracao) {
