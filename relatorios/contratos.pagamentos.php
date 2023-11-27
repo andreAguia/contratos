@@ -81,7 +81,7 @@ if ($acesso) {
     $row = $contratos->select($select);
 
     $relatorio->set_label(["Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Obs"]);
-    $relatorio->set_align(["left", "left", "center", "left", "right", "center", "center", "left"]);
+    $relatorio->set_align(["center", "center", "center", "center", "center", "center", "center", "left"]);
     $relatorio->set_width([5, 15, 10, 15, 15, 5, 5, 30]);
     $relatorio->set_funcao([null, null, "date_to_php"]);    
     $relatorio->set_classe([null, "Pagamento", null, null, "Pagamento", "Pagamento"]);

@@ -303,13 +303,11 @@ if ($acesso) {
             $botaoVoltar->set_accessKey('V');
             $menu1->add_link($botaoVoltar, "left");
 
-            if (Verifica::acesso($idUsuario, [1, 9])) {
-
-                # Exibe o controle de pgto ou de aluguel dependendo do contrato
-                if ($modalidade->getTipo($conteudo["idModalidade"]) == "Despesa") {
-                    $botaoControle = new Button("Controle de Saldo", "cadastroPagamento.php");
-                    $botaoControle->set_title("Acessa a rotina de controle de saldo para contratos de despesa");
-                    $menu1->add_link($botaoControle, "right");
+            # Exibe o controle de pgto ou de aluguel dependendo do contrato
+            if ($modalidade->getTipo($conteudo["idModalidade"]) == "Despesa") {
+                $botaoControle = new Button("Controle de Saldo", "cadastroPagamento.php");
+                $botaoControle->set_title("Acessa a rotina de controle de saldo para contratos de despesa");
+                $menu1->add_link($botaoControle, "right");
 
 //                    # Cronograma Físico-Financeiro
 //                    if (empty($contrato->getNaturezaDespesa($idContrato))) {
@@ -324,11 +322,13 @@ if ($acesso) {
 //                        #$botaoCronograma->set_class('button secondary');
 //                        $menu1->add_link($botaoCronograma, "right");
 //                    }
-                } else {
-                    $botaoControle = new Button("Controle de Aluguel", "cadastroReceita.php");
-                    $botaoControle->set_title("Acessa a rotina de controle de aluguel para contratos de receita");
-                    $menu1->add_link($botaoControle, "right");
-                }
+            } else {
+                $botaoControle = new Button("Controle de Aluguel", "cadastroReceita.php");
+                $botaoControle->set_title("Acessa a rotina de controle de aluguel para contratos de receita");
+                $menu1->add_link($botaoControle, "right");
+            }
+
+            if (Verifica::acesso($idUsuario, [1, 9])) {
 
                 # Incluir
                 $botaoInserir = new Button("Incluir Aditivo", "?fase=editar");

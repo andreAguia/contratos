@@ -9,6 +9,11 @@ class Contrato {
      *
      * @var private $idConcurso integer null O id do concurso
      */
+    
+    
+    # Id do Contrato
+    private $idContrato = null;    
+    
 ##############################################################
 
     public function __construct($idContrato = null) {

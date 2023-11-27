@@ -12,7 +12,7 @@ $idUsuario = null;
 include "_config.php";
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario, [1, 9]);
+$acesso = Verifica::acesso($idUsuario, [1, 9, 10]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
@@ -88,7 +88,12 @@ if ($acesso) {
                                 FROM tbpagamento
                               WHERE idPagamento = {$id}");
 
-    # Caminhos
+    # Habilita o modo leitura para determinados usuários
+    if (Verifica::acesso($idUsuario, 10)) {
+        $objeto->set_modoLeitura(true);
+    }
+
+    # Caminhos                                
     $objeto->set_linkEditar("?fase=editar");
     $objeto->set_linkExcluir("?fase=excluir");
     $objeto->set_linkGravar("?fase=gravar");
@@ -217,7 +222,7 @@ if ($acesso) {
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
 
-    # Edita Obs
+    # Edita Obs    
     $botaoObs = new Button("Obs Geral", "cadastroObsSaldo.php");
     $botaoObs->set_title("Insere / edita as observações gerais.");
 
@@ -234,7 +239,11 @@ if ($acesso) {
     $botaoRel->set_target("_blank");
     $botaoRel->set_imagem($imagem);
 
-    $objeto->set_botaoListarExtra([$botaoObs, $botaoRel]);
+    if (Verifica::acesso($idUsuario, [1, 9])) {
+        $objeto->set_botaoListarExtra([$botaoObs, $botaoRel]);
+    } else {
+        $objeto->set_botaoListarExtra([$botaoRel]);
+    }
 
     ################################################################
     switch ($fase) {
