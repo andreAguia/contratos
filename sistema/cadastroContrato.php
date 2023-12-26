@@ -700,7 +700,6 @@ if ($acesso) {
             $controle->set_valor($parametroNatureza);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
-            $controle->set_optgroup(true);
             $controle->set_col(3);
             $controle->set_array($comboNatureza);
             $form->add_item($controle);

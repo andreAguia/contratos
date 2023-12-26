@@ -971,8 +971,12 @@ class Comissao {
 
         $row = $contratos->select($select, false);
 
-        $pessoa = new Pessoal();
-        return $pessoa->get_nome($row[0]);
+        if (empty($row[0])) {
+            return null;
+        } else {
+            $pessoa = new Pessoal();
+            return $pessoa->get_nome($row[0]);
+        }
     }
 
 ##########################################################################################
