@@ -122,7 +122,7 @@ if ($acesso) {
     $objeto->set_idCampo("idReceita");
 
     # Tipo de label do formulário
-    $objeto->set_formlabelTipo(1);
+    $objeto->set_formLabelTipo(1);
 
     # Dados da combo natureza
     $natureza = $contratos->select('SELECT idNatureza,

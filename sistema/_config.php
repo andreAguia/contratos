@@ -134,11 +134,12 @@ spl_autoload_register("autoload");
 
 # Sobre o Sistema
 $intra = new Intra();
-define("SISTEMA", $intra->get_variavel("sistemaContratos"));             # Nome do sistema
-define("DESCRICAO", $intra->get_variavel("sistemaContratosDescricao"));  # Descrição do sistema
-define("AUTOR", $intra->get_variavel("sistemaAutor"));             # Autor do sistema
-define("EMAILAUTOR", $intra->get_variavel("sistemaAutorEmail"));   # Autor do sistema
+define("SISTEMA", $intra->get_variavel("sistemaContratos"));
+define("DESCRICAO", $intra->get_variavel("sistemaContratosDescricao"));
+define("AUTOR", $intra->get_variavel("sistemaAutor"));
+define("EMAILAUTOR", $intra->get_variavel("sistemaAutorEmail"));
+
 # Versão do sistema
 $versao = $intra->get_versaoAtual();
-define("VERSAO", $versao[0]);                    # Versão do Sistema 								
-define("ATUALIZACAO", date_to_php($versao[1]));  # Última Atualização
+define("VERSAO", $versao[0]);
+define("ATUALIZACAO", date_to_php($versao[1]));

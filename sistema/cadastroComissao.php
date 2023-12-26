@@ -190,7 +190,7 @@ if ($acesso) {
     $objeto->set_idCampo("idComissao");
 
     # Tipo de label do formulário
-    $objeto->set_formlabelTipo(1);
+    $objeto->set_formLabelTipo(1);
 
     # Pega os dados da combo de servidor
     $membro = $pessoal->select('SELECT idServidor,

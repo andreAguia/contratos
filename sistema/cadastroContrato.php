@@ -50,6 +50,7 @@ if ($acesso) {
     $parametroAno = post('parametroAno', get_session('parametroAno'));
     $parametroStatus = post('parametroStatus', get_session('parametroStatus', 1));
     $parametroModalidade = post('parametroModalidade', get_session('parametroModalidade'));
+    $parametroNatureza = post('parametroNatureza', get_session('parametroNatureza'));
     $parametroEmpresa = post('parametroEmpresa', get_session('parametroEmpresa'));
     $parametroObjeto = post('parametroObjeto', get_session('parametroObjeto'));
     $inclusaoEmpresa = post('inclusaoEmpresa', get_session('inclusaoEmpresa'));
@@ -58,6 +59,7 @@ if ($acesso) {
     set_session('parametroAno', $parametroAno);
     set_session('parametroStatus', $parametroStatus);
     set_session('parametroModalidade', $parametroModalidade);
+    set_session('parametroNatureza', $parametroNatureza);
     set_session('parametroEmpresa', $parametroEmpresa);
     set_session('parametroObjeto', $parametroObjeto);
     set_session('inclusaoEmpresa', $inclusaoEmpresa);
@@ -165,6 +167,10 @@ if ($acesso) {
     if (!empty($parametroModalidade)) {
         $select .= " AND idModalidade = {$parametroModalidade}";
     }
+    
+    if (!empty($parametroNatureza)) {
+        $select .= " AND natDespesa = {$parametroNatureza}";
+    }
 
     if (!empty($parametroStatus)) {
         $select .= " AND idStatus = {$parametroStatus}";
@@ -263,7 +269,7 @@ if ($acesso) {
     $objeto->set_idCampo('idContrato');
 
     # Tipo de label do formulário
-    $objeto->set_formlabelTipo(1);
+    $objeto->set_formLabelTipo(1);
 
     # Dados da combo status
     $status = $contratos->select('SELECT idStatus,
@@ -294,6 +300,10 @@ if ($acesso) {
                               ORDER BY razaoSocial');
 
     array_unshift($empresa, array(null, null));
+    
+    # Dados da Natureza da Despesa (array está no config)
+    $arrayNatureza = $contrato->getArrayNatureza();
+    array_unshift($arrayNatureza, array(null, null));
 
     # Campos para o formulario
     $objeto->set_campos(array(
@@ -352,7 +362,7 @@ if ($acesso) {
             'nome' => 'natDespesa',
             'label' => 'Natureza da Despesa:',
             'tipo' => 'combo',
-            'array' => [[null, null], [1, "Obra"], [2, "Serviço"]],
+            'array' => $arrayNatureza,
             'col' => 3,
             'size' => 30,
         ),
@@ -590,7 +600,7 @@ if ($acesso) {
                 $menu2->add_link($botao, "right");
 
                 # Natureza
-                $botao = new Button("Natureza", "cadastroNatureza.php?i=true");
+                $botao = new Button("Natureza do Saldo", "cadastroNatureza.php?i=true");
                 $botao->set_title("Cadastro de Natureza");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");
@@ -671,8 +681,28 @@ if ($acesso) {
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
             $controle->set_optgroup(true);
-            $controle->set_col(6);
+            $controle->set_col(3);
             $controle->set_array($comboModalidade);
+            $form->add_item($controle);
+            
+            /*
+             * Natureza
+             */
+
+            # Pega os dados
+            $comboNatureza = $contrato->getArrayNatureza();
+            array_unshift($comboNatureza, array(null, "Todos"));
+            
+            # Modalidade
+            $controle = new Input('parametroNatureza', 'combo', 'Natureza da Despesa:', 1);
+            $controle->set_size(20);
+            $controle->set_title('Natureza da Despesa');
+            $controle->set_valor($parametroNatureza);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(1);
+            $controle->set_optgroup(true);
+            $controle->set_col(3);
+            $controle->set_array($comboNatureza);
             $form->add_item($controle);
 
             /*

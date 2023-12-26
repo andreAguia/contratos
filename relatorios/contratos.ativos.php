@@ -6,7 +6,8 @@
  * By Alat
  */
 # Inicia as variáveis que receberão as sessions
-$idUsuario = null;              # Servidor logado
+$idUsuario = null;
+
 # Configuração
 include ("../sistema/_config.php");
 
@@ -52,11 +53,11 @@ if ($acesso) {
     # Monta o Relatório
     $relatorio = new Relatorio();
     $relatorio->set_conteudo($resumo);
-    $relatorio->set_label(array("Contrato", "Modalidade", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação"));
-    $relatorio->set_classe(array("Contrato", "Contrato", null, "Empresa", "Contrato", "Contrato", "Situacao"));
-    $relatorio->set_metodo(array("exibeNumeroSiafeRelatorio", "exibeModalidade", null, "getEmpresaCnpj", "getProcessoAdm", "exibeTempoEVigencia", "getSituacaoAtual"));
-    $relatorio->set_width(array(10, 15, 15, 15, 15, 15, 15));
-    $relatorio->set_align(array("center", "center","left", "left", "left", "center", "left"));
+    $relatorio->set_label(["Contrato", "Modalidade", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação"]);
+    $relatorio->set_classe(["Contrato", "Contrato", null, "Empresa", "Contrato", "Contrato", "Situacao"]);
+    $relatorio->set_metodo(["exibeNumeroSiafeRelatorio", "exibeModalidade", null, "getEmpresaCnpj", "getProcessoAdm", "exibeTempoEVigencia", "getSituacaoAtual"]);
+    $relatorio->set_width([10, 15, 15, 15, 15, 15, 15]);
+    $relatorio->set_align(["center", "center","left", "left", "left", "center", "left"]);
     $relatorio->set_bordaInterna(true);
 
     $relatorio->set_titulo($titulo);

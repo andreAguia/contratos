@@ -54,8 +54,7 @@ if ($acesso) {
             'onChange' => 'formPadrao.submit();',
             'col' => 12,
             'linha' => 1)));
-
-    $relatorio->set_formFocus('parametroTitulo');
+    
     $relatorio->set_formLink('?');
     
     $relatorio->show();

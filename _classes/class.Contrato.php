@@ -9,11 +9,10 @@ class Contrato {
      *
      * @var private $idConcurso integer null O id do concurso
      */
-    
-    
     # Id do Contrato
-    private $idContrato = null;    
-    
+    private $idContrato = null;
+    private $arrayNatureza = null;
+
 ##############################################################
 
     public function __construct($idContrato = null) {
@@ -25,6 +24,9 @@ class Contrato {
          * @syntax $concurso = new Concurso([$idConcurso]);
          */
         $this->idContrato = $idContrato;
+
+        # Variáveis desse sistema
+        $this->arrayNatureza = [[1, "Obra"], [2, "Serviço"], [3, "Compra"]];
     }
 
 ##############################################################
@@ -59,6 +61,17 @@ class Contrato {
 
         # Retorno
         return $row;
+    }
+
+    ##############################################################
+
+    public function getArrayNatureza() {
+        /**
+         * Informa o array da naturesa de uma despesa
+         *
+         * @syntax $concurso->getArrayNatureza;
+         */
+        return $this->arrayNatureza;
     }
 
     ##############################################################
@@ -306,7 +319,12 @@ class Contrato {
             if (empty($natDespesa)) {
                 label("Despesa", "warning", null, "Contrato de Despesa");
             } else {
-                label($natDespesa == 1 ? "Despesa - Obra" : "Despesa - Serviço", "warning", null, "Contrato de Despesa");
+
+                foreach ($this->arrayNatureza as $item) {
+                    if ($item[0] == $natDespesa) {
+                        label("Despesa - {$item[1]}", "warning", null, "Contrato de Despesa");
+                    }
+                }
             }
         }
 
@@ -1002,7 +1020,12 @@ class Contrato {
             if (empty($natDespesa)) {
                 $retorno .= "<br/>Despesa";
             } else {
-                $retorno .= ($natDespesa == 1 ? "<br/>Despesa - Obra" : "<br/>Despesa - Serviço");
+                foreach ($this->arrayNatureza as $item) {
+                    if ($item[0] == $natDespesa) {
+                        $retorno .= "<br/>Despesa - {$item[1]}";
+                    }
+                }
+                
             }
         }
         return $retorno;

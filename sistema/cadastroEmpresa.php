@@ -140,7 +140,7 @@ if ($acesso) {
     $objeto->set_idCampo("idEmpresa");
 
     # Tipo de label do formulário
-    $objeto->set_formlabelTipo(1);
+    $objeto->set_formLabelTipo(1);
 
     # Pega os dados da combo de cidade
     $cidade = $pessoal->select('SELECT idCidade,

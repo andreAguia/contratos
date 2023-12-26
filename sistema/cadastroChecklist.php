@@ -103,7 +103,7 @@ if ($acesso) {
     $objeto->set_idCampo("idchecklistModelo");
 
     # Tipo de label do formulário
-    $objeto->set_formlabelTipo(1);
+    $objeto->set_formLabelTipo(1);
 
     # Pega os dados da combo de cidade
     $tipos = $contratos->select('SELECT DISTINCT tipo, tipo

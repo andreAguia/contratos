@@ -70,7 +70,7 @@ if ($acesso) {
     $objeto->set_idCampo('idContrato');
 
 //    # Tipo de label do formulário
-//    $objeto->set_formlabelTipo(1);
+//    $objeto->set_formLabelTipo(1);
     # Formulario
     $objeto->set_campos(array(
         array(
