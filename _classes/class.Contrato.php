@@ -26,7 +26,12 @@ class Contrato {
         $this->idContrato = $idContrato;
 
         # Variáveis desse sistema
-        $this->arrayNatureza = [[1, "Obra"], [2, "Serviço"], [3, "Compra"]];
+        $this->arrayNatureza = [
+            [1, "Obra"],
+            [2, "Serviço"],
+            [3, "Compra"],
+            [4, "Serviço Contínuo"]
+        ];
     }
 
 ##############################################################
@@ -1025,7 +1030,6 @@ class Contrato {
                         $retorno .= "<br/>Despesa - {$item[1]}";
                     }
                 }
-                
             }
         }
         return $retorno;
