@@ -146,6 +146,23 @@ class Pagamento {
         $painel->fecha();
     }
 
+    ###########################################################
+
+    public function exibeValorLiquidadoAnoRelatorio($texto) {
+        # Separa os valores
+        $pedaco = explode("&", $texto);
+        
+        $idContrato = $pedaco[0];
+        $anoReferencia = $pedaco[1];
+        
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            return null;
+        }
+
+        return formataMoeda2($this->getValorLiquidadoAno($idContrato, $anoReferencia));
+    }
+
     ############################################################
 
     public function exibeValorSaldo($idContrato = null) {

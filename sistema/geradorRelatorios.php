@@ -43,6 +43,7 @@ $postComissaoPresidente = post('postComissaoPresidente');
 $postAditivosPrazo = post('postAditivosPrazo');
 
 $postPgtoSaldo = post('postPgtoSaldo');
+$postPgtoAno = post('postPgtoAno');
 
 $parametroOrdenaTipo = post('parametroOrdenaTipo', 'asc');
 $parametroOrdena = post('parametroOrdena', "numero");
@@ -387,6 +388,24 @@ if ($acesso) {
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(6);
     $controle->set_col(1);
+    $form->add_item($controle);
+    
+    # Pega os dados
+    $comboAnoLiqu = $contratos->select('SELECT DISTINCT YEAR(dtAssinatura), YEAR(dtAssinatura)
+                                                  FROM tbcontrato
+                                                 WHERE dtAssinatura IS NOT NULL
+                                              ORDER BY YEAR(dtAssinatura) DESC');
+
+    array_unshift($comboAnoLiqu, array(null, "Nenhum"));
+    
+    $controle = new Input('postPgtoAno', 'combo', 'Valor Liquidado por Ano:', 1);
+    $controle->set_size(5);
+    $controle->set_title('Informa o Valor Liquidado por Ano');
+    $controle->set_valor($postPgtoAno);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_array($comboAnoLiqu);
+    $controle->set_linha(6);
+    $controle->set_col(3);
     $form->add_item($controle);
 
 #################################### Ordenação #######################################
@@ -885,6 +904,15 @@ if ($acesso) {
         $align[] = "right";
         $class[] = "Pagamento";
         $method[] = "exibeValorSaldoRelatorio";
+        $function[] = "";
+    }
+    
+    if ($postPgtoAno <> null) {
+        $field[] = "concat(idContrato,'&','{$postPgtoAno}')";
+        $label[] = "Valor Liquidado em {$postPgtoAno}";
+        $align[] = "right";
+        $class[] = "Pagamento";
+        $method[] = "exibeValorLiquidadoAnoRelatorio";
         $function[] = "";
     }
 
