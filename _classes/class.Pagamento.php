@@ -89,11 +89,10 @@ class Pagamento {
 
     ###########################################################
 
-    private function getValorSaldo($idContrato = null) {
+    public function getValorSaldo($idContrato = null) {
         # Verifica se foi informado o id
-        if (vazio($idContrato)) {
-            alert("É necessário informar o id do Contrato.");
-            return;
+        if (empty($idContrato)) {
+            return null;
         }
 
         $contrato = new Contrato();
@@ -178,6 +177,17 @@ class Pagamento {
         }
 
         $painel->fecha();
+    }
+
+    ############################################################
+
+    public function exibeValorSaldoRelatorio($idContrato = null) {
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            return null;
+        }
+
+        return formataMoeda2($this->getValorSaldo($idContrato));
     }
 
     ###########################################################

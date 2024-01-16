@@ -42,6 +42,8 @@ $postComissaoPresidente = post('postComissaoPresidente');
 
 $postAditivosPrazo = post('postAditivosPrazo');
 
+$postPgtoSaldo = post('postPgtoSaldo');
+
 $parametroOrdenaTipo = post('parametroOrdenaTipo', 'asc');
 $parametroOrdena = post('parametroOrdena', "numero");
 
@@ -373,6 +375,19 @@ if ($acesso) {
     $controle->set_linha(5);
     $controle->set_col(1);
     $form->add_item($controle);
+    
+     /*
+     * Pagamantos
+     */
+
+    $controle = new Input('postPgtoSaldo', 'simnao', 'Saldo:', 1);
+    $controle->set_size(5);
+    $controle->set_title('Informa o Saldo');
+    $controle->set_valor($postPgtoSaldo);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(6);
+    $controle->set_col(1);
+    $form->add_item($controle);
 
 #################################### Ordenação #######################################
     # Ordenação
@@ -395,7 +410,7 @@ if ($acesso) {
     $controle->set_size(20);
     $controle->set_title('Ano da assinatura do contrato');
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(6);
+    $controle->set_linha(7);
     $controle->set_col(3);
     $controle->set_valor($parametroOrdena);
     $controle->set_array($ordena);
@@ -407,13 +422,13 @@ if ($acesso) {
     $controle->set_size(20);
     $controle->set_title('Ano da assinatura do contrato');
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(6);
+    $controle->set_linha(7);
     $controle->set_col(2);
     $controle->set_valor($parametroOrdenaTipo);
     $controle->set_array([
         ["asc", "asc"],
         ["desc", "desc"],
-    ]);
+    ]);    
     $form->add_item($controle);
 
 #################################### Filtro #######################################
@@ -436,7 +451,7 @@ if ($acesso) {
     $controle->set_title('Ano da assinatura do contrato');
     $controle->set_valor($parametroAno);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(7);
+    $controle->set_linha(8);
     $controle->set_col(2);
     $controle->set_array($comboAno);
     $controle->set_fieldset("Informe o Filtro:");
@@ -459,7 +474,7 @@ if ($acesso) {
     $controle->set_title('Status do contrato');
     $controle->set_valor($parametroStatus);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(7);
+    $controle->set_linha(8);
     $controle->set_col(2);
     $controle->set_array($comboStatus);
     $form->add_item($controle);
@@ -481,7 +496,7 @@ if ($acesso) {
     $controle->set_title('Modalidade do contrato');
     $controle->set_valor($parametroModalidade);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(7);
+    $controle->set_linha(8);
     $controle->set_optgroup(true);
     $controle->set_col(3);
     $controle->set_array($comboModalidade);
@@ -493,7 +508,7 @@ if ($acesso) {
     $controle->set_title('Se é despesa ou receita');
     $controle->set_valor($parametroModalidadeTipo);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(7);
+    $controle->set_linha(8);
     $controle->set_col(2);
     $controle->set_array(["Todos", "Despesa", "Receita"]);
     $form->add_item($controle);
@@ -512,7 +527,7 @@ if ($acesso) {
     $controle->set_title('Natureza da Despesa');
     $controle->set_valor($parametroNatureza);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(7);
+    $controle->set_linha(8);
     $controle->set_col(3);
     $controle->set_array($comboNatureza);
     $form->add_item($controle);
@@ -523,7 +538,7 @@ if ($acesso) {
     $controle->set_title('Se tem mão de obra alocada');
     $controle->set_valor($parametroMaoDeObra);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(7);
+    $controle->set_linha(8);
     $controle->set_col(2);
     $controle->set_array([["S", "Sim"], ["N", "Não"], [null, "Todos"]]);
     $form->add_item($controle);
@@ -591,7 +606,7 @@ if ($acesso) {
     $controle->set_title('Contratos');
     $controle->set_valor($parametroContrato);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(8);
+    $controle->set_linha(9);
     $controle->set_multiple(true);
     $controle->set_col(2);
     $controle->set_array($comboContrato);
@@ -614,7 +629,7 @@ if ($acesso) {
     $controle->set_title('Empresa contratada');
     $controle->set_valor($parametroEmpresa);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(8);
+    $controle->set_linha(9);
     $controle->set_col(9);
     $controle->set_array($comboEmpresa);
     $form->add_item($controle);
@@ -861,6 +876,15 @@ if ($acesso) {
         $align[] = "right";
         $class[] = "Contrato";
         $method[] = "exibeValorUltimoAditivo";
+        $function[] = "";
+    }
+    
+    if ($postPgtoSaldo) {
+        $field[] = "idContrato";
+        $label[] = "Saldo";
+        $align[] = "right";
+        $class[] = "Pagamento";
+        $method[] = "exibeValorSaldoRelatorio";
         $function[] = "";
     }
 

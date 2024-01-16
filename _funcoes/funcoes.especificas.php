@@ -27,20 +27,20 @@ function get_DadosContratoPagamento($idContrato) {
     $grid->fechaColuna();
     $grid->abreColuna(3);
 
-    # Exibe o valor
+    # Exibe o valor Liquidado
     $pagamento = new Pagamento();
     $pagamento->exibeValorLiquidado($idContrato);
 
     $grid->fechaColuna();
     $grid->abreColuna(3);
 
-    # Exibe o valor
+    # Exibe o Saldo
     $pagamento->exibeValorSaldo($idContrato);
 
     $grid->fechaColuna();
     $grid->abreColuna(3);
 
-    # Exibe o valor
+    # Exibe o Pgto Ideal
     $pagamento->exibePgtoIdeal($idContrato);
 
     $grid->fechaColuna();
