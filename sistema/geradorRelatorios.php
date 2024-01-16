@@ -380,9 +380,9 @@ if ($acesso) {
      * Pagamantos
      */
 
-    $controle = new Input('postPgtoSaldo', 'simnao', 'Saldo:', 1);
+    $controle = new Input('postPgtoSaldo', 'simnao', 'Saldo Atual:', 1);
     $controle->set_size(5);
-    $controle->set_title('Informa o Saldo');
+    $controle->set_title('Informa o Saldo Atual');
     $controle->set_valor($postPgtoSaldo);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(6);
@@ -881,7 +881,7 @@ if ($acesso) {
     
     if ($postPgtoSaldo) {
         $field[] = "idContrato";
-        $label[] = "Saldo";
+        $label[] = "Saldo Atual";
         $align[] = "right";
         $class[] = "Pagamento";
         $method[] = "exibeValorSaldoRelatorio";
