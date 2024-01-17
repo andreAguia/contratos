@@ -1982,5 +1982,97 @@ class Contrato {
         return $row["natDespesa"];
     }
 
+    ###########################################################
+
+    function getValorPorAno($idContrato = null) {
+        # Verifica se foi informado o id
+        if (empty($idContrato)) {
+            return null;
+        }
+
+        # Pega o valor total
+        $valorTotal = $this->getValorTotal($idContrato);
+
+        # Pega a vigência
+        $prazo = $this->getPrazo($idContrato);
+
+        # Faz o calculo
+        if ($prazo > 0) {
+            return ($valorTotal / $prazo) * 12;
+        } else {
+            return "---";
+        }
+    }
+
+    ###########################################################
+
+    function getPrazo($idContrato = null) {
+
+        # Verifica se foi informado o id
+        if (empty($idContrato)) {
+            return null;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+        return $conteudo["prazo"];
+    }
+
+    #####################################################################################
+
+    public function exibeValorPorAnoPainel($idContrato = null) {
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            return null;
+        }
+
+        tituloTable("Valor por Ano");
+
+        # exibe o resultado
+        $painel = new Callout("secondary");
+        $painel->abre();
+
+        $valorPorAno = $this->getValorPorAno($idContrato);
+
+        if ($valorPorAno >= 0) {
+            p("R$ " . formataMoeda($valorPorAno), "pvalorTotalPositivo");
+        } else {
+            p("R$ " . formataMoeda($valorPorAno), "pvalorTotalNegativo");
+        }
+
+        # Exibe o demonstrativo 
+        $valorTotal = formataMoeda($this->getValorTotal($idContrato));
+        $prazo = $this->getPrazo($idContrato);
+
+        # Faz o calculo
+        if ($prazo > 0) {
+            p("({$valorTotal} / {$prazo}) x 12", "pPagamentos");
+        } else {
+            p("---", "pPagamentos");
+        }
+        $painel->fecha();
+    }
+
+    #####################################################################################
+
+    public function exibeValorPorAno($idContrato = null) {
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            return null;
+        }
+
+        $valorPorAno = $this->getValorPorAno($idContrato);
+        $prazo = $this->getPrazo($idContrato);
+
+        if ($prazo > 0) {
+            if ($valorPorAno >= 0) {
+                p("R$ " . formataMoeda($valorPorAno), "pvalorTotalPositivo");
+            } else {
+                p("R$ " . formataMoeda($valorPorAno), "pvalorTotalNegativo");
+            }
+        } else {
+            p("---", "pPagamentos");
+        }
+    }
+
     #####################################################################################
 }

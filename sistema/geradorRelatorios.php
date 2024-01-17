@@ -44,6 +44,7 @@ $postAditivosPrazo = post('postAditivosPrazo');
 
 $postPgtoSaldo = post('postPgtoSaldo');
 $postPgtoAno = post('postPgtoAno');
+$postValorPorAno = post('postValorPorAno');
 
 $parametroOrdenaTipo = post('parametroOrdenaTipo', 'asc');
 $parametroOrdena = post('parametroOrdena', "numero");
@@ -376,8 +377,8 @@ if ($acesso) {
     $controle->set_linha(5);
     $controle->set_col(1);
     $form->add_item($controle);
-    
-     /*
+
+    /*
      * Pagamantos
      */
 
@@ -389,7 +390,7 @@ if ($acesso) {
     $controle->set_linha(6);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     # Pega os dados
     $comboAnoLiqu = $contratos->select('SELECT DISTINCT YEAR(dtAssinatura), YEAR(dtAssinatura)
                                                   FROM tbcontrato
@@ -397,7 +398,7 @@ if ($acesso) {
                                               ORDER BY YEAR(dtAssinatura) DESC');
 
     array_unshift($comboAnoLiqu, array(null, "Nenhum"));
-    
+
     $controle = new Input('postPgtoAno', 'combo', 'Valor Liquidado por Ano:', 1);
     $controle->set_size(5);
     $controle->set_title('Informa o Valor Liquidado por Ano');
@@ -406,6 +407,15 @@ if ($acesso) {
     $controle->set_array($comboAnoLiqu);
     $controle->set_linha(6);
     $controle->set_col(3);
+    $form->add_item($controle);
+
+    $controle = new Input('postValorPorAno', 'simnao', 'Valor por Ano:', 1);
+    $controle->set_size(5);
+    $controle->set_title('Informa o Valor por ano');
+    $controle->set_valor($postValorPorAno);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(6);
+    $controle->set_col(1);
     $form->add_item($controle);
 
 #################################### Ordenação #######################################
@@ -447,7 +457,7 @@ if ($acesso) {
     $controle->set_array([
         ["asc", "asc"],
         ["desc", "desc"],
-    ]);    
+    ]);
     $form->add_item($controle);
 
 #################################### Filtro #######################################
@@ -897,7 +907,7 @@ if ($acesso) {
         $method[] = "exibeValorUltimoAditivo";
         $function[] = "";
     }
-    
+
     if ($postPgtoSaldo) {
         $field[] = "idContrato";
         $label[] = "Saldo Atual";
@@ -906,13 +916,22 @@ if ($acesso) {
         $method[] = "exibeValorSaldoRelatorio";
         $function[] = "";
     }
-    
+
     if ($postPgtoAno <> null) {
         $field[] = "concat(idContrato,'&','{$postPgtoAno}')";
         $label[] = "Valor Liquidado em {$postPgtoAno}";
         $align[] = "right";
         $class[] = "Pagamento";
         $method[] = "exibeValorLiquidadoAnoRelatorio";
+        $function[] = "";
+    }
+    
+    if ($postValorPorAno) {
+        $field[] = "idContrato";
+        $label[] = "Valor por Ano";
+        $align[] = "right";
+        $class[] = "Contrato";
+        $method[] = "exibeValorPorAno";
         $function[] = "";
     }
 
