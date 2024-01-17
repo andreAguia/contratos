@@ -62,7 +62,10 @@ class Pagamento {
         $contratos = new Contratos();
 
         if (is_null($idNatureza)) {
-            $select = "SELECT valor, tipo FROM tbpagamento WHERE idContrato = {$idContrato}";
+            $select = "SELECT valor,
+                              tipo 
+                         FROM tbpagamento 
+                        WHERE idContrato = {$idContrato}";
         } else {
             if ($idNatureza == 0) {
                 $select = "SELECT valor, tipo FROM tbpagamento WHERE idContrato = {$idContrato} and idNatureza IS NULL";
@@ -127,22 +130,24 @@ class Pagamento {
 
         p(formataMoeda2($valorTotal), "pvalorTotalPositivo");
 
-        # Verifica se tem lançamento discriminando natureza. Se tem exibe o link para exibir por natureza
-        if ($this->temNatureza($idContrato)) {
-            $link = new Link("por Natureza");
+        # Verifica se teve pagamentos
+        if ($this->getNumPgto($idContrato) > 0) {
+
+            $link = new Link("Detalhes");
             $link->set_id("porNatureza");
             $link->set_onClick("abreFechaDivId('divNatureza');");
-            $link->set_title("Detalha os pagamanto pela natureza do gasto");
+            $link->set_title("Detalha os Pagamantos");
             $link->show();
 
             $div = new Div("divNatureza");
             $div->abre();
-
             br();
+
             $this->exibeValorLiquidadoPorNatureza($idContrato);
+            $this->exibeValorLiquidadoPorAno($idContrato);
+
             $div->fecha();
         }
-
         $painel->fecha();
     }
 
@@ -151,10 +156,10 @@ class Pagamento {
     public function exibeValorLiquidadoAnoRelatorio($texto) {
         # Separa os valores
         $pedaco = explode("&", $texto);
-        
+
         $idContrato = $pedaco[0];
         $anoReferencia = $pedaco[1];
-        
+
         # Verifica se foi informado
         if (empty($idContrato)) {
             return null;
@@ -349,7 +354,7 @@ class Pagamento {
 
     public function exibeValorLiquidadoPorNatureza($idContrato = null) {
         # Verifica se foi informado
-        if (vazio($idContrato)) {
+        if (empty($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
         }
@@ -357,7 +362,7 @@ class Pagamento {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
-        # Monta o select
+        # Monta o select 
         $select = "SELECT distinct idNatureza, natureza
                      FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
                     WHERE idContrato = {$idContrato} and idNatureza IS NOT NULL
@@ -365,25 +370,89 @@ class Pagamento {
 
         $row = $contratos->select($select);
         $numPgtos = $contratos->count($select);
-        $resultado[] = [null, $this->getValorLiquidado($idContrato, 0)];
+        
+        # Somatório
+        $somatorio = 0;
 
         # Percorre o array
         if ($numPgtos > 0) {
             foreach ($row as $item) {
                 $resultado[] = [$item["natureza"], $this->getValorLiquidado($idContrato, $item["idNatureza"])];
+                $somatorio += $this->getValorLiquidado($idContrato, $item["idNatureza"]);
             }
+            
+            $resultado[] = ["Total", $somatorio];
+        } else {
+            $resultado[] = [null, null];
         }
 
         # Exemplo de tabela simples
         $tabela = new Tabela();
-        #$tabela->set_titulo("Valor Liquidado Por Natureza");
+        $tabela->set_titulo("Por Natureza");
         $tabela->set_conteudo($resultado);
-        $tabela->set_label(array("Natureza", "Valor"));
-        #$tabela->set_width(array(70, 30));
-        $tabela->set_align(array("left", "center"));
-        $tabela->set_funcao(array(null, "formataMoeda2"));
-        #$tabela->set_rodape("Total: " . formataMoeda2($this->getValorLiquidado($idContrato)));
+        $tabela->set_label(["Natureza", "Valor"]);
+        $tabela->set_funcao([null, "formataMoeda2"]);
         $tabela->set_totalRegistro(false);
+        $tabela->set_formatacaoCondicional([
+            [
+                'coluna' => 0,
+                'valor' => "Total",
+                'operador' => '=',
+                'id' => 'resumoTotal'
+        ]]);
+        $tabela->show();
+    }
+
+    ###########################################################
+
+    public function exibeValorLiquidadoPorAno($idContrato = null) {
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Monta o select        
+        $select = "SELECT DISTINCT anoReferencia
+                     FROM tbpagamento
+                    WHERE idContrato = {$idContrato}
+                 ORDER BY anoReferencia desc";
+
+        $row = $contratos->select($select);
+        $numPgtos = $contratos->count($select);
+
+        # Somatório
+        $somatorio = 0;
+
+        # Percorre o array
+        if ($numPgtos > 0) {
+            foreach ($row as $item) {
+                $resultado[] = [$item["anoReferencia"], $this->getValorLiquidadoAno($idContrato, $item["anoReferencia"])];
+                $somatorio += $this->getValorLiquidadoAno($idContrato, $item["anoReferencia"]);
+            }
+
+            $resultado[] = ["Total", $somatorio];
+        } else {
+            $resultado[] = [null, null];
+        }
+
+        # Exemplo de tabela simples
+        $tabela = new Tabela();
+        $tabela->set_titulo("Por Ano");
+        $tabela->set_conteudo($resultado);
+        $tabela->set_label(["Ano", "Valor"]);
+        $tabela->set_funcao([null, "formataMoeda2"]);
+        $tabela->set_totalRegistro(false);
+        $tabela->set_formatacaoCondicional([
+            [
+                'coluna' => 0,
+                'valor' => "Total",
+                'operador' => '=',
+                'id' => 'resumoTotal'
+        ]]);
         $tabela->show();
     }
 
@@ -430,6 +499,25 @@ class Pagamento {
         $select = "SELECT idNatureza
                      FROM tbpagamento
                     WHERE idNatureza = {$idNatureza}";
+
+        return $contratos->count($select);
+    }
+
+    ###########################################################
+
+    public function getNumPgto($idContrato = null) {
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            return null;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Monta o select
+        $select = "SELECT idContrato
+                     FROM tbpagamento
+                    WHERE idContrato = {$idContrato}";
 
         return $contratos->count($select);
     }
@@ -574,7 +662,12 @@ class Pagamento {
         if (is_null($anoReferencia)) {
             return $this->getValorLiquidado($idContrato);
         } else {
-            $select = "SELECT valor, tipo FROM tbpagamento WHERE idContrato = {$idContrato} and anoReferencia = {$anoReferencia} ";
+            $select = "SELECT valor, 
+                               tipo 
+                         FROM tbpagamento 
+                        WHERE idContrato = {$idContrato} 
+                          AND anoReferencia = {$anoReferencia}";
+
             $row = $contratos->select($select);
             $numPgtos = $contratos->count($select);
 

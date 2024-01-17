@@ -557,6 +557,11 @@ div#divNatureza{
 div#divDetalhes{
     display: none;
 }
+
+tr#resumoTotal{
+    background-color: #02548b;
+    color: #fff;
+}
 /*******************************************
 * Folha de Rosto
 *******************************************/
