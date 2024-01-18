@@ -583,7 +583,13 @@ if ($acesso) {
             if (Verifica::acesso($idUsuario, [1, 9])) {
                 #hr("hrMenusecundario");
                 $menu2 = new MenuBar();
-
+                
+                # Membros Externos da Comissão
+                $botao = new Button("Membros Externos", "cadastroMembrosExternos.php?i=true");
+                $botao->set_title("Cadastro de Membros Externos");
+                $botao->set_class("button secondary");
+                $menu2->add_link($botao, "right");
+                
                 # Empresas
                 $botao = new Button("Empresas", "cadastroEmpresa.php?i=true");
                 $botao->set_title("Cadastro de Empresas");

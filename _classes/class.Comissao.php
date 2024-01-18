@@ -262,18 +262,27 @@ class Comissao {
 
 ##########################################################################################
 
-    public function get_foto($idServidor) {
+    public function get_foto($idComissao) {
 
         # Função que retorna a foto do servidor
         #
-        # Parâmetro: id do servidor
+        # Parâmetro: idComissao
+        # Pega os dados desse membro de comissão
+        $dados = $this->getDados($idComissao);
 
-        $pessoal = new Pessoal();
-        $idPessoa = $pessoal->get_idPessoa($idServidor);
-        $arquivo = PASTA_FOTOS . "$idPessoa.jpg";
+        if (!empty($dados["idServidor"])) {
 
-        $figura = new Imagem(PASTA_FOTOS . "$idPessoa.jpg", null, 100, 150);
-        $figura->show();
+            $pessoal = new Pessoal();
+            $foto = new ExibeFoto();
+            $foto->
+            $foto->show($pessoal->get_idPessoa($dados["idServidor"]));
+        }
+
+        if (!empty($dados["idMembroExterno"])) {
+
+            $figura = new Imagem(PASTA_FIGURAS . 'foto.png', null, 100, 150);
+            $figura->show();
+        }
     }
 
     ##########################################################################################

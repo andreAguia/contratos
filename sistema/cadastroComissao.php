@@ -20,6 +20,7 @@ if ($acesso) {
     $contrato = new Contrato();
     $pessoal = new Pessoal();
     $comissao = new Comissao();
+    $contratos = new Contratos();
 
     # Verifica a fase do programa
     $fase = get("fase", "listar");
@@ -106,7 +107,7 @@ if ($acesso) {
 
     # select da lista
     $objeto->set_selectLista("SELECT idComissao,
-                                     idServidor,
+                                     idComissao,
                                      idComissao,
                                      idServidor,
                                      idComissao
@@ -116,6 +117,7 @@ if ($acesso) {
 
     # select do edita
     $objeto->set_selectEdita("SELECT idServidor,
+                                     idMembroExterno,
                                      tipo,
                                      substituindo,
                                      portariaEntrada,
@@ -192,7 +194,7 @@ if ($acesso) {
     # Tipo de label do formulário
     $objeto->set_formLabelTipo(1);
 
-    # Pega os dados da combo de servidor
+    # combo membro servidor
     $membro = $pessoal->select('SELECT idServidor,
                                        CONCAT(tbpessoa.nome," | ",IFNULL(tbtipocargo.sigla,"")," - ",IFNULL(tbcargo.nome,"")," | ",uenf_grh.tbsituacao.situacao)
                                   FROM uenf_grh.tbservidor JOIN uenf_grh.tbpessoa USING (idPessoa)
@@ -202,6 +204,13 @@ if ($acesso) {
                                  WHERE (idPerfil = 1 OR idPerfil = 2 OR idPerfil = 3 OR idPerfil = 4)
                               ORDER BY uenf_grh.tbsituacao.idSituacao, tbpessoa.nome');
     array_unshift($membro, array(null, null));
+    
+    # Combo membro externo
+    $membroExterno = $contratos->select('SELECT idMembroExterno,
+                                              nome
+                                         FROM tbmembroexterno
+                                     ORDER BY nome');
+    array_unshift($membroExterno, array(null, null));
 
     # Pega os dados da combo de servidor
     $selectCombo = "SELECT idComissao,
@@ -236,8 +245,16 @@ if ($acesso) {
             'array' => $membro,
             'title' => 'Servidor membro da comissão',
             'col' => 9,
-            'required' => true,
             "autofocus" => true,
+            'size' => 30),
+        array(
+            'linha' => 1,
+            'nome' => 'idMembroExterno',
+            'label' => 'Membro Externo:',
+            'tipo' => 'combo',
+            'array' => $membroExterno,
+            'title' => 'Membro Externo da comissão',
+            'col' => 9,
             'size' => 30),
         array(
             'linha' => 1,
