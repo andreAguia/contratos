@@ -23,7 +23,6 @@ function get_DadosContratoPagamento($idContrato) {
 
     # Exibe o valor    
     $contrato->exibeValorTotalPainel($idContrato, true);
-    #$contrato->exibeValorPorAnoPainel($idContrato, true);
 
     $grid->fechaColuna();
     $grid->abreColuna(3);

@@ -802,7 +802,7 @@ if ($acesso) {
 
     if ($postVigencia) {
         $field[] = "idContrato";
-        $label[] = "Vigencia";
+        $label[] = "Vigência";
         $align[] = "center";
         $class[] = "Contrato";
         $method[] = "getVigencia";
@@ -927,12 +927,12 @@ if ($acesso) {
     }
     
     if ($postValorPorAno) {
-        $field[] = "idContrato";
+        $field[] = "valorPorAno";
         $label[] = "Valor por Ano";
         $align[] = "right";
-        $class[] = "Contrato";
-        $method[] = "exibeValorPorAno";
-        $function[] = "";
+        $class[] = "";
+        $method[] = "";
+        $function[] = "formataMoeda2";
     }
 
     if ($postValorTotal) {

@@ -224,6 +224,7 @@ if ($acesso) {
                                      prazo,
                                      tipoPrazo,
                                      rubrica,
+                                     valorPorAno,
                                      obs
                                 FROM tbcontrato
                               WHERE idContrato = ' . $id);
@@ -511,6 +512,14 @@ if ($acesso) {
         ),
         array(
             'linha' => 9,
+            'nome' => 'valorPorAno',
+            'label' => 'Valor por Ano:',
+            'tipo' => 'moeda',
+            'col' => 3,
+            'size' => 15,
+        ),
+        array(
+            'linha' => 10,
             'nome' => 'obs',
             'label' => 'Observação:',
             'tipo' => 'textarea',
