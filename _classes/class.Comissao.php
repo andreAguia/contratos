@@ -102,7 +102,7 @@ class Comissao {
             $tipo = $conteudo["tipo"];
 
             # Verifica se foi informado
-            if (vazio($tipo)) {
+            if (empty($tipo)) {
                 return "---";
             } else {
 
@@ -115,7 +115,11 @@ class Comissao {
                             break;
 
                         case 2:
-                            return "Membro";
+                            if (empty($conteudo["idServidor"])) {
+                                return "Membro Externo";
+                            } else {
+                                return "Membro";
+                            }
                             break;
 
                         case 3:
@@ -124,21 +128,6 @@ class Comissao {
                     }
                 }
             }
-        }
-    }
-
-#####################################################################################
-
-    public function exibeNomeMembro($idServidor) {
-
-        # Verifica se foi informado
-        if (empty($idServidor)) {
-            echo "---";
-        } else {
-            $pessoal = new Pessoal();
-            p($pessoal->get_nome($idServidor), "pmembroNome");
-            p($pessoal->get_lotacao($idServidor), "pmembroLotacao");
-            p($pessoal->get_cargo($idServidor), "pmembroLotacao");
         }
     }
 
@@ -157,18 +146,24 @@ class Comissao {
 
 #####################################################################################
 
-    public function getDadosMembro($idComissao) {
+    public function get_dadosMembro($idComissao) {
 
         # Verifica se o id foi informado
-        if (vazio($idComissao)) {
-            alert("É necessário informar o id.");
-            return;
-        } else {
-            # Pega os dados desse membro
-            $dados = $this->getDados($idComissao);
-            $idServidor = $dados["idServidor"];
+        if (empty($idComissao)) {
+            return null;
+        }
 
-            $pessoal = new Pessoal();
+        # Classes
+        $pessoal = new Pessoal();
+        $membro = new MembroExterno();
+
+        # Pega os dados desse membro
+        $dados = $this->getDados($idComissao);
+        $idServidor = $dados["idServidor"];
+        $idMembroExterno = $dados["idMembroExterno"];
+
+        # Se for membro servidor
+        if (!empty($idServidor)) {
             $idPessoa = $pessoal->get_idPessoa($idServidor);
 
             p($pessoal->get_nome($idServidor), "pmembroNome");
@@ -176,13 +171,59 @@ class Comissao {
             p($pessoal->get_cargo($idServidor), "pmembroLotacao");
             p("ID: {$pessoal->get_idFuncional($idServidor)}", "pmembroLotacao");
             p("CPF: {$pessoal->get_cpf($idPessoa)}", "pmembroLotacao");
+        }
 
-            if (!empty($dados["substituindo"])) {
-                hr("hrComissao");
-                $dadossubs = $this->getDados($dados["substituindo"]);
-                p("Substutuindo:", "pmembroLotacao");
+        # Se for membro externo
+        if (!empty($idMembroExterno)) {
+            $dados2 = $membro->get_dados($idMembroExterno);
+
+            p($dados2["nome"], "pmembroNome");
+            p("Órgão: {$dados2['orgao']}", "pmembroLotacao");
+            p("CPF: {$dados2['cpf']}", "pmembroLotacao");
+        }
+
+        # Dados do que foi substituído
+        if (!empty($dados["substituindo"])) {
+            hr("hrComissao");
+            $dadossubs = $this->getDados($dados["substituindo"]);
+            p("Substutuindo:", "pmembroLotacao");
+
+            # Se for servidor
+            if (!empty($dadossubs["idServidor"])) {
                 p($pessoal->get_nome($dadossubs["idServidor"]), "pmembroLotacao");
+            } else {
+                p($membro->get_nome($dadossubs["idMembroExterno"]), "pmembroLotacao");
             }
+        }
+    }
+
+#####################################################################################
+
+    public function get_contatosMembro($idComissao) {
+
+        # Verifica se o id foi informado
+        if (empty($idComissao)) {
+            return null;
+        }
+
+        # Pega os dados desse membro
+        $dados = $this->getDados($idComissao);
+        $idServidor = $dados["idServidor"];
+        $idMembroExterno = $dados["idMembroExterno"];
+
+        # Se for membro servidor
+        if (!empty($idServidor)) {
+            $pessoal = new Pessoal();
+            $pessoal->get_contatos($idServidor);
+        }
+
+        # Se for membro externo
+        if (!empty($idMembroExterno)) {
+            $membro = new MembroExterno();
+            $dados2 = $membro->get_dados($idMembroExterno);
+
+            p($dados2["telefone"], "pmembroLotacao");
+            p($dados2["email"], "pmembroLotacao");
         }
     }
 
@@ -199,8 +240,8 @@ class Comissao {
         $contratos = new Contratos();
 
         # monta o select
-        $select = "SELECT idServidor,
-                          idServidor,
+        $select = "SELECT idComissao,
+                          idComissao,
                           idComissao,
                           idComissao
                      FROM tbcomissao
@@ -221,6 +262,10 @@ class Comissao {
                 'operador' => '=',
                 'id' => 'membroComissao'),
             array('coluna' => 2,
+                'valor' => "Membro Externo",
+                'operador' => '=',
+                'id' => 'membroComissao'),
+            array('coluna' => 2,
                 'valor' => "Suplente",
                 'operador' => '=',
                 'id' => 'cuplenteComissao'),
@@ -237,7 +282,7 @@ class Comissao {
         $tabela->set_align(["center", "left", "center"]);
         $tabela->set_width([20, 60, 20]);
         $tabela->set_classe(["Comissao", "Comissao", "Comissao"]);
-        $tabela->set_metodo(["get_foto", "exibeNomeMembro", "getTipo"]);
+        $tabela->set_metodo(["get_foto", "get_dadosMembro", "getTipo"]);
         $tabela->set_conteudo($row);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
         $tabela->show();
@@ -274,7 +319,8 @@ class Comissao {
 
             $pessoal = new Pessoal();
             $foto = new ExibeFoto();
-            $foto->
+            $foto->set_fotoAltura("100%");
+            $foto->set_fotoLargura("100%");
             $foto->show($pessoal->get_idPessoa($dados["idServidor"]));
         }
 

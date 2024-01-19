@@ -109,7 +109,7 @@ if ($acesso) {
     $objeto->set_selectLista("SELECT idComissao,
                                      idComissao,
                                      idComissao,
-                                     idServidor,
+                                     idComissao,
                                      idComissao
                                 FROM tbcomissao
                                WHERE idContrato = {$idContrato}
@@ -153,6 +153,11 @@ if ($acesso) {
             'id' => 'membroComissao'),
         array(
             'coluna' => 0,
+            'valor' => "Membro Externo",
+            'operador' => '=',
+            'id' => 'membroComissao'),
+        array(
+            'coluna' => 0,
             'valor' => "Suplente",
             'operador' => '=',
             'id' => 'cuplenteComissao'),
@@ -168,8 +173,8 @@ if ($acesso) {
     $objeto->set_align(["center", "left", "left", "left", "left"]);
     $objeto->set_width([10, 10, 25, 18, 18]);
     #$objeto->set_funcao(array(null, null, null, null, null, "exibeFoto"));
-    $objeto->set_classe(["Comissao", "Comissao", "Comissao", "pessoal", "Comissao"]);
-    $objeto->set_metodo(["getTipo", "get_foto", "getDadosMembro", "get_contatos", "getDadosDesignacao"]);
+    $objeto->set_classe(["Comissao", "Comissao", "Comissao", "Comissao", "Comissao"]);
+    $objeto->set_metodo(["getTipo", "get_foto", "get_dadosMembro", "get_contatosMembro", "getDadosDesignacao"]);
     $objeto->set_numeroOrdem(true);
     $objeto->set_formatacaoCondicional($formatacaoCondicional);
 
@@ -207,22 +212,36 @@ if ($acesso) {
     
     # Combo membro externo
     $membroExterno = $contratos->select('SELECT idMembroExterno,
-                                              nome
-                                         FROM tbmembroexterno
-                                     ORDER BY nome');
+                                                nome
+                                           FROM tbmembroexterno
+                                       ORDER BY nome');
     array_unshift($membroExterno, array(null, null));
 
     # Pega os dados da combo de servidor
-    $selectCombo = "SELECT idComissao,
-                           CONCAT(tbpessoa.nome,  IF(portariaSaida IS NULL,'',' - Saiu'))
+    $selectCombo = "(SELECT idComissao,
+                           CONCAT(tbpessoa.nome,  IF(portariaSaida IS NULL,'',' - Saiu')),
+                           portariaSaida
                       FROM uenf_contratos.tbcomissao JOIN uenf_grh.tbservidor USING (idServidor)
-                                                     JOIN  uenf_grh.tbpessoa  USING (idPessoa)
-                      WHERE tbcomissao.idContrato = {$idContrato}";
+                                                     JOIN uenf_grh.tbpessoa  USING (idPessoa)
+                      WHERE tbcomissao.idContrato = {$idContrato}
+                        AND idServidor IS NOT NULL";
     if (!empty($id)) {
         $selectCombo .= " AND idComissao <> {$id}";
     }
+    
+    $selectCombo .= ") UNION (
+                    SELECT idComissao,
+                           CONCAT(uenf_contratos.tbmembroexterno.nome,' - (Membro Externo)'),
+                           portariaSaida
+                      FROM uenf_contratos.tbcomissao JOIN uenf_contratos.tbmembroexterno USING (idMembroExterno)
+                      WHERE tbcomissao.idContrato = {$idContrato}
+                        AND idMembroExterno IS NOT NULL";
+                      
+    if (!empty($id)) {
+        $selectCombo .= " AND idComissao <> {$id}";
+    }                  
 
-    $selectCombo .= " ORDER BY portariaSaida, uenf_grh.tbpessoa.nome";
+    $selectCombo .= ") ORDER BY portariaSaida, 2";
 
     $substituindo = $pessoal->select($selectCombo);
 
