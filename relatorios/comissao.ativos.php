@@ -25,33 +25,35 @@ if ($acesso) {
     ######   
     # Título & Subtitulo
     $titulo = "Comissão de Fiscalização dos Contratos Ativos";
-    $subTitulo = "Ordenado pelo Número do Contrato";
+    $subTitulo = "Ordenado pelo Número do Contrato";                    
 
     # Pega os dados
     $select = "SELECT idContrato,
                       idEmpresa,
                       idContrato,
                       idContrato,
-                      idContrato
+                      idContrato,
+                      year(dtInicial)
                  FROM tbcontrato
                 WHERE idStatus = 1
-             ORDER BY year(dtAssinatura), numero";
+             ORDER BY year(dtInicial), numero";
 
     $resumo = $contratos->select($select);
 
     # Monta o Relatório
     $relatorio = new Relatorio();
     $relatorio->set_conteudo($resumo);
-    $relatorio->set_label(array("Contrato", "Empresa", "Objeto", "Documentos", "Comissão de Fiscalização"));
-    $relatorio->set_classe(array("Contrato", "Empresa", "Contrato", "Comissao", "Comissao"));
-    $relatorio->set_metodo(array("getNumero", "exibeEmpresaRelatorio", "exibeObjetoRelatorio", "exibeDocumentosRelatorio", "listaComissaoRelatorio"));
-    $relatorio->set_width(array(10, 15, 15, 20, 40));
-    $relatorio->set_align(array("center", "left", "left", "left", "left"));
+    $relatorio->set_label(["Contrato", "Empresa", "Objeto", "Documentos", "Comissão de Fiscalização","Ano"]);
+    $relatorio->set_classe(["Contrato", "Empresa", "Contrato", "Comissao", "Comissao"]);
+    $relatorio->set_metodo(["getNumero", "exibeEmpresaRelatorio", "exibeObjetoRelatorio", "exibeDocumentosRelatorio", "listaComissaoRelatorio"]);
+    $relatorio->set_width([10, 15, 15, 20, 40]);
+    $relatorio->set_align(["center", "left", "left", "left", "left"]);
+    $relatorio->set_numGrupo(5);
     $relatorio->set_bordaInterna(true);
     $relatorio->set_numeroOrdem(true);
 
     $relatorio->set_titulo($titulo);
-    $relatorio->set_subtitulo($subTitulo);
+    $relatorio->set_subtitulo($subTitulo . "<br/>Agrupado pelo Ano de Assinatura");
     $relatorio->show();
 
     $page->terminaPagina();

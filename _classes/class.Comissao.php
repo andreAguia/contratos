@@ -197,6 +197,7 @@ class Comissao {
             p($dados2["nome"], "pmembroNome");
             p("Órgão: {$dados2['orgao']}", "pmembroLotacao");
             p("CPF: {$dados2['cpf']}", "pmembroLotacao");
+            p("Membro Externo", "pmembroLotacao");
         }
 
         # Dados do que foi substituído
@@ -246,6 +247,34 @@ class Comissao {
 
 #####################################################################################
 
+    public function get_emailMembro($idComissao) {
+
+        # Verifica se o id foi informado
+        if (empty($idComissao)) {
+            return null;
+        }
+
+        # Pega os dados desse membro
+        $dados = $this->getDados($idComissao);
+        $idServidor = $dados["idServidor"];
+        $idMembroExterno = $dados["idMembroExterno"];
+
+        # Se for membro servidor
+        if (!empty($idServidor)) {
+            $pessoal = new Pessoal();
+            return $pessoal->get_emailUenf($dados["idServidor"]) . " " . $pessoal->get_emailPessoal($dados["idServidor"]) . " " . $pessoal->get_emailOutro($dados["idServidor"]);
+        }
+
+        # Se for membro externo
+        if (!empty($idMembroExterno)) {
+            $membro = new MembroExterno();
+            $dados2 = $membro->get_dados($idMembroExterno);
+            return $dados2["email"];
+        }
+    }
+
+#####################################################################################
+
     public function listaComissao($idContrato, $idUsuario) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
@@ -264,7 +293,7 @@ class Comissao {
                      FROM tbcomissao
                     WHERE idContrato = {$idContrato}
                       AND dtPublicacaoSaida IS NULL  
-                 ORDER BY dtPublicacaoSaida,tipo";
+                 ORDER BY dtPublicacaoSaida, tipo";
 
         $row = $contratos->select($select);
 
@@ -367,23 +396,22 @@ class Comissao {
         $select = "(SELECT uenf_grh.tbpessoa.nome,
                           idServidor,
                           idComissao,
-                          idComissao
+                          idComissao,
+                          tipo
                      FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
                                      JOIN uenf_grh.tbpessoa USING(idPessoa)
                     WHERE idContrato = {$idContrato}
-                      AND dtPublicacaoSaida IS NULL  
-                 ORDER BY tipo, uenf_grh.tbpessoa.nome)
+                      AND dtPublicacaoSaida IS NULL)
                  UNION 
-                    (SELECT idComissao,
+                    (SELECT tbmembroexterno.nome,
                           idComissao,
                           idComissao,
-                          idComissao
-                     FROM tbcomissao JOIN 
+                          idComissao,
+                          tipo
+                     FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
                     WHERE idContrato = {$idContrato}
-                      AND dtPublicacaoSaida IS NULL  
-                 ORDER BY tipo, uenf_grh.tbpessoa.nome)
-                 
-                    ";
+                      AND dtPublicacaoSaida IS NULL)
+                 ORDER BY 5, 1";
 
         $row = $contratos->select($select);
 
@@ -393,8 +421,8 @@ class Comissao {
         $relatorio->set_label(["Servidor", "Lotação", "Designação", "Tipo"]);
         $relatorio->set_align(["left", "left", "left"]);
         $relatorio->set_width([30, 30, 30, 10]);
-        $relatorio->set_classe(["Comissao", "Pessoal", "Comissao", "Comissao"]);
-        $relatorio->set_metodo(["getNomeMembro", "get_lotacao", "getPortariaEntrada", "getTipo"]);
+        $relatorio->set_classe([null, "Pessoal", "Comissao", "Comissao"]);
+        $relatorio->set_metodo([null, "get_lotacao", "getPortariaEntrada", "getTipo"]);
 
         $relatorio->set_subTotal(false);
         $relatorio->set_totalRegistro(false);
@@ -931,15 +959,23 @@ class Comissao {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-        $pessoal = new Pessoal();
 
-        # monta o select
-        $select = "SELECT idServidor,
-                          idComissao
-                     FROM tbcomissao
+        # Monta o select
+        $select = "(SELECT uenf_grh.tbpessoa.nome,
+                          idComissao,
+                          tipo
+                     FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
+                                     JOIN uenf_grh.tbpessoa USING(idPessoa)
                     WHERE idContrato = {$idContrato}
-                      AND dtPublicacaoSaida IS NULL  
-                 ORDER BY tipo";
+                      AND dtPublicacaoSaida IS NULL)
+                 UNION 
+                    (SELECT tbmembroexterno.nome,
+                          idComissao,
+                          tipo
+                     FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
+                    WHERE idContrato = {$idContrato}
+                      AND dtPublicacaoSaida IS NULL)
+                 ORDER BY 3, 1";
 
         $row = $contratos->select($select);
         $numItem = $contratos->count($select);
@@ -950,7 +986,7 @@ class Comissao {
             # Mome do servidor e designação
             $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
             p($this->getNomeMembro($item["idComissao"]) . $designacao, "pComissaoImpressao");
-            p($pessoal->get_emails($item["idServidor"], false, false), "pComissaoImpressao");
+            p($this->get_emailMembro($item["idComissao"], false, false), "pComissaoImpressao");
             if ($contador < $numItem) {
                 hr();
                 $contador++;
@@ -969,15 +1005,23 @@ class Comissao {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-        $pessoal = new Pessoal();
 
-        # monta o select
-        $select = "SELECT idServidor,
-                          idComissao
-                     FROM tbcomissao
+        # Monta o select
+        $select = "(SELECT uenf_grh.tbpessoa.nome,
+                          idComissao,
+                          tipo
+                     FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
+                                     JOIN uenf_grh.tbpessoa USING(idPessoa)
                     WHERE idContrato = {$idContrato}
-                      AND dtPublicacaoSaida IS NULL  
-                 ORDER BY tipo";
+                      AND dtPublicacaoSaida IS NULL)
+                 UNION 
+                    (SELECT tbmembroexterno.nome,
+                          idComissao,
+                          tipo
+                     FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
+                    WHERE idContrato = {$idContrato}
+                      AND dtPublicacaoSaida IS NULL)
+                 ORDER BY 3, 1";
 
         $row = $contratos->select($select);
         $numItem = $contratos->count($select);
@@ -1007,25 +1051,32 @@ class Comissao {
 
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
-        $pessoal = new Pessoal();
 
-        # monta o select
-        $select = "SELECT idServidor,
-                          idComissao
-                     FROM tbcomissao
+        # Monta o select
+        $select = "(SELECT uenf_grh.tbpessoa.nome,
+                          idComissao,
+                          tipo
+                     FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
+                                     JOIN uenf_grh.tbpessoa USING(idPessoa)
                     WHERE idContrato = {$idContrato}
-                      AND dtPublicacaoSaida IS NULL  
-                 ORDER BY tipo";
+                      AND dtPublicacaoSaida IS NULL)
+                 UNION 
+                    (SELECT tbmembroexterno.nome,
+                          idComissao,
+                          tipo
+                     FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
+                    WHERE idContrato = {$idContrato}
+                      AND dtPublicacaoSaida IS NULL)
+                 ORDER BY 3, 1";
 
         $row = $contratos->select($select);
         $numItem = $contratos->count($select);
         $contador = 1;
 
         foreach ($row as $item) {
-
             # Mome do servidor e designação
-            $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
-            echo $this->getNomeMembro($item["idComissao"]) . $designacao . " - " . $pessoal->get_emailUenf($item["idServidor"]) . " " . $pessoal->get_emailPessoal($item["idServidor"]) . " " . $pessoal->get_emailOutro($item["idServidor"]);
+            $designacao = $this->getTipo($item[1]) == "Presidente" ? " - Presidente" : null;
+            echo " - ", $this->getNomeMembro($item[1]), $designacao, " - ", $this->get_emailMembro($item[1]);
 
             if ($contador < $numItem) {
                 br();
@@ -1047,7 +1098,7 @@ class Comissao {
         $contratos = new Contratos();
 
         # monta o select
-        $select = "SELECT idServidor
+        $select = "SELECT idComissao
                      FROM tbcomissao
                     WHERE idContrato = {$idContrato}
                       AND tipo = 1";
@@ -1057,8 +1108,7 @@ class Comissao {
         if (empty($row[0])) {
             return null;
         } else {
-            $pessoa = new Pessoal();
-            return $pessoa->get_nome($row[0]);
+           return $this->getNomeMembro($row['idComissao']);
         }
     }
 

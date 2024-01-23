@@ -12,7 +12,7 @@ $idUsuario = null;
 include ("_config.php");
 
 # Permissão de Acesso
-$acesso = Verifica::acesso($idUsuario,  [1, 9]);
+$acesso = Verifica::acesso($idUsuario, [1, 9]);
 
 if ($acesso) {
 
@@ -95,31 +95,43 @@ if ($acesso) {
 
             $form->show();
 
-            # monta o select
-            $select = "SELECT tbpessoa.nome,
-                              idComissao,
-                              idContrato,
-                              idContrato,
-                              idComissao
-                     FROM uenf_contratos.tbcomissao LEFT JOIN uenf_grh.tbservidor USING (idServidor)
-                                                         JOIN uenf_grh.tbpessoa USING (idPessoa)";
+            $select = "(SELECT uenf_grh.tbpessoa.nome,
+                                idComissao,
+                                idContrato,
+                                idContrato,
+                                idComissao
+                           FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
+                                           JOIN uenf_grh.tbpessoa USING(idPessoa)";
+
             if (!empty($parametroMembro)) {
                 $select .= " WHERE tbpessoa.nome like '%{$parametroMembro}%'";
             }
 
-            $select .= " ORDER BY tbpessoa.nome";
+            $select .= " ) UNION 
+                    (SELECT tbmembroexterno.nome,
+                            idComissao,
+                            idContrato,
+                            idContrato,
+                            idComissao
+                       FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)";
+
+            if (!empty($parametroMembro)) {
+                $select .= " WHERE tbmembroexterno.nome like '%{$parametroMembro}%'";
+            }
+
+            $select .= " ) ORDER BY 1";
 
             $row = $contratos->select($select);
 
             # Monta a tabela
             $tabela = new Tabela();
-            $tabela->set_titulo("Servidores Membros de Comissão de Fiscalização");
-            $tabela->set_label(array("Servidor", "Tipo", "Contrato", "Objeto", "Designação"));
-            $tabela->set_align(array("left", "center", "center", "left", "left"));
-            $tabela->set_width(array(20, 10, 10, 40, 20));
-            $tabela->set_funcaoDepoisClasse(array(null, "ressaltaSaiu"));
-            $tabela->set_classe(array(null, "Comissao", "Contrato", "Contrato", "Comissao"));
-            $tabela->set_metodo(array(null, "getTipo", "exibeNumeroContratoSimples", "exibeObjeto", "getDadosDesignacao"));
+            $tabela->set_titulo("Membros de Comissão de Fiscalização");
+            $tabela->set_label(["Servidor", "Tipo", "Contrato", "Objeto", "Designação"]);
+            $tabela->set_align(["left", "center", "center", "left", "left"]);
+            $tabela->set_width([20, 10, 10, 40, 20]);
+            $tabela->set_funcaoDepoisClasse([null, "ressaltaSaiu"]);
+            $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao"]);
+            $tabela->set_metodo([null, "getTipo", "exibeNumeroContratoSimples", "exibeObjeto", "getDadosDesignacao"]);
             $tabela->set_conteudo($row);
             $tabela->set_rowspan(0);
             $tabela->set_grupoCorColuna(0);
