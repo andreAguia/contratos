@@ -259,11 +259,11 @@ if ($acesso) {
         array(
             'linha' => 1,
             'nome' => 'idServidor',
-            'label' => 'Servidor:',
+            'label' => 'Servidor da Uenf:',
             'tipo' => 'combo',
             'array' => $membro,
-            'title' => 'Servidor membro da comissão',
-            'col' => 9,
+            'title' => 'Servidor da Uenf membro da comissão',
+            'col' => 6,
             "autofocus" => true,
             'size' => 30),
         array(
@@ -273,10 +273,10 @@ if ($acesso) {
             'tipo' => 'combo',
             'array' => $membroExterno,
             'title' => 'Membro Externo da comissão',
-            'col' => 9,
+            'col' => 6,
             'size' => 30),
         array(
-            'linha' => 1,
+            'linha' => 2,
             'nome' => 'tipo',
             'label' => 'Tipo:',
             'tipo' => 'combo',
