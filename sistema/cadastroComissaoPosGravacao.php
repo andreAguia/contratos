@@ -1,11 +1,11 @@
 <?php
 
 # Pega os dados
-$substituindo        = $campoValor[2];
-$portariaEntrada     = $campoValor[3];
-$dtPortariaEntrada   = $campoValor[4];
-$dtPublicacaoEntrada = $campoValor[5];
-$pgPublicacaoEntrada = $campoValor[6];
+$substituindo        = $campoValor[3];
+$portariaEntrada     = $campoValor[4];
+$dtPortariaEntrada   = $campoValor[5];
+$dtPublicacaoEntrada = $campoValor[6];
+$pgPublicacaoEntrada = $campoValor[7];
 
 # Verifica se houve alguma substutuição
 if (!empty($substituindo)) {
