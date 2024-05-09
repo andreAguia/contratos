@@ -57,6 +57,7 @@ $parametroEmpresa = post('parametroEmpresa');
 $parametroMaoDeObra = post('parametroMaoDeObra');
 $parametroContrato = post('parametroContrato', 0);
 $parametroNatureza = post('parametroNatureza');
+$parametroSetorReq = post('parametroSetorReq');
 
 # Permissão de Acesso
 $acesso = Verifica::acesso($idUsuario, [1, 9, 10]);
@@ -571,6 +572,16 @@ if ($acesso) {
     $controle->set_col(2);
     $controle->set_array([["S", "Sim"], ["N", "Não"], [null, "Todos"]]);
     $form->add_item($controle);
+    
+    # Mao de obra alocada
+    $controle = new Input('parametroSetorReq', 'texto', 'Setor Requisitante:', 1);
+    $controle->set_size(20);
+    $controle->set_title('Setor Requisitante');
+    $controle->set_valor($parametroSetorReq);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(8);
+    $controle->set_col(4);
+    $form->add_item($controle);
 
     /*
      * Contrato
@@ -984,6 +995,10 @@ if ($acesso) {
 
         if (!empty($parametroStatus)) {
             $select .= " AND idStatus = {$parametroStatus}";
+        }
+        
+        if (!empty($parametroSetorReq)) {
+            $select .= " AND requisitante LIKE '%{$parametroSetorReq}%'";
         }
 
         if (!empty($parametroMaoDeObra)) {
