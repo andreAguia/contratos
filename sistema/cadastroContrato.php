@@ -53,6 +53,7 @@ if ($acesso) {
     $parametroNatureza = post('parametroNatureza', get_session('parametroNatureza'));
     $parametroEmpresa = post('parametroEmpresa', get_session('parametroEmpresa'));
     $parametroObjeto = post('parametroObjeto', get_session('parametroObjeto'));
+    $parametroSetorRequisitante = post('parametroSetorRequisitante', get_session('parametroSetorRequisitante'));
     $inclusaoEmpresa = post('inclusaoEmpresa', get_session('inclusaoEmpresa'));
 
     # Joga os parâmetros par as sessions
@@ -62,6 +63,7 @@ if ($acesso) {
     set_session('parametroNatureza', $parametroNatureza);
     set_session('parametroEmpresa', $parametroEmpresa);
     set_session('parametroObjeto', $parametroObjeto);
+    set_session('parametroSetorRequisitante', $parametroSetorRequisitante);
     set_session('inclusaoEmpresa', $inclusaoEmpresa);
 
     ################################################################
@@ -175,6 +177,10 @@ if ($acesso) {
     if (!empty($parametroStatus)) {
         $select .= " AND idStatus = {$parametroStatus}";
     }
+    
+    if (!empty($parametroSetorRequisitante)) {
+        $select .= " AND requisitante LIKE '%{$parametroSetorRequisitante}%'";
+    }
 
     if (!empty($parametroObjeto)) {
         $select .= " AND objeto LIKE '%{$parametroObjeto}%'";
@@ -245,7 +251,7 @@ if ($acesso) {
 
     $objeto->set_label(["Contrato", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação", "Acessar"]);
     $objeto->set_classe(["Contrato", "Contrato", "Empresa", "Contrato", "Contrato", "Situacao"]);
-    $objeto->set_metodo(["exibeNumeroContrato", "exibeObjeto", "exibeEmpresaCnpj", "getProcesso", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"]);
+    $objeto->set_metodo(["exibeNumeroContrato", "exibeObjeto", "exibeEmpresaCnpj", "exibeProcessoERequisitante", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"]);
     $objeto->set_width([10, 20, 22, 18, 10, 20]);
     $objeto->set_align(["center", "left", "left", "left", "center", "left"]);
     $objeto->set_exibeTempoPesquisa(false);
@@ -737,8 +743,18 @@ if ($acesso) {
             $controle->set_valor($parametroEmpresa);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(2);
-            $controle->set_col(6);
+            $controle->set_col(5);
             $controle->set_array($comboEmpresa);
+            $form->add_item($controle);
+            
+            # Setor Requisitante
+            $controle = new Input('parametroSetorRequisitante', 'texto', 'Setor Requisitante:', 1);
+            $controle->set_size(50);
+            $controle->set_title('Setor Requisitante');
+            $controle->set_valor($parametroSetorRequisitante);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(2);
+            $controle->set_col(3);
             $form->add_item($controle);
 
             # Objeto
@@ -748,7 +764,7 @@ if ($acesso) {
             $controle->set_valor($parametroObjeto);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(2);
-            $controle->set_col(6);
+            $controle->set_col(4);
             $form->add_item($controle);
 
             $form->show();

@@ -173,6 +173,57 @@ class Contrato {
 
     #####################################################################################
 
+    public function exibeProcessoERequisitante($idContrato = null, $br = true) {
+
+        /**
+         * Informa os dados da base de dados
+         *
+         * @param $idConcurso integer null O id do concurso
+         *
+         * @syntax $concurso->get_dados([$idConcurso]);
+         */
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        $processo = null;
+
+        # Verifica se tem somente um processo
+        if ((empty($conteudo["processoSei"])) xor (empty($conteudo["processo"]))) {
+            if (empty($conteudo["processoSei"])) {
+                $processo = $conteudo["processo"];
+            } else {
+                $processo = "SEI - {$conteudo["processoSei"]}";
+            }
+        }
+
+        # Verifica se tem os dois
+        if ((!empty($conteudo["processoSei"])) and (!empty($conteudo["processo"]))) {
+            if ($br) {
+                $processo = "SEI - {$conteudo["processoSei"]} <br/> {$conteudo["processo"]}";
+            } else {
+                $processo = "SEI - {$conteudo["processoSei"]}  {$conteudo["processo"]}";
+            }
+        }
+
+        # Processo de prestação de contas
+        if (!empty($conteudo["processoPrestacao"])) {
+            $processo .= "<br/>Prestação de Contas:<br/>{$conteudo["processoPrestacao"]}";
+        }
+        
+        # Coloca o requisitante
+        if(!empty($conteudo["requisitante"])){
+            $processo .= "<br/><br/>Requisitante:<br/>{$conteudo["requisitante"]}";
+        }
+        return $processo;
+    }
+
+    #####################################################################################
+
     public function exibeProcessoExecucao($idContrato = null) {
 
         /**
