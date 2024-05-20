@@ -148,6 +148,11 @@ if ($acesso) {
             'id' => 'presidenteComissao'),
         array(
             'coluna' => 0,
+            'valor' => "Gestor",
+            'operador' => '=',
+            'id' => 'presidenteComissao'),
+        array(
+            'coluna' => 0,
             'valor' => "Membro",
             'operador' => '=',
             'id' => 'membroComissao'),
@@ -252,6 +257,7 @@ if ($acesso) {
         array(1, "Presidente"),
         array(2, "Membro"),
         array(3, "Suplente"),
+        array(4, "Gestor"),
     );
 
     # Campos para o formulario

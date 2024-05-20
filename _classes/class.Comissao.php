@@ -125,6 +125,10 @@ class Comissao {
                         case 3:
                             return "Suplente";
                             break;
+                        
+                        case 4:
+                            return "Gestor";
+                            break;
                     }
                 }
             }
@@ -301,6 +305,10 @@ class Comissao {
         $formatacaoCondicional = array(
             array('coluna' => 2,
                 'valor' => "Presidente",
+                'operador' => '=',
+                'id' => 'presidenteComissao'),
+            array('coluna' => 2,
+                'valor' => "Gestor",
                 'operador' => '=',
                 'id' => 'presidenteComissao'),
             array('coluna' => 2,
