@@ -90,7 +90,7 @@ if ($acesso) {
     $objeto->set_campos(array(
         array(
             "linha" => 1,
-            'col' => 9,
+            'col' => 5,
             "nome" => "lei",
             "label" => "Lei:",
             'required' => true,
@@ -98,14 +98,14 @@ if ($acesso) {
             "tipo" => "texto",
             "size" => 200),
         array(
-            'linha' => 2,
+            'linha' => 1,
             'nome' => 'dtPublicacao',
             'label' => 'Publicado no DOERJ em:',
             'tipo' => 'date',
             'col' => 3,
             'size' => 15),
         array(
-            'linha' => 3,
+            'linha' => 2,
             'nome' => 'obs',
             'label' => 'Observação:',
             'tipo' => 'textarea',
