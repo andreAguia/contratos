@@ -35,6 +35,7 @@ if ($acesso) {
 
     # Pega os parâmetros
     $parametroMembro = post("parametroMembro");
+    $parametroTipo = post("parametroTipo");
 
     # Começa uma nova página
     $page = new Page();
@@ -63,6 +64,16 @@ if ($acesso) {
             $linkBotao1->set_accessKey('V');
             $menu->add_link($linkBotao1, "left");
 
+            # Cadastro de Membros Externos
+            $botao = new Button("Membros Externos", "cadastroMembrosExternos.php?i=true");
+            $botao->set_title("Cadastro de Membros Externos");
+            $menu->add_link($botao, "right");
+
+            # Cadastro de Tipos de Membros de Comissao
+            $linkBotao1 = new Link("Tipos de Membros", "cadastroTipoMembro.php");
+            $linkBotao1->set_class('button');
+            $linkBotao1->set_title('Cadastro dos tipos de membros de comissão');
+            $menu->add_link($linkBotao1, "right");
             $menu->show();
 
             /*
@@ -70,7 +81,7 @@ if ($acesso) {
              */
             $form = new Form('?');
             /*
-             * Empresa
+             * Membro
              */
 
             # Pega os dados
@@ -81,7 +92,7 @@ if ($acesso) {
 
             array_unshift($comboMembro, array(null, "Todas"));
 
-            # Empresa
+            # Membro
             $controle = new Input('parametroMembro', 'texto', 'Membro:', 1);
             $controle->set_size(20);
             $controle->set_title('Pesquisa por Membro da Comissão');
@@ -91,6 +102,24 @@ if ($acesso) {
             $controle->set_col(5);
             #$controle->set_array($comboMembro);
             $controle->set_autofocus(true);
+            $form->add_item($controle);
+
+            # Dados da combo tipo
+            $tipo = $contratos->select('SELECT idTipoMembro,
+                                     tipo
+                                FROM tbtipomembro
+                            ORDER BY numOrdem');
+            array_unshift($tipo, array(null, "Todos"));
+
+            # Tipo de Membro
+            $controle = new Input('parametroTipo', 'combo', 'Tipo:', 1);
+            $controle->set_size(20);
+            $controle->set_title('Pesquisa por Membro da Comissão');
+            $controle->set_valor($parametroTipo);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(1);
+            $controle->set_col(3);
+            $controle->set_array($tipo);
             $form->add_item($controle);
 
             $form->show();
@@ -103,8 +132,14 @@ if ($acesso) {
                            FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
                                            JOIN uenf_grh.tbpessoa USING(idPessoa)";
 
+            # Membro
             if (!empty($parametroMembro)) {
                 $select .= " WHERE tbpessoa.nome like '%{$parametroMembro}%'";
+            }
+
+            # Tipo            
+            if (!empty($parametroTipo)) {
+                $select .= " WHERE idTipoMembro = {$parametroTipo}";
             }
 
             $select .= " ) UNION 
@@ -114,9 +149,14 @@ if ($acesso) {
                             idContrato,
                             idComissao
                        FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)";
-
+            # Membro
             if (!empty($parametroMembro)) {
                 $select .= " WHERE tbmembroexterno.nome like '%{$parametroMembro}%'";
+            }
+
+            # Tipo            
+            if (!empty($parametroTipo)) {
+                $select .= " WHERE idTipoMembro = {$parametroTipo}";
             }
 
             $select .= " ) ORDER BY 1";
@@ -131,7 +171,7 @@ if ($acesso) {
             $tabela->set_width([20, 10, 10, 40, 20]);
             $tabela->set_funcaoDepoisClasse([null, "ressaltaSaiu"]);
             $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao"]);
-            $tabela->set_metodo([null, "getTipo", "exibeNumeroContratoSimples", "exibeObjeto", "getDadosDesignacao"]);
+            $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoSimples", "exibeObjeto", "getDadosDesignacao"]);
             $tabela->set_conteudo($row);
             $tabela->set_rowspan(0);
             $tabela->set_grupoCorColuna(0);

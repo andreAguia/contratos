@@ -111,14 +111,14 @@ if ($acesso) {
                                      idComissao,
                                      idComissao,
                                      idComissao
-                                FROM tbcomissao
+                                FROM tbcomissao JOIN tbtipomembro USING (idTipoMembro)
                                WHERE idContrato = {$idContrato}
-                            ORDER BY dtPublicacaoSaida, tipo");
+                            ORDER BY dtPublicacaoSaida, numOrdem");
 
     # select do edita
     $objeto->set_selectEdita("SELECT idServidor,
                                      idMembroExterno,
-                                     tipo,
+                                     idTipoMembro,
                                      substituindo,
                                      portariaEntrada,
                                      dtPortariaEntrada,
@@ -168,8 +168,8 @@ if ($acesso) {
             'id' => 'cuplenteComissao'),
         array(
             'coluna' => 0,
-            'valor' => "Saiu",
-            'operador' => '=',
+            'valor' => "(Saiu)",
+            'operador' => 'in',
             'id' => 'saiuComissao'),
     );
 
@@ -179,7 +179,7 @@ if ($acesso) {
     $objeto->set_width([10, 10, 25, 18, 18]);
     #$objeto->set_funcao(array(null, null, null, null, null, "exibeFoto"));
     $objeto->set_classe(["Comissao", "Comissao", "Comissao", "Comissao", "Comissao"]);
-    $objeto->set_metodo(["getTipo", "get_foto", "get_dadosMembro", "get_contatosMembro", "getDadosDesignacao"]);
+    $objeto->set_metodo(["exibe_membroTipo", "get_foto", "get_dadosMembro", "get_contatosMembro", "getDadosDesignacao"]);
     $objeto->set_numeroOrdem(true);
     $objeto->set_formatacaoCondicional($formatacaoCondicional);
 
@@ -251,15 +251,14 @@ if ($acesso) {
     $substituindo = $pessoal->select($selectCombo);
 
     array_unshift($substituindo, array(null, null));  // Adiciona o valor de nulo
+    
     # Dados da combo tipo
-    $tipo = array(
-        array(null, null),
-        array(1, "Presidente"),
-        array(2, "Membro"),
-        array(3, "Suplente"),
-        array(4, "Gestor"),
-    );
-
+    $tipo = $contratos->select('SELECT idTipoMembro,
+                                     tipo
+                                FROM tbtipomembro
+                            ORDER BY numOrdem');
+    array_unshift($tipo, array(null, null));
+    
     # Campos para o formulario
     $objeto->set_campos(array(
         array(
@@ -283,7 +282,7 @@ if ($acesso) {
             'size' => 30),
         array(
             'linha' => 2,
-            'nome' => 'tipo',
+            'nome' => 'idTipoMembro',
             'label' => 'Tipo:',
             'tipo' => 'combo',
             'array' => $tipo,

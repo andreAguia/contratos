@@ -357,9 +357,9 @@ if ($acesso) {
     $controle->set_col(1);
     $form->add_item($controle);
 
-    $controle = new Input('postComissaoPresidente', 'simnao', 'Presidente:', 1);
+    $controle = new Input('postComissaoPresidente', 'simnao', 'Responsável:', 1);
     $controle->set_size(5);
-    $controle->set_title('O Presidente da Comissão');
+    $controle->set_title('Presidente / Gestor da Comissão');
     $controle->set_valor($postComissaoPresidente);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(4);
@@ -861,7 +861,7 @@ if ($acesso) {
         $label[] = "Comissão";
         $align[] = "left";
         $class[] = "Comissao";
-        $method[] = "listaComissaoTabela";
+        $method[] = "listaComissaoRelatorio";
         $function[] = "";
     }
 
@@ -870,7 +870,7 @@ if ($acesso) {
         $label[] = "Comissão";
         $align[] = "left";
         $class[] = "Comissao";
-        $method[] = "listaComissaoEmailTabela";
+        $method[] = "listaComissaoEmailRelatorio";
         $function[] = "";
     }
 
@@ -894,10 +894,10 @@ if ($acesso) {
 
     if ($postComissaoPresidente) {
         $field[] = "idContrato";
-        $label[] = "Presidente da Comissão";
+        $label[] = "Presidente / Gestor da Comissão";
         $align[] = "left";
         $class[] = "Comissao";
-        $method[] = "getPresidente";
+        $method[] = "get_responsavel";
         $function[] = "";
     }
 

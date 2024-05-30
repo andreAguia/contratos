@@ -36,23 +36,23 @@ class AlertaContrato {
         }
 
         ################################################################################
-        # Verifica se tem 1 presidente
+        # Verifica se tem 1 presidente ou gestor
         $select = "SELECT idComissao
                      FROM tbcomissao 
                     WHERE idContrato = {$idContrato} 
                       AND dtPublicacaoSaida IS NULL
-                      AND tipo = 1";
+                      AND (idTipoMembro = 1 OR idTipoMembro = 4)";
 
         $presidente = $contratos->count($select);
 
         if ($membros > 0) {
             # Verifica se tem 1 presidente
             if ($presidente > 1) {
-                $erro[] = "A comissão deve ter SOMENTE 1 presidente!";
+                $erro[] = "A comissão deve ter SOMENTE um Presidente ou Gestor!";
             }
 
             if (($presidente < 1) OR (empty($presidente))) {
-                $erro[] = "A comissão deve ter, ao menos, 1 presidente!";
+                $erro[] = "A comissão deve ter, ao menos, um Presidente ou Gestor!";
             }
         }
 

@@ -89,48 +89,67 @@ class Comissao {
 
 #####################################################################################
 
-    public function getTipo($idComissao) {
+    public function get_membroTipo($idComissao) {
 
         # Verifica se o id foi informado
-        if (vazio($idComissao)) {
-            alert("É necessário informar o id.");
-            return;
+        if (empty($idComissao)) {
+            return null;
         } else {
 
             $conteudo = $this->getDados($idComissao);
+            $tipo = $conteudo["idTipoMembro"];
             $dtPublicacaoSaida = $conteudo["dtPublicacaoSaida"];
-            $tipo = $conteudo["tipo"];
 
-            # Verifica se foi informado
+            # Sem tipo
             if (empty($tipo)) {
-                return "---";
+                return null;
+            }
+
+            # Conecta ao Banco de Dados
+            $contratos = new Contratos();
+
+            # Pega o tipo
+            $select = "SELECT tipo FROM tbtipomembro WHERE idTipoMembro = {$tipo}";
+            $row = $contratos->select($select, false);
+
+            if (empty($dtPublicacaoSaida)) {
+                return $row[0];
             } else {
+                return "{$row[0]}<br/>(Saiu)";
+            }
+        }
+    }
 
-                if ((!empty($dtPublicacaoSaida)) and (jaPassou(date_to_php($dtPublicacaoSaida)))) {
-                    return "Saiu";
-                } else {
-                    switch ($tipo) {
-                        case 1:
-                            return "Presidente";
-                            break;
+#####################################################################################
 
-                        case 2:
-                            if (empty($conteudo["idServidor"])) {
-                                return "Membro Externo";
-                            } else {
-                                return "Membro";
-                            }
-                            break;
+    public function exibe_membroTipo($idComissao) {
 
-                        case 3:
-                            return "Suplente";
-                            break;
-                        
-                        case 4:
-                            return "Gestor";
-                            break;
-                    }
-                }
+        if (empty($idComissao)) {
+            return null;
+        } else {
+
+            $retorno = $this->get_membroTipo($idComissao);
+
+            if ($this->e_membroExterno($idComissao)) {
+                $retorno .= "<br/><span class='label warning' title='Membro Externo'>Externo</span>";
+            }
+
+            return $retorno;
+        }
+    }
+
+#####################################################################################
+
+    public function e_membroExterno($idComissao) {
+
+        if (empty($idComissao)) {
+            return null;
+        } else {
+
+            if (empty($this->getDados($idComissao)["idServidor"])) {
+                return true;
+            } else {
+                return false;
             }
         }
     }
@@ -294,10 +313,10 @@ class Comissao {
                           idComissao,
                           idComissao,
                           idComissao
-                     FROM tbcomissao
+                     FROM tbcomissao JOIN tbtipomembro USING (idTipoMembro)
                     WHERE idContrato = {$idContrato}
                       AND dtPublicacaoSaida IS NULL  
-                 ORDER BY dtPublicacaoSaida, tipo";
+                 ORDER BY dtPublicacaoSaida, numOrdem";
 
         $row = $contratos->select($select);
 
@@ -332,11 +351,11 @@ class Comissao {
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_titulo("Comissão de Fiscalização");
-        $tabela->set_label(["Foto", "Servidor", "Tipo"]);
+        $tabela->set_label(["Foto", "Membro", "Tipo"]);
         $tabela->set_align(["center", "left", "center"]);
         $tabela->set_width([20, 60, 20]);
         $tabela->set_classe(["Comissao", "Comissao", "Comissao"]);
-        $tabela->set_metodo(["get_foto", "get_dadosMembro", "getTipo"]);
+        $tabela->set_metodo(["get_foto", "get_dadosMembro", "exibe_membroTipo"]);
         $tabela->set_conteudo($row);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
         $tabela->show();
@@ -405,9 +424,10 @@ class Comissao {
                           idServidor,
                           idComissao,
                           idComissao,
-                          tipo
+                          numOrdem
                      FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
                                      JOIN uenf_grh.tbpessoa USING(idPessoa)
+                                     JOIN tbtipomembro USING (idTipoMembro)
                     WHERE idContrato = {$idContrato}
                       AND dtPublicacaoSaida IS NULL)
                  UNION 
@@ -415,11 +435,12 @@ class Comissao {
                           idComissao,
                           idComissao,
                           idComissao,
-                          tipo
+                          numOrdem
                      FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
+                                     JOIN tbtipomembro USING (idTipoMembro)
                     WHERE idContrato = {$idContrato}
                       AND dtPublicacaoSaida IS NULL)
-                 ORDER BY 5, 1";
+                 ORDER BY 5";
 
         $row = $contratos->select($select);
 
@@ -430,7 +451,7 @@ class Comissao {
         $relatorio->set_align(["left", "left", "left"]);
         $relatorio->set_width([30, 30, 30, 10]);
         $relatorio->set_classe([null, "Pessoal", "Comissao", "Comissao"]);
-        $relatorio->set_metodo([null, "get_lotacao", "getPortariaEntrada", "getTipo"]);
+        $relatorio->set_metodo([null, "get_lotacao", "getPortariaEntrada", "exibe_membroTipo"]);
 
         $relatorio->set_subTotal(false);
         $relatorio->set_totalRegistro(false);
@@ -971,16 +992,18 @@ class Comissao {
         # Monta o select
         $select = "(SELECT uenf_grh.tbpessoa.nome,
                           idComissao,
-                          tipo
+                          numOrdem
                      FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
                                      JOIN uenf_grh.tbpessoa USING(idPessoa)
+                                     JOIN tbtipomembro USING (idTipoMembro)
                     WHERE idContrato = {$idContrato}
                       AND dtPublicacaoSaida IS NULL)
                  UNION 
                     (SELECT tbmembroexterno.nome,
                           idComissao,
-                          tipo
+                          numOrdem
                      FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
+                                     JOIN tbtipomembro USING (idTipoMembro)
                     WHERE idContrato = {$idContrato}
                       AND dtPublicacaoSaida IS NULL)
                  ORDER BY 3, 1";
@@ -991,12 +1014,19 @@ class Comissao {
 
         foreach ($row as $item) {
 
-            # Mome do servidor e designação
-            $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
-            p($this->getNomeMembro($item["idComissao"]) . $designacao, "pComissaoImpressao");
-            p($this->get_emailMembro($item["idComissao"], false, false), "pComissaoImpressao");
+            # Pega o tipo
+            $tipo = $this->get_membroTipo($item["idComissao"]);
+
+            # Nome do servidor e designação
+            if ($tipo == "Presidente" OR $tipo == "Gestor") {
+                p("{$this->getNomeMembro($item['idComissao'])} - {$tipo}", "pComissaoImpressao");
+            } else {
+                p($this->getNomeMembro($item["idComissao"]), "pComissaoImpressao");
+            }
+
+            # p($this->get_emailMembro($item["idComissao"], false, false), "pComissaoImpressao");
             if ($contador < $numItem) {
-                hr();
+                hr("geral");
                 $contador++;
             }
         }
@@ -1004,7 +1034,7 @@ class Comissao {
 
 #####################################################################################
 
-    public function listaComissaoTabela($idContrato) {
+    public function listaComissaoEmailRelatorio($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
             alert("É necessário informar o id.");
@@ -1017,16 +1047,18 @@ class Comissao {
         # Monta o select
         $select = "(SELECT uenf_grh.tbpessoa.nome,
                           idComissao,
-                          tipo
+                          numOrdem
                      FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
                                      JOIN uenf_grh.tbpessoa USING(idPessoa)
+                                     JOIN tbtipomembro USING (idTipoMembro)
                     WHERE idContrato = {$idContrato}
                       AND dtPublicacaoSaida IS NULL)
                  UNION 
                     (SELECT tbmembroexterno.nome,
                           idComissao,
-                          tipo
+                          numOrdem
                      FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
+                                     JOIN tbtipomembro USING (idTipoMembro)
                     WHERE idContrato = {$idContrato}
                       AND dtPublicacaoSaida IS NULL)
                  ORDER BY 3, 1";
@@ -1037,12 +1069,19 @@ class Comissao {
 
         foreach ($row as $item) {
 
-            # Mome do servidor e designação
-            $designacao = $this->getTipo($item["idComissao"]) == "Presidente" ? " - Presidente" : null;
-            echo $this->getNomeMembro($item["idComissao"]) . $designacao;
+            # Pega o tipo
+            $tipo = $this->get_membroTipo($item["idComissao"]);
 
+            # Nome do servidor e designação
+            if ($tipo == "Presidente" OR $tipo == "Gestor") {
+                p("{$this->getNomeMembro($item['idComissao'])} - {$tipo} - {$this->get_emailMembro($item[1])}", "pComissaoImpressao");
+            } else {
+                p("{$this->getNomeMembro($item["idComissao"])} - {$this->get_emailMembro($item[1])}", "pComissaoImpressao");
+            }
+
+            # p($this->get_emailMembro($item["idComissao"], false, false), "pComissaoImpressao");
             if ($contador < $numItem) {
-                br();
+                hr("geral");
                 $contador++;
             }
         }
@@ -1050,52 +1089,7 @@ class Comissao {
 
 #####################################################################################
 
-    public function listaComissaoEmailTabela($idContrato) {
-        # Verifica se foi informado
-        if (vazio($idContrato)) {
-            alert("É necessário informar o id.");
-            return;
-        }
-
-        # Conecta ao Banco de Dados
-        $contratos = new Contratos();
-
-        # Monta o select
-        $select = "(SELECT uenf_grh.tbpessoa.nome,
-                          idComissao,
-                          tipo
-                     FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
-                                     JOIN uenf_grh.tbpessoa USING(idPessoa)
-                    WHERE idContrato = {$idContrato}
-                      AND dtPublicacaoSaida IS NULL)
-                 UNION 
-                    (SELECT tbmembroexterno.nome,
-                          idComissao,
-                          tipo
-                     FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
-                    WHERE idContrato = {$idContrato}
-                      AND dtPublicacaoSaida IS NULL)
-                 ORDER BY 3, 1";
-
-        $row = $contratos->select($select);
-        $numItem = $contratos->count($select);
-        $contador = 1;
-
-        foreach ($row as $item) {
-            # Mome do servidor e designação
-            $designacao = $this->getTipo($item[1]) == "Presidente" ? " - Presidente" : null;
-            echo " - ", $this->getNomeMembro($item[1]), $designacao, " - ", $this->get_emailMembro($item[1]);
-
-            if ($contador < $numItem) {
-                br();
-                $contador++;
-            }
-        }
-    }
-
-#####################################################################################
-
-    public function getPresidente($idContrato) {
+    public function get_responsavel($idContrato) {
         # Verifica se foi informado
         if (empty($idContrato)) {
             alert("É necessário informar o id.");
@@ -1109,16 +1103,37 @@ class Comissao {
         $select = "SELECT idComissao
                      FROM tbcomissao
                     WHERE idContrato = {$idContrato}
-                      AND tipo = 1";
+                      AND dtPublicacaoSaida IS NULL   
+                      AND (idTipoMembro = 1 OR idTipoMembro = 4)";
 
         $row = $contratos->select($select, false);
 
         if (empty($row[0])) {
             return null;
         } else {
-           return $this->getNomeMembro($row['idComissao']);
+            return $this->getNomeMembro($row['idComissao']);
         }
     }
 
-##########################################################################################
+#####################################################################################
+
+    public function get_numMembrosTipo($idTipo) {
+
+        # Verifica se o id foi informado
+        if (empty($idTipo)) {
+            return null;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # monta o select
+        $select = "SELECT idComissao
+                     FROM tbcomissao
+                    WHERE idTipoMembro = {$idTipo}";
+
+        return $contratos->count($select);
+    }
+
+#####################################################################################
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Cadastro de Natureza de Pgto
+ * Cadastro de Tipo de Membro de Comissão
  *
  * By Alat
  */
@@ -16,12 +16,12 @@ $acesso = Verifica::acesso($idUsuario, [1, 9]);
 
 if ($acesso) {
     # Conecta ao Banco de Dados
-    $status = new Status();
+    $comissao = new Comissao();
 
     # log
     if (get('i', false)) {
         # Grava no log a atividade
-        $atividade = "Acessou o cadastro de Membros Externos da comissão.";
+        $atividade = "Acessou o cadastro de tipo de membro de comissão.";
         $data = date("Y-m-d H:i:s");
         $intra->registraLog($idUsuario, $data, $atividade, null, null, 7);
     }
@@ -44,31 +44,26 @@ if ($acesso) {
 
     ################################################################
     # Nome do Modelo
-    $objeto->set_nome("Membros Externos de Comissões");
+    $objeto->set_nome("Tipos de Membros de Comissão");
 
     # Botão de voltar da lista
     $objeto->set_voltarLista("cadastroMembros.php");
 
     # select da lista
-    $objeto->set_selectLista("SELECT  cpf,
-                                      nome,
-                                      orgao,
-                                      telefone,
-                                      email,
+    $objeto->set_selectLista("SELECT idTipoMembro,
+                                      numOrdem,
+                                      tipo,
                                       obs,
-                                      idMembroExterno
-                                 FROM tbmembroexterno
-                             ORDER BY nome");
+                                      idTipoMembro
+                                 FROM tbtipomembro
+                             ORDER BY numOrdem");
 
     # select do edita
-    $objeto->set_selectEdita("SELECT cpf,
-                                     nome,
-                                     orgao,
-                                     telefone,
-                                     email,
+    $objeto->set_selectEdita("SELECT numOrdem,
+                                     tipo,
                                      obs
-                                FROM tbmembroexterno
-                               WHERE idMembroExterno = {$id}");
+                                FROM tbtipomembro
+                              WHERE idTipoMembro = {$id}");
 
     # Caminhos
     $objeto->set_linkEditar("?fase=editar");
@@ -77,18 +72,20 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(["Cpf", "Nome", "Órgão", "Telefones", "E-mail", "Obs"]);
-    $objeto->set_width([10, 20, 20, 15, 15, 20]);
-    $objeto->set_align(["center", "left", "left", "left", "left", "left"]);
+    $objeto->set_label(["Id", "Num Ordem", "Tipo", "Obs", "Membros"]);
+    $objeto->set_width([5, 5, 20, 45, 10]);
+    $objeto->set_align(["center", "center", "left", "left"]);
+    $objeto->set_classe([null, null, null, null, "Comissao"]);
+    $objeto->set_metodo([null, null, null, null, "get_numMembrosTipo"]);
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
 
     # Nome da tabela
-    $objeto->set_tabela("tbmembroexterno");
+    $objeto->set_tabela("tbtipomembro");
 
     # Nome do campo id
-    $objeto->set_idCampo("idMembroExterno");
+    $objeto->set_idCampo("idTipoMembro");
 
     # Tipo de label do formulário
     $objeto->set_formLabelTipo(1);
@@ -96,40 +93,21 @@ if ($acesso) {
     # Campos para o formulario
     $objeto->set_campos(array(
         array("linha" => 1,
-            "nome" => "cpf",
-            "label" => "CPF:",
-            "tipo" => "cpf",
+            "nome" => "numOrdem",
+            "label" => "Num Ordem:",
+            "tipo" => "texto",
             "required" => true,
             "autofocus" => true,
             "col" => 3,
-            "size" => 50),
+            "size" => 3),
         array("linha" => 1,
-            "nome" => "nome",
-            "label" => "Nome:",
+            "nome" => "tipo",
+            "label" => "Tipo:",
             "tipo" => "texto",
             "required" => true,
-            "col" => 9,
-            "size" => 250),
+            "col" => 6,
+            "size" => 100),
         array("linha" => 2,
-            "nome" => "orgao",
-            "label" => "Órgão:",
-            "tipo" => "texto",
-            "required" => true,
-            "col" => 4,
-            "size" => 250),
-        array("linha" => 2,
-            "nome" => "telefone",
-            "label" => "Telefone:",
-            "tipo" => "texto",
-            "col" => 4,
-            "size" => 250),
-        array("linha" => 2,
-            "nome" => "email",
-            "label" => "E-mail:",
-            "tipo" => "texto",
-            "col" => 4,
-            "size" => 250),
-        array("linha" => 3,
             "nome" => "obs",
             "label" => "Observação:",
             "tipo" => "textarea",
@@ -149,11 +127,10 @@ if ($acesso) {
 
         case "excluir":
             # Verifica se tem contrato com esse status
-            $pagamento = new Pagamento();
-            $getNumPgtoNatureza = $pagamento->getNumPgtoNatureza($id);
+            $num = $comissao->get_numMembrosTipo($id);
 
-            if ($getNumPgtoNatureza > 0) {
-                alert("Existem pagamentos cadastrados com esta natureza. Dessa forma a mesma NÃO poderá ser excluída.");
+            if ($num > 0) {
+                alert("Existem membros cadastrados com este tipo. Dessa forma o mesmo NÃO poderá ser excluída.");
                 back(1);
             } else {
                 $objeto->excluir($id);
