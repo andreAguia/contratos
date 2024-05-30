@@ -2034,4 +2034,30 @@ class Contrato {
     }
 
     ###########################################################
+
+    public function exibeLei($idLei) {
+        /**
+         * Exibe o pdf da lei
+         * 
+         * @param $idLei integer null O id
+         * 
+         * @syntax $contrato->exibeLei($idLei);
+         */
+        # Monta o arquivo
+        $arquivo = PASTA_LEI . $idLei . ".pdf";
+
+        # Verifica se ele existe
+        if (file_exists($arquivo)) {
+
+            # Monta o link
+            $link = new Link(null, $arquivo, "Exibe o pdf da Lei");
+            $link->set_imagem(PASTA_FIGURAS . 'doc.png', 20, 20);
+            $link->set_target("_blank");
+            $link->show();
+        } else {
+            echo "-";
+        }
+    }
+
+##########################################################
 }

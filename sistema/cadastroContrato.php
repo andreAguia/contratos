@@ -216,6 +216,7 @@ if ($acesso) {
                                      dtProposta,
                                      dtAssinatura,
                                      maoDeObra,
+                                     idLei,
                                      localExecucao,
                                      idEmpresa,
                                      objeto,                                     
@@ -308,6 +309,14 @@ if ($acesso) {
 
     array_unshift($empresa, array(null, null));
     
+    # Dados da combo lei
+    $lei = $contratos->select('SELECT idLei,
+                                      lei
+                                 FROM tblei
+                             ORDER BY dtPublicacao DESC');
+
+    array_unshift($lei, array(null, null));
+    
     # Dados da Natureza da Despesa (array está no config)
     $arrayNatureza = $contrato->getArrayNatureza();
     array_unshift($arrayNatureza, array(null, null));
@@ -389,9 +398,18 @@ if ($acesso) {
             'col' => 3,
             'size' => 15,
         ),
-        
         array(
             'linha' => 2,
+            'nome' => 'idLei',
+            'label' => 'Lei:',
+            'tipo' => 'combo',
+            'array' => $lei,
+            'required' => true,
+            'col' => 3,
+            'size' => 200,
+        ),        
+        array(
+            'linha' => 3,
             'nome' => 'maoDeObra',
             'label' => 'Mão de Obra Alocada:',
             'tipo' => 'simnao',
@@ -405,7 +423,7 @@ if ($acesso) {
             'nome' => 'localExecucao',
             'label' => 'Local de Execução:',
             'tipo' => 'texto',
-            'col' => 12,
+            'col' => 10,
             'size' => 250,
         ),
         array(
@@ -617,6 +635,12 @@ if ($acesso) {
                 # Natureza
                 $botao = new Button("Natureza do Saldo", "cadastroNatureza.php?i=true");
                 $botao->set_title("Cadastro de Natureza");
+                $botao->set_class("button secondary");
+                $menu2->add_link($botao, "right");
+                
+                # Lei
+                $botao = new Button("Lei", "cadastroLei.php?i=true");
+                $botao->set_title("Cadastro de Leis");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");
 

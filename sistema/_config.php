@@ -44,12 +44,13 @@ define("PASTA_ESTILOS", "../_css/");                                 // Estilos 
 /*
  *  Arquivos
  */
-define("PASTA_FOTOS", "../../_arquivos/fotos/");                    // Fotos dos Servidores
-define("PASTA_CONTRATOS_PUBLICACAO", "../../_arquivos/contratosPublicacao/");            // Publicação de Contratos
+define("PASTA_FOTOS", "../../_arquivos/fotos/");                                // Fotos dos Servidores
+define("PASTA_CONTRATOS_PUBLICACAO", "../../_arquivos/contratosPublicacao/");   // Publicação de Contratos
 define("PASTA_ADITIVOS_PUBLICACAO", "../../_arquivos/aditivosPublicacao/");     // Publicação de Aditivos
-define("PASTA_CONTRATOS", "../../_arquivos/contratos/");            // Os Contratos
-define("PASTA_ADITIVOS", "../../_arquivos/aditivos/");     // Os Aditivos
-define("PASTA_DOCUMENTOS", "../../_arquivos/contratosDocumentos/"); // Documentos extras
+define("PASTA_CONTRATOS", "../../_arquivos/contratos/");                        // Os Contratos
+define("PASTA_ADITIVOS", "../../_arquivos/aditivos/");                          // Os Aditivos
+define("PASTA_DOCUMENTOS", "../../_arquivos/contratosDocumentos/");             // Documentos extras
+define("PASTA_LEI", "../../_arquivos/contratosLei/");                           // Documentos extras
 
 /*
  *  Tags aceitas em campos com htmlTag = true
