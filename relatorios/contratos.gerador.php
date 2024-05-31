@@ -24,6 +24,7 @@ if ($acesso) {
     
     # Pega o título
     $parametroTitulo = post('parametroTitulo', 'Contratos');
+    $parametroSubtitulo = post('parametroSubtitulo');
     
     # Pega as variáveis
     $select = get_session("sessionSelect");
@@ -44,6 +45,7 @@ if ($acesso) {
     $relatorio->set_funcao($function);
     $relatorio->set_bordaInterna(true);
     $relatorio->set_titulo($parametroTitulo);
+    $relatorio->set_subtitulo($parametroSubtitulo);
     $relatorio->set_formCampos(array(
         array('nome' => 'parametroTitulo',
             'label' => 'Título:',
@@ -53,7 +55,17 @@ if ($acesso) {
             'title' => 'Título do Relatório',
             'onChange' => 'formPadrao.submit();',
             'col' => 12,
-            'linha' => 1)));
+            'linha' => 1),
+        array('nome' => 'parametroSubtitulo',
+            'label' => 'Subtítulo:',
+            'tipo' => 'texto',            
+            'size' => 150,
+            'padrao' => $parametroSubtitulo,
+            'title' => 'Subtítulo do Relatório',
+            'onChange' => 'formPadrao.submit();',
+            'col' => 12,
+            'linha' => 1)
+        ));
     
     $relatorio->set_formLink('?');
     

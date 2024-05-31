@@ -28,14 +28,18 @@ if ($acesso) {
     }
 
     # Verifica a fase do programa
-    $fase = get("fase", "listar");
+    $fase = get("fase");
 
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
 
     # Pega os parâmetros
-    $parametroMembro = post("parametroMembro");
-    $parametroTipo = post("parametroTipo");
+    $parametroMembro = post("parametroMembro", get_session('parametroMembro'));
+    $parametroTipo = post("parametroTipo", get_session('parametroTipo'));
+    
+    # Joga os parâmetros par as sessions
+    set_session('parametroMembro', $parametroMembro);
+    set_session('parametroTipo', $parametroTipo);
 
     # Começa uma nova página
     $page = new Page();
@@ -48,7 +52,23 @@ if ($acesso) {
 
     switch ($fase) {
         case "":
-        case "listar" :
+            br(8);
+            aguarde();
+            br();
+
+            # Limita a tela
+            $grid1 = new Grid("center");
+            $grid1->abreColuna(5);
+            p("Aguarde...", "center");
+            $grid1->fechaColuna();
+            $grid1->fechaGrid();
+
+            loadPage('?fase=listar');
+            break;
+
+        ################################################################
+
+        case "listar":
 
             # Limita o tamanho da tela
             $grid = new Grid();

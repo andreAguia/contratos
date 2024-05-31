@@ -72,7 +72,7 @@ if ($acesso) {
     $objeto->set_funcao([null, "date_to_php"]);
 
     $objeto->set_classe([null, null, null, "contrato"]);
-    $objeto->set_metodo([null, null, null, "exibeLei"]);
+    $objeto->set_metodo([null, null, null, "exibePdfLei"]);
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");

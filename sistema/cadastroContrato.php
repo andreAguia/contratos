@@ -38,13 +38,16 @@ if ($acesso) {
     }
 
     # Verifica a fase do programa
-    $fase = get('fase', 'listar');
+    $fase = get('fase');
 
     # pega o id (se tiver)
     $id = soNumeros(get('id'));
 
-    # zera a sessionContrato
+    # zera as session de outras rotinas
     set_session('sessionContrato', $id);
+    set_session('parametroMembro');
+    set_session('parametroTipo');
+    set_session('sessionParametro');
 
     # Pega os parâmetros
     $parametroAno = post('parametroAno', get_session('parametroAno'));
@@ -55,6 +58,7 @@ if ($acesso) {
     $parametroObjeto = post('parametroObjeto', get_session('parametroObjeto'));
     $parametroSetorRequisitante = post('parametroSetorRequisitante', get_session('parametroSetorRequisitante'));
     $inclusaoEmpresa = post('inclusaoEmpresa', get_session('inclusaoEmpresa'));
+    $parametroLei = post('parametroLei', get_session('parametroLei'));
 
     # Joga os parâmetros par as sessions
     set_session('parametroAno', $parametroAno);
@@ -65,6 +69,7 @@ if ($acesso) {
     set_session('parametroObjeto', $parametroObjeto);
     set_session('parametroSetorRequisitante', $parametroSetorRequisitante);
     set_session('inclusaoEmpresa', $inclusaoEmpresa);
+    set_session('parametroLei', $parametroLei);
 
     ################################################################
     # Começa uma nova página
@@ -169,7 +174,7 @@ if ($acesso) {
     if (!empty($parametroModalidade)) {
         $select .= " AND idModalidade = {$parametroModalidade}";
     }
-    
+
     if (!empty($parametroNatureza)) {
         $select .= " AND natDespesa = {$parametroNatureza}";
     }
@@ -177,13 +182,17 @@ if ($acesso) {
     if (!empty($parametroStatus)) {
         $select .= " AND idStatus = {$parametroStatus}";
     }
-    
+
     if (!empty($parametroSetorRequisitante)) {
         $select .= " AND requisitante LIKE '%{$parametroSetorRequisitante}%'";
     }
 
     if (!empty($parametroObjeto)) {
         $select .= " AND objeto LIKE '%{$parametroObjeto}%'";
+    }
+
+    if (!empty($parametroLei)) {
+        $select .= " AND idLei = {$parametroLei}";
     }
 
     /*
@@ -308,7 +317,7 @@ if ($acesso) {
                               ORDER BY razaoSocial');
 
     array_unshift($empresa, array(null, null));
-    
+
     # Dados da combo lei
     $lei = $contratos->select('SELECT idLei,
                                       lei
@@ -316,7 +325,7 @@ if ($acesso) {
                              ORDER BY dtPublicacao DESC');
 
     array_unshift($lei, array(null, null));
-    
+
     # Dados da Natureza da Despesa (array está no config)
     $arrayNatureza = $contrato->getArrayNatureza();
     array_unshift($arrayNatureza, array(null, null));
@@ -407,7 +416,7 @@ if ($acesso) {
             'required' => true,
             'col' => 3,
             'size' => 200,
-        ),        
+        ),
         array(
             'linha' => 3,
             'nome' => 'maoDeObra',
@@ -561,6 +570,22 @@ if ($acesso) {
     ################################################################
     switch ($fase) {
         case "":
+            br(8);
+            aguarde();
+            br();
+
+            # Limita a tela
+            $grid1 = new Grid("center");
+            $grid1->abreColuna(5);
+            p("Aguarde...", "center");
+            $grid1->fechaColuna();
+            $grid1->fechaGrid();
+
+            loadPage('?fase=listar');
+            break;
+
+    ################################################################
+
         case "listar":
             # Zera a session da inclusão de contrato
             set_session('inclusaoEmpresa');
@@ -607,7 +632,7 @@ if ($acesso) {
             if (Verifica::acesso($idUsuario, [1, 9])) {
                 #hr("hrMenusecundario");
                 $menu2 = new MenuBar();
-                
+
                 # Empresas
                 $botao = new Button("Empresas", "cadastroEmpresa.php?i=true");
                 $botao->set_title("Cadastro de Empresas");
@@ -637,7 +662,7 @@ if ($acesso) {
                 $botao->set_title("Cadastro de Natureza");
                 $botao->set_class("button secondary");
                 $menu2->add_link($botao, "right");
-                
+
                 # Lei
                 $botao = new Button("Lei", "cadastroLei.php?i=true");
                 $botao->set_title("Cadastro de Leis");
@@ -723,7 +748,7 @@ if ($acesso) {
             $controle->set_col(3);
             $controle->set_array($comboModalidade);
             $form->add_item($controle);
-            
+
             /*
              * Natureza
              */
@@ -731,7 +756,7 @@ if ($acesso) {
             # Pega os dados
             $comboNatureza = $contrato->getArrayNatureza();
             array_unshift($comboNatureza, array(null, "Todos"));
-            
+
             # Modalidade
             $controle = new Input('parametroNatureza', 'combo', 'Natureza da Despesa:', 1);
             $controle->set_size(20);
@@ -761,10 +786,10 @@ if ($acesso) {
             $controle->set_valor($parametroEmpresa);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(2);
-            $controle->set_col(5);
+            $controle->set_col(3);
             $controle->set_array($comboEmpresa);
             $form->add_item($controle);
-            
+
             # Setor Requisitante
             $controle = new Input('parametroSetorRequisitante', 'texto', 'Setor Requisitante:', 1);
             $controle->set_size(50);
@@ -782,7 +807,29 @@ if ($acesso) {
             $controle->set_valor($parametroObjeto);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(2);
-            $controle->set_col(4);
+            $controle->set_col(3);
+            $form->add_item($controle);
+
+            /*
+             * Lei
+             */
+
+            $comboLei = $contratos->select('SELECT idLei,
+                                      lei
+                                 FROM tblei
+                             ORDER BY dtPublicacao DESC');
+
+            array_unshift($comboLei, array(null, "Todos"));
+
+            # Lei
+            $controle = new Input('parametroLei', 'combo', 'Lei:', 1);
+            $controle->set_size(20);
+            $controle->set_title('Lei do contrato');
+            $controle->set_valor($parametroLei);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_array($comboLei);
+            $controle->set_linha(2);
+            $controle->set_col(3);
             $form->add_item($controle);
 
             $form->show();

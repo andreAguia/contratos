@@ -214,9 +214,9 @@ class Contrato {
         if (!empty($conteudo["processoPrestacao"])) {
             $processo .= "<br/>Prestação de Contas:<br/>{$conteudo["processoPrestacao"]}";
         }
-        
+
         # Coloca o requisitante
-        if(!empty($conteudo["requisitante"])){
+        if (!empty($conteudo["requisitante"])) {
             $processo .= "<br/><br/>Requisitante:<br/>{$conteudo["requisitante"]}";
         }
         return $processo;
@@ -400,6 +400,9 @@ class Contrato {
         if ($conteudo["maoDeObra"]) {
             p("Mão de Obra Alocada", "pVigencia");
         }
+
+        # Exibe a Lei
+        $this->exibeLei($idContrato);
     }
 
     #####################################################################################
@@ -1924,7 +1927,7 @@ class Contrato {
         $painel->fecha();
     }
 
-    #####################################################################################
+    ###########################################################
 
     public function exibeAssinaturaEReitor($dtAssinatura) {
 
@@ -1956,7 +1959,7 @@ class Contrato {
         }
     }
 
-    #####################################################################################
+    ###########################################################
 
     function exibeCaracteristicas($idContrato = null, $idUsuario = null) {
 
@@ -2009,7 +2012,7 @@ class Contrato {
         $painel->fecha();
     }
 
-    #####################################################################################
+    ###########################################################
 
     public function getNaturezaDespesa($idContrato = null) {
 
@@ -2035,7 +2038,7 @@ class Contrato {
 
     ###########################################################
 
-    public function exibeLei($idLei) {
+    public function exibePdfLei($idLei) {
         /**
          * Exibe o pdf da lei
          * 
@@ -2059,5 +2062,75 @@ class Contrato {
         }
     }
 
-##########################################################
+    ###########################################################
+
+    public function get_idUltimaLei() {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Pega os dados
+        $select = "SELECT idLei
+                     FROM tblei
+                 ORDER BY dtPublicacao DESC";
+
+        $row = $contratos->select($select, false);
+        return $row[0];
+    }
+
+    ###########################################################
+
+    public function exibeLei($idContrato) {
+
+        # Verifica se foi informado o id
+        if (empty($idContrato)) {
+            return "---";
+        } else {
+            # Pega o id da lei
+            $dados = $this->getDados($idContrato);
+            $idLei = $dados["idLei"];
+            
+            if(empty($idLei)){
+                return "---";
+            }
+
+            # Pega a lei
+            $contratos = new Contratos();
+            $select = "SELECT lei
+                         FROM tblei
+                        WHERE idLei = {$idLei}";
+
+            $row = $contratos->select($select, false);
+            label($row[0], "secondary");
+        }
+    }
+
+    ###########################################################
+
+    public function get_lei($idContrato) {
+
+        # Verifica se foi informado o id
+        if (empty($idContrato)) {
+            return "---";
+        } else {
+            # Pega o id da lei
+            $dados = $this->getDados($idContrato);
+            $idLei = $dados["idLei"];
+            
+            if(empty($idLei)){
+                return "---";
+            }
+
+            # Pega a lei
+            $contratos = new Contratos();
+            $select = "SELECT lei
+                         FROM tblei
+                        WHERE idLei = {$idLei}";
+
+            $row = $contratos->select($select, false);
+            return $row[0];
+        }
+    }
+
+    ###########################################################
 }

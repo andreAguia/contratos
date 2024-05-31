@@ -28,7 +28,7 @@ if ($acesso) {
     }
 
     # Verifica a fase do programa
-    $fase = get("fase", "listar");
+    $fase = get("fase");
 
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
@@ -128,7 +128,7 @@ if ($acesso) {
     $objeto->set_align(array("left", "left", "left", "left", "left"));
     $objeto->set_classe(array("Empresa", "Empresa", "Empresa", "Empresa", null, "Empresa"));
     $objeto->set_metodo(array("getEmpresaCnpj", "getTelefones", "getEmails", "getContatos", null, "getNumContratos"));
-    $objeto->set_funcao(array(null, null, null, null, "nl2br"));
+    $objeto->set_funcao(array(null, null, null, null, "nl2br2"));
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -309,9 +309,9 @@ if ($acesso) {
             'nome' => 'representanteCep',
             'label' => 'Cep:',
             'tipo' => 'cep',
-            'title' => 'Cep',            
+            'title' => 'Cep',
             'col' => 3,
-            'size' => 10),        
+            'size' => 10),
         array('linha' => 10,
             'nome' => 'obs',
             'fieldset' => 'fecha',
@@ -325,6 +325,22 @@ if ($acesso) {
     ################################################################
     switch ($fase) {
         case "":
+            br(8);
+            aguarde();
+            br();
+
+            # Limita a tela
+            $grid1 = new Grid("center");
+            $grid1->abreColuna(5);
+            p("Aguarde...", "center");
+            $grid1->fechaColuna();
+            $grid1->fechaGrid();
+
+            loadPage('?fase=listar');
+            break;
+
+        ################################################################
+
         case "listar":
             $objeto->listar();
             break;
