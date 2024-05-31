@@ -2089,8 +2089,8 @@ class Contrato {
             # Pega o id da lei
             $dados = $this->getDados($idContrato);
             $idLei = $dados["idLei"];
-            
-            if(empty($idLei)){
+
+            if (empty($idLei)) {
                 return "---";
             }
 
@@ -2116,8 +2116,8 @@ class Contrato {
             # Pega o id da lei
             $dados = $this->getDados($idContrato);
             $idLei = $dados["idLei"];
-            
-            if(empty($idLei)){
+
+            if (empty($idLei)) {
                 return "---";
             }
 
@@ -2133,4 +2133,24 @@ class Contrato {
     }
 
     ###########################################################
+
+    public function get_numLei($idLei) {
+
+        # Verifica se foi informado o id
+        if (empty($idLei)) {
+            return "---";
+        } else {
+            # Conecta ao Banco de Dados
+            $contratos = new Contratos();
+
+            # monta o select
+            $select = "SELECT idContrato
+                         FROM tbcontrato
+                        WHERE idLei = {$idLei}";
+
+            return $contratos->count($select);
+        }
+    }
+
+    ########################################################
 }

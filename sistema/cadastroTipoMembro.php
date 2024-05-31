@@ -130,7 +130,7 @@ if ($acesso) {
             $num = $comissao->get_numMembrosTipo($id);
 
             if ($num > 0) {
-                alert("Existem membros cadastrados com este tipo. Dessa forma o mesmo NÃO poderá ser excluída.");
+                alert("Existem membros cadastrados com este tipo. Dessa forma o mesmo NÃO poderá ser excluído.");
                 back(1);
             } else {
                 $objeto->excluir($id);

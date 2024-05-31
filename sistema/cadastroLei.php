@@ -47,6 +47,7 @@ if ($acesso) {
                                      dtPublicacao,
                                      lei,
                                      idLei,
+                                     idLei,
                                      obs
                                 FROM tblei
                             ORDER BY dtPublicacao DESC");
@@ -66,13 +67,13 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(["id", "Publicação", "Lei", "Ver", "Obs"]);
-    $objeto->set_width([5, 10, 30, 5, 40]);
-    $objeto->set_align(["center", "center", "left", "center", "left"]);
+    $objeto->set_label(["id", "Publicação", "Lei", "Ver", "Contratos", "Obs"]);
+    $objeto->set_width([5, 10, 30, 5, 10, 30]);
+    $objeto->set_align(["center", "center", "left", "center", "center", "left"]);
     $objeto->set_funcao([null, "date_to_php"]);
 
-    $objeto->set_classe([null, null, null, "contrato"]);
-    $objeto->set_metodo([null, null, null, "exibePdfLei"]);
+    $objeto->set_classe([null, null, null, "contrato", "contrato"]);
+    $objeto->set_metodo([null, null, null, "exibePdfLei", "get_numLei"]);
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -141,8 +142,23 @@ if ($acesso) {
             $objeto->listar();
             break;
 
+        ################################################################
+
+        case "excluir":
+            # Verifica se tem contrato com essa lei
+            $num = $contrato->get_numLei($id);
+
+            if ($num > 0) {
+                alert("Existem Contratos cadastrados com essa lei. Dessa forma a mesma NÃO poderá ser excluída.");
+                back(1);
+            } else {
+                $objeto->excluir($id);
+            }
+            break;
+
+        ################################################################
+
         case "editar" :
-        case "excluir" :
         case "gravar" :
             $objeto->$fase($id);
             break;
