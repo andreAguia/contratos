@@ -114,15 +114,11 @@ if ($acesso) {
     # Parametros da tabela
     $objeto->set_label(["Tipo", "Objeto", "Publicação", "Aditivo", "Assinatura", "Duração", "Garantia", "Valor"]);
     $objeto->set_align(["center", "left", "center", "center", "center", "center", "center", "right"]);
-    $objeto->set_width([15, 25, 10, 10, 10, 10, 10, 10]);
-    $objeto->set_classe(["Aditivo", "Aditivo", "Aditivo", "Aditivo", "Contrato", "Aditivo", "Aditivo", "Aditivo"]);
+    $objeto->set_width([15, 22, 10, 10, 13, 10, 10, 10]);
 
-    if (Verifica::acesso($idUsuario, [1, 9])) {
-        $objeto->set_metodo(["exibeTipoNumerado", "exibeObjeto", "exibePublicacao", "exibeAditivo", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"]);
-    } else {
-        $objeto->set_metodo(["exibeTipoNumerado", "exibeObjeto", "exibePublicacaoDiretoria", "exibeAditivoDiretoria", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"]);
-    }
-    #$objeto->set_funcao(array(null, null, null, null, "date_to_php"));
+    $objeto->set_classe(["Aditivo", "Aditivo", "Aditivo", "Aditivo", "Contrato", "Aditivo", "Aditivo", "Aditivo"]);
+    $objeto->set_metodo(["exibeTipoNumerado", "exibeObjeto", "exibePublicacao", "exibeAditivo", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"]);
+
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
 
@@ -281,6 +277,42 @@ if ($acesso) {
 
     # idUsuário para o Log
     $objeto->set_idUsuario($idUsuario);
+
+    # Botão de Upload
+    if (Verifica::acesso($idUsuario, [1, 9])) {
+        if (!empty($id)) {
+
+            /*
+             * Upload Publicacao
+             */
+            $pasta = PASTA_ADITIVOS_PUBLICACAO;
+            $nome = "Publicação";
+            $tabela = "tbaditivo";
+            $extensoes = ["pdf"];
+
+            # Botão de Upload Publicação
+            $botao1 = new Button("Upload {$nome}");
+            $botao1->set_url("cadastroAditivoPublicacaoUpload.php?fase=upload&id={$id}");
+            $botao1->set_title("Faz o Upload da {$nome}");
+            $botao1->set_target("_blank");
+
+            /*
+             * Upload Aditivo
+             */
+            $pasta = PASTA_ADITIVOS;
+            $nome = "Aditivo";
+            $tabela = "tbaditivo";
+            $extensoes = ["pdf"];
+
+            # Botão de Upload Aditivos
+            $botao2 = new Button("Upload {$nome}");
+            $botao2->set_url("cadastroAditivoUpload.php?fase=upload&id={$id}");
+            $botao2->set_title("Faz o Upload do {$nome}");
+            $botao2->set_target("_blank");
+
+            $objeto->set_botaoEditarExtra([$botao1, $botao2]);
+        }
+    }
 
     ################################################################
     switch ($fase) {
@@ -506,162 +538,6 @@ if ($acesso) {
             break;
 
         ################################################################
-
-        case "uploadPublicacao":
-            $grid = new Grid("center");
-            $grid->abreColuna(12);
-
-            # Botão voltar
-            botaoVoltar('cadastroAditivo.php');
-
-            # Título
-            tituloTable("Upload de Publicação");
-
-            # Limita a tela
-            $grid->fechaColuna();
-            $grid->abreColuna(6);
-
-            # Monta o formulário
-            echo "<form class='upload' method='post' enctype='multipart/form-data'><br>
-                        <input type='file' name='doc'>
-                        <p>Click aqui ou arraste o arquivo.</p>
-                        <button type='submit' name='submit'>Enviar</button>
-                    </form>";
-
-            # Pasta onde será guardado o arquivo
-            $pasta = PASTA_ADITIVOS_PUBLICACAO;
-
-            # Se não existe o programa cria
-            if (!file_exists($pasta) || !is_dir($pasta)) {
-                mkdir($pasta, 0755);
-            }
-
-            # Extensões possíveis
-            $extensoes = array("pdf");
-
-            # Pega os valores do php.ini
-            $postMax = limpa_numero(ini_get('post_max_size'));
-            $uploadMax = limpa_numero(ini_get('upload_max_filesize'));
-            $limite = menorValor(array($postMax, $uploadMax));
-
-            $texto = "Extensões Permitidas:";
-            foreach ($extensoes as $pp) {
-                $texto .= " $pp";
-            }
-            $texto .= "<br/>Tamanho Máximo do Arquivo: {$limite} M";
-
-            br();
-            p($texto, "f14", "center");
-
-            if ((isset($_POST["submit"])) && (!empty($_FILES['doc']))) {
-                $upload = new UploadDoc($_FILES['doc'], $pasta, $id, $extensoes);
-
-                # Salva e verifica se houve erro
-                if ($upload->salvar()) {
-
-                    # Registra log
-                    $Objetolog = new Intra();
-                    $data = date("Y-m-d H:i:s");
-                    $atividade = "Fez o upload da publicação do(a) " . $aditivo->getTipoNumerado($id) . " do contrato " . $contrato->getNumero($idContrato);
-                    $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
-
-                    # Volta para o menu
-                    loadPage('cadastroAditivo.php');
-                } else {
-                    loadPage("?fase=uploadPublicacao&id=$id");
-                }
-            }
-
-            # Informa caso exista um arquivo com o mesmo nome
-            $arquivoDocumento = $pasta . $id . ".pdf";
-            if (file_exists($arquivoDocumento)) {
-                p("Já existe um documento para este registro no servidor!!<br/>O novo documento irá sobrescrevê-lo e o antigo será apagado !!", "puploadMensagem");
-                br();
-            }
-
-            $grid->fechaColuna();
-            $grid->fechaGrid();
-            break;
-
-        ###################################################################
-
-        case "uploadAditivo":
-            $grid = new Grid("center");
-            $grid->abreColuna(12);
-
-            # Botão voltar
-            botaoVoltar('cadastroAditivo.php');
-
-            # Título
-            tituloTable("Upload do Aditivo");
-
-            # Limita a tela
-            $grid->fechaColuna();
-            $grid->abreColuna(6);
-
-            # Monta o formulário
-            echo "<form class='upload' method='post' enctype='multipart/form-data'><br>
-                        <input type='file' name='doc'>
-                        <p>Click aqui ou arraste o arquivo.</p>
-                        <button type='submit' name='submit'>Enviar</button>
-                    </form>";
-
-            # Pasta onde será guardado o arquivo
-            $pasta = PASTA_ADITIVOS;
-
-            # Se não existe o programa cria
-            if (!file_exists($pasta) || !is_dir($pasta)) {
-                mkdir($pasta, 0755);
-            }
-
-            # Extensões possíveis
-            $extensoes = array("pdf");
-
-            # Pega os valores do php.ini
-            $postMax = limpa_numero(ini_get('post_max_size'));
-            $uploadMax = limpa_numero(ini_get('upload_max_filesize'));
-            $limite = menorValor(array($postMax, $uploadMax));
-
-            $texto = "Extensões Permitidas:";
-            foreach ($extensoes as $pp) {
-                $texto .= " $pp";
-            }
-            $texto .= "<br/>Tamanho Máximo do Arquivo: $limite M";
-
-            br();
-            p($texto, "f14", "center");
-
-            if ((isset($_POST["submit"])) && (!empty($_FILES['doc']))) {
-                $upload = new UploadDoc($_FILES['doc'], $pasta, $id, $extensoes);
-
-                # Salva e verifica se houve erro
-                if ($upload->salvar()) {
-
-                    # Registra log
-                    $Objetolog = new Intra();
-                    $data = date("Y-m-d H:i:s");
-                    $atividade = "Fez o upload do aditivo " . $aditivo->getTipoNumerado($id) . " do contrato " . $contrato->getNumero($idContrato);
-                    $Objetolog->registraLog($idUsuario, $data, $atividade, null, $id, 8);
-
-                    # Volta para o menu
-                    loadPage('cadastroAditivo.php');
-                } else {
-                    loadPage("?fase=uploadAditivo&id=$id");
-                }
-            }
-
-            # Informa caso exista um arquivo com o mesmo nome
-            $arquivoDocumento = $pasta . $id . ".pdf";
-            if (file_exists($arquivoDocumento)) {
-                p("Já existe um documento para este registro no servidor!!<br/>O novo documento irá sobrescrevê-lo e o antigo será apagado !!", "puploadMensagem");
-                br();
-            }
-
-            $grid->fechaColuna();
-            $grid->fechaGrid();
-            break;
-
-        ##################################################################
     }
 
     $page->terminaPagina();

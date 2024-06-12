@@ -21,11 +21,11 @@ if ($acesso) {
     # Começa uma nova página
     $page = new Page();
     $page->iniciaPagina();
-    
+
     # Pega o título
     $parametroTitulo = post('parametroTitulo', 'Contratos');
     $parametroSubtitulo = post('parametroSubtitulo');
-    
+
     # Pega as variáveis
     $select = get_session("sessionSelect");
     $label = get_session("sessionLabel");
@@ -49,7 +49,7 @@ if ($acesso) {
     $relatorio->set_formCampos(array(
         array('nome' => 'parametroTitulo',
             'label' => 'Título:',
-            'tipo' => 'texto',            
+            'tipo' => 'texto',
             'size' => 150,
             'padrao' => $parametroTitulo,
             'title' => 'Título do Relatório',
@@ -58,18 +58,15 @@ if ($acesso) {
             'linha' => 1),
         array('nome' => 'parametroSubtitulo',
             'label' => 'Subtítulo:',
-            'tipo' => 'texto',            
+            'tipo' => 'texto',
             'size' => 150,
             'padrao' => $parametroSubtitulo,
             'title' => 'Subtítulo do Relatório',
             'onChange' => 'formPadrao.submit();',
             'col' => 12,
             'linha' => 1)
-        ));
-    
-    $relatorio->set_formLink('?');
-    
-    $relatorio->show();
+    ));
 
+    $relatorio->show();
     $page->terminaPagina();
 }

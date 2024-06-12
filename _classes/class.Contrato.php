@@ -504,22 +504,18 @@ class Contrato {
 
         $tabela = new Tabela();
         $tabela->set_titulo("Contrato {$conteudo["numero"]}");
-        $tabela->set_label(array("Tipo", "Objeto", "Publicação", "Contrato", "Assinatura", "Duração", "Proposta e Garantia", "Valor"));
-        $tabela->set_align(array("center", "left", "center", "center", "center", "center", "center", "right"));
-        $tabela->set_width(array(15, 25, 10, 10, 10, 10, 10, 10));
-        #$tabela->set_funcao(array(null, null, null, null, "date_to_php"));
+        $tabela->set_label(["Tipo", "Objeto", "Publicação", "Contrato", "Assinatura", "Duração", "Proposta e Garantia", "Valor"]);
+        $tabela->set_align(["center", "left", "center", "center", "center", "center", "center", "right"]);
+        $tabela->set_width([15, 22, 10, 10, 13, 10, 10, 10]);
+
+        $tabela->set_classe(["Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato"]);
+        $tabela->set_metodo(["exibeModalidade", "exibeObjeto", "exibePublicacao", "exibeContrato", "exibeAssinaturaEReitor", "getPeriodo", "exibePropostaEGarantia", "exibeValor"]);
+
         $tabela->set_conteudo($row);
         $tabela->set_totalRegistro(false);
+        $tabela->set_editar('cadastroContrato.php?fase=editar');
+        $tabela->set_idCampo('idContrato');
 
-        if (Verifica::acesso($idUsuario, [1, 9])) {
-            $tabela->set_editar('cadastroContrato.php?fase=editar');
-            $tabela->set_idCampo('idContrato');
-            $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato"));
-            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacao", "exibeContrato", "exibeAssinaturaEReitor", "getPeriodo", "exibePropostaEGarantia", "exibeValor"));
-        } else {
-            $tabela->set_classe(array("Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato", "Contrato"));
-            $tabela->set_metodo(array("exibeModalidade", "exibeObjeto", "exibePublicacaoDiretoria", "exibeContratoDiretoria", "exibeAssinaturaEReitor", "getPeriodo", "exibePropostaEGarantia", "exibeValor"));
-        }
         $tabela->show();
     }
 
@@ -1308,9 +1304,8 @@ class Contrato {
     public function exibePublicacao($idContrato = null) {
 
         # Verifica se foi informado o id
-        if (vazio($idContrato)) {
-            alert("É necessário informar o id do Contrato.");
-            return;
+        if (empty($idContrato)) {
+            return null;
         }
 
         $conteudo = $this->getDados($idContrato);
@@ -1320,97 +1315,22 @@ class Contrato {
 
         # Verifica se ele existe
         if (file_exists($arquivo)) {
-            # Limita o tamanho da tela
-            $grid1 = new Grid("center");
-            $grid1->abreColuna(10);
-
-            $grid = new Grid();
-            $grid->abreColuna(6);
-            # Ver a Publicação
             $botao = new BotaoGrafico();
-            #$botao->set_label("Ver");
             $botao->set_title("Ver a Publicação");
             $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
+            $botao->set_imagem(PASTA_FIGURAS . 'doc.png', 20, 20);
             $botao->set_target("_blank");
             $botao->show();
-
-            $grid->fechaColuna();
-            $grid->abreColuna(6);
-
-            # Botão de Upload
-            $botao = new BotaoGrafico();
-            #$botao->set_label("Upload");
-            $botao->set_title("Altera a Publicação");
-            $botao->set_url("cadastroContrato.php?fase=uploadPublicacao&id={$idContrato}");
-            $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
-            $botao->show();
-
-            $grid->fechaColuna();
-            $grid->fechaGrid();
-
-            $grid1->fechaColuna();
-            $grid1->fechaGrid();
         } else {
-            # Botão de Upload
-            $botao = new BotaoGrafico();
-            #$botao->set_label("Upload");
-            $botao->set_title("Faça upload da Publicação");
-            $botao->set_url("cadastroContrato.php?fase=uploadPublicacao&id={$idContrato}");
-            $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
-            $botao->show();
+            echo "---";
         }
-
+        
         # Publicação
         p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
 
         if (!empty($conteudo["pgPublicacao"])) {
             p("pag: {$conteudo["pgPublicacao"]}", "pAditivoPag");
         }
-
-
-        return;
-    }
-
-    ##########################################################
-    /*
-     * Informa a data de publicação mais a página ( se tiver) do Contrato
-     */
-
-    public function exibePublicacaoDiretoria($idContrato = null) {
-
-        # Verifica se foi informado o id
-        if (vazio($idContrato)) {
-            alert("É necessário informar o id do Contrato.");
-            return;
-        }
-
-        $conteudo = $this->getDados($idContrato);
-
-        # Monta o arquivo
-        $arquivo = PASTA_CONTRATOS_PUBLICACAO . $idContrato . ".pdf";
-
-        # Verifica se ele existe
-        if (file_exists($arquivo)) {
-
-            # Ver a Publicação
-            $botao = new BotaoGrafico();
-            #$botao->set_label("Ver");
-            $botao->set_title("Ver a Publicação");
-            $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
-            $botao->set_target("_blank");
-            $botao->show();
-        }
-
-        # Publicação
-        p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
-
-        if (!empty($conteudo["pgPublicacao"])) {
-            p("pag: {$conteudo["pgPublicacao"]}", "pAditivoPag");
-        }
-
-
         return;
     }
 
@@ -1434,80 +1354,21 @@ class Contrato {
 
         # Verifica se ele existe
         if (file_exists($arquivo)) {
-            # Limita o tamanho da tela
-            $grid1 = new Grid("center");
-            $grid1->abreColuna(10);
-
-            $grid = new Grid();
-            $grid->abreColuna(6);
 
             # Ver o Contrato
             $botao = new BotaoGrafico();
-            #$botao->set_label("Ver");
             $botao->set_title("Ver o contrato");
             $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
+            $botao->set_imagem(PASTA_FIGURAS . 'doc.png', 20, 20);
             $botao->set_target("_blank");
             $botao->show();
-
-            $grid->fechaColuna();
-            $grid->abreColuna(6);
-
-            # Botão de Upload
-            $botao = new BotaoGrafico();
-            #$botao->set_label("Upload");
-            $botao->set_title("Altera o contrato");
-            $botao->set_url("cadastroContrato.php?fase=uploadContrato&id={$idContrato}");
-            $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
-            $botao->show();
-
-            $grid->fechaColuna();
-            $grid->fechaGrid();
-
-            $grid1->fechaColuna();
-            $grid1->fechaGrid();
         } else {
-            # Botão de Upload
-            $botao = new BotaoGrafico();
-            #$botao->set_label("Upload");
-            $botao->set_title("Faça upload do contrato");
-            $botao->set_url("cadastroContrato.php?fase=uploadContrato&id={$idContrato}");
-            $botao->set_imagem(PASTA_FIGURAS . 'upload.png', 20, 20);
-            $botao->show();
+            echo "---";
         }
-        return;
-    }
-
-    ##########################################################
-    /*
-     * Informa a data de publicação mais a página ( se tiver) do Contrato
-     */
-
-    public function exibeContratoDiretoria($idContrato = null) {
-
-        # Verifica se foi informado o id
-        if (vazio($idContrato)) {
-            alert("É necessário informar o id do Contrato.");
-            return;
-        }
-
-        $conteudo = $this->getDados($idContrato);
-
-        # Monta o arquivo
-        $arquivo = PASTA_CONTRATOS . $idContrato . ".pdf";
-
-        # Verifica se ele existe
-        if (file_exists($arquivo)) {
-
-            # Ver o Contrato
-            $botao = new BotaoGrafico();
-            #$botao->set_label("Ver");
-            $botao->set_title("Ver o contrato");
-            $botao->set_url($arquivo);
-            $botao->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
-            $botao->set_target("_blank");
-            $botao->show();
-        }
+        
+        # Contrato
+        p("Contrato", "pAditivoPublicacao");
+        p($conteudo['numero'], "pAditivoPag");       
         return;
     }
 
