@@ -127,7 +127,7 @@ if ($acesso) {
                         # Registra log
                         $Objetolog = new Intra();
                         $data = date("Y-m-d H:i:s");
-                        $Objetolog->registraLog($idUsuario, $data, $atividade, $tabela, $id, 8, $idServidorPesquisado);
+                        $Objetolog->registraLog($idUsuario, $data, $atividade, $tabela, $id, 8);
 
                         # Fecha a janela aberta
                         loadPage("?fase=uploadTerminado");
