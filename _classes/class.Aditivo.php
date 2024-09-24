@@ -672,6 +672,8 @@ class Aditivo {
             echo "&nbsp;&nbsp;";
             toolTip("(Obs)", $dados["obs"]);
         }
+        
+        p($idAditivo,"f9","right");
     }
 
     ##############################################################

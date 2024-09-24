@@ -74,6 +74,7 @@ if ($acesso) {
                                      idAditivo,
                                      idAditivo,
                                      idAditivo,
+                                     idAditivo,
                                      dtAssinatura,
                                      idAditivo,
                                      idAditivo,
@@ -112,12 +113,12 @@ if ($acesso) {
     $objeto->set_exibeTempoPesquisa(false);
 
     # Parametros da tabela
-    $objeto->set_label(["Tipo", "Objeto", "Publicação", "Aditivo", "Assinatura", "Duração", "Garantia", "Valor"]);
-    $objeto->set_align(["center", "left", "center", "center", "center", "center", "center", "right"]);
-    $objeto->set_width([15, 22, 10, 10, 13, 10, 10, 10]);
+    $objeto->set_label(["id", "Tipo", "Objeto", "Publicação", "Aditivo", "Assinatura", "Duração", "Garantia", "Valor"]);
+    $objeto->set_align(["center", "center", "left", "center", "center", "center", "center", "center", "right"]);
+    $objeto->set_width([3, 15, 22, 10, 10, 10, 10, 10, 10]);
 
-    $objeto->set_classe(["Aditivo", "Aditivo", "Aditivo", "Aditivo", "Contrato", "Aditivo", "Aditivo", "Aditivo"]);
-    $objeto->set_metodo(["exibeTipoNumerado", "exibeObjeto", "exibePublicacao", "exibeAditivo", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"]);
+    $objeto->set_classe([null, "Aditivo", "Aditivo", "Aditivo", "Aditivo", "Contrato", "Aditivo", "Aditivo", "Aditivo"]);
+    $objeto->set_metodo([null, "exibeTipoNumerado", "exibeObjeto", "exibePublicacao", "exibeAditivo", "exibeAssinaturaEReitor", "exibePeriodo", "exibeGarantia", "exibeValor"]);
 
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
