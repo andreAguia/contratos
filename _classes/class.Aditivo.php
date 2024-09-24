@@ -372,7 +372,7 @@ class Aditivo {
             $tipo = null;
             $dtFinal = null;
 
-            if (empty($prazo)) {
+            if (empty($prazo) OR empty($tipoPrazo)) {
                 $retorno = "{$dtInicial}<br/>---<br/>---";
             } else {
                 if ($tipoPrazo == 1) {
@@ -549,7 +549,7 @@ class Aditivo {
             }
         }
 
-        # Se não tiver aditivo com data retorna a dtFinal do contraTO   
+        # Se não tiver aditivo com data retorna a dtFinal do contrato
         $contrato = new Contrato();
         $dtFinal = $contrato->getDtFinal($idContrato);
         return addDias($dtFinal, 1, false);

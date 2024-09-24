@@ -510,8 +510,7 @@ if ($acesso) {
             break;
 
         case "gravar" :
-            #$objeto->gravar($id, "cadastroAditivoExtra.php"); // retirado a pedido de Kátia
-            $objeto->gravar($id);
+            $objeto->gravar($id, "cadastroAditivoExtra.php");
             break;
 
         ################################################################
