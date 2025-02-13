@@ -794,12 +794,23 @@ class Contrato {
             $dtFinal = $this->getVigencia($idContrato);
             $tempo = $this->getTempoTotal($idContrato);
             p("{$dtInicial} - {$dtFinal}", "pVigencia");
+            
+            # Meses
+            if (!empty($tempo["meses"])) {
+                if ($tempo["meses"] >= 60) {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal60");
+                } else {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal");
+                }
+            }
 
-            # Verifica se já passou de 60 meses
-            if ($tempo["meses"] >= 60) {
-                p("{$tempo["meses"]} Meses", "pTempoTotal60");
-            } else {
-                p("{$tempo["meses"]} Meses", "pTempoTotal");
+            # Dias
+            if (!empty($tempo["dias"])) {
+                if ($tempo["dias"] >= 1800) {
+                    p("{$tempo["dias"]} dias", "pTempoTotal60");
+                } else {
+                    p("{$tempo["dias"]} dias", "pTempoTotal");
+                }
             }
         }
     }
@@ -835,12 +846,26 @@ class Contrato {
 
             return null;
         } else {
+            
+            # Pega os valores
             $tempo = $this->getTempoTotal($idContrato);
-            # Verifica se já passou de 60 meses
-            if ($tempo["meses"] >= 60) {
-                p("{$tempo["meses"]} Meses", "pTempoTotal60");
-            } else {
-                p("{$tempo["meses"]} Meses", "pTempoTotal");
+            
+            # Meses
+            if (!empty($tempo["meses"])) {
+                if ($tempo["meses"] >= 60) {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal60");
+                } else {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal");
+                }
+            }
+
+            # Dias
+            if (!empty($tempo["dias"])) {
+                if ($tempo["dias"] >= 1800) {
+                    p("{$tempo["dias"]} dias", "pTempoTotal60");
+                } else {
+                    p("{$tempo["dias"]} dias", "pTempoTotal");
+                }
             }
         }
     }
@@ -1324,7 +1349,7 @@ class Contrato {
         } else {
             echo "---";
         }
-        
+
         # Publicação
         p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
 
@@ -1365,10 +1390,10 @@ class Contrato {
         } else {
             echo "---";
         }
-        
+
         # Contrato
         p("Contrato", "pAditivoPublicacao");
-        p($conteudo['numero'], "pAditivoPag");       
+        p($conteudo['numero'], "pAditivoPag");
         return;
     }
 
