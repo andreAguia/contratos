@@ -96,6 +96,7 @@ if ($acesso) {
     $relatorio->set_log(false);
 
     $relatorio->set_conteudo($row);
+    $relatorio->set_cabecalhoGerencia("Setor de Contratos");
     $relatorio->show();
 
     $page->terminaPagina();
