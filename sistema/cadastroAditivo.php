@@ -195,7 +195,6 @@ if ($acesso) {
             'linha' => 3,
             'nome' => 'dtAssinatura',
             'label' => 'Assinatura:',
-            'required' => true,
             'tipo' => 'date',
             'col' => 3,
             'size' => 15),

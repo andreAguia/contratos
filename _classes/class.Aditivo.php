@@ -673,7 +673,7 @@ class Aditivo {
             toolTip("(Obs)", $dados["obs"]);
         }
         
-        p($idAditivo,"f9","right");
+        #p($idAditivo,"f9","right");
     }
 
     ##############################################################
