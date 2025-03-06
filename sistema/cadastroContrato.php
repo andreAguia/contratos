@@ -241,6 +241,8 @@ if ($acesso) {
                                      tipoPrazo,
                                      rubrica,
                                      valorPorAno,
+                                     dtPncp,
+                                     linkPncp,
                                      obs
                                 FROM tbcontrato
                               WHERE idContrato = ' . $id);
@@ -553,10 +555,28 @@ if ($acesso) {
         ),
         array(
             'linha' => 10,
+            'nome' => 'dtPncp',
+            'label' => 'Publicação no PNCP:',
+            'tipo' => 'date',
+            'col' => 3,
+            'size' => 15,
+            'fieldset' => 'PNCP',
+        ),
+        array(
+            'linha' => 10,
+            'nome' => 'linkPncp',
+            'label' => 'Link:',
+            'tipo' => 'texto',
+            'col' => 9,
+            'size' => 256,
+        ),
+        array(
+            'linha' => 11,
             'nome' => 'obs',
             'label' => 'Observação:',
             'tipo' => 'textarea',
             'size' => array(80, 3),
+            'fieldset' => 'fecha',
         ),
     ));
 
