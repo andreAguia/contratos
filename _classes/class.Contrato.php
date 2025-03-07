@@ -2064,7 +2064,7 @@ class Contrato {
         $painel = new Callout();
         $painel->abre();
 
-        p('Data de Publicação PNCP:<br/>' . trataNulo(date_to_php($row['dtPncp'])), "caracteristicas");
+        p('Data da Publicação:<br/>' . trataNulo(date_to_php($row['dtPncp'])), "center");
 
         if (!empty($row['linkPncp'])) {
 
