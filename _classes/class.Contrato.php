@@ -513,8 +513,10 @@ class Contrato {
 
         $tabela->set_conteudo($row);
         $tabela->set_totalRegistro(false);
-        $tabela->set_editar('cadastroContrato.php?fase=editar');
-        $tabela->set_idCampo('idContrato');
+        if (Verifica::acesso($idUsuario, [1, 9])) {
+            $tabela->set_editar('cadastroContrato.php?fase=editar');
+            $tabela->set_idCampo('idContrato');
+        }
 
         $tabela->show();
     }
