@@ -157,8 +157,8 @@ if ($acesso) {
                       idContrato,
                       idContrato,
                       idContrato,
-                      idContrato                      
-                 FROM tbcontrato JOIN tbmodalidade USING (idModalidade)
+                      idContrato
+                 FROM tbcontrato DD JOIN tbmodalidade USING (idModalidade)
                                  JOIN tbstatus USING (idStatus)
                                  JOIN tbempresa USING (idEmpresa)
                 WHERE true";
@@ -188,7 +188,7 @@ if ($acesso) {
     }
 
     if (!empty($parametroObjeto)) {
-        $select .= " AND objeto LIKE '%{$parametroObjeto}%'";
+        $select .= " AND (objeto LIKE '%{$parametroObjeto}%' OR (SELECT situacao FROM tbsituacao WHERE tbsituacao.idContrato = DD.idContrato ORDER BY idSituacao desc LIMIT 1) LIKE '%{$parametroObjeto}%')";
     }
 
     if (!empty($parametroLei)) {
@@ -208,7 +208,7 @@ if ($acesso) {
                           SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
                           ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbaditivo
-                    WHERE tbaditivo.idContrato = tbcontrato.idContrato
+                    WHERE tbaditivo.idContrato = DD.idContrato
                       AND prazo IS NOT NULL 
                  ORDER BY dtAssinatura desc LIMIT 1),
                  IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY)))), numero";
@@ -216,7 +216,7 @@ if ($acesso) {
     $objeto->set_selectLista($select);
 
     # select do edita
-    $objeto->set_selectEdita('SELECT numero,
+    $objeto->set_selectEdita("SELECT numero,
                                      idModalidade,
                                      numPregao,
                                      siafe,
@@ -245,7 +245,7 @@ if ($acesso) {
                                      linkPncp,
                                      obs
                                 FROM tbcontrato
-                              WHERE idContrato = ' . $id);
+                              WHERE idContrato = {$id}");
 
     # Caminhos
     $objeto->set_linkEditar('?fase=editar');
@@ -856,8 +856,8 @@ if ($acesso) {
             $controle->set_col(3);
             $form->add_item($controle);
 
-            # Objeto
-            $controle = new Input('parametroObjeto', 'texto', 'Objeto:', 1);
+            # Objeto ou Situação
+            $controle = new Input('parametroObjeto', 'texto', 'Objeto e/ou Situação:', 1);
             $controle->set_size(50);
             $controle->set_title('Objeto do contrato');
             $controle->set_valor($parametroObjeto);

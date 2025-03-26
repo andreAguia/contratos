@@ -85,6 +85,8 @@ class Situacao {
         if (!vazio($row)) {
             echo $row[0];
         }
+        
+        hr("geral1");
 
         # Exibe alertas (se tiver)
         $alerta = new AlertaContrato($idContrato);
