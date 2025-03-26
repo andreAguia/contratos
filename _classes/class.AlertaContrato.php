@@ -27,7 +27,7 @@ class AlertaContrato {
 
         # Verifica se é menor que 3 (Contrário a legislação)
         if (($membros < 3) AND ($membros > 0)) {
-            $erro[] = "De acordo com a legislação vigente, a comissão de fiscalização deverá ter, pelo menos, 3 (TRÊS) membros ativos!";
+            $erro[] = "De acordo com a legislação vigente, a comissão de fiscalização deverá ter, pelo menos, 3 (TRÊS) fiscais ativos!";
         }
 
         # Verifica se tem comissão de fiscalização

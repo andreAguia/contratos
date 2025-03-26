@@ -131,7 +131,7 @@ class Comissao {
             $retorno = $this->get_membroTipo($idComissao);
 
             if ($this->e_membroExterno($idComissao)) {
-                $retorno .= "<br/><span class='label warning' title='Membro Externo'>Externo</span>";
+                $retorno .= "<br/><span class='label warning' title='Fiscal Externo'>Externo</span>";
             }
 
             return $retorno;
@@ -220,7 +220,7 @@ class Comissao {
             p($dados2["nome"], "pmembroNome");
             p("Órgão: {$dados2['orgao']}", "pmembroLotacao");
             p("CPF: {$dados2['cpf']}", "pmembroLotacao");
-            p("Membro Externo", "pmembroLotacao");
+            p("Fiscal Externo", "pmembroLotacao");
         }
 
         # Dados do que foi substituído
@@ -331,11 +331,11 @@ class Comissao {
                 'operador' => '=',
                 'id' => 'presidenteComissao'),
             array('coluna' => 2,
-                'valor' => "Membro",
+                'valor' => "Fiscal",
                 'operador' => '=',
                 'id' => 'membroComissao'),
             array('coluna' => 2,
-                'valor' => "Membro Externo",
+                'valor' => "Fiscal Externo",
                 'operador' => '=',
                 'id' => 'membroComissao'),
             array('coluna' => 2,
@@ -351,7 +351,7 @@ class Comissao {
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_titulo("Comissão de Fiscalização");
-        $tabela->set_label(["Foto", "Membro", "Tipo"]);
+        $tabela->set_label(["Foto", "Fiscal", "Tipo"]);
         $tabela->set_align(["center", "left", "center"]);
         $tabela->set_width([20, 60, 20]);
         $tabela->set_classe(["Comissao", "Comissao", "Comissao"]);

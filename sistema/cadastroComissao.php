@@ -153,7 +153,7 @@ if ($acesso) {
             'id' => 'presidenteComissao'),
         array(
             'coluna' => 0,
-            'valor' => "Membro",
+            'valor' => "Fiscal",
             'operador' => '=',
             'id' => 'membroComissao'),
         array(
