@@ -131,7 +131,7 @@ class Comissao {
             $retorno = $this->get_membroTipo($idComissao);
 
             if ($this->e_membroExterno($idComissao)) {
-                $retorno .= "<br/><span class='label warning' title='Fiscal Externo'>Externo</span>";
+                $retorno .= "<br/><span class='label warning' title='Membro Externo'>Externo</span>";
             }
 
             return $retorno;
@@ -220,7 +220,7 @@ class Comissao {
             p($dados2["nome"], "pmembroNome");
             p("Órgão: {$dados2['orgao']}", "pmembroLotacao");
             p("CPF: {$dados2['cpf']}", "pmembroLotacao");
-            p("Fiscal Externo", "pmembroLotacao");
+            p("Membro Externo", "pmembroLotacao");
         }
 
         # Dados do que foi substituído
@@ -335,7 +335,7 @@ class Comissao {
                 'operador' => '=',
                 'id' => 'membroComissao'),
             array('coluna' => 2,
-                'valor' => "Fiscal Externo",
+                'valor' => "Membro Externo",
                 'operador' => '=',
                 'id' => 'membroComissao'),
             array('coluna' => 2,
