@@ -30,7 +30,8 @@ class Contrato {
             [1, "Obra"],
             [2, "Serviço"],
             [3, "Compra"],
-            [4, "Serviço Contínuo"]
+            [4, "Serviço Contínuo"],
+            [5, "Serviço Contínuo - Concessionária"],
         ];
     }
 
