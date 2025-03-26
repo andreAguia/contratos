@@ -513,8 +513,10 @@ class Contrato {
 
         $tabela->set_conteudo($row);
         $tabela->set_totalRegistro(false);
-        $tabela->set_editar('cadastroContrato.php?fase=editar');
-        $tabela->set_idCampo('idContrato');
+        if (Verifica::acesso($idUsuario, [1, 9])) {
+            $tabela->set_editar('cadastroContrato.php?fase=editar');
+            $tabela->set_idCampo('idContrato');
+        }
 
         $tabela->show();
     }
@@ -795,11 +797,22 @@ class Contrato {
             $tempo = $this->getTempoTotal($idContrato);
             p("{$dtInicial} - {$dtFinal}", "pVigencia");
 
-            # Verifica se já passou de 60 meses
-            if ($tempo["meses"] >= 60) {
-                p("{$tempo["meses"]} Meses", "pTempoTotal60");
-            } else {
-                p("{$tempo["meses"]} Meses", "pTempoTotal");
+            # Meses
+            if (!empty($tempo["meses"])) {
+                if ($tempo["meses"] >= 60) {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal60");
+                } else {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal");
+                }
+            }
+
+            # Dias
+            if (!empty($tempo["dias"])) {
+                if ($tempo["dias"] >= 1800) {
+                    p("{$tempo["dias"]} dias", "pTempoTotal60");
+                } else {
+                    p("{$tempo["dias"]} dias", "pTempoTotal");
+                }
             }
         }
     }
@@ -835,12 +848,26 @@ class Contrato {
 
             return null;
         } else {
+
+            # Pega os valores
             $tempo = $this->getTempoTotal($idContrato);
-            # Verifica se já passou de 60 meses
-            if ($tempo["meses"] >= 60) {
-                p("{$tempo["meses"]} Meses", "pTempoTotal60");
-            } else {
-                p("{$tempo["meses"]} Meses", "pTempoTotal");
+
+            # Meses
+            if (!empty($tempo["meses"])) {
+                if ($tempo["meses"] >= 60) {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal60");
+                } else {
+                    p("{$tempo["meses"]} Meses", "pTempoTotal");
+                }
+            }
+
+            # Dias
+            if (!empty($tempo["dias"])) {
+                if ($tempo["dias"] >= 1800) {
+                    p("{$tempo["dias"]} dias", "pTempoTotal60");
+                } else {
+                    p("{$tempo["dias"]} dias", "pTempoTotal");
+                }
             }
         }
     }
@@ -1324,7 +1351,7 @@ class Contrato {
         } else {
             echo "---";
         }
-        
+
         # Publicação
         p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
 
@@ -1365,10 +1392,10 @@ class Contrato {
         } else {
             echo "---";
         }
-        
+
         # Contrato
         p("Contrato", "pAditivoPublicacao");
-        p($conteudo['numero'], "pAditivoPag");       
+        p($conteudo['numero'], "pAditivoPag");
         return;
     }
 
@@ -2013,5 +2040,56 @@ class Contrato {
         }
     }
 
-    ########################################################
+    ###########################################################
+
+    function exibePncp($idContrato = null) {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            alert("É necessário informar o id.");
+            return;
+        }
+
+        # Pega os dados
+        $select = "SELECT dtPncp,
+                          linkPncp
+                     FROM tbcontrato
+                    WHERE idContrato = {$idContrato}";
+
+        $row = $contratos->select($select, false);
+
+        tituloTable("Portal Nacional de Contratação Públicas");
+
+        $painel = new Callout();
+        $painel->abre();
+
+        p('Data da Publicação:<br/>' . trataNulo(date_to_php($row['dtPncp'])), "center");
+
+        if (!empty($row['linkPncp'])) {
+
+            $div = new Div("divEdita1");
+            $div->abre();
+
+            $div = new Div("divEdita2");
+            $div->abre();
+
+            # Botão
+            $botaoEditar = new Link("Link", $row['linkPncp']);
+            $botaoEditar->set_class('tiny button secondary');
+            $botaoEditar->set_target("_blank");
+            $botaoEditar->set_title('Editar características especiais do contrato');
+            $botaoEditar->show();
+
+            $div->fecha();
+
+            $div->fecha();
+        }
+
+        $painel->fecha();
+    }
+
+    ###########################################################
 }

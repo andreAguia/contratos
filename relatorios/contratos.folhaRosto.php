@@ -38,6 +38,7 @@ if ($acesso) {
 
     # Relatório
     $relatorio = new Relatorio();
+    $relatorio->set_cabecalhoGerencia("Setor de Contratos");
     $relatorio->exibeCabecalho();
     
     # Exibe o valor e a comissão

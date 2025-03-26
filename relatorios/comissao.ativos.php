@@ -54,6 +54,7 @@ if ($acesso) {
 
     $relatorio->set_titulo($titulo);
     $relatorio->set_subtitulo($subTitulo . "<br/>Agrupado pelo Ano de Assinatura");
+    $relatorio->set_cabecalhoGerencia("Setor de Contratos");
     $relatorio->show();
 
     $page->terminaPagina();

@@ -195,7 +195,6 @@ if ($acesso) {
             'linha' => 3,
             'nome' => 'dtAssinatura',
             'label' => 'Assinatura:',
-            'required' => true,
             'tipo' => 'date',
             'col' => 3,
             'size' => 15),
@@ -359,7 +358,7 @@ if ($acesso) {
                 $botaoControle = new Button("Controle de Aluguel", "cadastroReceita.php");
                 $botaoControle->set_title("Acessa a rotina de controle de aluguel para contratos de receita");
                 $menu1->add_link($botaoControle, "right");
-            }
+            }            
 
             if (Verifica::acesso($idUsuario, [1, 9])) {
 
@@ -377,6 +376,8 @@ if ($acesso) {
                 $botaoRel->set_imagem($imagem);
                 $menu1->add_link($botaoRel, "right");
             }
+
+
 
             $menu1->show();
 
@@ -485,7 +486,12 @@ if ($acesso) {
             $contrato->listaProcessosExecucao($idContrato, $idUsuario);
 
             $grid->fechaColuna();
-            $grid->abreColuna(8);
+            $grid->abreColuna(3);
+            
+            $contrato->exibePncp($idContrato);
+            
+            $grid->fechaColuna();
+            $grid->abreColuna(5);
 
             # Exibe as Características do Contrato
             $contrato->exibeCaracteristicas($idContrato, $idUsuario);
