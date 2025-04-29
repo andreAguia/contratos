@@ -1,7 +1,7 @@
 <?php
 
 # Configuração
-include ("sistema/_config.php");
+include ("/sistema/_config.php");
 
 # Cabeçalho da Página
 AreaServidor::cabecalho();
