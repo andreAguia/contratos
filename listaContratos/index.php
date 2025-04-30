@@ -18,16 +18,16 @@ $contratos = new Contratos();
 AreaServidor::cabecalho();
 br();
 
-$select = "SELECT idContrato,
+$select = "SELECT YEAR(dtInicial),
+                numero,
                 idContrato,
                 idEmpresa,
-                idContrato,
-                idContrato,
                 idContrato
            FROM tbcontrato DD JOIN tbmodalidade USING (idModalidade)
                            JOIN tbstatus USING (idStatus)
                            JOIN tbempresa USING (idEmpresa)
-          WHERE true";
+           WHERE idStatus = 1                
+          ORDER BY YEAR(dtInicial) desc, dtInicial";
 
 $array = $contratos->select($select);
 
@@ -36,12 +36,14 @@ $tabela = new Tabela();
 $tabela->set_titulo("Contratos");
 $tabela->set_conteudo($array);
 
-$tabela->set_label(["Contrato", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Folha"]);
-$tabela->set_classe(["Contrato", "Contrato", "Empresa", "Contrato", "Contrato"]);
-$tabela->set_metodo(["exibeNumeroContrato", "exibeObjeto", "exibeEmpresaCnpj", "exibeProcessoERequisitante", "exibeTempoEVigencia"]);
-$tabela->set_width([10, 20, 20, 20, 15]);
-$tabela->set_align(["center", "left", "left", "left", "center", "left"]);
-$tabela->set_bordaInterna(true);
+$tabela->set_label(["Ano", "Contrato", "Objeto", "Empresa",  "Folha"]);
+$tabela->set_classe([null, null, "Contrato", "Empresa"]);
+$tabela->set_metodo([null, null, "exibeObjeto", "exibeEmpresaRelatorio"]);
+$tabela->set_width([10, 10, 40, 40]);
+$tabela->set_align(["center", "center", "left", "left"]);
+#$tabela->set_bordaInterna(true);
+$tabela->set_rowspan(0);
+$tabela->set_grupoCorColuna(0);
 
 # Botão 
 $botao = new BotaoGrafico();
@@ -52,7 +54,7 @@ $botao->set_target("_blank");
 $botao->set_imagem(PASTA_FIGURAS_GERAIS . "olho.png", 20, 20);
 
 # Coloca o objeto link na tabela
-$tabela->set_link(["", "", "", "", "", $botao]);
+$tabela->set_link(["", "", "", "",  $botao]);
 
 $tabela->show();
 
