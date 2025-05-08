@@ -71,7 +71,7 @@ $grid->fechaGrid();
 $contrato->exibeResumoDadosRel($idContrato);
 
 # Exibe o contrato
-$contrato->exibeDadosContratoRel($idContrato);
+$contrato->exibeDadosContrato2Rel($idContrato);
 
 # Exibe os aditivos
 $aditivo->exibeAditivosContratoRel($idContrato);

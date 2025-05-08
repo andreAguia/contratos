@@ -573,6 +573,54 @@ class Contrato {
 
     ###########################################################
 
+    /**
+     * Método exibeDadosConcurso
+     * fornece os dados de uma vaga em forma de tabela
+     *
+     * @param    string $idContrato O id da vaga
+     */
+    public function exibeDadosContrato2Rel($idContrato) {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+        $conteudo = $this->getDados($idContrato);
+
+        $select = "SELECT idContrato,
+                          dtAssinatura,
+                          idContrato,
+                          idContrato
+                     FROM tbcontrato
+                    WHERE idContrato = {$idContrato}";
+
+        $contratos = new Contratos();
+        $row = $contratos->select($select);
+
+        tituloRelatorio("Contrato {$conteudo["numero"]}");
+
+        # Monta o Relatório
+        $relatorio = new Relatorio();
+        $relatorio->set_label(["Publicação", "Assinatura", "Duração", "Valor"]);
+        $relatorio->set_align(["center", "center", "center", "center", "right"]);
+        #$relatorio->set_width(array(15, 25, 10, 10, 10, 15, 15));
+        $relatorio->set_classe(["Contrato", null, "Contrato", "Contrato"]);
+        $relatorio->set_metodo(["exibePublicacaoRel", null, "getPeriodo", "exibeValor"]);
+        $relatorio->set_funcao([null, "date_to_php"]);
+        $relatorio->set_conteudo($row);
+
+        $relatorio->set_subTotal(false);
+        $relatorio->set_totalRegistro(false);
+        $relatorio->set_dataImpressao(false);
+        $relatorio->set_cabecalhoRelatorio(false);
+        $relatorio->set_menuRelatorio(false);
+        $relatorio->set_log(false);
+        $relatorio->show();
+    }
+
+    ###########################################################
+
     public function exibeResumoDados($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
