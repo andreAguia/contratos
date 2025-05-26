@@ -2125,12 +2125,20 @@ class Contrato {
             $div = new Div("divEdita2");
             $div->abre();
 
-            # Botão
+            # Botão link
             $botaoEditar = new Link("Link", $row['linkPncp']);
             $botaoEditar->set_class('tiny button secondary');
             $botaoEditar->set_target("_blank");
             $botaoEditar->set_title('Editar características especiais do contrato');
             $botaoEditar->show();
+            
+            # Botão copiar
+            $botaoEditar = new Link("Copiar");
+            $botaoEditar->set_class('tiny button secondary');
+            $botaoEditar->set_onClick("navigator.clipboard.writeText('{$row['linkPncp']}'); alert('Link copiado para área de transferência.');");
+            $botaoEditar->set_title('Copia o link para a área de tranferência');
+            $botaoEditar->show();            
+            
 
             $div->fecha();
 
