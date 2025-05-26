@@ -243,6 +243,7 @@ if ($acesso) {
                                      valorPorAno,
                                      dtPncp,
                                      linkPncp,
+                                     idPncp,
                                      obs
                                 FROM tbcontrato
                               WHERE idContrato = {$id}");
@@ -563,7 +564,7 @@ if ($acesso) {
             'fieldset' => 'PNCP',
         ),
         array(
-            'linha' => 10,
+            'linha' => 11,
             'nome' => 'linkPncp',
             'label' => 'Link:',
             'tipo' => 'texto',
@@ -571,7 +572,15 @@ if ($acesso) {
             'size' => 256,
         ),
         array(
-            'linha' => 11,
+            'linha' => 12,
+            'nome' => 'idPncp',
+            'label' => 'Id:',
+            'tipo' => 'texto',
+            'col' => 9,
+            'size' => 256,
+        ),
+        array(
+            'linha' => 13,
             'nome' => 'obs',
             'label' => 'Observação:',
             'tipo' => 'textarea',
@@ -909,7 +918,7 @@ if ($acesso) {
         ################################################################
 
         case "gravar":
-            $objeto->gravar($id, null, "cadastroContratoPosGravacao.php");
+            $objeto->gravar($id, "cadastroContratoExtra.php", "cadastroContratoPosGravacao.php");
             break;
 
         ################################################################
