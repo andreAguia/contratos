@@ -52,6 +52,7 @@ if ($acesso) {
     # select da lista
     $objeto->set_selectLista("SELECT  codigo,
                                       natureza,
+                                      afetaSaldo,
                                       obs,
                                       idNatureza
                                  FROM tbnatureza
@@ -60,6 +61,7 @@ if ($acesso) {
     # select do edita
     $objeto->set_selectEdita("SELECT codigo,
                                      natureza,
+                                     afetaSaldo,
                                      obs
                                 FROM tbnatureza
                               WHERE idNatureza = {$id}");
@@ -71,9 +73,10 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(array("Código", "Natureza", "Obs"));
-    $objeto->set_width(array(15, 20, 50));
-    $objeto->set_align(array("center", "center", "left"));
+    $objeto->set_label(["Código", "Natureza", "Afeta o Saldo?", "Obs"]);
+    $objeto->set_width([15, 20, 15, 35]);
+    $objeto->set_align(["center", "center", "center", "left"]);
+    $objeto->set_funcao([null, null, "ressaltaSimNao"]);
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -98,12 +101,20 @@ if ($acesso) {
             "size" => 10),
         array("linha" => 1,
             "nome" => "natureza",
-            "label" => "Natureza:",
+            "label" => "Nome da Natureza:",
             "tipo" => "texto",
             "required" => true,
             "autofocus" => true,
-            "col" => 9,
+            "col" => 6,
             "size" => 100),
+        array('linha' => 1,
+            'nome' => 'afetaSaldo',
+            'autofocus' => true,
+            'label' => 'Considera no Saldo?',
+            'size' => 10,
+            "required" => true,
+            'col' => 3,
+            'tipo' => 'simnao3'),
         array("linha" => 2,
             "nome" => "obs",
             "label" => "Observação:",
