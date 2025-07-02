@@ -69,6 +69,7 @@ if ($acesso) {
                                      idPagamento,                                     
                                      tipo,
                                      natureza,
+                                     afetaSaldo,
                                      tbpagamento.obs,
                                      idPagamento
                                 FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
@@ -103,10 +104,10 @@ if ($acesso) {
     $objeto->set_grupoCorColuna(0);
 
     # Parametros da tabela
-    $objeto->set_label(["Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Obs"]);
-    $objeto->set_align(["center", "center", "center", "center", "right", "center", "center", "left"]);
-    $objeto->set_width([5, 13, 10, 10, 12, 5, 5, 30]);
-    $objeto->set_funcao([null, null, "date_to_php"]);
+    $objeto->set_label(["Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Afeta o Saldo?", "Obs"]);
+    $objeto->set_align(["center", "center", "center", "center", "right", "center", "center", "center", "left"]);
+    $objeto->set_width([5, 13, 10, 10, 12, 8, 8, 8, 16]);
+    $objeto->set_funcao([null, null, "date_to_php", null, null, null, null, "ressaltaSimNao"]);
     $objeto->set_classe([null, "Pagamento", null, null, "Pagamento", "Pagamento"]);
     $objeto->set_metodo([null, "exibeReferencia", null, null, "exibeValor", "exibeTipo"]);
     $objeto->set_numeroOrdem(true);
@@ -201,6 +202,7 @@ if ($acesso) {
             'label' => 'Natureza:',
             'tipo' => 'combo',
             'array' => $natureza,
+            'required' => true,
             'col' => 3,
             'size' => 100),
         array(
