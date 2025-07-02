@@ -64,13 +64,14 @@ class Pagamento {
         if (is_null($idNatureza)) {
             $select = "SELECT valor,
                               tipo 
-                         FROM tbpagamento 
-                        WHERE idContrato = {$idContrato}";
+                         FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
+                        WHERE afetaSaldo = 's'
+                          AND idContrato = {$idContrato}";
         } else {
             if ($idNatureza == 0) {
-                $select = "SELECT valor, tipo FROM tbpagamento WHERE idContrato = {$idContrato} and idNatureza IS NULL";
+                $select = "SELECT valor, tipo FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) WHERE afetaSaldo = 's' AND idContrato = {$idContrato} and idNatureza IS NULL";
             } else {
-                $select = "SELECT valor, tipo FROM tbpagamento WHERE idContrato = {$idContrato} and idNatureza = {$idNatureza}";
+                $select = "SELECT valor, tipo FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) WHERE afetaSaldo = 's' AND idContrato = {$idContrato} and idNatureza = {$idNatureza}";
             }
         }
         $row = $contratos->select($select);
@@ -366,6 +367,7 @@ class Pagamento {
         $select = "SELECT distinct idNatureza, natureza
                      FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
                     WHERE idContrato = {$idContrato} and idNatureza IS NOT NULL
+                      AND afetaSaldo = 's'
                  ORDER BY natureza desc ";
 
         $row = $contratos->select($select);
@@ -417,8 +419,9 @@ class Pagamento {
 
         # Monta o select        
         $select = "SELECT DISTINCT anoReferencia
-                     FROM tbpagamento
-                    WHERE idContrato = {$idContrato}
+                     FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
+                    WHERE afetaSaldo = 's' 
+                      AND idContrato = {$idContrato}
                  ORDER BY anoReferencia desc";
 
         $row = $contratos->select($select);
@@ -664,8 +667,9 @@ class Pagamento {
         } else {
             $select = "SELECT valor, 
                                tipo 
-                         FROM tbpagamento 
+                         FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
                         WHERE idContrato = {$idContrato} 
+                          AND afetaSaldo = 's'
                           AND anoReferencia = {$anoReferencia}";
 
             $row = $contratos->select($select);
