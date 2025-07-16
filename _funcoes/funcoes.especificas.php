@@ -11,39 +11,52 @@ function get_DadosContrato($idContrato) {
 ##########################################################
 
 function get_DadosContratoPagamento($idContrato) {
+
+    # Inicia as Classes
     $contrato = new Contrato();
-    # Exibe os dados do contrato
+    $pagamento = new Pagamento();
+
+    /*
+     *  Exibe os dados do contrato
+     */
     $contrato->exibeResumoDados($idContrato);
 
-    # Exibe a observação do saldo (quando houver)
+    /*
+     *  Exibe a observação do saldo (quando houver)
+     */
     $contrato->exibeObsSaldo($idContrato);
 
     $grid = new Grid();
-    $grid->abreColuna(3);
 
-    # Exibe o valor    
+    /*
+     * Exibe o Valor Total do Contrato
+     */
+    $grid->abreColuna(3);
     $contrato->exibeValorTotalPainel($idContrato, true);
-
     $grid->fechaColuna();
-    $grid->abreColuna(3);
 
-    # Exibe o valor Liquidado
-    $pagamento = new Pagamento();
+    /*
+     * Exibe o Valor Liquidado
+     */
+    $grid->abreColuna(3);
     $pagamento->exibeValorLiquidado($idContrato);
-
     $grid->fechaColuna();
-    $grid->abreColuna(3);
 
-    # Exibe o Saldo
+    /*
+     * Exibe o Saldo 
+     */
+    $grid->abreColuna(3);
     $pagamento->exibeValorSaldo($idContrato);
-
     $grid->fechaColuna();
+
+    /*
+     * Exibe o Pgto Ideal
+     */
+
     $grid->abreColuna(3);
-
-    # Exibe o Pgto Ideal
     $pagamento->exibePgtoIdeal($idContrato);
-
     $grid->fechaColuna();
+
     $grid->fechaGrid();
 }
 

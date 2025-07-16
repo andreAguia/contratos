@@ -49,8 +49,10 @@ if ($acesso) {
     ################################################################
     # Exibe os dados do Contrato
     if ($fase == "listar") {
+        # Exibe os dados do Contrato e dos pagamentos
         $objeto->set_rotinaExtra("get_DadosContratoPagamento");
     } else {
+        # Exibe somente os dados do contrato
         $objeto->set_rotinaExtra("get_DadosContrato");
     }
     $objeto->set_rotinaExtraParametro($idContrato);

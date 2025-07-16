@@ -49,8 +49,9 @@ class Pagamento {
     ############################################################
 
     private function getValorLiquidado($idContrato = null, $idNatureza = null) {
+
         # Verifica se foi informado o id
-        if (vazio($idContrato)) {
+        if (empty($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
         }
@@ -58,9 +59,10 @@ class Pagamento {
         # Inicia a variável de retorno
         $valorTotal = 0;
 
-        # Pega os valores dos pgtos
+        # Inicia as Classes
         $contratos = new Contratos();
 
+        # Pega os valores dos pgtos que afetam o saldo
         if (is_null($idNatureza)) {
             $select = "SELECT valor,
                               tipo 
@@ -69,11 +71,22 @@ class Pagamento {
                           AND idContrato = {$idContrato}";
         } else {
             if ($idNatureza == 0) {
-                $select = "SELECT valor, tipo FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) WHERE afetaSaldo = 's' AND idContrato = {$idContrato} and idNatureza IS NULL";
+                $select = "SELECT valor,
+                                  tipo 
+                             FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
+                            WHERE afetaSaldo = 's' 
+                              AND idContrato = {$idContrato} 
+                              AND idNatureza IS NULL";
             } else {
-                $select = "SELECT valor, tipo FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) WHERE afetaSaldo = 's' AND idContrato = {$idContrato} and idNatureza = {$idNatureza}";
+                $select = "SELECT valor,
+                                  tipo 
+                             FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
+                            WHERE afetaSaldo = 's' 
+                              AND idContrato = {$idContrato} 
+                              AND idNatureza = {$idNatureza}";
             }
         }
+
         $row = $contratos->select($select);
         $numPgtos = $contratos->count($select);
 
@@ -81,10 +94,12 @@ class Pagamento {
         if ($numPgtos > 0) {
             foreach ($row as $item) {
                 if ($item["tipo"] == 2) {
-                    $valorTotal -= $item["valor"];  // Diminui Quando é estorno
+                    # Diminui Quando é estorno
+                    $valorTotal -= $item["valor"];
                 } elseif ($item["tipo"] == 1) {
-                    $valorTotal += $item["valor"];  // /aumenta quando é pgto
-                }   // Desconsidera o SRA
+                    # Aumenta quando é pgto
+                    $valorTotal += $item["valor"];
+                }
             }
         }
 
@@ -116,12 +131,12 @@ class Pagamento {
 
     public function exibeValorLiquidado($idContrato = null) {
         # Verifica se foi informado
-        if (vazio($idContrato)) {
+        if (empty($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
         }
 
-        # exibe o resultado
+        # Exibe o titulo
         tituloTable("Valor Liquidado");
 
         $painel = new Callout("secondary");
@@ -147,6 +162,17 @@ class Pagamento {
             $this->exibeValorLiquidadoPorNatureza($idContrato);
             $this->exibeValorLiquidadoPorAno($idContrato);
 
+            # Verifica se tem algum pagamento sem afetar saldo
+            if ($this->temPgtaSemSaldo($idContrato)) {
+
+                hr("padrao");
+
+                # Exibe o titulo
+                p("Não Afeta o Saldo", "center", "f14");
+
+                $this->exibeValorSemSaldoPorNatureza($idContrato);
+                $this->exibeValorSemSaldoPorAno($idContrato);
+            }
             $div->fecha();
         }
         $painel->fecha();
@@ -166,7 +192,7 @@ class Pagamento {
             return null;
         }
 
-        return formataMoeda2($this->getValorLiquidadoAno($idContrato, $anoReferencia));
+        return formataMoeda2($this->getValorLiquidadoPorAno($idContrato, $anoReferencia));
     }
 
     ############################################################
@@ -372,7 +398,7 @@ class Pagamento {
 
         $row = $contratos->select($select);
         $numPgtos = $contratos->count($select);
-        
+
         # Somatório
         $somatorio = 0;
 
@@ -382,7 +408,7 @@ class Pagamento {
                 $resultado[] = [$item["natureza"], $this->getValorLiquidado($idContrato, $item["idNatureza"])];
                 $somatorio += $this->getValorLiquidado($idContrato, $item["idNatureza"]);
             }
-            
+
             $resultado[] = ["Total", $somatorio];
         } else {
             $resultado[] = [null, null];
@@ -393,6 +419,7 @@ class Pagamento {
         $tabela->set_titulo("Por Natureza");
         $tabela->set_conteudo($resultado);
         $tabela->set_label(["Natureza", "Valor"]);
+        $tabela->set_width([40, 60]);
         $tabela->set_funcao([null, "formataMoeda2"]);
         $tabela->set_totalRegistro(false);
         $tabela->set_formatacaoCondicional([
@@ -433,8 +460,8 @@ class Pagamento {
         # Percorre o array
         if ($numPgtos > 0) {
             foreach ($row as $item) {
-                $resultado[] = [$item["anoReferencia"], $this->getValorLiquidadoAno($idContrato, $item["anoReferencia"])];
-                $somatorio += $this->getValorLiquidadoAno($idContrato, $item["anoReferencia"]);
+                $resultado[] = [$item["anoReferencia"], $this->getValorLiquidadoPorAno($idContrato, $item["anoReferencia"])];
+                $somatorio += $this->getValorLiquidadoPorAno($idContrato, $item["anoReferencia"]);
             }
 
             $resultado[] = ["Total", $somatorio];
@@ -447,6 +474,7 @@ class Pagamento {
         $tabela->set_titulo("Por Ano");
         $tabela->set_conteudo($resultado);
         $tabela->set_label(["Ano", "Valor"]);
+        $tabela->set_width([40, 60]);
         $tabela->set_funcao([null, "formataMoeda2"]);
         $tabela->set_totalRegistro(false);
         $tabela->set_formatacaoCondicional([
@@ -555,6 +583,7 @@ class Pagamento {
     ###########################################################
     /*
      * Verifica se tem algum SRA nos lançamentos
+     * SRA - Saldo Residual Anulado
      */
 
     public function temSra($idContrato = null) {
@@ -654,7 +683,7 @@ class Pagamento {
 
     ############################################################
 
-    private function getValorLiquidadoAno($idContrato = null, $anoReferencia = null) {
+    private function getValorLiquidadoPorAno($idContrato = null, $anoReferencia = null) {
 
         # Inicia a variável de retorno
         $valorTotal = 0;
@@ -666,7 +695,7 @@ class Pagamento {
             return $this->getValorLiquidado($idContrato);
         } else {
             $select = "SELECT valor, 
-                               tipo 
+                              tipo 
                          FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
                         WHERE idContrato = {$idContrato} 
                           AND afetaSaldo = 's'
@@ -689,5 +718,243 @@ class Pagamento {
         }
     }
 
+    ############################################################
+
+    private function getValorSemSaldoPorAno($idContrato = null, $anoReferencia = null) {
+
+        # Inicia a variável de retorno
+        $valorTotal = 0;
+
+        # Pega os valores dos pgtos
+        $contratos = new Contratos();
+
+        if (is_null($anoReferencia)) {
+            return $this->getValorLiquidado($idContrato);
+        } else {
+            $select = "SELECT valor, 
+                              tipo 
+                         FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
+                        WHERE idContrato = {$idContrato} 
+                          AND afetaSaldo = 'n'
+                          AND anoReferencia = {$anoReferencia}";
+
+            $row = $contratos->select($select);
+            $numPgtos = $contratos->count($select);
+
+            # Verifica se tem algum aditivo
+            if ($numPgtos > 0) {
+                foreach ($row as $item) {
+                    if ($item["tipo"] == 2) {
+                        $valorTotal -= $item["valor"];  // Diminui Quando é estorno
+                    } elseif ($item["tipo"] == 1) {
+                        $valorTotal += $item["valor"];  // /aumenta quando é pgto
+                    }   // Desconsidera o SRA
+                }
+            }
+            return $valorTotal;
+        }
+    }
+
     ###########################################################
+
+    public function exibeValorSemSaldoPorAno($idContrato = null) {
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Monta o select        
+        $select = "SELECT DISTINCT anoReferencia
+                     FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
+                    WHERE afetaSaldo = 'n' 
+                      AND idContrato = {$idContrato}
+                 ORDER BY anoReferencia desc";
+
+        $row = $contratos->select($select);
+        $numPgtos = $contratos->count($select);
+
+        # Somatório
+        $somatorio = 0;
+
+        # Percorre o array
+        if ($numPgtos > 0) {
+            foreach ($row as $item) {
+                $resultado[] = [$item["anoReferencia"], $this->getValorSemSaldoPorAno($idContrato, $item["anoReferencia"])];
+                $somatorio += $this->getValorSemSaldoPorAno($idContrato, $item["anoReferencia"]);
+            }
+
+            $resultado[] = ["Total", $somatorio];
+        } else {
+            $resultado[] = [null, null];
+        }
+
+        # Exemplo de tabela simples
+        $tabela = new Tabela();
+        $tabela->set_titulo("Por Ano");
+        $tabela->set_conteudo($resultado);
+        $tabela->set_label(["Ano", "Valor"]);
+        $tabela->set_width([40, 60]);
+        $tabela->set_funcao([null, "formataMoeda2"]);
+        $tabela->set_totalRegistro(false);
+        $tabela->set_formatacaoCondicional([
+            [
+                'coluna' => 0,
+                'valor' => "Total",
+                'operador' => '=',
+                'id' => 'resumoTotal'
+        ]]);
+        $tabela->show();
+    }
+
+    ###########################################################    
+
+    private function getValorSemSaldoPorNatureza($idContrato = null, $idNatureza = null) {
+
+        # Verifica se foi informado o id
+        if (empty($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Inicia a variável de retorno
+        $valorTotal = 0;
+
+        # Inicia as Classes
+        $contratos = new Contratos();
+
+        # Pega os valores dos pgtos que afetam o saldo
+        if (is_null($idNatureza)) {
+            $select = "SELECT valor,
+                              tipo 
+                         FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
+                        WHERE afetaSaldo = 'n'
+                          AND idContrato = {$idContrato}";
+        } else {
+            if ($idNatureza == 0) {
+                $select = "SELECT valor,
+                                  tipo 
+                             FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
+                            WHERE afetaSaldo = 'n' 
+                              AND idContrato = {$idContrato} 
+                              AND idNatureza IS NULL";
+            } else {
+                $select = "SELECT valor,
+                                  tipo 
+                             FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza) 
+                            WHERE afetaSaldo = 'n' 
+                              AND idContrato = {$idContrato} 
+                              AND idNatureza = {$idNatureza}";
+            }
+        }
+
+        $row = $contratos->select($select);
+        $numPgtos = $contratos->count($select);
+
+        # Verifica se tem algum aditivo
+        if ($numPgtos > 0) {
+            foreach ($row as $item) {
+                if ($item["tipo"] == 2) {
+                    # Diminui Quando é estorno
+                    $valorTotal -= $item["valor"];
+                } elseif ($item["tipo"] == 1) {
+                    # Aumenta quando é pgto
+                    $valorTotal += $item["valor"];
+                }
+            }
+        }
+
+        return $valorTotal;
+    }
+
+    ###########################################################
+
+    public function exibeValorSemSaldoPorNatureza($idContrato = null) {
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Monta o select 
+        $select = "SELECT distinct idNatureza, natureza
+                     FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
+                    WHERE idContrato = {$idContrato} and idNatureza IS NOT NULL
+                      AND afetaSaldo = 'n'
+                 ORDER BY natureza desc ";
+
+        $row = $contratos->select($select);
+        $numPgtos = $contratos->count($select);
+
+        # Somatório
+        $somatorio = 0;
+
+        # Percorre o array
+        if ($numPgtos > 0) {
+            foreach ($row as $item) {
+                $resultado[] = [$item["natureza"], $this->getValorSemSaldoPorNatureza($idContrato, $item["idNatureza"])];
+                $somatorio += $this->getValorSemSaldoPorNatureza($idContrato, $item["idNatureza"]);
+            }
+
+            $resultado[] = ["Total", $somatorio];
+        } else {
+            $resultado[] = [null, null];
+        }
+
+        # Exemplo de tabela simples
+        $tabela = new Tabela();
+        $tabela->set_titulo("Por Natureza");
+        $tabela->set_conteudo($resultado);
+        $tabela->set_label(["Natureza", "Valor"]);
+        $tabela->set_width([40, 60]);
+        $tabela->set_funcao([null, "formataMoeda2"]);
+        $tabela->set_totalRegistro(false);
+        $tabela->set_formatacaoCondicional([
+            [
+                'coluna' => 0,
+                'valor' => "Total",
+                'operador' => '=',
+                'id' => 'resumoTotal'
+        ]]);
+        $tabela->show();
+    }
+
+    ###########################################################
+    /*
+     * Verifica se tem algum Pagamento que não é considerado no saldo liquidado
+     */
+
+    public function temPgtaSemSaldo($idContrato = null) {
+
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Monta o select
+        $select = "SELECT idPagamento
+                     FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
+                    WHERE idContrato = {$idContrato}
+                      AND afetaSaldo = 'n'";
+
+        $soma = $contratos->count($select);
+
+        if ($soma > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    ############################################################
 }
