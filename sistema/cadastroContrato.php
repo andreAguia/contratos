@@ -54,6 +54,7 @@ if ($acesso) {
     $parametroStatus = post('parametroStatus', get_session('parametroStatus', 1));
     $parametroModalidade = post('parametroModalidade', get_session('parametroModalidade'));
     $parametroNatureza = post('parametroNatureza', get_session('parametroNatureza'));
+    $parametroSiafe = post('parametroSiafe', get_session('parametroSiafe'));
     $parametroEmpresa = post('parametroEmpresa', get_session('parametroEmpresa'));
     $parametroObjeto = post('parametroObjeto', get_session('parametroObjeto'));
     $parametroSetorRequisitante = post('parametroSetorRequisitante', get_session('parametroSetorRequisitante'));
@@ -65,6 +66,7 @@ if ($acesso) {
     set_session('parametroStatus', $parametroStatus);
     set_session('parametroModalidade', $parametroModalidade);
     set_session('parametroNatureza', $parametroNatureza);
+    set_session('parametroSiafe', $parametroSiafe);
     set_session('parametroEmpresa', $parametroEmpresa);
     set_session('parametroObjeto', $parametroObjeto);
     set_session('parametroSetorRequisitante', $parametroSetorRequisitante);
@@ -178,8 +180,14 @@ if ($acesso) {
     if (!empty($parametroNatureza)) {
         $select .= " AND natDespesa = {$parametroNatureza}";
     }
+    
+    if (!empty($parametroSiafe)) {
+        $select .= " AND siafe = {$parametroSiafe}";
+    }
 
-    if (!empty($parametroStatus)) {
+    if (!empty($parametroStatus) AND $parametroStatus <> "*") {
+        # A comparacao 'e um pouco diferente aqui para possibilitar
+        # O valor padrao inicial ser 1 => Ativos
         $select .= " AND idStatus = {$parametroStatus}";
     }
 
@@ -778,7 +786,7 @@ if ($acesso) {
                                                FROM tbstatus
                                            ORDER BY idStatus');
 
-            array_unshift($comboStatus, array(null, "Todos"));
+            array_unshift($comboStatus, array("*", "Todos"));
 
             # Status
             $controle = new Input('parametroStatus', 'combo', 'Status:', 1);
@@ -832,28 +840,18 @@ if ($acesso) {
             $controle->set_col(3);
             $controle->set_array($comboNatureza);
             $form->add_item($controle);
-
-            /*
-             * Empresa
-             */
-
-            # Pega os dados
-            $comboEmpresa = $contratos->select('SELECT idEmpresa, razaoSocial
-                                               FROM tbempresa
-                                           ORDER BY razaoSocial');
-
-            array_unshift($comboEmpresa, array(null, "Todas"));
-
-            # Empresa
-            $controle = new Input('parametroEmpresa', 'combo', 'Empresa:', 1);
-            $controle->set_size(20);
-            $controle->set_title('Empresa contratada');
-            $controle->set_valor($parametroEmpresa);
+            
+            # Siafe
+            $controle = new Input('parametroSiafe', 'texto', 'Siafe:', 1);
+            $controle->set_size(50);
+            $controle->set_title('Siafe');
+            $controle->set_valor($parametroSiafe);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(2);
             $controle->set_col(3);
-            $controle->set_array($comboEmpresa);
             $form->add_item($controle);
+
+            
 
             # Setor Requisitante
             $controle = new Input('parametroSetorRequisitante', 'texto', 'Setor Requisitante:', 1);
@@ -895,6 +893,28 @@ if ($acesso) {
             $controle->set_array($comboLei);
             $controle->set_linha(2);
             $controle->set_col(3);
+            $form->add_item($controle);
+            
+            /*
+             * Empresa
+             */
+
+            # Pega os dados
+            $comboEmpresa = $contratos->select('SELECT idEmpresa, razaoSocial
+                                               FROM tbempresa
+                                           ORDER BY razaoSocial');
+
+            array_unshift($comboEmpresa, array(null, "Todas"));
+
+            # Empresa
+            $controle = new Input('parametroEmpresa', 'combo', 'Empresa:', 1);
+            $controle->set_size(20);
+            $controle->set_title('Empresa contratada');
+            $controle->set_valor($parametroEmpresa);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(2);
+            $controle->set_col(12);
+            $controle->set_array($comboEmpresa);
             $form->add_item($controle);
 
             $form->show();
