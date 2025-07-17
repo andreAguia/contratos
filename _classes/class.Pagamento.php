@@ -165,13 +165,16 @@ class Pagamento {
             # Verifica se tem algum pagamento sem afetar saldo
             if ($this->temPgtaSemSaldo($idContrato)) {
 
-                hr("padrao");
-
                 # Exibe o titulo
-                p("Não Afeta o Saldo", "center", "f14");
+                tituloTable("Pagamentos que<br/> Não Afetam o Saldo");
+
+                $painel2 = new Callout("secondary");
+                $painel2->abre();
 
                 $this->exibeValorSemSaldoPorNatureza($idContrato);
                 $this->exibeValorSemSaldoPorAno($idContrato);
+
+                $painel2->fecha();
             }
             $div->fecha();
         }
