@@ -48,6 +48,8 @@ if ($acesso) {
     set_session('parametroMembro');
     set_session('parametroTipo');
     set_session('sessionParametro');
+    set_session('parametroAnoPgto');
+    set_session('parametroNaturezaPgto');
 
     # Pega os parâmetros
     $parametroAno = post('parametroAno', get_session('parametroAno'));

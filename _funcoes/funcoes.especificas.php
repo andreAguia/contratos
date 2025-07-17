@@ -19,7 +19,7 @@ function get_DadosContratoPagamento($idContrato) {
     /*
      *  Exibe os dados do contrato
      */
-    $contrato->exibeResumoDados($idContrato);
+    #$contrato->exibeResumoDados($idContrato);
 
     /*
      *  Exibe a observação do saldo (quando houver)

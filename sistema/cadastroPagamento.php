@@ -28,6 +28,14 @@ if ($acesso) {
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
 
+    # Pega os parâmetros
+    $parametroAnoPgto = post('parametroAnoPgto', get_session('parametroAnoPgto'));
+    $parametroNaturezaPgto = post('parametroNaturezaPgto', get_session('parametroNaturezaPgto'));
+
+    # Joga os parâmetros par as sessions
+    set_session('parametroAnoPgto', $parametroAnoPgto);
+    set_session('parametroNaturezaPgto', $parametroNaturezaPgto);
+
     # pega o contrato
     $idContrato = soNumeros(get_session('sessionContrato'));
 
@@ -47,15 +55,86 @@ if ($acesso) {
     $objeto = new Modelo();
 
     ################################################################
+    # Rotina que exibe o formul'ario de Pesquisa extra
+    # Limita o tamanho da tela
+
+    function exibeFormPesqPgto($array) {
+
+        $idContrato = $array[0];
+        $parametroAno = $array[1];
+        $parametroNatureza = $array[2];
+
+        $grid = new Grid();
+        $grid->abreColuna(12);
+
+        # Formulário de Pesquisa
+        $form = new Form('?');
+
+        $contratos = new Contratos();
+        $contrato = new Contrato();
+
+        /*
+         * Ano do Contrato
+         */
+
+        # Pega os dados
+        $comboAno = $contratos->select("SELECT DISTINCT YEAR(data), YEAR(data)
+                                                  FROM tbpagamento
+                                                 WHERE idContrato = {$idContrato}
+                                              ORDER BY YEAR(data) DESC");
+
+        array_unshift($comboAno, array(null, "Todos"));
+
+        # Ano
+        $controle = new Input('parametroAnoPgto', 'combo', 'Ano:', 1);
+        $controle->set_size(20);
+        $controle->set_title('Ano da assinatura do contrato');
+        $controle->set_valor($parametroAno);
+        $controle->set_onChange('formPadrao.submit();');
+        $controle->set_linha(1);
+        $controle->set_col(3);
+        $controle->set_array($comboAno);
+        $form->add_item($controle);
+        /*
+         * Natureza
+         */
+
+        # Pega os dados
+        $comboNatureza = $contratos->select("SELECT DISTINCT idNatureza,
+                                                    natureza
+                                          FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
+                                         WHERE idContrato = {$idContrato} 
+                                      ORDER BY natureza");
+        array_unshift($comboNatureza, array(null, "Todos"));
+
+        # Natureza
+        $controle = new Input('parametroNaturezaPgto', 'combo', 'Natureza da Despesa:', 1);
+        $controle->set_size(20);
+        $controle->set_title('Natureza da Despesa');
+        $controle->set_valor($parametroNatureza);
+        $controle->set_onChange('formPadrao.submit();');
+        $controle->set_linha(1);
+        $controle->set_col(3);
+        $controle->set_array($comboNatureza);
+        $form->add_item($controle);
+
+        $form->show();
+
+        $grid->fechaColuna();
+        $grid->fechaGrid();
+    }
+
+    ################################################################
     # Exibe os dados do Contrato
     if ($fase == "listar") {
         # Exibe os dados do Contrato e dos pagamentos
-        $objeto->set_rotinaExtra("get_DadosContratoPagamento");
+        $objeto->set_rotinaExtra(["get_DadosContrato", "get_DadosContratoPagamento", "exibeFormPesqPgto"]);
+        $objeto->set_rotinaExtraParametro([$idContrato, $idContrato, [$idContrato, $parametroAnoPgto, $parametroNaturezaPgto]]);
     } else {
         # Exibe somente os dados do contrato
         $objeto->set_rotinaExtra("get_DadosContrato");
+        $objeto->set_rotinaExtraParametro($idContrato);
     }
-    $objeto->set_rotinaExtraParametro($idContrato);
 
     # Nome do Modelo
     $objeto->set_nome("Pagamentos");
@@ -63,20 +142,30 @@ if ($acesso) {
     # Botão de voltar da lista
     $objeto->set_voltarLista("cadastroAditivo.php");
 
-    # select da lista
-    $objeto->set_selectLista("SELECT anoReferencia,
-                                     idPagamento,
-                                     data,
-                                     notaFiscal,
-                                     idPagamento,                                     
-                                     tipo,
-                                     natureza,
-                                     afetaSaldo,
-                                     tbpagamento.obs,
-                                     idPagamento
-                                FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
-                               WHERE idContrato = {$idContrato}
-                            ORDER BY anoReferencia desc, mesReferencia desc, data desc");
+    # select da lista    
+    $select = "SELECT anoReferencia,
+                    idPagamento,
+                    data,
+                    notaFiscal,
+                    idPagamento,                                     
+                    tipo,
+                    idNatureza,
+                    tbpagamento.obs,
+                    idPagamento
+               FROM tbpagamento LEFT JOIN tbnatureza USING (idNatureza)
+              WHERE idContrato = {$idContrato}";
+
+    if (!empty($parametroAnoPgto)) {
+        $select .= " AND anoReferencia = {$parametroAnoPgto}";
+    }
+
+    if (!empty($parametroNaturezaPgto)) {
+        $select .= " AND idNatureza = {$parametroNaturezaPgto}";
+    }
+
+    $select .= " ORDER BY anoReferencia desc, mesReferencia desc, data desc";
+
+    $objeto->set_selectLista($select);
 
     # select do edita
     $objeto->set_selectEdita("SELECT data,
@@ -106,12 +195,12 @@ if ($acesso) {
     $objeto->set_grupoCorColuna(0);
 
     # Parametros da tabela
-    $objeto->set_label(["Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Afeta o Saldo?", "Obs"]);
-    $objeto->set_align(["center", "center", "center", "center", "right", "center", "center", "center", "left"]);
-    $objeto->set_width([5, 13, 10, 10, 12, 8, 8, 8, 16]);
-    $objeto->set_funcao([null, null, "date_to_php", null, null, null, null, "ressaltaSimNao"]);
-    $objeto->set_classe([null, "Pagamento", null, null, "Pagamento", "Pagamento"]);
-    $objeto->set_metodo([null, "exibeReferencia", null, null, "exibeValor", "exibeTipo"]);
+    $objeto->set_label(["Ano", "Referência", "Data", "Nota Fiscal", "Valor", "Tipo", "Natureza", "Obs"]);
+    $objeto->set_align(["center", "center", "center", "center", "right", "center", "center", "left"]);
+    $objeto->set_width([5, 13, 10, 10, 12, 8, 8, 20]);
+    $objeto->set_funcao([null, null, "date_to_php"]);
+    $objeto->set_classe([null, "Pagamento", null, null, "Pagamento", "Pagamento", "Natureza"]);
+    $objeto->set_metodo([null, "exibeReferencia", null, null, "exibeValor", "exibeTipo", "exibeNatureza"]);
     $objeto->set_numeroOrdem(true);
     $objeto->set_numeroOrdemTipo('d');
 
@@ -129,9 +218,9 @@ if ($acesso) {
 
     # Dados da combo natureza
     $natureza = $contratos->select('SELECT idNatureza,
-                                         natureza
-                                    FROM tbnatureza
-                                ORDER BY natureza');
+                                           natureza
+                                      FROM tbnatureza
+                                  ORDER BY natureza');
 
     array_unshift($natureza, array(null, null));
 
