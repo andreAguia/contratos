@@ -142,6 +142,7 @@ if ($acesso) {
     if ($fase == "listar") {
         p(SISTEMA, 'grhTitulo');
         p("Versão: " . VERSAO, "versao");
+        br();
     }
 
     # Abre um novo objeto Modelo
@@ -681,6 +682,51 @@ if ($acesso) {
             $botaoVoltar->set_title('Voltar a página anterior');
             $botaoVoltar->set_accessKey('V');
             $menu1->add_link($botaoVoltar, "left");
+            
+            if (Verifica::acesso($idUsuario, [1, 9])) {
+
+                # Empresas
+                $botao = new Button("Empresas", "cadastroEmpresa.php?i=true");
+                $botao->set_title("Cadastro de Empresas");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
+
+                # Comissões
+                $botao = new Button("Comissões", "cadastroMembros.php?i=true");
+                $botao->set_title("Cadastro de Comissões");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
+
+                # Modalidade
+                $botao = new Button("Modalidade", "cadastroModalidade.php?i=true");
+                $botao->set_title("Cadastro de Modalidade");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
+
+                # Status
+                $botao = new Button("Status", "cadastroStatus.php?i=true");
+                $botao->set_title("Cadastro de Status");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
+
+                # Natureza
+                $botao = new Button("Natureza do Saldo", "cadastroNatureza.php?i=true");
+                $botao->set_title("Cadastro de Natureza");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
+
+                # Lei
+                $botao = new Button("Lei", "cadastroLei.php?i=true");
+                $botao->set_title("Cadastro de Leis");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
+
+                # Checklist
+                $botao = new Button("Checklist", "cadastroChecklist.php");
+                $botao->set_title("Modelos de Checklist");
+                $botao->set_class("button secondary");
+                #$menu2->add_link($botao, "right");
+            }
 
             # Relatórios
             $imagem = new Imagem(PASTA_FIGURAS . 'print.png', null, 15, 15);
@@ -699,59 +745,7 @@ if ($acesso) {
             }
 
             $menu1->show();
-
-            /*
-             * Menu auxiliar
-             */
-
-            if (Verifica::acesso($idUsuario, [1, 9])) {
-                #hr("hrMenusecundario");
-                $menu2 = new MenuBar();
-
-                # Empresas
-                $botao = new Button("Empresas", "cadastroEmpresa.php?i=true");
-                $botao->set_title("Cadastro de Empresas");
-                $botao->set_class("button secondary");
-                $menu2->add_link($botao, "right");
-
-                # Comissões
-                $botao = new Button("Comissões", "cadastroMembros.php?i=true");
-                $botao->set_title("Cadastro de Comissões");
-                $botao->set_class("button secondary");
-                $menu2->add_link($botao, "right");
-
-                # Modalidade
-                $botao = new Button("Modalidade", "cadastroModalidade.php?i=true");
-                $botao->set_title("Cadastro de Modalidade");
-                $botao->set_class("button secondary");
-                $menu2->add_link($botao, "right");
-
-                # Status
-                $botao = new Button("Status", "cadastroStatus.php?i=true");
-                $botao->set_title("Cadastro de Status");
-                $botao->set_class("button secondary");
-                $menu2->add_link($botao, "right");
-
-                # Natureza
-                $botao = new Button("Natureza do Saldo", "cadastroNatureza.php?i=true");
-                $botao->set_title("Cadastro de Natureza");
-                $botao->set_class("button secondary");
-                $menu2->add_link($botao, "right");
-
-                # Lei
-                $botao = new Button("Lei", "cadastroLei.php?i=true");
-                $botao->set_title("Cadastro de Leis");
-                $botao->set_class("button secondary");
-                $menu2->add_link($botao, "right");
-
-                # Checklist
-                $botao = new Button("Checklist", "cadastroChecklist.php");
-                $botao->set_title("Modelos de Checklist");
-                $botao->set_class("button secondary");
-                #$menu2->add_link($botao, "right");
-
-                $menu2->show();
-            }
+                        
 
             # Formulário de Pesquisa
             $form = new Form('?');
