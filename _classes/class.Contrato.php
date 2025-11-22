@@ -342,12 +342,12 @@ class Contrato {
 
         $conteudo = $this->getDados($idContrato);
 
-        # Verifica se tem Acompanhamento Especial
-        if ($conteudo['especial']) {
-            $figura = new Imagem(PASTA_FIGURAS . 'flag.png', 'Acompanhamento Especial', 15, 15);
-            $figura->set_id('flagContrato');
-            $figura->show();
-        }
+//        # Verifica se tem Acompanhamento Especial
+//        if ($conteudo['especial']) {
+//            $figura = new Imagem(PASTA_FIGURAS . 'flag.png', 'Acompanhamento Especial', 15, 15);
+//            $figura->set_id('flagContrato');
+//            $figura->show();
+//        }
 
         # Exibe o Número do Contrato
         p($conteudo["numero"], "contratoNumero");
