@@ -358,9 +358,14 @@ if ($acesso) {
                 $botaoControle = new Button("Controle de Aluguel", "cadastroReceita.php");
                 $botaoControle->set_title("Acessa a rotina de controle de aluguel para contratos de receita");
                 $menu1->add_link($botaoControle, "right");
-            }            
+            }
 
             if (Verifica::acesso($idUsuario, [1, 9])) {
+                
+                # MArcadores
+                $botaoMarcador = new Button("Marcadores", "cadastroMarcadorContrato.php");
+                $botaoMarcador->set_title("Editar os marcadores deste contratoo");
+                $menu1->add_link($botaoMarcador, "right");
 
                 # Incluir
                 $botaoInserir = new Button("Incluir Aditivo", "?fase=editar");
@@ -383,9 +388,11 @@ if ($acesso) {
 
             ##########                       
             # Exibe alerta de Acompanhamento Especial
-            if ($conteudo["especial"]) {
-                titulo2("Contrato com Acompanhamento Especial", "Contratos com Acompanhamento Especial SEMPRE aparecerão no início de uma lista, independente de qualquer outra característica.");
-            }
+//            if ($conteudo["especial"]) {
+//                titulo2("Contrato com Acompanhamento Especial", "Contratos com Acompanhamento Especial SEMPRE aparecerão no início de uma lista, independente de qualquer outra característica.");
+//            }
+            $marcador = new Marcador();
+            $marcador->exibe_marcadoresContratoHorizontal($idContrato);
 
             ##########
             # Exibe os dados do contrado
@@ -399,70 +406,35 @@ if ($acesso) {
 
             $grid->fechaColuna();
 
-            # Define as colunas a serem exibidas
-            if (Verifica::acesso($idUsuario, [1, 9])) {
-                $colunas = [3, 3, 4, 4, 6];
-            } else {
-                $colunas = [3, 3, 6, 4, 8];
-            }
-
             # Exibe o Valor / Setor Requisitante / Situação
             if ($modalidade->getTipo($conteudo["idModalidade"]) == "Despesa") {
 
                 # Exibe o valor
-                $grid->abreColuna($colunas[0]);
+                $grid->abreColuna(3);
                 $contrato->exibeValorTotalPainel($idContrato);
                 $grid->fechaColuna();
 
                 # Exibe o Setor Requisitante
-                $grid->abreColuna($colunas[1]);
+                $grid->abreColuna(3);
                 $contrato->exibeRequisitante($idContrato, $idUsuario);
                 $grid->fechaColuna();
 
                 # Exibe a situação atual
-                $grid->abreColuna($colunas[2]);
+                $grid->abreColuna(6);
                 $situacao->exibeSituacaoAtual($idContrato, $idUsuario);
                 $grid->fechaColuna();
             } else {
                 # Exibe o Setor Requisitante
-                $grid->abreColuna($colunas[3]);
+                $grid->abreColuna(5);
                 $contrato->exibeRequisitante($idContrato, $idUsuario);
                 $grid->fechaColuna();
 
                 # Exibe a situação atual
-                $grid->abreColuna($colunas[4]);
+                $grid->abreColuna(7);
                 $situacao->exibeSituacaoAtual($idContrato, $idUsuario);
                 $grid->fechaColuna();
             }
 
-            # Exibe botão de acompanhamento especial
-            if (Verifica::acesso($idUsuario, [1, 9])) {
-                $grid->abreColuna(2);
-
-                tituloTable("Acompanhamento Especial?");
-
-                $div = new Div("center");
-                $div->abre();
-                br();
-
-                # Formuário exemplo de login
-                $form = new Form('?fase=especial');
-
-                # botão de acompanhamento especial
-                $controle = new Input('especial', 'simnao');
-                $controle->set_size(4);
-                $controle->set_linha(1);
-                $controle->set_valor($conteudo["especial"]);
-                $controle->set_col(12);
-                $controle->set_title('Informa se o contrato terá Acompanhamento Especial ou não');
-                $controle->set_onChange('formPadrao.submit();');
-                $form->add_item($controle);
-
-                $form->show();
-                $div->fecha();
-
-                $grid->fechaColuna();
-            }
             $grid->abreColuna(12);
 
             # Exibe outros dados do contrato
@@ -487,9 +459,9 @@ if ($acesso) {
 
             $grid->fechaColuna();
             $grid->abreColuna(3);
-            
+
             $contrato->exibePncp($idContrato);
-            
+
             $grid->fechaColuna();
             $grid->abreColuna(5);
 

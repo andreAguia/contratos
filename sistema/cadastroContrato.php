@@ -62,6 +62,8 @@ if ($acesso) {
     $parametroSetorRequisitante = post('parametroSetorRequisitante', get_session('parametroSetorRequisitante'));
     $inclusaoEmpresa = post('inclusaoEmpresa', get_session('inclusaoEmpresa'));
     $parametroLei = post('parametroLei', get_session('parametroLei'));
+    $parametroMarcador = post('parametroMarcador', get_session('parametroMarcador'));
+    $aba = get('aba', get_session('aba', 1));
 
     # Joga os parâmetros par as sessions
     set_session('parametroAno', $parametroAno);
@@ -74,6 +76,8 @@ if ($acesso) {
     set_session('parametroSetorRequisitante', $parametroSetorRequisitante);
     set_session('inclusaoEmpresa', $inclusaoEmpresa);
     set_session('parametroLei', $parametroLei);
+    set_session('parametroMarcador', $parametroMarcador);
+    set_session('aba', $aba);
 
     ################################################################
     # Começa uma nova página
@@ -155,77 +159,6 @@ if ($acesso) {
     # Botão de voltar da lista
     $objeto->set_voltarLista('cadastroContrato.php');
 
-    # select da lista
-    $select = "SELECT idContrato,
-                      idContrato,
-                      idEmpresa,
-                      idContrato,
-                      idContrato,
-                      idContrato,
-                      idContrato
-                 FROM tbcontrato DD JOIN tbmodalidade USING (idModalidade)
-                                 JOIN tbstatus USING (idStatus)
-                                 JOIN tbempresa USING (idEmpresa)
-                WHERE true";
-
-    if (!empty($parametroEmpresa)) {
-        $select .= " AND idEmpresa = {$parametroEmpresa}";
-    }
-
-    if (!empty($parametroAno)) {
-        $select .= " AND (SUBSTRING(numero,-4) = {$parametroAno} OR YEAR(dtAssinatura) = {$parametroAno})";
-    }
-
-    if (!empty($parametroModalidade)) {
-        $select .= " AND idModalidade = {$parametroModalidade}";
-    }
-
-    if (!empty($parametroNatureza)) {
-        $select .= " AND natDespesa = {$parametroNatureza}";
-    }
-    
-    if (!empty($parametroSiafe)) {
-        $select .= " AND siafe = {$parametroSiafe}";
-    }
-
-    if (!empty($parametroStatus) AND $parametroStatus <> "*") {
-        # A comparacao 'e um pouco diferente aqui para possibilitar
-        # O valor padrao inicial ser 1 => Ativos
-        $select .= " AND idStatus = {$parametroStatus}";
-    }
-
-    if (!empty($parametroSetorRequisitante)) {
-        $select .= " AND requisitante LIKE '%{$parametroSetorRequisitante}%'";
-    }
-
-    if (!empty($parametroObjeto)) {
-        $select .= " AND (objeto LIKE '%{$parametroObjeto}%' OR (SELECT situacao FROM tbsituacao WHERE tbsituacao.idContrato = DD.idContrato ORDER BY idSituacao desc LIMIT 1) LIKE '%{$parametroObjeto}%')";
-    }
-
-    if (!empty($parametroLei)) {
-        $select .= " AND idLei = {$parametroLei}";
-    }
-
-    /*
-     * Rotina abaixo ordena seguindo os seguintes critérios:
-     * 1 - pela data de término do último termo aditivo onde o prezo não é nulo
-     *     quando tiver termo aditivo. Caso não tenha termo pega a data de término
-     *     do contrato.
-     * 2 - pelo número do contrato
-     */
-
-    $select .= " ORDER BY especial desc, (IFNULL(
-                      (SELECT IF(tipoPrazo = 2,
-                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
-                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
-                     FROM tbaditivo
-                    WHERE tbaditivo.idContrato = DD.idContrato
-                      AND prazo IS NOT NULL 
-                 ORDER BY dtAssinatura desc LIMIT 1),
-                 IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY)))), numero";
-
-    $objeto->set_selectLista($select);
-
     # select do edita
     $objeto->set_selectEdita("SELECT numero,
                                      idModalidade,
@@ -260,7 +193,7 @@ if ($acesso) {
                               WHERE idContrato = {$id}");
 
     # Caminhos
-    $objeto->set_linkEditar('?fase=editar');
+    $objeto->set_linkEditar("?fase=editar");
     $objeto->set_botaoEditar(false);
     $objeto->set_linkGravar('?fase=gravar');
 
@@ -275,20 +208,10 @@ if ($acesso) {
 
     $objeto->set_label(["Contrato", "Objeto", "Empresa", "Processo", "Duração & Vigência", "Situação", "Acessar"]);
     $objeto->set_classe(["Contrato", "Contrato", "Empresa", "Contrato", "Contrato", "Situacao"]);
-    $objeto->set_metodo(["exibeNumeroContrato", "exibeObjeto", "exibeEmpresaCnpj", "exibeProcessoERequisitante", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"]);
+    $objeto->set_metodo(["exibeNumeroContrato", "exibeObjetoEMarcador", "exibeEmpresaCnpj", "exibeProcessoERequisitante", "exibeTempoEVigencia", "getSituacaoAtualEAlerta"]);
     $objeto->set_width([10, 20, 22, 18, 10, 20]);
     $objeto->set_align(["center", "left", "left", "left", "center", "left"]);
     $objeto->set_exibeTempoPesquisa(false);
-
-    # Botão 
-    $botao = new BotaoGrafico();
-    $botao->set_label('');
-    $botao->set_title('Acessar Contrato');
-    $botao->set_url("?fase=editaContrato&id={$id}");
-    $botao->set_imagem(PASTA_FIGURAS_GERAIS . "olho.png", 20, 20);
-
-    # Coloca o objeto link na tabela
-    $objeto->set_link(array("", "", "", "", "", "", $botao));
 
     # Classe do banco de dados
     $objeto->set_classBd('Contratos');
@@ -682,8 +605,9 @@ if ($acesso) {
             $botaoVoltar->set_title('Voltar a página anterior');
             $botaoVoltar->set_accessKey('V');
             $menu1->add_link($botaoVoltar, "left");
-            
+
             if (Verifica::acesso($idUsuario, [1, 9])) {
+
 
                 # Empresas
                 $botao = new Button("Empresas", "cadastroEmpresa.php?i=true");
@@ -721,6 +645,12 @@ if ($acesso) {
                 $botao->set_class("button secondary");
                 $menu1->add_link($botao, "right");
 
+                # Marcadores
+                $botao = new Button("Marcadores", "cadastroMarcador.php?i=true");
+                $botao->set_title("Cadastro de Marcadores");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");
+
                 # Checklist
                 $botao = new Button("Checklist", "cadastroChecklist.php");
                 $botao->set_title("Modelos de Checklist");
@@ -745,33 +675,21 @@ if ($acesso) {
             }
 
             $menu1->show();
-                        
 
             # Formulário de Pesquisa
             $form = new Form('?');
 
-            /*
-             * Ano do Contrato
-             */
-
-            # Pega os dados
-            $comboAno = $contratos->select('SELECT DISTINCT YEAR(dtAssinatura), YEAR(dtAssinatura)
-                                                  FROM tbcontrato
-                                                 WHERE dtAssinatura IS NOT NULL
-                                              ORDER BY YEAR(dtAssinatura) DESC');
-
-            array_unshift($comboAno, array(null, "Todos"));
-
-            # Ano
-            $controle = new Input('parametroAno', 'combo', 'Ano:', 1);
-            $controle->set_size(20);
-            $controle->set_title('Ano da assinatura do contrato');
-            $controle->set_valor($parametroAno);
+            # Siafe / Requisitante / Objeto / Situacao
+            $controle = new Input('parametroSiafe', 'texto', 'Número / Siafe / Setor Requisitante / Objeto / Situação / Empresa:', 1);
+            $controle->set_size(50);
+            $controle->set_title('Siafe');
+            $controle->set_valor($parametroSiafe);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
-            $controle->set_col(3);
-            $controle->set_array($comboAno);
+            $controle->set_col(9);
+            $controle->set_autofocus(true);
             $form->add_item($controle);
+            
 
             /*
              * Status
@@ -796,6 +714,29 @@ if ($acesso) {
             $form->add_item($controle);
 
             /*
+             * Ano do Contrato
+             */
+
+            # Pega os dados
+            $comboAno = $contratos->select('SELECT DISTINCT YEAR(dtAssinatura), YEAR(dtAssinatura)
+                                                  FROM tbcontrato
+                                                 WHERE dtAssinatura IS NOT NULL
+                                              ORDER BY YEAR(dtAssinatura) DESC');
+
+            array_unshift($comboAno, array(null, "Todos"));
+
+            # Ano
+            $controle = new Input('parametroAno', 'combo', 'Ano:', 1);
+            $controle->set_size(20);
+            $controle->set_title('Ano da assinatura do contrato');
+            $controle->set_valor($parametroAno);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(2);
+            $controle->set_col(3);
+            $controle->set_array($comboAno);
+            $form->add_item($controle);
+
+            /*
              * Modalidade
              */
 
@@ -812,7 +753,7 @@ if ($acesso) {
             $controle->set_title('Modalidade do contrato');
             $controle->set_valor($parametroModalidade);
             $controle->set_onChange('formPadrao.submit();');
-            $controle->set_linha(1);
+            $controle->set_linha(2);
             $controle->set_optgroup(true);
             $controle->set_col(3);
             $controle->set_array($comboModalidade);
@@ -826,47 +767,15 @@ if ($acesso) {
             $comboNatureza = $contrato->getArrayNatureza();
             array_unshift($comboNatureza, array(null, "Todos"));
 
-            # Modalidade
+            # Natureza
             $controle = new Input('parametroNatureza', 'combo', 'Natureza da Despesa:', 1);
             $controle->set_size(20);
             $controle->set_title('Natureza da Despesa');
             $controle->set_valor($parametroNatureza);
             $controle->set_onChange('formPadrao.submit();');
-            $controle->set_linha(1);
+            $controle->set_linha(2);
             $controle->set_col(3);
             $controle->set_array($comboNatureza);
-            $form->add_item($controle);
-            
-            # Siafe
-            $controle = new Input('parametroSiafe', 'texto', 'Siafe:', 1);
-            $controle->set_size(50);
-            $controle->set_title('Siafe');
-            $controle->set_valor($parametroSiafe);
-            $controle->set_onChange('formPadrao.submit();');
-            $controle->set_linha(2);
-            $controle->set_col(3);
-            $form->add_item($controle);
-
-            
-
-            # Setor Requisitante
-            $controle = new Input('parametroSetorRequisitante', 'texto', 'Setor Requisitante:', 1);
-            $controle->set_size(50);
-            $controle->set_title('Setor Requisitante');
-            $controle->set_valor($parametroSetorRequisitante);
-            $controle->set_onChange('formPadrao.submit();');
-            $controle->set_linha(2);
-            $controle->set_col(3);
-            $form->add_item($controle);
-
-            # Objeto ou Situação
-            $controle = new Input('parametroObjeto', 'texto', 'Objeto e/ou Situação:', 1);
-            $controle->set_size(50);
-            $controle->set_title('Objeto do contrato');
-            $controle->set_valor($parametroObjeto);
-            $controle->set_onChange('formPadrao.submit();');
-            $controle->set_linha(2);
-            $controle->set_col(3);
             $form->add_item($controle);
 
             /*
@@ -890,7 +799,27 @@ if ($acesso) {
             $controle->set_linha(2);
             $controle->set_col(3);
             $form->add_item($controle);
-            
+
+            # Setor Requisitante
+            $controle = new Input('parametroSetorRequisitante', 'texto', 'Setor Requisitante:', 1);
+            $controle->set_size(50);
+            $controle->set_title('Setor Requisitante');
+            $controle->set_valor($parametroSetorRequisitante);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(2);
+            $controle->set_col(3);
+            #$form->add_item($controle);
+            # Objeto ou Situação
+            $controle = new Input('parametroObjeto', 'texto', 'Objeto e/ou Situação:', 1);
+            $controle->set_size(50);
+            $controle->set_title('Objeto do contrato');
+            $controle->set_valor($parametroObjeto);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(2);
+            $controle->set_col(3);
+            #$form->add_item($controle);
+
+
             /*
              * Empresa
              */
@@ -909,16 +838,173 @@ if ($acesso) {
             $controle->set_valor($parametroEmpresa);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(2);
-            $controle->set_col(12);
+            $controle->set_col(6);
             $controle->set_array($comboEmpresa);
-            $form->add_item($controle);
+            #$form->add_item($controle);
+
+            /*
+             * Marcador
+             */
+
+            # Pega os dados
+            $comboMarcador = $contratos->select('SELECT idMarcador, 
+                                                        marcador
+                                                   FROM tbmarcador
+                                               ORDER BY marcador');
+
+            array_unshift($comboMarcador, array("*", "Todos"));
+
+            # Marcador
+            $controle = new Input('parametroMarcador', 'combo', 'Marcador:', 1);
+            $controle->set_size(20);
+            $controle->set_title('Marcador');
+            $controle->set_valor($parametroMarcador);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(2);
+            $controle->set_col(3);
+            $controle->set_array($comboMarcador);
+            #$form->add_item($controle);
 
             $form->show();
 
+            # Menu de Abas            
+            $arrayAbas = null;
+
+            # Preenche as abas com os marcadores
+            foreach ($comboMarcador as $item) {
+                $arrayAbas[] = $item[1];
+            }
+
+            p("Marcadores:", "pAbaMarcador");
+
+            $tab = new Tab($arrayAbas, $aba);
+            $contador = 1;
+
+            # Preenche o conteúdo
+            foreach ($comboMarcador as $item) {
+                $tab->abreConteudo();
+
+                # Botão 
+                $botao = new BotaoGrafico();
+                $botao->set_label('');
+                $botao->set_title('Acessar Contrato');
+                $botao->set_url("?fase=editaContrato&aba={$contador}&id={$id}");
+                $botao->set_imagem(PASTA_FIGURAS_GERAIS . "olho.png", 20, 20);
+
+                # Coloca o objeto link na tabela
+                $objeto->set_link(array("", "", "", "", "", "", $botao));
+
+                $contador++;
+
+                $parametroMarcador = $item[0];
+
+                # select da lista
+                $select = "SELECT idContrato,
+                      idContrato,
+                      idEmpresa,
+                      idContrato,
+                      idContrato,
+                      idContrato,
+                      idContrato
+                 FROM tbcontrato DD JOIN tbmodalidade USING (idModalidade)
+                                 JOIN tbstatus USING (idStatus)
+                                 JOIN tbempresa USING (idEmpresa)
+                WHERE true";
+
+//                if (!empty($parametroEmpresa)) {
+//                    $select .= " AND idEmpresa = {$parametroEmpresa}";
+//                }
+
+                if (!empty($parametroAno)) {
+                    $select .= " AND (SUBSTRING(numero,-4) = {$parametroAno} OR YEAR(dtAssinatura) = {$parametroAno})";
+                }
+
+                if (!empty($parametroModalidade)) {
+                    $select .= " AND idModalidade = {$parametroModalidade}";
+                }
+
+                if (!empty($parametroNatureza)) {
+                    $select .= " AND natDespesa = {$parametroNatureza}";
+                }
+
+                if (!empty($parametroSiafe)) {
+
+                    if (strpos($parametroSiafe, ' ') !== false) {
+
+                        # Separa as palavras
+                        $palavras = explode(' ', $parametroSiafe);
+
+                        # Percorre as palavras
+                        foreach ($palavras as $item) {
+                            $select .= " AND (";
+                            $select .= "numero LIKE '%{$item}%' OR ";
+                            $select .= "siafe LIKE '%{$item}%' OR ";
+                            $select .= "requisitante LIKE '%{$item}%' OR ";
+                            $select .= "objeto LIKE '%{$item}%' OR ";
+                            $select .= "(SELECT situacao FROM tbsituacao WHERE tbsituacao.idContrato = DD.idContrato ORDER BY idSituacao desc LIMIT 1) LIKE '%{$item}%' OR ";
+                            $select .= "tbempresa.razaoSocial  LIKE '%{$item}%'";
+                            $select .= ")";
+                        }
+                    } else {
+
+                        $select .= " AND (";
+                        $select .= "numero LIKE '%{$parametroSiafe}%' OR ";
+                        $select .= "siafe LIKE '%{$parametroSiafe}%' OR ";
+                        $select .= "requisitante LIKE '%{$parametroSiafe}%' OR ";
+                        $select .= "objeto LIKE '%{$parametroSiafe}%' OR ";
+                        $select .= "(SELECT situacao FROM tbsituacao WHERE tbsituacao.idContrato = DD.idContrato ORDER BY idSituacao desc LIMIT 1) LIKE '%{$parametroSiafe}%' OR ";
+                        $select .= "tbempresa.razaoSocial  LIKE '%{$parametroSiafe}%'";
+                        $select .= ")";
+                        $objeto->set_textoRessaltado($parametroSiafe);
+                    }
+                }
+
+                if (!empty($parametroMarcador) AND $parametroMarcador <> "*") {
+                    $select .= " AND (marcador1 = {$parametroMarcador} OR marcador2 = {$parametroMarcador} OR marcador3 = {$parametroMarcador}";
+                    $select .= " OR marcador4 = {$parametroMarcador} OR marcador5 = {$parametroMarcador} OR marcador6 = {$parametroMarcador})";
+                }
+
+                if (!empty($parametroStatus) AND $parametroStatus <> "*") {
+                    # A comparacao 'e um pouco diferente aqui para possibilitar
+                    # O valor padrao inicial ser 1 => Ativos
+                    $select .= " AND idStatus = {$parametroStatus}";
+                }
+
+                if (!empty($parametroLei)) {
+                    $select .= " AND idLei = {$parametroLei}";
+                }
+
+                /*
+                 * Rotina abaixo ordena seguindo os seguintes critérios:
+                 * 1 - pela data de término do último termo aditivo onde o prezo não é nulo
+                 *     quando tiver termo aditivo. Caso não tenha termo pega a data de término
+                 *     do contrato.
+                 * 2 - pelo número do contrato
+                 */
+
+                $select .= " ORDER BY (IFNULL(
+                      (SELECT IF(tipoPrazo = 2,
+                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
+                     FROM tbaditivo
+                    WHERE tbaditivo.idContrato = DD.idContrato
+                      AND prazo IS NOT NULL 
+                 ORDER BY dtAssinatura desc LIMIT 1),
+                 IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY)))), numero";
+
+                #echo $select;
+                $objeto->set_selectLista($select);
+
+                $objeto->listar();
+
+                $tab->fechaConteudo();
+            }
+
+
+            $tab->show();
+
             $grid->fechaColuna();
             $grid->fechaGrid();
-
-            $objeto->listar();
 
             # Exibe o rodapé
             AreaServidor::rodape($idUsuario, false);

@@ -223,6 +223,12 @@ p#pAditivoPag{
     font-size: 10px;
 }
 
+p#pAbaMarcador{
+    padding: 0px;
+    margin: 0px;
+    font-size: 11px;
+}
+
 img#flagContrato{
     position: relative;
     float: left;

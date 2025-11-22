@@ -1708,6 +1708,28 @@ class Contrato {
 
     ##########################################################################################
 
+    public function exibeObjetoEMarcador($idContrato) {
+
+        # Pega os dados
+        $dados = $this->getDados($idContrato);
+
+        # Exibe o objeto
+        echo $dados["objeto"];
+
+        # Verifica se tem observação, se tiver exibe uma figura com mouseover
+        if (!empty($dados["obs"])) {
+            echo "&nbsp;&nbsp;";
+            toolTip("(Obs)", $dados["obs"]);
+        }
+        
+        br(2);
+        # Exibe os marcadores
+        $marcador = new Marcador();
+        $marcador->exibe_marcadores($idContrato);
+    }
+
+    ##########################################################################################
+
     public function exibeObjetoRel($idContrato) {
 
         # Pega os dados
@@ -1853,7 +1875,7 @@ class Contrato {
             # Botão
             $botaoEditar = new Link("Editar", "cadastroRequisitante.php");
             $botaoEditar->set_class('tiny button secondary');
-            $botaoEditar->set_title('Editar características especiais do contrato');
+            $botaoEditar->set_title('Editar o setor requisitante do contrato');
             $botaoEditar->show();
 
             $div->fecha();
