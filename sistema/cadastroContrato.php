@@ -680,7 +680,7 @@ if ($acesso) {
             $form = new Form('?');
 
             # Siafe / Requisitante / Objeto / Objeto do Aditivo / Situacao
-            $controle = new Input('parametroSiafe', 'texto', 'Número / Siafe / Setor Requisitante / Objeto / Situação / Empresa:', 1);
+            $controle = new Input('parametroSiafe', 'texto', 'Número / Siafe / Setor Requisitante / Objeto / Objeto do Aditivo / Situação / Empresa:', 1);
             $controle->set_size(50);
             $controle->set_title('Siafe');
             $controle->set_valor($parametroSiafe);
