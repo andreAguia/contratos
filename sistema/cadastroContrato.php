@@ -679,7 +679,7 @@ if ($acesso) {
             # Formulário de Pesquisa
             $form = new Form('?');
 
-            # Siafe / Requisitante / Objeto / Situacao
+            # Siafe / Requisitante / Objeto / Objeto do Aditivo / Situacao
             $controle = new Input('parametroSiafe', 'texto', 'Número / Siafe / Setor Requisitante / Objeto / Situação / Empresa:', 1);
             $controle->set_size(50);
             $controle->set_title('Siafe');
@@ -907,6 +907,7 @@ if ($acesso) {
                       idContrato,
                       idContrato
                  FROM tbcontrato DD JOIN tbmodalidade USING (idModalidade)
+                                 JOIN tbaditivo USING (idContrato)
                                  JOIN tbstatus USING (idStatus)
                                  JOIN tbempresa USING (idEmpresa)
                 WHERE true";
@@ -940,7 +941,8 @@ if ($acesso) {
                             $select .= "numero LIKE '%{$item}%' OR ";
                             $select .= "siafe LIKE '%{$item}%' OR ";
                             $select .= "requisitante LIKE '%{$item}%' OR ";
-                            $select .= "objeto LIKE '%{$item}%' OR ";
+                            $select .= "DD.objeto LIKE '%{$item}%' OR ";
+                            $select .= "tbaditivo.objeto LIKE '%{$item}%' OR ";
                             $select .= "(SELECT situacao FROM tbsituacao WHERE tbsituacao.idContrato = DD.idContrato ORDER BY idSituacao desc LIMIT 1) LIKE '%{$item}%' OR ";
                             $select .= "tbempresa.razaoSocial  LIKE '%{$item}%'";
                             $select .= ")";
@@ -951,7 +953,8 @@ if ($acesso) {
                         $select .= "numero LIKE '%{$parametroSiafe}%' OR ";
                         $select .= "siafe LIKE '%{$parametroSiafe}%' OR ";
                         $select .= "requisitante LIKE '%{$parametroSiafe}%' OR ";
-                        $select .= "objeto LIKE '%{$parametroSiafe}%' OR ";
+                        $select .= "DD.objeto LIKE '%{$parametroSiafe}%' OR ";
+                        $select .= "tbaditivo.objeto LIKE '%{$parametroSiafe}%' OR ";
                         $select .= "(SELECT situacao FROM tbsituacao WHERE tbsituacao.idContrato = DD.idContrato ORDER BY idSituacao desc LIMIT 1) LIKE '%{$parametroSiafe}%' OR ";
                         $select .= "tbempresa.razaoSocial  LIKE '%{$parametroSiafe}%'";
                         $select .= ")";
@@ -976,21 +979,21 @@ if ($acesso) {
 
                 /*
                  * Rotina abaixo ordena seguindo os seguintes critérios:
-                 * 1 - pela data de término do último termo aditivo onde o prezo não é nulo
-                 *     quando tiver termo aditivo. Caso não tenha termo pega a data de término
-                 *     do contrato.
+                 * 1 - pela data de término do último termo aditivo onde o prazo não é nulo
+                 *     quando tiver termo aditivo. 
+                 *     Caso não tenha termo pega a data de término do contrato.
                  * 2 - pelo número do contrato
                  */
 
-                $select .= " ORDER BY (IFNULL(
-                      (SELECT IF(tipoPrazo = 2,
-                          SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
-                          ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
-                     FROM tbaditivo
-                    WHERE tbaditivo.idContrato = DD.idContrato
-                      AND prazo IS NOT NULL 
-                 ORDER BY dtAssinatura desc LIMIT 1),
-                 IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY)))), numero";
+                $select .= " ORDER BY (
+                    IFNULL(
+                      (SELECT IF(tipoPrazo = 2, SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
+                              ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
+                         FROM tbaditivo
+                        WHERE tbaditivo.idContrato = DD.idContrato
+                          AND prazo IS NOT NULL 
+                     ORDER BY dtAssinatura desc LIMIT 1),
+                     IF(DD.tipoPrazo = 2,SUBDATE(ADDDATE(DD.dtInicial, INTERVAL DD.prazo MONTH), INTERVAL 1 DAY),ADDDATE(DD.dtInicial, INTERVAL DD.prazo-1 DAY)))), DD.numero";
 
                 #echo $select;
                 $objeto->set_selectLista($select);
