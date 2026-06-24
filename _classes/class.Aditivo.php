@@ -17,8 +17,8 @@ class Aditivo {
         }
 
         # Verifica se é a lei antiga
-        $contrato - new Contrato();
-        if ($contrato->get_idLei($idContrato) == 1) {
+        $contrato = new Contrato();
+        if ($contrato->get_idLei($this->getidContrato($idAditivo)) == 1) {
 
             # Lei antiga - Tira um dia
             $select = 'SELECT * ,
@@ -40,6 +40,27 @@ class Aditivo {
 
             return $contratos->select($select, false);
         }
+    }
+
+    ##############################################################
+
+    public function getidContrato($idAditivo = null) {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (vazio($idAditivo)) {
+            alert("É necessário informar o id do Aditivo.");
+            return;
+        }
+
+        $select = "SELECT idContrato
+                     FROM tbaditivo
+                    WHERE idAditivo = {$idAditivo}";
+
+        $row = $contratos->select($select, false);
+        return $row[0];
     }
 
     ##############################################################
@@ -496,7 +517,7 @@ class Aditivo {
         }
 
         # Verifica se é a lei antiga
-        $contrato - new Contrato();
+        $contrato = new Contrato();
         if ($contrato->get_idLei($idContrato) == 1) {
 
             # Lei antiga - Tira um dia
