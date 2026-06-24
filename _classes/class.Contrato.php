@@ -47,6 +47,7 @@ class Contrato {
          * @syntax $concurso->get_dados([$idConcurso]);
          */
         # Verifica se foi informado
+        
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
@@ -55,15 +56,29 @@ class Contrato {
         # Conecta ao Banco de Dados
         $contratos = new Contratos();
 
-        # Pega os dados
-        $select = "SELECT *,
+        # Verifica se é a lei antiga
+        if ($this->get_idLei($idContrato) == 1) {
+
+            # Lei antiga - Tira um dia
+            $select = "SELECT *,
                           IF(tipoPrazo = 2,
                           SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
                           ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbcontrato
                     WHERE idContrato = {$idContrato}";
 
-        $row = $contratos->select($select, false);
+            $row = $contratos->select($select, false);
+        }else{
+            # Nova Lei
+            $select = "SELECT *,
+                          IF(tipoPrazo = 2,
+                          ADDDATE(dtInicial, INTERVAL prazo MONTH),
+                          ADDDATE(dtInicial, INTERVAL prazo DAY)) as dtFinal
+                     FROM tbcontrato
+                    WHERE idContrato = {$idContrato}";
+
+            $row = $contratos->select($select, false);
+        }
 
         # Retorno
         return $row;
@@ -348,7 +363,6 @@ class Contrato {
 //            $figura->set_id('flagContrato');
 //            $figura->show();
 //        }
-
         # Exibe o Número do Contrato
         p($conteudo["numero"], "contratoNumero");
 
@@ -1721,7 +1735,7 @@ class Contrato {
             echo "&nbsp;&nbsp;";
             toolTip("(Obs)", $dados["obs"]);
         }
-        
+
         br(2);
         # Exibe os marcadores
         $marcador = new Marcador();
@@ -2093,6 +2107,25 @@ class Contrato {
 
     ###########################################################
 
+    public function get_idLei($idContrato) {
+
+        # Verifica se foi informado o id
+        if (empty($idContrato)) {
+            return null;
+        } else {
+            # Pega o id da lei
+            $contratos = new Contratos();
+            $select = "SELECT idLei
+                         FROM tbcontrato
+                        WHERE idContrato = {$idContrato}";
+
+            $row = $contratos->select($select, false);
+            return $row[0];
+        }
+    }
+
+    ###########################################################
+
     public function get_numLei($idLei) {
 
         # Verifica se foi informado o id
@@ -2153,14 +2186,13 @@ class Contrato {
             $botaoEditar->set_target("_blank");
             $botaoEditar->set_title('Editar características especiais do contrato');
             $botaoEditar->show();
-            
+
             # Botão copiar
             $botaoEditar = new Link("Copiar");
             $botaoEditar->set_class('tiny button secondary');
             $botaoEditar->set_onClick("navigator.clipboard.writeText('{$row['linkPncp']}'); alert('Link copiado para área de transferência.');");
             $botaoEditar->set_title('Copia o link para a área de tranferência');
-            $botaoEditar->show();            
-            
+            $botaoEditar->show();
 
             $div->fecha();
 

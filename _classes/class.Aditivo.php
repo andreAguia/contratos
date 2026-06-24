@@ -16,15 +16,30 @@ class Aditivo {
             return;
         }
 
-        # Pega os dados
-        $select = 'SELECT * ,
+        # Verifica se é a lei antiga
+        $contrato - new Contrato();
+        if ($contrato->get_idLei($idContrato) == 1) {
+
+            # Lei antiga - Tira um dia
+            $select = 'SELECT * ,
                           IF(tipoPrazo = 2,
                           SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
                           ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
                      FROM tbaditivo
                     WHERE idAditivo = ' . $idAditivo;
 
-        return $contratos->select($select, false);
+            return $contratos->select($select, false);
+        } else {
+            # Nova Lei
+            $select = 'SELECT * ,
+                          IF(tipoPrazo = 2,
+                          ADDDATE(dtInicial, INTERVAL prazo MONTH),
+                          ADDDATE(dtInicial, INTERVAL prazo DAY)) as dtFinal
+                     FROM tbaditivo
+                    WHERE idAditivo = ' . $idAditivo;
+
+            return $contratos->select($select, false);
+        }
     }
 
     ##############################################################
@@ -175,7 +190,7 @@ class Aditivo {
         } else {
             echo "---";
         }
-        
+
         # Publicação
         p(date_to_php($conteudo["dtPublicacao"]), "pAditivoPublicacao");
 
@@ -213,7 +228,7 @@ class Aditivo {
         } else {
             echo "---";
         }
-        
+
         # Aditivo
         p($this->getTipoNumerado($idAditivo), "pAditivoPublicacao");
         return;
@@ -480,8 +495,12 @@ class Aditivo {
             return;
         }
 
-        # monta o select
-        $select = "SELECT *,
+        # Verifica se é a lei antiga
+        $contrato - new Contrato();
+        if ($contrato->get_idLei($idContrato) == 1) {
+
+            # Lei antiga - Tira um dia
+            $select = "SELECT *,
                           IF(tipoPrazo = 2,
                           SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
                           ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
@@ -490,7 +509,20 @@ class Aditivo {
                       AND dtInicial IS NOT NULL 
                  ORDER BY dtAssinatura desc LIMIT 1";
 
-        return $contratos->select($select, false);
+            return $contratos->select($select, false);
+        } else {
+            # Lei Nova
+            $select = "SELECT *,
+                          IF(tipoPrazo = 2,
+                          ADDDATE(dtInicial, INTERVAL prazo MONTH),
+                          ADDDATE(dtInicial, INTERVAL prazo DAY)) as dtFinal
+                     FROM tbaditivo
+                    WHERE idContrato = {$idContrato}
+                      AND dtInicial IS NOT NULL 
+                 ORDER BY dtAssinatura desc LIMIT 1";
+
+            return $contratos->select($select, false);
+        }
     }
 
     ##############################################################
@@ -510,8 +542,12 @@ class Aditivo {
             return;
         }
 
-        # monta o select
-        $select = "SELECT *,
+        # Verifica se é a lei antiga
+        $contrato - new Contrato();
+        if ($contrato->get_idLei($idContrato) == 1) {
+
+            # Lei antiga - Tira um dia
+            $select = "SELECT *,
                           IF(tipoPrazo = 2,
                           SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),
                           ADDDATE(dtInicial, INTERVAL prazo-1 DAY)) as dtFinal
@@ -520,7 +556,20 @@ class Aditivo {
                       AND valor IS NOT NULL 
                  ORDER BY dtAssinatura desc LIMIT 1";
 
-        return $contratos->select($select, false);
+            return $contratos->select($select, false);
+        } else {
+            # Lei Nova
+            $select = "SELECT *,
+                          IF(tipoPrazo = 2,
+                          ADDDATE(dtInicial, INTERVAL prazo MONTH),
+                          ADDDATE(dtInicial, INTERVAL prazo DAY)) as dtFinal
+                     FROM tbaditivo
+                    WHERE idContrato = {$idContrato}
+                      AND valor IS NOT NULL 
+                 ORDER BY dtAssinatura desc LIMIT 1";
+
+            return $contratos->select($select, false);
+        }
     }
 
     ##############################################################
@@ -672,7 +721,7 @@ class Aditivo {
             echo "&nbsp;&nbsp;";
             toolTip("(Obs)", $dados["obs"]);
         }
-        
+
         #p($idAditivo,"f9","right");
     }
 
@@ -708,9 +757,9 @@ class Aditivo {
         $numDados = $contratos->count($select);
 
         if ($numDados > 0) {
-            
+
             # Percorre os registros
-            foreach($dados as $item){
+            foreach ($dados as $item) {
                 # Exibe o número do aditivo
                 echo $this->getTipoNumerado($item["idAditivo"]);
                 br();
@@ -718,19 +767,18 @@ class Aditivo {
                 br();
                 echo date_to_php($item["dtInicial"]);
                 echo " - ";
-                
-                if($item["tipoPrazo"] == 1){
-                    echo $item["prazo"]," dias";
-                } else{
-                    echo $item["prazo"]," meses";
+
+                if ($item["tipoPrazo"] == 1) {
+                    echo $item["prazo"], " dias";
+                } else {
+                    echo $item["prazo"], " meses";
                 }
                 echo " - ";
-                echo $this->getDtFinal($item["idAditivo"]);                
+                echo $this->getDtFinal($item["idAditivo"]);
                 hr("nenhumItem");
             }
-            
         } else {
-           p("---", "center");
+            p("---", "center");
         }
     }
 
