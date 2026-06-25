@@ -81,11 +81,12 @@ class AlertaContrato {
         }
 
         ################################################################################
-        # Verifica se o contrato já chegou a 60 meses
+        # Verifica se o contrato já passou do limite de meses
         $tempoTotal = $contrato->getTempoTotal($idContrato);
+        $limiteMeses = $contrato->getLimiteDuracaoContratos($idContrato);
 
-        if ($tempoTotal["meses"] >= 60) {
-            $erro[] = "O contrato já tem 60 meses de duração e NÃO poderá mais ser prorrogado !!";
+        if ($tempoTotal["meses"] >= $limiteMeses) {
+            $erro[] = "O contrato já tem {$limiteMeses} meses de duração e NÃO poderá ser prorrogado !!";
         }
 
         ################################################################################

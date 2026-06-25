@@ -47,7 +47,7 @@ class Contrato {
          * @syntax $concurso->get_dados([$idConcurso]);
          */
         # Verifica se foi informado
-        
+
         if (vazio($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
@@ -68,7 +68,7 @@ class Contrato {
                     WHERE idContrato = {$idContrato}";
 
             $row = $contratos->select($select, false);
-        }else{
+        } else {
             # Nova Lei
             $select = "SELECT *,
                           IF(tipoPrazo = 2,
@@ -747,10 +747,13 @@ class Contrato {
             # Tempo Total
             $tempo = $this->getTempoTotal($idContrato);
 
-            #var_dump($tempo);
-            # Verifica se já passou de 60 meses
+            
+            # Limite de meses
+            $limiteMeses = $this->getLimiteDuracaoContratos($idContrato);            
+            
+            # Verifica se já passou do limite de meses
             if (!empty($tempo["meses"])) {
-                if ($tempo["meses"] >= 60) {
+                if ($tempo["meses"] >= $limiteMeses) {
                     p("{$tempo["meses"]} Meses", "pTempoTotal60");
                 } else {
                     p("{$tempo["meses"]} Meses", "pTempoTotal");
@@ -799,11 +802,14 @@ class Contrato {
 
             # Tempo Total
             $tempo = $this->getTempoTotal($idContrato);
+            
+            # Limite de meses
+            $limiteMeses = $this->getLimiteDuracaoContratos($idContrato);    
 
             #var_dump($tempo);
-            # Verifica se já passou de 60 meses
+            # Verifica se já passou o limite de meses
             if (!empty($tempo["meses"])) {
-                if ($tempo["meses"] >= 60) {
+                if ($tempo["meses"] >= $limiteMeses) {
                     p("{$tempo["meses"]} Meses", "pTempoTotal60");
                 } else {
                     p("{$tempo["meses"]} Meses", "pTempoTotal");
@@ -2202,5 +2208,33 @@ class Contrato {
         $painel->fecha();
     }
 
-    ###########################################################
+    ##############################################################
+
+    public function getLimiteDuracaoContratos($idContrato = null) {
+
+        /**
+         * Informa, em meses, o limite de duração de um contrato
+         *
+         * @param $idConcurso integer null O id do concurso
+         *
+         * @syntax $concurso->getLimiteDuracaoContratos([$idConcurso]);
+         */
+        # Verifica se foi informado
+
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        # Verifica se é a lei antiga
+        if ($this->get_idLei($idContrato) == 1) {
+            # Lei antiga é de 60 meses
+            return 60;
+        } else {
+            # Lei nova é de 120
+            return 120;
+        }
+    }
+
+    ##############################################################
 }
