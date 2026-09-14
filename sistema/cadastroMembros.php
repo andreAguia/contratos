@@ -36,7 +36,7 @@ if ($acesso) {
     # Pega os parâmetros
     $parametroMembro = post("parametroMembro", get_session('parametroMembro'));
     $parametroTipo = post("parametroTipo", get_session('parametroTipo'));
-    
+
     # Joga os parâmetros par as sessions
     set_session('parametroMembro', $parametroMembro);
     set_session('parametroTipo', $parametroTipo);
@@ -150,11 +150,25 @@ if ($acesso) {
                                 idContrato,
                                 idComissao
                            FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
-                                           JOIN uenf_grh.tbpessoa USING(idPessoa)";
+                                           JOIN uenf_grh.tbpessoa USING(idPessoa)
+                          WHERE TRUE";
 
             # Membro
-            if (!empty($parametroMembro)) {
-                $select .= " WHERE tbpessoa.nome like '%{$parametroMembro}%'";
+            if (!is_null($parametroMembro)) {
+                
+                # Verifica se tem espaços
+                if (strpos($parametroMembro, ' ') !== false) { 
+                    # Separa as palavras
+                    $palavras = explode(' ', $parametroMembro);
+
+                    # Percorre as palavras
+                    foreach ($palavras as $item) {
+                        $select .= ' AND (tbpessoa.nome LIKE "%' . $item . '%")';
+                    }
+                } else {
+                    $select .= ' AND (';
+                    $select .= 'tbpessoa.nome LIKE "%' . $parametroMembro . '%")';
+                }
             }
 
             # Tipo            
@@ -191,7 +205,7 @@ if ($acesso) {
             $tabela->set_width([20, 10, 10, 40, 20]);
             $tabela->set_funcaoDepoisClasse([null, "ressaltaSaiu"]);
             $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao"]);
-            $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoSimples", "exibeObjeto", "getDadosDesignacao"]);
+            $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoEStatus", "exibeObjeto", "getDadosDesignacao"]);
             $tabela->set_conteudo($row);
             $tabela->set_rowspan(0);
             $tabela->set_grupoCorColuna(0);

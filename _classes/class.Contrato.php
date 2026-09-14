@@ -436,6 +436,32 @@ class Contrato {
 
     #####################################################################################
 
+    public function exibeNumeroContratoEStatus($idContrato) {
+        # Verifica se foi informado
+        if (vazio($idContrato)) {
+            alert("É necessário informar o id do Contrato.");
+            return;
+        }
+
+        $conteudo = $this->getDados($idContrato);
+
+        p($conteudo["numero"], "contratoNumero");
+        
+        # Exibe os Status
+        $status = $this->getStatus($idContrato);
+
+        if ($status == "Ativo") {
+            $stilo = "statusAtivo";
+        } elseif ($status == "Pendente") {
+            $stilo = "statusPendente";
+        } else {
+            $stilo = "statusEncerrado";
+        }
+        p($status, "$stilo");
+    }
+
+    #####################################################################################
+
     public function exibeNumeroSiafeRelatorio($idContrato) {
         # Verifica se foi informado
         if (vazio($idContrato)) {
