@@ -144,3 +144,8 @@ define("EMAILAUTOR", $intra->get_variavel("sistemaAutorEmail"));
 $versao = $intra->get_versaoAtual();
 define("VERSAO", $versao[0]);
 define("ATUALIZACAO", date_to_php($versao[1]));
+
+/*
+ * Sobre a Uenf
+ */
+define("DATA_ANIVERSARIO_UENF", "16/08/1993");
