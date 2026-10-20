@@ -46,7 +46,11 @@ if ($acesso) {
     $objeto->set_nome('Setor Requisitante');
 
     # select do edita
-    $objeto->set_selectEdita('SELECT requisitante
+    $objeto->set_selectEdita('SELECT requisitante,
+                                     setorRequisitante,
+                                     setorParticipante1,
+                                     setorParticipante2,
+                                     setorParticipante3
                                 FROM tbcontrato
                                WHERE idContrato = ' . $idContrato);
 
@@ -69,8 +73,17 @@ if ($acesso) {
     # Nome do campo id
     $objeto->set_idCampo('idContrato');
 
-//    # Tipo de label do formulário
-//    $objeto->set_formLabelTipo(1);
+    # Pega os dados da combo lotacao
+    $selectLotacao = 'SELECT idlotacao, 
+                             concat(IFnull(tblotacao.DIR,"")," - ",IFnull(tblotacao.GER,"")," - ",IFnull(tblotacao.nome,"")) as lotacao,
+                             tblotacao.DIR 
+                        FROM tblotacao
+                        WHERE ativo 
+                     ORDER BY lotacao';
+
+    $result = $pessoal->select($selectLotacao);
+    array_unshift($result, array(null, null));
+
     # Formulario
     $objeto->set_campos(array(
         array(
@@ -80,7 +93,44 @@ if ($acesso) {
             'label' => 'Setor Requisitante:',
             'tipo' => 'texto',
             'col' => 12,
-            'size' => 250)));
+            'size' => 250),
+        array('nome' => 'setorRequisitante',
+            'label' => 'Setor Requisitante:',
+            'tipo' => 'combo',
+            'optgroup' => true,
+            'array' => $result,
+            'size' => 20,
+            'col' => 9,
+            'title' => 'Em qual setor o servidor está lotado',
+            'linha' => 1),
+        array('nome' => 'setorParticipante1',
+            'label' => 'Setor Participante 1:',
+            'tipo' => 'combo',
+            'optgroup' => true,
+            'array' => $result,
+            'size' => 20,
+            'col' => 9,
+            'title' => 'Em qual setor o servidor está lotado',
+            'linha' => 1),
+        array('nome' => 'setorParticipante2',
+            'label' => 'Setor Participante 2:',
+            'tipo' => 'combo',
+            'optgroup' => true,
+            'array' => $result,
+            'size' => 20,
+            'col' => 9,
+            'title' => 'Em qual setor o servidor está lotado',
+            'linha' => 1),
+        array('nome' => 'setorParticipante3',
+            'label' => 'Setor Participante 3:',
+            'tipo' => 'combo',
+            'optgroup' => true,
+            'array' => $result,
+            'size' => 20,
+            'col' => 9,
+            'title' => 'Em qual setor o servidor está lotado',
+            'linha' => 1),
+    ));
 
     # Log
     $objeto->set_idUsuario($idUsuario);

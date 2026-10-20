@@ -446,7 +446,7 @@ class Contrato {
         $conteudo = $this->getDados($idContrato);
 
         p($conteudo["numero"], "contratoNumero");
-        
+
         # Exibe os Status
         $status = $this->getStatus($idContrato);
 
@@ -773,10 +773,9 @@ class Contrato {
             # Tempo Total
             $tempo = $this->getTempoTotal($idContrato);
 
-            
             # Limite de meses
-            $limiteMeses = $this->getLimiteDuracaoContratos($idContrato);            
-            
+            $limiteMeses = $this->getLimiteDuracaoContratos($idContrato);
+
             # Verifica se já passou do limite de meses
             if (!empty($tempo["meses"])) {
                 if ($tempo["meses"] >= $limiteMeses) {
@@ -828,9 +827,9 @@ class Contrato {
 
             # Tempo Total
             $tempo = $this->getTempoTotal($idContrato);
-            
+
             # Limite de meses
-            $limiteMeses = $this->getLimiteDuracaoContratos($idContrato);    
+            $limiteMeses = $this->getLimiteDuracaoContratos($idContrato);
 
             #var_dump($tempo);
             # Verifica se já passou o limite de meses
@@ -1898,16 +1897,20 @@ class Contrato {
         # Pega os dados
         $dados = $this->getDados($idContrato);
 
+        # Classe pessoa
+        $pessoal = new Pessoal();
+
         tituloTable("Setor Requisitante");
         $painel = new Callout();
         $painel->abre();
+        
+        # Setor Requisitante
+        p($dados["requisitante"], "requisitante");
+        p($pessoal->get_nomeLotacao2($dados["setorRequisitante"]), "requisitante");
 
-        # Data da proposta
-        if (empty($dados["requisitante"])) {
-            p("---", "requisitante");
-        } else {
-            p($dados["requisitante"], "requisitante");
-        }
+        p($pessoal->get_nomeLotacao2($dados["setorParticipante1"]), "pLinha2");
+        p($pessoal->get_nomeLotacao2($dados["setorParticipante2"]), "pLinha2");
+        p($pessoal->get_nomeLotacao2($dados["setorParticipante3"]), "pLinha2");
 
         # Editar
         if (Verifica::acesso($idUsuario, [1, 9])) {

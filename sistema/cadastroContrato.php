@@ -63,6 +63,7 @@ if ($acesso) {
     $inclusaoEmpresa = post('inclusaoEmpresa', get_session('inclusaoEmpresa'));
     $parametroLei = post('parametroLei', get_session('parametroLei'));
     $parametroMarcador = post('parametroMarcador', get_session('parametroMarcador'));
+    $parametroRequisitante = post('parametroRequisitante', get_session('parametroRequisitante'));
     $aba = get('aba', get_session('aba', 1));
 
     # Joga os parâmetros par as sessions
@@ -77,6 +78,7 @@ if ($acesso) {
     set_session('inclusaoEmpresa', $inclusaoEmpresa);
     set_session('parametroLei', $parametroLei);
     set_session('parametroMarcador', $parametroMarcador);
+    set_session('parametroRequisitante', $parametroRequisitante);
     set_session('aba', $aba);
 
     ################################################################
@@ -686,10 +688,31 @@ if ($acesso) {
             $controle->set_valor($parametroSiafe);
             $controle->set_onChange('formPadrao.submit();');
             $controle->set_linha(1);
-            $controle->set_col(9);
+            $controle->set_col(6);
             $controle->set_autofocus(true);
             $form->add_item($controle);
             
+            /*
+             * Setor Requisitante
+             */
+            
+            $result = $pessoal->select('(SELECT idlotacao, concat(IFnull(tblotacao.DIR,"")," - ",IFnull(tblotacao.GER,"")," - ",IFnull(tblotacao.nome,"")) lotacao
+                                              FROM tblotacao
+                                             WHERE ativo) UNION (SELECT distinct DIR, DIR
+                                              FROM tblotacao
+                                             WHERE ativo)
+                                          ORDER BY 2');
+            array_unshift($result, array('*', 'Todos'));
+
+            $controle = new Input('parametroRequisitante', 'combo', 'Setor Requisitante / Participantes:', 1);
+            $controle->set_size(30);
+            $controle->set_title('Filtra por Lotação');
+            $controle->set_array($result);
+            $controle->set_valor($parametroRequisitante);
+            $controle->set_onChange('formPadrao.submit();');
+            $controle->set_linha(1);
+            $controle->set_col(3);
+            $form->add_item($controle);            
 
             /*
              * Status

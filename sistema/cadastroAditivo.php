@@ -361,8 +361,8 @@ if ($acesso) {
             }
 
             if (Verifica::acesso($idUsuario, [1, 9])) {
-                
-                # MArcadores
+
+                # Marcadores
                 $botaoMarcador = new Button("Marcadores", "cadastroMarcadorContrato.php");
                 $botaoMarcador->set_title("Editar os marcadores deste contratoo");
                 $menu1->add_link($botaoMarcador, "right");
@@ -381,8 +381,6 @@ if ($acesso) {
                 $botaoRel->set_imagem($imagem);
                 $menu1->add_link($botaoRel, "right");
             }
-
-
 
             $menu1->show();
 
