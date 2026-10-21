@@ -431,7 +431,7 @@ if ($acesso) {
     $controle->set_col(1);
     $form->add_item($controle);
     
-    $controle = new Input('postValorPagoTotal', 'simnao', 'Valor Pago Total:', 1);
+    $controle = new Input('postValorPagoTotal', 'simnao', 'Valor Liquidado Total:', 1);
     $controle->set_size(5);
     $controle->set_title('Informa o Valor Pago Total');
     $controle->set_valor($postValorPagoTotal);
@@ -1009,7 +1009,7 @@ if ($acesso) {
     
     if ($postValorPagoTotal) {
         $field[] = "idContrato";
-        $label[] = "Valor Pago Liquidado";
+        $label[] = "Valor Liquidado";
         $align[] = "right";
         $class[] = "Pagamento";
         $method[] = "exibeValorLiquidado2";
