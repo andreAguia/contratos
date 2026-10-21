@@ -1903,7 +1903,7 @@ class Contrato {
         tituloTable("Setor Requisitante");
         $painel = new Callout();
         $painel->abre();
-        
+
         # Setor Requisitante
         p($dados["requisitante"], "requisitante");
         p($pessoal->get_nomeLotacao2($dados["setorRequisitante"]), "requisitante");
@@ -2042,6 +2042,34 @@ class Contrato {
 
         # Retorno        
         return $row["natDespesa"];
+    }
+
+    ###########################################################
+
+    public function getNaturezaDespesa2($idContrato = null) {
+
+        # Conecta ao Banco de Dados
+        $contratos = new Contratos();
+
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            return null;
+        } else {
+
+            # Pega a natureza da Despesa
+            $natDespesa = $this->getNaturezaDespesa($idContrato);
+
+            if (empty($natDespesa)) {
+                return null;
+            } else {
+
+                foreach ($this->arrayNatureza as $item) {
+                    if ($item[0] == $natDespesa) {
+                        return $item[1];
+                    }
+                }
+            }
+        }
     }
 
     ###########################################################

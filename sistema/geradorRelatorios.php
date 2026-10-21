@@ -26,6 +26,7 @@ $postProcesso = post('postProcesso');
 $postProcessoExec = post('postProcessoExec');
 $postProposta = post('postProposta');
 $postLei = post('postLei');
+$postNaturezaDespesa = post('postNaturezaDespesa');
 $postDuracao = post('postDuracao');
 $postPrazo = post('postPrazo');
 $postVigencia = post('postVigencia');
@@ -161,7 +162,7 @@ if ($acesso) {
     $controle->set_title('Mão de Obra Alocada?');
     $controle->set_valor($postMaoDeObra);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
+    $controle->set_linha(3);
     $controle->set_col(1);
     $form->add_item($controle);
 
@@ -170,7 +171,7 @@ if ($acesso) {
     $controle->set_title('O Processo do contrato');
     $controle->set_valor($postProcesso);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
+    $controle->set_linha(3);
     $controle->set_col(1);
     $form->add_item($controle);
 
@@ -179,7 +180,7 @@ if ($acesso) {
     $controle->set_title('O Processo de execução do contrato');
     $controle->set_valor($postProcessoExec);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
+    $controle->set_linha(3);
     $controle->set_col(1);
     $form->add_item($controle);
 
@@ -188,7 +189,7 @@ if ($acesso) {
     $controle->set_title('O Setor Requisitante');
     $controle->set_valor($postSetorReq);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
+    $controle->set_linha(3);
     $controle->set_col(1);
 
     $form->add_item($controle);
@@ -197,7 +198,16 @@ if ($acesso) {
     $controle->set_title('A Lei do Contrato');
     $controle->set_valor($postLei);
     $controle->set_onChange('formPadrao.submit();');
-    $controle->set_linha(1);
+    $controle->set_linha(3);
+    $controle->set_col(1);
+    $form->add_item($controle);
+
+    $controle = new Input('postNaturezaDespesa', 'simnao', 'Natu.Despesa:', 1);
+    $controle->set_size(5);
+    $controle->set_title('Natureza da Despesa');
+    $controle->set_valor($postNaturezaDespesa);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(3);
     $controle->set_col(1);
     $form->add_item($controle);
 
@@ -231,7 +241,7 @@ if ($acesso) {
     $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postDtInicial', 'simnao', 'Data Inicial:', 1);
     $controle->set_size(5);
     $controle->set_title('A data Inicial');
@@ -440,7 +450,7 @@ if ($acesso) {
     $controle->set_linha(6);
     $controle->set_col(1);
     $form->add_item($controle);
-    
+
     $controle = new Input('postValorPagoTotal', 'simnao', 'Valor Liquidado Total:', 1);
     $controle->set_size(5);
     $controle->set_title('Informa o Valor Pago Total');
@@ -582,7 +592,7 @@ if ($acesso) {
     $comboNatureza = $contrato->getArrayNatureza();
     array_unshift($comboNatureza, array(null, "Todos"));
 
-    # Modalidade
+    # Natureza
     $controle = new Input('parametroNatureza', 'combo', 'Natureza da Despesa:', 1);
     $controle->set_size(20);
     $controle->set_title('Natureza da Despesa');
@@ -846,6 +856,15 @@ if ($acesso) {
         $function[] = "";
     }
 
+    if ($postNaturezaDespesa) {
+        $field[] = "idContrato";
+        $label[] = "Nat.Despesa";
+        $align[] = "center";
+        $class[] = "Contrato";
+        $method[] = "getNaturezaDespesa2";
+        $function[] = "";
+    }
+
     if ($postDuracao) {
         $field[] = "idContrato";
         $label[] = "Duração";
@@ -872,7 +891,7 @@ if ($acesso) {
         $method[] = "exibePrazo";
         $function[] = "";
     }
-    
+
     if ($postDtInicial) {
         $field[] = "idContrato";
         $label[] = "Data Inicial";
@@ -1025,7 +1044,7 @@ if ($acesso) {
         $method[] = "exibeValorTotal";
         $function[] = "";
     }
-    
+
     if ($postValorPagoTotal) {
         $field[] = "idContrato";
         $label[] = "Valor Liquidado";
