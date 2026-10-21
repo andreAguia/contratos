@@ -46,6 +46,7 @@ $postAditivosPrazo = post('postAditivosPrazo');
 $postPgtoSaldo = post('postPgtoSaldo');
 $postPgtoAno = post('postPgtoAno');
 $postValorPorAno = post('postValorPorAno');
+$postValorPagoTotal = post('postValorPagoTotal');
 
 $parametroOrdenaTipo = post('parametroOrdenaTipo', 'asc');
 $parametroOrdena = post('parametroOrdena', "numero");
@@ -428,6 +429,15 @@ if ($acesso) {
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(6);
     $controle->set_col(1);
+    $form->add_item($controle);
+    
+    $controle = new Input('postValorPagoTotal', 'simnao', 'Valor Pago Total:', 1);
+    $controle->set_size(5);
+    $controle->set_title('Informa o Valor Pago Total');
+    $controle->set_valor($postValorPagoTotal);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(6);
+    $controle->set_col(2);
     $form->add_item($controle);
 
 #################################### Ordenação #######################################
@@ -994,6 +1004,15 @@ if ($acesso) {
         $align[] = "right";
         $class[] = "Contrato";
         $method[] = "exibeValorTotal";
+        $function[] = "";
+    }
+    
+    if ($postValorPagoTotal) {
+        $field[] = "idContrato";
+        $label[] = "Valor Pago Liquidado";
+        $align[] = "right";
+        $class[] = "Pagamento";
+        $method[] = "exibeValorLiquidado2";
         $function[] = "";
     }
 

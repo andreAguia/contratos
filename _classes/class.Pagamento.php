@@ -48,7 +48,7 @@ class Pagamento {
 
     ############################################################
 
-    private function getValorLiquidado($idContrato = null, $idNatureza = null) {
+    public function getValorLiquidado($idContrato = null, $idNatureza = null) {
 
         # Verifica se foi informado o id
         if (empty($idContrato)) {
@@ -179,6 +179,22 @@ class Pagamento {
             $div->fecha();
         }
         $painel->fecha();
+    }
+
+    ###########################################################
+
+    public function exibeValorLiquidado2($idContrato = null) {
+
+        /*
+         * é o get_valorliquidado com formato de moeda
+         */
+
+        # Verifica se foi informado
+        if (empty($idContrato)) {
+            return null;
+        } else {
+            return formataMoeda2($this->getValorLiquidado($idContrato));
+        }
     }
 
     ###########################################################

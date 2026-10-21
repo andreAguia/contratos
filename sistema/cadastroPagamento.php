@@ -55,7 +55,7 @@ if ($acesso) {
     $objeto = new Modelo();
 
     ################################################################
-    # Rotina que exibe o formul'ario de Pesquisa extra
+    # Rotina que exibe o formulário de Pesquisa extra
     # Limita o tamanho da tela
 
     function exibeFormPesqPgto($array) {
