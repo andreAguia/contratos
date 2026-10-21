@@ -29,6 +29,7 @@ $postLei = post('postLei');
 $postDuracao = post('postDuracao');
 $postPrazo = post('postPrazo');
 $postVigencia = post('postVigencia');
+$postDtInicial = post('postDtInicial');
 $postSetorReq = post('postSetorReq');
 
 $postPeriodo = post('postPeriodo');
@@ -230,6 +231,15 @@ if ($acesso) {
     $controle->set_linha(2);
     $controle->set_col(1);
     $form->add_item($controle);
+    
+    $controle = new Input('postDtInicial', 'simnao', 'Data Inicial:', 1);
+    $controle->set_size(5);
+    $controle->set_title('A data Inicial');
+    $controle->set_valor($postDtInicial);
+    $controle->set_onChange('formPadrao.submit();');
+    $controle->set_linha(2);
+    $controle->set_col(1);
+    $form->add_item($controle);
 
     /*
      * Tempo 
@@ -369,7 +379,7 @@ if ($acesso) {
     $controle->set_col(1);
     $form->add_item($controle);
 
-    $controle = new Input('postComissaoPresidente', 'simnao', 'Responsável:', 1);
+    $controle = new Input('postComissaoPresidente', 'simnao', 'Gestor/Presidente:', 1);
     $controle->set_size(5);
     $controle->set_title('Presidente / Gestor da Comissão');
     $controle->set_valor($postComissaoPresidente);
@@ -860,6 +870,15 @@ if ($acesso) {
         $align[] = "center";
         $class[] = "Contrato";
         $method[] = "exibePrazo";
+        $function[] = "";
+    }
+    
+    if ($postDtInicial) {
+        $field[] = "idContrato";
+        $label[] = "Data Inicial";
+        $align[] = "center";
+        $class[] = "Contrato";
+        $method[] = "getDtInicial";
         $function[] = "";
     }
 
