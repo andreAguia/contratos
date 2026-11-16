@@ -155,9 +155,9 @@ if ($acesso) {
 
             # Membro
             if (!is_null($parametroMembro)) {
-                
+
                 # Verifica se tem espaços
-                if (strpos($parametroMembro, ' ') !== false) { 
+                if (strpos($parametroMembro, ' ') !== false) {
                     # Separa as palavras
                     $palavras = explode(' ', $parametroMembro);
 
@@ -173,7 +173,7 @@ if ($acesso) {
 
             # Tipo            
             if (!empty($parametroTipo)) {
-                $select .= " WHERE idTipoMembro = {$parametroTipo}";
+                $select .= " AND idTipoMembro = {$parametroTipo}";
             }
 
             $select .= " ) UNION 
@@ -190,26 +190,31 @@ if ($acesso) {
 
             # Tipo            
             if (!empty($parametroTipo)) {
-                $select .= " WHERE idTipoMembro = {$parametroTipo}";
+                $select .= " AND idTipoMembro = {$parametroTipo}";
             }
 
-            $select .= " ) ORDER BY 1";
+            $select .= ") ORDER BY 1";
 
-            $row = $contratos->select($select);
+            if (empty($parametroMembro)) {
+                calloutWarning("Entre com o Nome do Membro da Comissão", "Membros de Comissão de Fiscalização", "center");
+            } else {
 
-            # Monta a tabela
-            $tabela = new Tabela();
-            $tabela->set_titulo("Membros de Comissão de Fiscalização");
-            $tabela->set_label(["Servidor", "Tipo", "Contrato", "Objeto", "Designação"]);
-            $tabela->set_align(["left", "center", "center", "left", "left"]);
-            $tabela->set_width([20, 10, 10, 40, 20]);
-            $tabela->set_funcaoDepoisClasse([null, "ressaltaSaiu"]);
-            $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao"]);
-            $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoEStatus", "exibeObjeto", "getDadosDesignacao"]);
-            $tabela->set_conteudo($row);
-            $tabela->set_rowspan(0);
-            $tabela->set_grupoCorColuna(0);
-            $tabela->show();
+                $row = $contratos->select($select);
+
+                # Monta a tabela
+                $tabela = new Tabela();
+                $tabela->set_titulo("Membros de Comissão de Fiscalização");
+                $tabela->set_label(["Servidor", "Tipo", "Contrato", "Objeto", "Designação"]);
+                $tabela->set_align(["left", "center", "center", "left", "left"]);
+                $tabela->set_width([20, 10, 10, 40, 20]);
+                $tabela->set_funcaoDepoisClasse([null, "ressaltaSaiu"]);
+                $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao"]);
+                $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoEStatus", "exibeObjeto", "getDadosDesignacao"]);
+                $tabela->set_conteudo($row);
+                $tabela->set_rowspan(0);
+                $tabela->set_grupoCorColuna(0);
+                $tabela->show();
+            }
             break;
     }
 
