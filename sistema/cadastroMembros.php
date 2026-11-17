@@ -16,6 +16,9 @@ $acesso = Verifica::acesso($idUsuario, [1, 9]);
 
 if ($acesso) {
 
+    # Pega a hora
+    $time_start = microtime(true);
+
     # Conecta ao Banco de Dados
     $contratos = new Contratos();
 
@@ -214,6 +217,11 @@ if ($acesso) {
                 $tabela->set_rowspan(0);
                 $tabela->set_grupoCorColuna(0);
                 $tabela->show();
+
+                # Calcula e exibe o tempo
+                $time_end = microtime(true);
+                $time = $time_end - $time_start;
+                p(number_format($time, 4, '.', ',') . " segundos", "right", "f10");
             }
             break;
     }
