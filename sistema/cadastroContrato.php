@@ -8,9 +8,6 @@
 # Reservado para o servidor logado
 $idUsuario = null;
 
-# Pega o time
-$time_start = microtime(true);
-
 # Configuração
 include "_config.php";
 
@@ -151,6 +148,9 @@ if ($acesso) {
         p(SISTEMA, 'grhTitulo');
         p("Versão: " . VERSAO, "versao");
         br();
+
+        # Pega a hora
+        $time_start = microtime(true);
     }
 
     # Abre um novo objeto Modelo
@@ -1015,11 +1015,16 @@ if ($acesso) {
 
             $objeto->listar();
 
-            $grid->fechaColuna();
-            $grid->fechaGrid();
-
             # Exibe o rodapé
             AreaServidor::rodape($idUsuario, false);
+
+            # Calcula e exibe o tempo
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
+            p(number_format($time, 4, '.', ',') . " segundos", "right", "f10");
+
+            $grid->fechaColuna();
+            $grid->fechaGrid();
             break;
 
         ################################################################
@@ -1141,11 +1146,6 @@ if ($acesso) {
 
         ################################################################
     }
-
-    # Calcula e exibe o tempo
-    $time_end = microtime(true);
-    $time = $time_end - $time_start;
-    p(number_format($time, 4, '.', ',') . " segundos", "right", "f10");
 
     $page->terminaPagina();
 } else {
