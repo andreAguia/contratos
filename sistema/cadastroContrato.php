@@ -50,6 +50,7 @@ if ($acesso) {
     set_session('sessionParametro');
     set_session('parametroAnoPgto');
     set_session('parametroNaturezaPgto');
+    set_session('origem');
 
     # Pega os parâmetros
     $parametroAno = post('parametroAno', get_session('parametroAno'));
@@ -59,13 +60,12 @@ if ($acesso) {
     $parametroSiafe = post('parametroSiafe', get_session('parametroSiafe'));
     $parametroEmpresa = post('parametroEmpresa', get_session('parametroEmpresa'));
     $parametroObjeto = post('parametroObjeto', get_session('parametroObjeto'));
-    $parametroSetorRequisitante = post('parametroSetorRequisitante', get_session('parametroSetorRequisitante'));
     $inclusaoEmpresa = post('inclusaoEmpresa', get_session('inclusaoEmpresa'));
     $parametroLei = post('parametroLei', get_session('parametroLei'));
     $parametroMarcador = post('parametroMarcador', get_session('parametroMarcador'));
-    $parametroRequisitante = post('parametroRequisitante', get_session('parametroRequisitante'));
-    $aba = get('aba', get_session('aba', 1));
 
+    $parametroSetorRequisitante = post('parametroSetorRequisitante', get_session('parametroSetorRequisitante'));    // Texto
+    $parametroRequisitante = post('parametroRequisitante', get_session('parametroRequisitante', "*"));                   // Combo
     # Joga os parâmetros par as sessions
     set_session('parametroAno', $parametroAno);
     set_session('parametroStatus', $parametroStatus);
@@ -74,13 +74,12 @@ if ($acesso) {
     set_session('parametroSiafe', $parametroSiafe);
     set_session('parametroEmpresa', $parametroEmpresa);
     set_session('parametroObjeto', $parametroObjeto);
-    set_session('parametroSetorRequisitante', $parametroSetorRequisitante);
     set_session('inclusaoEmpresa', $inclusaoEmpresa);
     set_session('parametroLei', $parametroLei);
     set_session('parametroMarcador', $parametroMarcador);
-    set_session('parametroRequisitante', $parametroRequisitante);
-    set_session('aba', $aba);
 
+    set_session('parametroSetorRequisitante', $parametroSetorRequisitante); // Texto
+    set_session('parametroRequisitante', $parametroRequisitante);           // Combo
     ################################################################
     # Começa uma nova página
     $page = new Page();
@@ -614,6 +613,12 @@ if ($acesso) {
 
             if (Verifica::acesso($idUsuario, [1, 9])) {
 
+                # Setor Requisitante
+                if (Verifica::acesso($idUsuario, 1)) {
+                    $botao = new Button("Setor Requisitante", "setorRequisitante.php?i=true");
+                    $botao->set_class("button secondary");
+                    $menu1->add_link($botao, "right");
+                }
 
                 # Empresas
                 $botao = new Button("Empresas", "cadastroEmpresa.php?i=true");
@@ -685,7 +690,7 @@ if ($acesso) {
             # Formulário de Pesquisa
             $form = new Form('?');
 
-            # Siafe / Requisitante / Objeto / Situacao
+            # Siafe / Objeto / Situacao
             $controle = new Input('parametroSiafe', 'texto', 'Número / Siafe / Objeto / Situação / Empresa:', 1);
             $controle->set_size(50);
             $controle->set_title('Siafe');
@@ -827,15 +832,6 @@ if ($acesso) {
             $controle->set_col(3);
             $form->add_item($controle);
 
-            # Setor Requisitante
-            $controle = new Input('parametroSetorRequisitante', 'texto', 'Setor Requisitante:', 1);
-            $controle->set_size(50);
-            $controle->set_title('Setor Requisitante');
-            $controle->set_valor($parametroSetorRequisitante);
-            $controle->set_onChange('formPadrao.submit();');
-            $controle->set_linha(2);
-            $controle->set_col(3);
-            #$form->add_item($controle);
             # Objeto ou Situação
             $controle = new Input('parametroObjeto', 'texto', 'Objeto e/ou Situação:', 1);
             $controle->set_size(50);
@@ -923,6 +919,16 @@ if ($acesso) {
 //                if (!empty($parametroEmpresa)) {
 //                    $select .= " AND idEmpresa = {$parametroEmpresa}";
 //                }
+            # Setor Requisitante e Setores Participantes
+            if ($parametroRequisitante <> "*") {
+                # Verifica se o que veio é numérico
+                if (is_numeric($parametroRequisitante)) {
+                    $select .= " AND setorRequisitante = {$parametroRequisitante}";
+                } else { # senão é uma diretoria genérica
+                    $select .= " AND setorRequisitante IN (SELECT idLotacao FROM uenf_grh.tblotacao WHERE tblotacao.DIR = '{$parametroRequisitante}')";
+                }
+            }
+
 
             if (!empty($parametroAno)) {
                 $select .= " AND (SUBSTRING(numero,-4) = {$parametroAno} OR YEAR(dtAssinatura) = {$parametroAno})";

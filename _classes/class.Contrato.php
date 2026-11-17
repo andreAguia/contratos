@@ -232,8 +232,12 @@ class Contrato {
         }
 
         # Coloca o requisitante
-        if (!empty($conteudo["requisitante"])) {
-            $processo .= "<br/><br/>Requisitante:<br/>{$conteudo["requisitante"]}";
+        if (!empty($conteudo["setorRequisitante"])) {
+            # Classe pessoa
+            $pessoal = new Pessoal();
+
+            $processo .= "<br/><br/>Requisitante:<br/>";
+            $processo .= $pessoal->get_nomeLotacao($conteudo["setorRequisitante"]);
         }
         return $processo;
     }
@@ -1905,12 +1909,15 @@ class Contrato {
         $painel->abre();
 
         # Setor Requisitante
-        p($dados["requisitante"], "requisitante");
-        p($pessoal->get_nomeLotacao2($dados["setorRequisitante"]), "requisitante");
+        if (empty($dados["setorRequisitante"])) {
+            p($dados["requisitante"], "requisitante");
+        } else {
+            p($pessoal->get_nomeLotacao2($dados["setorRequisitante"]), "requisitante");
 
-        p($pessoal->get_nomeLotacao2($dados["setorParticipante1"]), "pLinha2");
-        p($pessoal->get_nomeLotacao2($dados["setorParticipante2"]), "pLinha2");
-        p($pessoal->get_nomeLotacao2($dados["setorParticipante3"]), "pLinha2");
+            p($pessoal->get_nomeLotacao2($dados["setorParticipante1"]), "pLinha2");
+            p($pessoal->get_nomeLotacao2($dados["setorParticipante2"]), "pLinha2");
+            p($pessoal->get_nomeLotacao2($dados["setorParticipante3"]), "pLinha2");
+        }
 
         # Editar
         if (Verifica::acesso($idUsuario, [1, 9])) {

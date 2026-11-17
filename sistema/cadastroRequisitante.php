@@ -27,6 +27,9 @@ if ($acesso) {
     # pega o contrato
     $idContrato = soNumeros(get_session('sessionContrato'));
 
+    # Pega a Origem (se tiver)
+    $origem = get_session('origem');
+
     # Começa uma nova página
     $page = new Page();
     $page->iniciaPagina();
@@ -58,8 +61,13 @@ if ($acesso) {
     $objeto->set_linkGravar('?fase=gravar');
 
     # Define o caminho de volta
-    $objeto->set_linkListar('cadastroAditivo.php');
-    $objeto->set_voltarForm('cadastroAditivo.php');
+    if (empty($origem)) {
+        $objeto->set_linkListar('cadastroAditivo.php');
+        $objeto->set_voltarForm('cadastroAditivo.php');
+    } else {
+        $objeto->set_linkListar($origem);
+        $objeto->set_voltarForm($origem);
+    }
 
     # retira o botão incluir
     $objeto->set_botaoIncluir(false);

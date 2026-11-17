@@ -61,7 +61,7 @@ $parametroEmpresa = post('parametroEmpresa');
 $parametroMaoDeObra = post('parametroMaoDeObra');
 $parametroContrato = post('parametroContrato', 0);
 $parametroNatureza = post('parametroNatureza');
-$parametroSetorReq = post('parametroSetorReq');
+$parametroRequisitante = post('parametroRequisitante');
 $parametroLei = post('parametroLei');
 
 # Permissão de Acesso
@@ -614,11 +614,23 @@ if ($acesso) {
     $controle->set_array([["S", "Sim"], ["N", "Não"], [null, "Todos"]]);
     $form->add_item($controle);
 
-    # Setor Requisitante
-    $controle = new Input('parametroSetorReq', 'texto', 'Setor Requisitante:', 1);
+    /*
+     *  Setor Requisitante
+     */
+
+    $result = $pessoal->select('(SELECT idlotacao, concat(IFnull(tblotacao.DIR,"")," - ",IFnull(tblotacao.GER,"")," - ",IFnull(tblotacao.nome,"")) lotacao
+                                              FROM tblotacao
+                                             WHERE ativo) UNION (SELECT distinct DIR, DIR
+                                              FROM tblotacao
+                                             WHERE ativo)
+                                          ORDER BY 2');
+    array_unshift($result, array(null, 'Todos'));
+
+    $controle = new Input('parametroRequisitante', 'combo', 'Setor Requisitante / Participantes:', 1);
     $controle->set_size(20);
     $controle->set_title('Setor Requisitante');
-    $controle->set_valor($parametroSetorReq);
+    $controle->set_array($result);
+    $controle->set_valor($parametroRequisitante);
     $controle->set_onChange('formPadrao.submit();');
     $controle->set_linha(8);
     $controle->set_col(4);
@@ -1104,6 +1116,16 @@ if ($acesso) {
             $select .= " AND idLei = {$parametroLei}";
         }
 
+        # Setor Requisitante e Setores Participantes
+        if ($parametroRequisitante <> "*") {
+            # Verifica se o que veio é numérico
+            if (is_numeric($parametroRequisitante)) {
+                $select .= " AND setorRequisitante = {$parametroRequisitante}";
+            } else { # senão é uma diretoria genérica
+                $select .= " AND setorRequisitante IN (SELECT idLotacao FROM uenf_grh.tblotacao WHERE tblotacao.DIR = '{$parametroRequisitante}')";
+            }
+        }
+
         if (!empty($parametroMaoDeObra)) {
             if ($parametroMaoDeObra == "S") {
                 $select .= " AND maoDeObra = 1";
@@ -1134,7 +1156,7 @@ if ($acesso) {
             $select .= " ORDER BY {$parametroOrdena} {$parametroOrdenaTipo}";
         }
 
-        #echo $select;
+        echo $select;
 
         $contratos = new Contratos();
         $row = $contratos->select($select);

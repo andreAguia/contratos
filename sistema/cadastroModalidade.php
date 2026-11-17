@@ -73,23 +73,14 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(array("Id", "Tipo", "Modalidade", "Obs", "Contratos"));
-    $objeto->set_width(array(5, 10, 20, 50, 5));
-    $objeto->set_align(array("center", "center", "left", "left", "center"));
-    $objeto->set_classe(array(null, null, null, null, "Modalidade"));
-    $objeto->set_metodo(array(null, null, null, null, "getNumContratos"));
+    $objeto->set_label(["Id", "Tipo", "Modalidade", "Obs", "Contratos"]);
+    $objeto->set_width([5, 10, 20, 50, 5]);
+    $objeto->set_align(["center", "center", "left", "left", "center"]);
+    $objeto->set_classe([null, null, null, null, "Modalidade"]);
+    $objeto->set_metodo([null, null, null, null, "getNumContratos"]);
     
-    $formatacaoCondicional = array(
-        array('coluna'   => 1,
-            'valor'    => "Despesa",
-            'operador' => '=',
-            'id'       => 'trModalidadeDespesa'),
-        array('coluna'   => 1,
-            'valor'    => "Receita",
-            'operador' => '=',
-            'id'       => 'trModalidadeReceita'),
-    );
-    $objeto->set_formatacaoCondicional($formatacaoCondicional);
+    $objeto->set_rowspan(1);
+    $objeto->set_grupoCorColuna(1);
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
