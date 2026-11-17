@@ -8,6 +8,9 @@
 # Reservado para o servidor logado
 $idUsuario = null;
 
+# Pega o time
+$time_start = microtime(true);
+
 # Configuração
 include "_config.php";
 
@@ -750,11 +753,12 @@ if ($acesso) {
              */
 
             # Pega os dados
-            $comboAno = $contratos->select('SELECT DISTINCT YEAR(dtAssinatura), YEAR(dtAssinatura)
-                                                  FROM tbcontrato
-                                                 WHERE dtAssinatura IS NOT NULL
-                                              ORDER BY YEAR(dtAssinatura) DESC');
+//            $comboAno = $contratos->select('SELECT DISTINCT YEAR(dtAssinatura), YEAR(dtAssinatura)
+//                                                  FROM tbcontrato
+//                                                 WHERE dtAssinatura IS NOT NULL
+//                                              ORDER BY YEAR(dtAssinatura) DESC');
 
+            $comboAno = range(date("Y"), 2013);
             array_unshift($comboAno, array(null, "Todos"));
 
             # Ano
@@ -1137,6 +1141,11 @@ if ($acesso) {
 
         ################################################################
     }
+
+    # Calcula e exibe o tempo
+    $time_end = microtime(true);
+    $time = $time_end - $time_start;
+    p(number_format($time, 4, '.', ',') . " segundos", "right", "f10");
 
     $page->terminaPagina();
 } else {
