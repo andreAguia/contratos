@@ -21,6 +21,11 @@ if ($acesso) {
     $contrato = new Contrato();
     $pessoal = new Pessoal();
 
+    # Informa se estamos em manutenção
+    if ($intra->get_variavel('manutencao')) {
+        label('Em Manutenção');
+    }
+
     # Faz o backup de hora em hora
     # Verifica se o backup automático está habilitado
     if ($intra->get_variavel("backupAutomatico")) {
@@ -893,9 +898,6 @@ if ($acesso) {
             $form->add_item($controle);
 
             $form->show();
-
-            # Cria Botões com os marcadores
-            $menu2 = new MenuBar();
 
             # Botão 
             $botao = new BotaoGrafico();
