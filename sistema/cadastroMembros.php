@@ -185,10 +185,11 @@ if ($acesso) {
                             idContrato,
                             idContrato,
                             idComissao
-                       FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)";
+                       FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
+                       WHERE TRUE";
             # Membro
             if (!empty($parametroMembro)) {
-                $select .= " WHERE tbmembroexterno.nome like '%{$parametroMembro}%'";
+                $select .= " AND tbmembroexterno.nome like '%{$parametroMembro}%'";
             }
 
             # Tipo            
@@ -198,31 +199,27 @@ if ($acesso) {
 
             $select .= ") ORDER BY 1";
 
-            if (empty($parametroMembro)) {
-                calloutWarning("Entre com o Nome do Membro da Comissão", "Membros de Comissão de Fiscalização", "center");
-            } else {
+            $row = $contratos->select($select);
 
-                $row = $contratos->select($select);
+            # Monta a tabela
+            $tabela = new Tabela();
+            $tabela->set_titulo("Membros de Comissão de Fiscalização");
+            $tabela->set_label(["Servidor", "Tipo", "Contrato", "Objeto", "Designação"]);
+            $tabela->set_align(["left", "center", "center", "left", "left"]);
+            $tabela->set_width([20, 10, 10, 40, 20]);
+            $tabela->set_funcaoDepoisClasse([null, "ressaltaSaiu"]);
+            $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao"]);
+            $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoEStatus", "exibeObjeto", "getDadosDesignacao"]);
+            $tabela->set_conteudo($row);
+            $tabela->set_rowspan(0);
+            $tabela->set_grupoCorColuna(0);
+            $tabela->show();
 
-                # Monta a tabela
-                $tabela = new Tabela();
-                $tabela->set_titulo("Membros de Comissão de Fiscalização");
-                $tabela->set_label(["Servidor", "Tipo", "Contrato", "Objeto", "Designação"]);
-                $tabela->set_align(["left", "center", "center", "left", "left"]);
-                $tabela->set_width([20, 10, 10, 40, 20]);
-                $tabela->set_funcaoDepoisClasse([null, "ressaltaSaiu"]);
-                $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao"]);
-                $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoEStatus", "exibeObjeto", "getDadosDesignacao"]);
-                $tabela->set_conteudo($row);
-                $tabela->set_rowspan(0);
-                $tabela->set_grupoCorColuna(0);
-                $tabela->show();
+            # Calcula e exibe o tempo
+            $time_end = microtime(true);
+            $time = $time_end - $time_start;
+            p(number_format($time, 4, '.', ',') . " segundos", "right", "f10");
 
-                # Calcula e exibe o tempo
-                $time_end = microtime(true);
-                $time = $time_end - $time_start;
-                p(number_format($time, 4, '.', ',') . " segundos", "right", "f10");
-            }
             break;
     }
 

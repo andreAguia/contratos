@@ -627,7 +627,7 @@ if ($acesso) {
                     $botao->set_class("button secondary");
                     $menu1->add_link($botao, "right");
                 }
-
+                
                 # Empresas
                 $botao = new Button("Empresas", "cadastroEmpresa.php?i=true");
                 $botao->set_title("Cadastro de Empresas");
@@ -639,6 +639,12 @@ if ($acesso) {
                 $botao->set_title("Cadastro de Comissões");
                 $botao->set_class("button secondary");
                 $menu1->add_link($botao, "right");
+                
+                # Treinamentos
+                $botao = new Button("Treinamentos", "cadastroTreinamento.php?i=true");
+                $botao->set_title("Cadastro de Treinamentos dos Membros da Comissão");
+                $botao->set_class("button secondary");
+                $menu1->add_link($botao, "right");                
 
                 # Modalidade
                 $botao = new Button("Modalidade", "cadastroModalidade.php?i=true");
