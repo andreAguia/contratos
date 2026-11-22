@@ -237,15 +237,14 @@ class Contrato {
             $pessoal = new Pessoal();
 
             # Setor Requisitante
-            $processo .= p2("<br/>Requisitante:","p10left");
-            $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorRequisitante"]),"p12left");
-            
+            $processo .= p2("<br/>Requisitante:", "p10left");
+            $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorRequisitante"]), "p12left");
+
             # Setores Participantes
             $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorParticipante1"]), "p10leftverde");
             $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorParticipante2"]), "p10leftverde");
             $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorParticipante3"]), "p10leftverde");
             $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorParticipante4"]), "p10leftverde");
-            
         }
         return $processo;
     }
@@ -457,7 +456,9 @@ class Contrato {
 
         $conteudo = $this->getDados($idContrato);
 
-        p($conteudo["numero"], "contratoNumero");
+        # Exemplo de link comum
+        $link = new Link(p2($conteudo["numero"], "contratoNumero"), "cadastroContrato.php?fase=editaContrato&id={$idContrato}");
+        $link->show();
 
         # Exibe os Status
         $status = $this->getStatus($idContrato);

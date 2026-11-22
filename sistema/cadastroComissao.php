@@ -110,7 +110,8 @@ if ($acesso) {
                                      idComissao,
                                      idComissao,
                                      idComissao,
-                                     idComissao
+                                     idComissao,
+                                     idServidor
                                 FROM tbcomissao JOIN tbtipomembro USING (idTipoMembro)
                                WHERE idContrato = {$idContrato}
                             ORDER BY dtPublicacaoSaida, numOrdem");
@@ -174,12 +175,12 @@ if ($acesso) {
     );
 
     # Parametros da tabela
-    $objeto->set_label(["Tipo", "Foto", "Nome", "Contatos", "Designação"]);
-    $objeto->set_align(["center", "left", "left", "left", "left"]);
-    $objeto->set_width([10, 10, 25, 18, 18]);
+    $objeto->set_label(["Tipo", "Foto", "Nome", "Contatos", "Designação", "Treinamentos"]);
+    $objeto->set_align(["center", "left", "left", "left", "left", "left"]);
+    $objeto->set_width([10, 10, 25, 15, 15, 15]);
     #$objeto->set_funcao(array(null, null, null, null, null, "exibeFoto"));
-    $objeto->set_classe(["Comissao", "Comissao", "Comissao", "Comissao", "Comissao"]);
-    $objeto->set_metodo(["exibe_membroTipo", "get_foto", "get_dadosMembro", "get_contatosMembro", "getDadosDesignacao"]);
+    $objeto->set_classe(["Comissao", "Comissao", "Comissao", "Comissao", "Comissao", "Treinamento"]);
+    $objeto->set_metodo(["exibe_membroTipo", "get_foto", "get_dadosMembro", "get_contatosMembro", "getDadosDesignacao", "listaTreinamentos"]);
     $objeto->set_numeroOrdem(true);
     $objeto->set_formatacaoCondicional($formatacaoCondicional);
 
@@ -214,7 +215,7 @@ if ($acesso) {
                                  WHERE (idPerfil = 1 OR idPerfil = 2 OR idPerfil = 3 OR idPerfil = 4)
                               ORDER BY uenf_grh.tbsituacao.idSituacao, tbpessoa.nome');
     array_unshift($membro, array(null, null));
-    
+
     # Combo membro externo
     $membroExterno = $contratos->select('SELECT idMembroExterno,
                                                 nome
@@ -233,7 +234,7 @@ if ($acesso) {
     if (!empty($id)) {
         $selectCombo .= " AND idComissao <> {$id}";
     }
-    
+
     $selectCombo .= ") UNION (
                     SELECT idComissao,
                            CONCAT(uenf_contratos.tbmembroexterno.nome,' - (Membro Externo)'),
@@ -241,24 +242,23 @@ if ($acesso) {
                       FROM uenf_contratos.tbcomissao JOIN uenf_contratos.tbmembroexterno USING (idMembroExterno)
                       WHERE tbcomissao.idContrato = {$idContrato}
                         AND idMembroExterno IS NOT NULL";
-                      
+
     if (!empty($id)) {
         $selectCombo .= " AND idComissao <> {$id}";
-    }                  
+    }
 
     $selectCombo .= ") ORDER BY portariaSaida, 2";
 
     $substituindo = $pessoal->select($selectCombo);
 
     array_unshift($substituindo, array(null, null));  // Adiciona o valor de nulo
-    
     # Dados da combo tipo
     $tipo = $contratos->select('SELECT idTipoMembro,
                                      tipo
                                 FROM tbtipomembro
                             ORDER BY numOrdem');
     array_unshift($tipo, array(null, null));
-    
+
     # Campos para o formulario
     $objeto->set_campos(array(
         array(

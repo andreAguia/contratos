@@ -151,7 +151,8 @@ if ($acesso) {
                                 idComissao,
                                 idContrato,
                                 idContrato,
-                                idComissao
+                                idComissao,
+                                idServidor
                            FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
                                            JOIN uenf_grh.tbpessoa USING(idPessoa)
                           WHERE TRUE";
@@ -184,7 +185,8 @@ if ($acesso) {
                             idComissao,
                             idContrato,
                             idContrato,
-                            idComissao
+                            idComissao,
+                            NULL
                        FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
                        WHERE TRUE";
             # Membro
@@ -204,14 +206,14 @@ if ($acesso) {
             # Monta a tabela
             $tabela = new Tabela();
             $tabela->set_titulo("Membros de Comissão de Fiscalização");
-            $tabela->set_label(["Servidor", "Tipo", "Contrato", "Objeto", "Designação"]);
-            $tabela->set_align(["left", "center", "center", "left", "left"]);
-            $tabela->set_width([20, 10, 10, 40, 20]);
+            $tabela->set_label(["Servidor", "Tipo", "Contrato", "Objeto", "Designação", "Treinamentos"]);
+            $tabela->set_align(["left", "center", "center", "left", "left", "left"]);
+            $tabela->set_width([20, 10, 10, 30, 15, 15]);
             $tabela->set_funcaoDepoisClasse([null, "ressaltaSaiu"]);
-            $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao"]);
-            $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoEStatus", "exibeObjeto", "getDadosDesignacao"]);
+            $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao", "Treinamento"]);
+            $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoEStatus", "exibeObjeto", "getDadosDesignacao", "listaTReinamentos"]);
             $tabela->set_conteudo($row);
-            $tabela->set_rowspan(0);
+            $tabela->set_rowspan([0, 5]);
             $tabela->set_grupoCorColuna(0);
             $tabela->show();
 

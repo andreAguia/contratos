@@ -50,13 +50,13 @@ if ($acesso) {
     $objeto->set_voltarLista("cadastroContrato.php");
 
     # select da lista
-    $objeto->set_selectLista("SELECT idTreinamento,
-                                      data,
-                                      descricao,
-                                      obs,
-                                      idTreinamento
-                                 FROM tbtreinamento
-                             ORDER BY data");
+    $objeto->set_selectLista("SELECT data,
+                                     descricao,
+                                     obs,
+                                     idTreinamento,
+                                     idTreinamento
+                                FROM tbtreinamento
+                            ORDER BY data");
 
     # select do edita
     $objeto->set_selectEdita("SELECT data,
@@ -72,15 +72,22 @@ if ($acesso) {
     $objeto->set_linkListar("?fase=listar");
 
     # Parametros da tabela
-    $objeto->set_label(["Id", "Data", "Descrição", "Obs", "Alunos"]);
-    $objeto->set_width([5, 10, 30, 40, 5]);
-    $objeto->set_align(["center", "center", "left", "left", "center"]);
-    $objeto->set_funcao([null, "date_to_php"]);
-//    $objeto->set_classe([null, null, null, null, "Modalidade"]);
-//    $objeto->set_metodo([null, null, null, null, "getNumContratos"]);
+    $objeto->set_label(["Data", "Descrição", "Obs", "Alunos", null]);
+    $objeto->set_colspanLabel([null, null, null, 2]);
+    $objeto->set_width([10, 30, 35, 5, 5]);
+    $objeto->set_align(["center", "left", "left", "center"]);
+    $objeto->set_funcao(["date_to_php"]);
 
-    $objeto->set_rowspan(1);
-    $objeto->set_grupoCorColuna(1);
+    # Ver alunos
+    $alunos = new Link(null, "?fase=verAlunos&id=");
+    $alunos->set_imagem(PASTA_FIGURAS_GERAIS . 'olho.png', 20, 20);
+    $alunos->set_title("Exibe os alunos deste treinamento");
+
+    $objeto->set_classe([null, null, null, "Treinamento"]);
+    $objeto->set_metodo([null, null, null, "get_numAlunos"]);
+
+    # Coloca o objeto link na tabela			
+    $objeto->set_link([null, null, null, null, $alunos]);
 
     # Classe do banco de dados
     $objeto->set_classBd("Contratos");
@@ -142,6 +149,25 @@ if ($acesso) {
         case "gravar":
             $objeto->$fase($id);
             break;
+
+        ################################################################
+
+        /*
+         * Chama a rotina de cadastro de aluno
+         */
+
+        case "verAlunos" :
+            br(8);
+            aguarde();
+
+            # Informa o $idTreinamento
+            set_session('idTreinamento', $id);
+
+            # Carrega a página específica
+            loadPage('cadastroTreinamentoServidor.php');
+            break;
+
+        ################################################################
     }
 
     $page->terminaPagina();
