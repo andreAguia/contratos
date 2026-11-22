@@ -929,9 +929,17 @@ if ($acesso) {
             if ($parametroRequisitante <> "*") {
                 # Verifica se o que veio é numérico
                 if (is_numeric($parametroRequisitante)) {
-                    $select .= " AND setorRequisitante = {$parametroRequisitante}";
+                    $select .= " AND (setorRequisitante = {$parametroRequisitante}";
+                    $select .= " OR setorParticipante1 = {$parametroRequisitante}";
+                    $select .= " OR setorParticipante2 = {$parametroRequisitante}";
+                    $select .= " OR setorParticipante3 = {$parametroRequisitante}";
+                    $select .= " OR setorParticipante4 = {$parametroRequisitante})";
                 } else { # senão é uma diretoria genérica
-                    $select .= " AND setorRequisitante IN (SELECT idLotacao FROM uenf_grh.tblotacao WHERE tblotacao.DIR = '{$parametroRequisitante}')";
+                    $select .= " AND (setorRequisitante IN (SELECT idLotacao FROM uenf_grh.tblotacao WHERE tblotacao.DIR = '{$parametroRequisitante}')";
+                    $select .= " OR setorParticipante1 IN (SELECT idLotacao FROM uenf_grh.tblotacao WHERE tblotacao.DIR = '{$parametroRequisitante}')";
+                    $select .= " OR setorParticipante2 IN (SELECT idLotacao FROM uenf_grh.tblotacao WHERE tblotacao.DIR = '{$parametroRequisitante}')";
+                    $select .= " OR setorParticipante3 IN (SELECT idLotacao FROM uenf_grh.tblotacao WHERE tblotacao.DIR = '{$parametroRequisitante}')";
+                    $select .= " OR setorParticipante4 IN (SELECT idLotacao FROM uenf_grh.tblotacao WHERE tblotacao.DIR = '{$parametroRequisitante}'))";
                 }
             }
 
@@ -1013,6 +1021,7 @@ if ($acesso) {
                      ORDER BY dtAssinatura desc LIMIT 1),
                      IF(tipoPrazo = 2,SUBDATE(ADDDATE(dtInicial, INTERVAL prazo MONTH), INTERVAL 1 DAY),ADDDATE(dtInicial, INTERVAL prazo-1 DAY)))), numero";
 
+            #echo $select;
             $objeto->set_selectLista($select);
 
             $objeto->listar();

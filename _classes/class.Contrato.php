@@ -198,8 +198,8 @@ class Contrato {
          *
          * @syntax $concurso->get_dados([$idConcurso]);
          */
-        # Verifica se foi informado
-        if (vazio($idContrato)) {
+        # Verifica se foi informado o id
+        if (empty($idContrato)) {
             alert("É necessário informar o id do Contrato.");
             return;
         }
@@ -236,8 +236,16 @@ class Contrato {
             # Classe pessoa
             $pessoal = new Pessoal();
 
-            $processo .= "<br/><br/>Requisitante:<br/>";
-            $processo .= $pessoal->get_nomeLotacao($conteudo["setorRequisitante"]);
+            # Setor Requisitante
+            $processo .= p2("<br/>Requisitante:","p10left");
+            $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorRequisitante"]),"p12left");
+            
+            # Setores Participantes
+            $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorParticipante1"]), "p10leftverde");
+            $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorParticipante2"]), "p10leftverde");
+            $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorParticipante3"]), "p10leftverde");
+            $processo .= p2($pessoal->get_nomeLotacao4($conteudo["setorParticipante4"]), "p10leftverde");
+            
         }
         return $processo;
     }
@@ -1914,9 +1922,10 @@ class Contrato {
         } else {
             p($pessoal->get_nomeLotacao2($dados["setorRequisitante"]), "requisitante");
 
-            p($pessoal->get_nomeLotacao2($dados["setorParticipante1"]), "pLinha2");
-            p($pessoal->get_nomeLotacao2($dados["setorParticipante2"]), "pLinha2");
-            p($pessoal->get_nomeLotacao2($dados["setorParticipante3"]), "pLinha2");
+            p($pessoal->get_nomeLotacao2($dados["setorParticipante1"]), "setorParticipante");
+            p($pessoal->get_nomeLotacao2($dados["setorParticipante2"]), "setorParticipante");
+            p($pessoal->get_nomeLotacao2($dados["setorParticipante3"]), "setorParticipante");
+            p($pessoal->get_nomeLotacao2($dados["setorParticipante4"]), "setorParticipante");
         }
 
         # Editar

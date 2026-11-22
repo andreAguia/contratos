@@ -53,7 +53,8 @@ if ($acesso) {
                                      setorRequisitante,
                                      setorParticipante1,
                                      setorParticipante2,
-                                     setorParticipante3
+                                     setorParticipante3,
+                                     setorParticipante4
                                 FROM tbcontrato
                                WHERE idContrato = ' . $idContrato);
 
@@ -131,6 +132,15 @@ if ($acesso) {
             'linha' => 1),
         array('nome' => 'setorParticipante3',
             'label' => 'Setor Participante 3:',
+            'tipo' => 'combo',
+            'optgroup' => true,
+            'array' => $result,
+            'size' => 20,
+            'col' => 9,
+            'title' => 'Em qual setor o servidor está lotado',
+            'linha' => 1),
+        array('nome' => 'setorParticipante4',
+            'label' => 'Setor Participante 4:',
             'tipo' => 'combo',
             'optgroup' => true,
             'array' => $result,
