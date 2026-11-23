@@ -60,7 +60,36 @@ class TReinamento {
             $dados = $contratos->select($select);
 
             foreach ($dados as $item) {
-                $retorno .= p2(date_to_php($item[0]) . " - {$item[1]}", "p#p10left");
+                $retorno .= p2(date_to_php($item[0]) . " - {$item[1]}", "p10left");
+            }
+
+            return $retorno;
+        }
+    }
+
+    ############################################################
+
+    public function listaTreinamentosSimples($id = null) {
+
+        # Variável de retorno
+        $retorno = null;
+
+        # Verifica se foi informado
+        if (empty($id)) {
+            return "---";
+        } else {
+            # Conecta ao Banco de Dados
+            $contratos = new Contratos();
+
+            # Pega os dados
+            $select = "SELECT data, descricao
+                         FROM tbtreinamento JOIN tbtreinamentoservidor USING (idTReinamento)
+                        WHERE idServidor = {$id}";
+
+            $dados = $contratos->select($select);
+
+            foreach ($dados as $item) {
+                $retorno .= p2(" - " . date_to_php($item[0]), "p10left");
             }
 
             return $retorno;

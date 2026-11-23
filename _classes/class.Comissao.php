@@ -312,6 +312,7 @@ class Comissao {
         $select = "SELECT idComissao,
                           idComissao,
                           idComissao,
+                          idServidor,
                           idComissao
                      FROM tbcomissao JOIN tbtipomembro USING (idTipoMembro)
                     WHERE idContrato = {$idContrato}
@@ -351,11 +352,11 @@ class Comissao {
         # Monta a tabela
         $tabela = new Tabela();
         $tabela->set_titulo("Comissão de Fiscalização");
-        $tabela->set_label(["Foto", "Fiscal", "Tipo"]);
-        $tabela->set_align(["center", "left", "center"]);
-        $tabela->set_width([20, 60, 20]);
-        $tabela->set_classe(["Comissao", "Comissao", "Comissao"]);
-        $tabela->set_metodo(["get_foto", "get_dadosMembro", "exibe_membroTipo"]);
+        $tabela->set_label(["Foto", "Fiscal", "Tipo", "Treinamento"]);
+        $tabela->set_align(["center", "left", "center", "left"]);
+        $tabela->set_width([20, 40, 20, 20]);
+        $tabela->set_classe(["Comissao", "Comissao", "Comissao", "Treinamento"]);
+        $tabela->set_metodo(["get_foto", "get_dadosMembro", "exibe_membroTipo", "listaTreinamentosSimples"]);
         $tabela->set_conteudo($row);
         $tabela->set_formatacaoCondicional($formatacaoCondicional);
         $tabela->show();

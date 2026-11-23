@@ -36,6 +36,9 @@ if ($acesso) {
     # pega o id (se tiver)
     $id = soNumeros(get("id"));
 
+    # Pega o idContrato caso seja o link para abrir um contrato
+    $idContrato = soNumeros(get("idContrato"));
+
     # Pega os parâmetros
     $parametroMembro = post("parametroMembro", get_session('parametroMembro'));
     $parametroTipo = post("parametroTipo", get_session('parametroTipo'));
@@ -151,8 +154,7 @@ if ($acesso) {
                                 idComissao,
                                 idContrato,
                                 idContrato,
-                                idComissao,
-                                idServidor
+                                idComissao
                            FROM tbcomissao JOIN uenf_grh.tbservidor USING(idServidor)
                                            JOIN uenf_grh.tbpessoa USING(idPessoa)
                           WHERE TRUE";
@@ -185,8 +187,7 @@ if ($acesso) {
                             idComissao,
                             idContrato,
                             idContrato,
-                            idComissao,
-                            NULL
+                            idComissao
                        FROM tbcomissao JOIN tbmembroexterno USING (idMembroExterno)
                        WHERE TRUE";
             # Membro
@@ -206,12 +207,12 @@ if ($acesso) {
             # Monta a tabela
             $tabela = new Tabela();
             $tabela->set_titulo("Membros de Comissão de Fiscalização");
-            $tabela->set_label(["Servidor", "Tipo", "Contrato", "Objeto", "Designação", "Treinamentos"]);
-            $tabela->set_align(["left", "center", "center", "left", "left", "left"]);
-            $tabela->set_width([20, 10, 10, 30, 15, 15]);
+            $tabela->set_label(["Servidor", "Tipo", "Contrato", "Objeto", "Designação"]);
+            $tabela->set_align(["left", "center", "center", "left", "left"]);
+            $tabela->set_width([20, 10, 10, 40, 20]);
             $tabela->set_funcaoDepoisClasse([null, "ressaltaSaiu"]);
-            $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao", "Treinamento"]);
-            $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoEStatus", "exibeObjeto", "getDadosDesignacao", "listaTReinamentos"]);
+            $tabela->set_classe([null, "Comissao", "Contrato", "Contrato", "Comissao"]);
+            $tabela->set_metodo([null, "exibe_membroTipo", "exibeNumeroContratoEStatus", "exibeObjeto", "getDadosDesignacao"]);
             $tabela->set_conteudo($row);
             $tabela->set_rowspan([0, 5]);
             $tabela->set_grupoCorColuna(0);
@@ -223,6 +224,24 @@ if ($acesso) {
             p(number_format($time, 4, '.', ',') . " segundos", "right", "f10");
 
             break;
+
+        ################################################################
+
+        case "editaContrato":
+            /*
+             * O sistema passa por aqui para gerar a sessao de volta
+             */
+
+            # Gera a origem
+            set_session("origem","cadastroMembros.php");
+            
+            # idContrato
+            set_session('sessionContrato', $idContrato);
+            
+            loadPage("cadastroAditivo.php?i=true");
+            break;
+
+        ################################################################
     }
 
     $page->terminaPagina();

@@ -35,6 +35,9 @@ if ($acesso) {
     # pega o contrato
     $idContrato = soNumeros(get_session('sessionContrato'));
 
+    # pega a origem (se tiver)
+    $origem = get_session("origem");
+
     # Começa uma nova página
     $page = new Page();
     if ($fase == "uploadPublicacao" OR $fase == "uploadAditivo") {
@@ -67,7 +70,11 @@ if ($acesso) {
     }
 
     # Botão de voltar da lista
-    $objeto->set_voltarLista('cadastroContrato.php');
+    if (empty($origem)) {
+        $objeto->set_voltarLista('cadastroContrato.php');
+    } else {
+        $objeto->set_voltarLista($origem);
+    }
 
     # select da lista
     $objeto->set_selectLista("SELECT idAditivo,
@@ -329,7 +336,11 @@ if ($acesso) {
             $menu1 = new MenuBar();
 
             # Voltar
-            $botaoVoltar = new Link("Voltar", "cadastroContrato.php");
+            if (empty($origem)) {
+                $botaoVoltar = new Link("Voltar", "cadastroContrato.php");
+            } else {
+                $botaoVoltar = new Link("Voltar", $origem);
+            }
             $botaoVoltar->set_class('button');
             $botaoVoltar->set_title('Voltar a página anterior');
             $botaoVoltar->set_accessKey('V');
