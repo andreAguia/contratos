@@ -457,7 +457,7 @@ class Contrato {
         $conteudo = $this->getDados($idContrato);
 
         # Exemplo de link comum
-        $link = new Link(p2($conteudo["numero"], "contratoNumero"), "cadastroMembros.php?fase=editaContrato&idContrato={$idContrato}");
+        $link = new Link(p2($conteudo["numero"], "contratoNumero"), "cadastroMembros.php?fase=editaContrato&idContrato={$idContrato}","Clique Para Acessar o Contrato");
         $link->show();
 
         # Exibe os Status
